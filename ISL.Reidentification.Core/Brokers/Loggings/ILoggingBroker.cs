@@ -1,11 +1,11 @@
-﻿// ----------------------------------------------------------------------------------
-// Copyright (c) The Standard Organization: A coalition of the Good-Hearted Engineers
-// ----------------------------------------------------------------------------------
+﻿// ---------------------------------------------------------
+// Copyright (c) North East London ICB. All rights reserved.
+// ---------------------------------------------------------
 
 using System;
 using System.Threading.Tasks;
 
-namespace GitFyle.Core.Api.Brokers.Loggings
+namespace ISL.Reidentification.Core.Brokers.Loggings
 {
     internal interface ILoggingBroker
     {
