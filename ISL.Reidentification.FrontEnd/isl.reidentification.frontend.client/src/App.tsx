@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './App.css';
 import Root from './components/root';
-import ErrorPage from './components/error';
-import { Page1 } from './components/page1';
-import { Page2 } from './components/page2';
+import ErrorPage from './errors/error';
+import { Page1 } from './pages/page1';
+import { Page2 } from './pages/page2';
 import { MsalProvider } from '@azure/msal-react';
 
 // TODO:
@@ -14,7 +15,6 @@ import { MsalProvider } from '@azure/msal-react';
 //      - API Secured Routes
 //      - Unsecured routes
 //      - Features
-
 
 function App({ instance }: any) {
 
