@@ -13,10 +13,15 @@ namespace ISL.Reidentification.FrontEnd.Server
             // Add services to the container.
             builder.Services.AddAuthorization();
 
+            //CreateHostBuilder(args).Build().Run();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddControllers();
+
+            // Register IConfiguration to be available for dependency injection
+            builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
             var app = builder.Build();
 
@@ -40,8 +45,6 @@ namespace ISL.Reidentification.FrontEnd.Server
             {
                 "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
             };
-
-
 
             app.MapGet("/weatherforecast", (HttpContext httpContext) =>
             {

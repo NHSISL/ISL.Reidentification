@@ -3,11 +3,15 @@ import { InteractionRequiredAuthError, PublicClientApplication } from "@azure/ms
 import { loginRequest, msalConfig } from '../authConfig';
 
 class ApiBroker {
-
-    //baseUrl = "https://localhost:5173";  /*process.env.REACT_APP_API;*/
     msalInstance = new PublicClientApplication(msalConfig);
 
+    private async initialize() {
+        await this.msalInstance.initialize();
+    }
+
     private async acquireAccessToken() {
+        await this.initialize(); // Ensure MSAL is initialized
+
         const activeAccount = this.msalInstance.getActiveAccount();
         const accounts = this.msalInstance.getAllAccounts();
 
@@ -16,26 +20,25 @@ class ApiBroker {
             account: activeAccount || accounts[0]
         };
 
-        await this.msalInstance.acquireTokenSilent(request).then(response => {
-            return response.accessToken;
-        }).catch(async (error) => {
+        let authResult;
+        try {
+            authResult = await this.msalInstance.acquireTokenSilent(request);
+        } catch (error) {
             if (error instanceof InteractionRequiredAuthError) {
                 // fallback to interaction when silent call fails
-                return this.msalInstance.acquireTokenRedirect(request);
+                await this.msalInstance.acquireTokenRedirect(request);
+            } else {
+                console.log(error);
+                throw error; // rethrow the error after logging it
             }
-        }).catch(error => {
-            console.log(error);
-        });
-
-        const authResult = await this.msalInstance.acquireTokenSilent(request);
-
-        return authResult.accessToken;
+        }
+        return authResult ? authResult.accessToken : null;
     }
 
     private async config() {
         const accessToken = await this.acquireAccessToken();
         if (accessToken) {
-            return { headers: { 'Authorization': 'Bearer ' + await this.acquireAccessToken() } }
+            return { headers: { 'Authorization': 'Bearer ' + accessToken } }
         }
 
         return {};
