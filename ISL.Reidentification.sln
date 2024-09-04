@@ -27,9 +27,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ISL.Reidentification.Client
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Clients", "Clients", "{959E2D1E-E4F8-462F-B4B3-8AB0DAF0416B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ISL.Reidentification.FrontEnd.Server", "ISL.Reidentification.FrontEnd\ISL.Reidentification.FrontEnd.Server\ISL.Reidentification.FrontEnd.Server.csproj", "{304DB718-6C9D-401D-BFE1-AB59D3907FEC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ISL.Reidentification.FrontEnd.Server", "ISL.Reidentification.FrontEnd\ISL.Reidentification.FrontEnd.Server\ISL.Reidentification.FrontEnd.Server.csproj", "{304DB718-6C9D-401D-BFE1-AB59D3907FEC}"
 EndProject
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "isl.reidentification.frontend.client", "ISL.Reidentification.FrontEnd\isl.reidentification.frontend.client\isl.reidentification.frontend.client.esproj", "{729E5460-28E5-48F4-BB15-56783931164C}"
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "ISL.Reidentification.FrontEnd.Client", "ISL.Reidentification.FrontEnd\isl.reidentification.frontend.client\ISL.Reidentification.FrontEnd.Client.esproj", "{729E5460-28E5-48F4-BB15-56783931164C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
