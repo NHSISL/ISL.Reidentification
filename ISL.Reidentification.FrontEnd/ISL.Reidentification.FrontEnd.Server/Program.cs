@@ -16,6 +16,7 @@ namespace ISL.Reidentification.FrontEnd.Server
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddControllers();
 
             var app = builder.Build();
 
@@ -33,10 +34,14 @@ namespace ISL.Reidentification.FrontEnd.Server
 
             app.UseAuthorization();
 
+            app.MapControllers();
+
             var summaries = new[]
             {
                 "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
             };
+
+
 
             app.MapGet("/weatherforecast", (HttpContext httpContext) =>
             {

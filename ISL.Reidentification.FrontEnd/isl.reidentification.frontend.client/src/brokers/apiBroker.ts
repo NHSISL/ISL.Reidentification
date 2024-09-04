@@ -4,7 +4,7 @@ import { loginRequest, msalConfig } from '../authConfig';
 
 class ApiBroker {
 
-    baseUrl = "https://localhost:5173";  /*process.env.REACT_APP_API;*/
+    //baseUrl = "https://localhost:5173";  /*process.env.REACT_APP_API;*/
     msalInstance = new PublicClientApplication(msalConfig);
 
     private async acquireAccessToken() {
@@ -42,7 +42,7 @@ class ApiBroker {
     }
 
     public async GetAsync(queryFragment: string) {
-        const url = `${this.baseUrl}${queryFragment}`;
+        const url = queryFragment;
         return axios.get(url, await this.config());
     }
 
@@ -51,7 +51,7 @@ class ApiBroker {
     }
 
     public async PostAsync(relativeUrl: string, data: any) {
-        const url = `${this.baseUrl}${relativeUrl}`;
+        const url = relativeUrl;
 
         return axios.post(url,
             data,
@@ -60,7 +60,7 @@ class ApiBroker {
     }
 
     public async PostFormAsync(relativeUrl: string, data: FormData) {
-        const url = `${this.baseUrl}${relativeUrl}`;
+        const url = relativeUrl;
 
         const headers = {
             'Authorization': 'Bearer ' + await this.acquireAccessToken(),
@@ -74,13 +74,13 @@ class ApiBroker {
     }
 
     public async PutAsync(relativeUrl: string, data: any) {
-        const url = `${this.baseUrl}${relativeUrl}`;
+        const url = relativeUrl;
 
         return axios.put(url, data, await this.config());
     }
 
     public async DeleteAsync(relativeUrl: string) {
-        const url = `${this.baseUrl}${relativeUrl}`;
+        const url = relativeUrl;
 
         return axios.delete(url, await this.config());
     }
