@@ -1,6 +1,7 @@
 import { useIsAuthenticated, useMsal } from '@azure/msal-react';
 import { ReactElement } from 'react';
 import { Alert, Button, Container } from 'react-bootstrap';
+import { loginRequest } from '../authConfig';
 
 type SecuredRouteParameters = {
     children: ReactElement,
@@ -39,7 +40,7 @@ export const SecuredRoute = ({ children, allowedRoles = [], deniedRoles = [] }: 
                     You do not have access to this area of the application, please contact support.
                 </p>
                 {!isAuthenticated && (
-                    <Button className="inlineLogin" onClick={() => instance.loginRedirect(loginRequest)} edit>
+                    <Button className="inlineLogin" onClick={() => instance.loginRedirect(loginRequest)}>
                         Login
                     </Button>
                 )}
@@ -71,7 +72,7 @@ export const SecuredRoute = ({ children, allowedRoles = [], deniedRoles = [] }: 
                 <p>
                     To access this part of the site, you must first login.
                 </p>
-                <Button className="inlineLoginNotAuth" onClick={() => instance.loginRedirect(loginRequest)} edit>
+                <Button className="inlineLoginNotAuth" onClick={() => instance.loginRedirect(loginRequest)}>
                     Login
                 </Button>
             </Alert>

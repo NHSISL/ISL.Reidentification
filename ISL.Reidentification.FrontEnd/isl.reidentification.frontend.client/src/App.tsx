@@ -8,6 +8,9 @@ import { Page2 } from './pages/page2';
 import { MsalProvider } from '@azure/msal-react';
 import { SecuredRoute } from './components/securedRoutes';
 import securityPoints from './securityMatrix';
+import { Page3 } from './pages/page3';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClientGlobalOptions } from './brokers/apiBroker.globals';
 
 // TODO:
 //      - /////User Profile Screen
@@ -22,26 +25,32 @@ function App({ instance }: any) {
 
     const router = createBrowserRouter([
         {
-          path: "/",
-          element: <Root />,
-          errorElement: <ErrorPage />,
-          children: [
-            {
-                path: "page1/:id",
-                element: <Page1 />
-            },
-            {
-                path: "page2",
-                element: <SecuredRoute allowedRoles={securityPoints.page2.view}><Page2 /></SecuredRoute>
-            }
-          ]
+            path: "/",
+            element: <Root />,
+            errorElement: <ErrorPage />,
+            children: [
+                {
+                    path: "page1/:id",
+                    element: <Page1 />
+                },
+                {
+                    path: "page2",
+                    element: <SecuredRoute allowedRoles={securityPoints.page2.view}><Page2 /></SecuredRoute>
+                },
+                {
+                    path: "page3",
+                    element: <Page3 />
+                },
+            ]
         }
-      ]);
+    ]);
 
     return (
         <>
             <MsalProvider instance={instance}>
-                <RouterProvider router={router} />
+                <QueryClientProvider client={queryClientGlobalOptions}>
+                    <RouterProvider router={router} />
+                </QueryClientProvider>
             </MsalProvider>
         </>
     );

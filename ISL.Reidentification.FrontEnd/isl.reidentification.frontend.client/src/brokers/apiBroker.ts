@@ -4,7 +4,7 @@ import { loginRequest, msalConfig } from '../authConfig';
 
 class ApiBroker {
 
-    baseUrl = process.env.REACT_APP_API;
+    baseUrl = "https://localhost:5173";  /*process.env.REACT_APP_API;*/
     msalInstance = new PublicClientApplication(msalConfig);
 
     private async acquireAccessToken() {

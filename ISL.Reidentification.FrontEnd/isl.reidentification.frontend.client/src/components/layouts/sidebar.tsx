@@ -3,6 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Card, ListGroup } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { FeatureDefinitions } from '../../featureDefinitions';
+import { FeatureSwitch } from '../accessControls/featureSwitch';
 
 const SideBarComponent: React.FC = () => {
 
@@ -22,6 +24,14 @@ const SideBarComponent: React.FC = () => {
                     <FontAwesomeIcon icon={faList} className="me-2" />
                     <Link to="/page2">Page 2 (Secured)</Link>
                 </ListGroup.Item>
+
+                <FeatureSwitch feature={FeatureDefinitions.Test}>
+                    <ListGroup.Item className="bg-light">
+                        <FontAwesomeIcon icon={faList} className="me-2" />
+                        <Link to="/page3">Page 3 (Feature Switch)</Link>
+                    </ListGroup.Item>
+                </FeatureSwitch>
+
             </ListGroup>
         </Card>
     );

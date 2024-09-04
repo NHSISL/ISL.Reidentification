@@ -1,14 +1,23 @@
-import { useQuery } from "react-query";
-import FeatureBroker from "../../brokers/apiBroker.features";
-import { Feature } from "../../models/features/feature";
+import React, { FunctionComponent } from 'react';
+import { FeatureDefinitions } from '../../featureDefinitions';
+import { featureService } from '../../services/foundations/featureService';
 
-export const featureService = {
-    useGetAllFeatures: () => {
-        const featureBroker = new FeatureBroker();
+type FeatureSwitchProps = {
+    feature: FeatureDefinitions;
+    children: React.ReactNode;
+}
 
-        return useQuery<Feature[]>(
-            ["FeaturesGetAll"],
-            () => featureBroker.GetAllFeatureAsync(),
-            { staleTime: Infinity });
+export const FeatureSwitch: FunctionComponent<FeatureSwitchProps> = (props) => {
+    const { feature, children } = props;
+    const { data, isLoading } = featureService.useGetAllFeatures();
+
+    if (isLoading || !data) {
+        return <></>
     }
+
+    if (data.findIndex(f => f.feature === feature) > -1) {
+        return <>{children}</>;
+    }
+
+    return <></>;
 }

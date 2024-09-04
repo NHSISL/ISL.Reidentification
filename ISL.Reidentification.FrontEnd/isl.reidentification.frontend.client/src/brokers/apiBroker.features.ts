@@ -6,16 +6,12 @@ class FeatureBroker {
 
     private apiBroker: ApiBroker = new ApiBroker();
 
-    async GetAllFeatureAsync() {
+    async GetAllFeatureAsync(): Promise<Feature[]> {
         const url = this.relativeAuditUrl;
 
-        return await this.apiBroker.GetAsync(url)
-            .then(result => {
-                return result.data.map((feature: any) => {
-                    return new Feature(feature);
-                })
-            }
-            );
+        const result = await this.apiBroker.GetAsync(url);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return result.data.map((feature: any) => new Feature(feature));
     }
 }
 export default FeatureBroker;

@@ -3,7 +3,7 @@ const securityPoints = {
         //add: 
         //delete:
         //edit:
-        view: ["ISL.LDS.AdminSpa.Page1", "ISL.LDS.AdminSpa.Administrators"]
+        view: ["ISL.LDS.AdminSpa.Page2", "ISL.LDS.AdminSpa.Administrators"]
     }
 }
 
