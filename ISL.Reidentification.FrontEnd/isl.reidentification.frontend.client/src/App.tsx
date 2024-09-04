@@ -4,9 +4,11 @@ import Root from './components/root';
 import ErrorPage from './components/error';
 import { Page1 } from './components/page1';
 import { Page2 } from './components/page2';
+import { MsalProvider } from '@azure/msal-react';
 
 
-function App() {
+
+function App({ instance }: any) {
 
     const router = createBrowserRouter([
         {
@@ -28,7 +30,9 @@ function App() {
 
     return (
         <>
-            <RouterProvider router={router} />
+            <MsalProvider instance={instance}>
+                <RouterProvider router={router} />
+            </MsalProvider>
         </>
     );
 
