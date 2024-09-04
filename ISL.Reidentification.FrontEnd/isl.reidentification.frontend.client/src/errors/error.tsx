@@ -13,8 +13,8 @@ export default function ErrorPage(): JSX.Element {
     } else if (typeof error === 'string') {
         errorMessage = error;
     } else {
-        console.error(error);
-        errorMessage = 'Unknown error';
+        console.error('Unknown error:', error);
+        errorMessage = 'An unknown error has occurred';
     }
 
     return (
