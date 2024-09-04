@@ -15,7 +15,7 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({ toggleSidebar, showMe
         <Navbar className="bg-body-tertiary" sticky="top">
             <Container fluid>
                 {showMenuButton && (
-                    <Button onClick={toggleSidebar} variant="outline-primary" className="ms-3">
+                    <Button onClick={toggleSidebar} variant="outline-dark" className="ms-3">
                         <FontAwesomeIcon icon={faBars} />
                     </Button>
                 )}

@@ -1,6 +1,6 @@
 import { useMsal } from "@azure/msal-react";
 import { ReactElement, useState } from "react"
-import { Button, Card, CardBody, CardTitle, ListGroup, Modal, NavDropdown } from "react-bootstrap";
+import { Button, Card, ListGroup, Modal, NavDropdown } from "react-bootstrap";
 
 
 export const UserProfile = (): ReactElement => {

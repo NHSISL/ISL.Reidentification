@@ -6,14 +6,16 @@ import ErrorPage from './errors/error';
 import { Page1 } from './pages/page1';
 import { Page2 } from './pages/page2';
 import { MsalProvider } from '@azure/msal-react';
+import { SecuredRoute } from './components/securedRoutes';
+import securityPoints from './securityMatrix';
 
 // TODO:
-//      - User Profile Screen
-//      - Secured Routes (block / allow)
+//      - /////User Profile Screen
+//      - ////Secured Routes (block / allow)
 //      - Secured UI Elements (hide / show)
 //      - React Query 
 //      - API Secured Routes
-//      - Unsecured routes
+//      - ////Unsecured routes
 //      - Features
 
 function App({ instance }: any) {
@@ -30,7 +32,7 @@ function App({ instance }: any) {
             },
             {
                 path: "page2",
-                element: <Page2 />
+                element: <SecuredRoute allowedRoles={securityPoints.page2.view}><Page2 /></SecuredRoute>
             }
           ]
         }
