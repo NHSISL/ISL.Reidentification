@@ -6,6 +6,14 @@ import { Page1 } from './components/page1';
 import { Page2 } from './components/page2';
 import { MsalProvider } from '@azure/msal-react';
 
+// TODO:
+//      - User Profile Screen
+//      - Secured Routes (block / allow)
+//      - Secured UI Elements (hide / show)
+//      - React Query 
+//      - API Secured Routes
+//      - Unsecured routes
+//      - Features
 
 
 function App({ instance }: any) {
