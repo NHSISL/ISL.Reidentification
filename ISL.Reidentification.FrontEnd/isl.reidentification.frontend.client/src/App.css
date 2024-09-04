@@ -1,4 +1,30 @@
-﻿#root {
+﻿/* App.css */
+#root {
     text-align: center;
     width: 100%;
+}
+
+.sidebar {
+    width: 300px; /* Fixed width of the sidebar */
+}
+
+.sidebar-open {
+    transition: transform 0.3s ease-in-out;
+    transform: translateX(0);
+}
+
+.sidebar-closed {
+    transition: transform 0.3s ease-in-out;
+    transform: translateX(-100%);
+    overflow: hidden;
+}
+
+.content-shift-left {
+    transition: margin-left 0.3s ease-in-out;
+    margin-left: -300px;
+}
+
+.content-shift-right {
+    transition: margin-left 0.3s ease-in-out;
+    margin-left: 0px; 
 }
