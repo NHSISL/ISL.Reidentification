@@ -1,16 +1,24 @@
 import React from 'react';
+import { Card, ListGroup } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 const SideBarComponent: React.FC = () => {
 
     return (
-        <div className="sidebar">
-            <h4>Sidebar</h4>
-            <ul>
-                <li>Link 1</li>
-                <li>Link 2</li>
-                <li>Link 3</li>
-            </ul>
-        </div>
+        <Card className="sidebar" style={{ width: '18rem' }}>
+            <Card.Header as="h4">Menu</Card.Header>
+            <ListGroup variant="flush">
+                <ListGroup.Item>
+                    <Link to="/">Home</Link>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                    <Link to="/page1/1">Page 1</Link>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                    <Link to="/page2">Page 2</Link>
+                </ListGroup.Item>
+            </ListGroup>
+        </Card>
     );
 }
 

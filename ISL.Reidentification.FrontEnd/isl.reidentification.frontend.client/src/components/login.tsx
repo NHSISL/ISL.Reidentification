@@ -20,11 +20,11 @@ const Login: React.FC = () => {
         <>
             <UnauthenticatedTemplate>
                 <div className="collapse navbar-collapse justify-content-end">
-                    <Button onClick={handleLoginRedirect}>Sign in</Button>
+                    <Button onClick={handleLoginRedirect} className="me-3">Sign in</Button>
                 </div>
             </UnauthenticatedTemplate>
             <AuthenticatedTemplate>
-                <NavDropdown title={activeAccount?.username} id="collasible-nav-dropdown">
+                <NavDropdown title={activeAccount?.username} id="collasible-nav-dropdown" className="me-3">
                     <NavDropdown.Item onClick={handleLogoutRedirect}>Sign out</NavDropdown.Item>
                     <UserProfile />
                 </NavDropdown>

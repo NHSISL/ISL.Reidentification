@@ -19,7 +19,9 @@ export default function Root() {
                 <Row className="flex-grow-1">
 
                     <Col xs={2} style={{ width: '300px' }} className={`d-flex flex-column bg-light p-0 ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
-                        <SideBarComponent />
+                        <AuthenticatedTemplate>
+                            <SideBarComponent />
+                        </AuthenticatedTemplate>
                     </Col>
 
                     <Col className={`d-flex flex-column p-0 ${sidebarOpen ? 'content-shift-right' : 'content-shift-left'}`}>

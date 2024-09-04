@@ -1,5 +1,6 @@
 import React from 'react';
-import { useMsal } from "@azure/msal-react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars} from '@fortawesome/free-solid-svg-icons';
 import { Button, Container, Navbar } from "react-bootstrap";
 import Login from '../login';
 
@@ -15,10 +16,10 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({ toggleSidebar, showMe
             <Container fluid>
                 {showMenuButton && (
                     <Button onClick={toggleSidebar} variant="outline-primary" className="ms-3">
-                        <FontAwesomeIcon icon={faCaretUp} className="ps-2" />
+                        <FontAwesomeIcon icon={faBars} />
                     </Button>
                 )}
-                <Navbar.Brand href="#home">London Data Service - Re-Identification</Navbar.Brand>
+                <Navbar.Brand href="/" className="me-auto ms-3">London Data Service - Re-Identification</Navbar.Brand>
                 <Navbar.Text>
                     <Login />
                 </Navbar.Text>
