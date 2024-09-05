@@ -5,7 +5,7 @@ export const Page1 = () => {
     const { id } = useParams();
 
     return (
-        <Container>
+        <Container fluid>
             <h1>Page 1</h1>
             <p>This is an example how to get the url param into the page - {id}</p>
         </Container>

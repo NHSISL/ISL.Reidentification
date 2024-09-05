@@ -33,7 +33,7 @@ export const SecuredRoute = ({ children, allowedRoles = [], deniedRoles = [] }: 
     }
 
     const NoAccess = () => {
-        return <Container className="mt-3">
+        return <Container fluid className="mt-3">
             <Alert variant="danger">
                 <Alert.Heading>Invalid Access</Alert.Heading>
                 <p>
