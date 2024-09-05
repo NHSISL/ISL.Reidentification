@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ISL.Reidentification.Core.Brokers.Loggings
 {
-    internal interface ILoggingBroker
+    public interface ILoggingBroker
     {
         ValueTask LogInformationAsync(string message);
         ValueTask LogTraceAsync(string message);

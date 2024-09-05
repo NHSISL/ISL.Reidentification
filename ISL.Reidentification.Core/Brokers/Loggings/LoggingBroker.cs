@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace ISL.Reidentification.Core.Brokers.Loggings
 {
-    internal class LoggingBroker : ILoggingBroker
+    public class LoggingBroker : ILoggingBroker
     {
         private readonly ILogger<LoggingBroker> logger;
 

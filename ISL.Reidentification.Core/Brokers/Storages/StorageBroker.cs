@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace ISL.Reidentification.Core.Brokers.Storages
 {
-    internal partial class StorageBroker : EFxceptionsContext, IStorageBroker
+    public partial class StorageBroker : EFxceptionsContext, IStorageBroker
     {
         private readonly IConfiguration configuration;
 
