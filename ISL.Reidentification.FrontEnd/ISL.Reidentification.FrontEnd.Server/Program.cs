@@ -2,6 +2,9 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using ISL.Reidentification.Core.Brokers.DateTimes;
+using ISL.Reidentification.Core.Brokers.Loggings;
+using ISL.Reidentification.Core.Brokers.Storages;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
 
@@ -67,7 +70,9 @@ namespace ISL.Reidentification.FrontEnd.Server
 
         private static void AddBrokers(IServiceCollection services)
         {
-            services.AddTransient<ISL.Reidentification.Core.Brokers.DateTimes.IDateTimeBroker, DateTimeBroker>();
+            services.AddTransient<IStorageBroker, StorageBroker>();
+            services.AddTransient<IDateTimeBroker, DateTimeBroker>();
+            services.AddTransient<ILoggingBroker, LoggingBroker>();
         }
 
         private static void AddFoundationServices(IServiceCollection services)
