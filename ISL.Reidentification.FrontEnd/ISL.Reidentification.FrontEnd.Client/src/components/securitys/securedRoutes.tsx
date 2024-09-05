@@ -1,7 +1,7 @@
 import { useIsAuthenticated, useMsal } from '@azure/msal-react';
 import { ReactElement } from 'react';
 import { Alert, Button, Container } from 'react-bootstrap';
-import { loginRequest } from '../authConfig';
+import { loginRequest } from '../../authConfig';
 
 type SecuredRouteParameters = {
     children: ReactElement,

@@ -6,20 +6,15 @@ import ErrorPage from './errors/error';
 import { Page1 } from './pages/page1';
 import { Page2 } from './pages/page2';
 import { MsalProvider } from '@azure/msal-react';
-import { SecuredRoute } from './components/securedRoutes';
+import { SecuredRoute } from './components/securitys/securedRoutes';
 import securityPoints from './securityMatrix';
 import { Page3 } from './pages/page3';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClientGlobalOptions } from './brokers/apiBroker.globals';
+import { Page4 } from './pages/page4';
 
 // TODO:
-//      - /////User Profile Screen
-//      - ////Secured Routes (block / allow)
-//      - Secured UI Elements (hide / show)
-//      - React Query 
 //      - API Secured Routes
-//      - ////Unsecured routes
-//      - Features
 
 function App({ instance }: any) {
 
@@ -40,6 +35,10 @@ function App({ instance }: any) {
                 {
                     path: "page3",
                     element: <Page3 />
+                },
+                {
+                    path: "page4",
+                    element: <Page4 />
                 },
             ]
         }
