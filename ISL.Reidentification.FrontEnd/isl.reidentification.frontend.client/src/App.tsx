@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 import './App.css';
 import Root from './components/root';
 import ErrorPage from './errors/error';
@@ -13,6 +13,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClientGlobalOptions } from './brokers/apiBroker.globals';
 import { Page4 } from './pages/page4';
 import { Page5 } from './pages/page5';
+import { Home } from './pages/home';
 
 // TODO:
 //      - API Secured Routes
@@ -25,6 +26,10 @@ function App({ instance }: any) {
             element: <Root />,
             errorElement: <ErrorPage />,
             children: [
+                {
+                    path: "home",
+                    element: <Home />
+                },
                 {
                     path: "page1/:id",
                     element: <Page1 />
@@ -45,6 +50,10 @@ function App({ instance }: any) {
                     path: "page5",
                     element: <Page5 />
                 },
+                {
+                    index: true,
+                    element: <Navigate to="/home" />
+                }
             ]
         }
     ]);

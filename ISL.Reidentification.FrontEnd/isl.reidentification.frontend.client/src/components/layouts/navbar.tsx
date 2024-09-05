@@ -12,7 +12,7 @@ interface NavbarComponentProps {
 const NavbarComponent: React.FC<NavbarComponentProps> = ({ toggleSidebar, showMenuButton }) => {
 
     return (
-        <Navbar className="" sticky="top">
+        <Navbar className="bg-light" sticky="top">
             <Container fluid>
                 {showMenuButton && (
                     <Button onClick={toggleSidebar} variant="outline-dark" className="ms-3">
