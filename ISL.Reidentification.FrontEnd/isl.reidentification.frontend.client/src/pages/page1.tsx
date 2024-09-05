@@ -2,12 +2,12 @@ import { Container } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 
 export const Page1 = () => {
-    let { id } = useParams();
+    const { id } = useParams();
 
     return (
         <Container>
             <h1>Page 1</h1>
-            <p>Page 1 content - {id}</p>
+            <p>This is an example how to get the url param into the page - {id}</p>
         </Container>
     )
 }

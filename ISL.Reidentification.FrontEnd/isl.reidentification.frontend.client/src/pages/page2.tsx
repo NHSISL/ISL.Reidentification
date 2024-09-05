@@ -1,10 +1,10 @@
+import { Container } from "react-bootstrap"
 
 export const Page2 = () => {
     return (
-        <div>
+        <Container>
             <h1>Page 2</h1>
-            <p>Page 2 content</p>
-
-        </div>
+            <p>Role Needs to be in Security Matrix and Azure AD against user.</p>
+        </Container>
     )
 }

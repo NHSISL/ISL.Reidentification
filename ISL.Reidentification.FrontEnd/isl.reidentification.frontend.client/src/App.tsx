@@ -12,6 +12,7 @@ import { Page3 } from './pages/page3';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClientGlobalOptions } from './brokers/apiBroker.globals';
 import { Page4 } from './pages/page4';
+import { Page5 } from './pages/page5';
 
 // TODO:
 //      - API Secured Routes
@@ -39,6 +40,10 @@ function App({ instance }: any) {
                 {
                     path: "page4",
                     element: <Page4 />
+                },
+                {
+                    path: "page5",
+                    element: <Page5 />
                 },
             ]
         }

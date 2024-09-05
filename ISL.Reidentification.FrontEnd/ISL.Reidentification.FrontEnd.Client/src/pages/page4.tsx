@@ -1,9 +1,10 @@
+import { Container } from "react-bootstrap"
 
 export const Page4 = () => {
     return (
-        <div>
+        <Container>
             <h1>Page 4</h1>
-            <p>Page 4 content</p>
-        </div>
+            <p>Please go to the SecurityMatrix.tsx to comment in a role.</p>
+        </Container>
     )
 }

@@ -22,7 +22,7 @@ const SideBarComponent: React.FC = () => {
 
                 <ListGroup.Item className="bg-light">
                     <FontAwesomeIcon icon={faList} className="me-2" />
-                    <Link to="/page1/1">Page 1 (Not Secure)</Link>
+                    <Link to="/page1/1">Page 1 (with url param)</Link>
                 </ListGroup.Item>
 
                 <ListGroup.Item className="bg-light">
@@ -43,6 +43,11 @@ const SideBarComponent: React.FC = () => {
                         <Link to="/page4">Page 4 (secureComponent)</Link>
                     </ListGroup.Item>
                 </SecuredComponent>
+
+                <ListGroup.Item className="bg-light">
+                    <FontAwesomeIcon icon={faList} className="me-2" />
+                    <Link to="/page5">Page 5 (no security)</Link>
+                </ListGroup.Item>
 
             </ListGroup>
         </Card>

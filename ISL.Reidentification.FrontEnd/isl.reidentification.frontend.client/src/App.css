@@ -1,11 +1,10 @@
 ﻿/* App.css */
 #root {
-    text-align: center;
     width: 100%;
 }
 
 .sidebar {
-    width: 300px; /* Fixed width of the sidebar */
+    width: 300px; 
 }
 
 .sidebar-open {
