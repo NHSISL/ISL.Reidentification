@@ -3,6 +3,10 @@
     width: 100%;
 }
 
+.hero-text {
+    color: #45B8AC;
+}
+
 .sidebar {
     width: 300px;
     border-right: solid 1px #ccc;

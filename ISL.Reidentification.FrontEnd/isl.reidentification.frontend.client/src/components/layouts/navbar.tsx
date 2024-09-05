@@ -19,7 +19,10 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({ toggleSidebar, showMe
                         <FontAwesomeIcon icon={faBars} />
                     </Button>
                 )}
-                <Navbar.Brand href="/" className="me-auto ms-3">London Data Service - Re-Identification</Navbar.Brand>
+                <Navbar.Brand href="/" className="me-auto ms-3">
+                    London Data Service -
+                    <strong className="hero-text">Re-Identification</strong>
+                </Navbar.Brand>
                 <Navbar.Text>
                     <Login />
                 </Navbar.Text>

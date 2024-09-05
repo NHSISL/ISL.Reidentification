@@ -11,8 +11,8 @@ namespace ISL.Reidentification.FrontEnd.Server
     {
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
-
+            var builder =
+                WebApplication.CreateBuilder(args);
 
             // Add services to the container.
             var azureAdOptions = builder.Configuration.GetSection("AzureAd");
@@ -28,6 +28,12 @@ namespace ISL.Reidentification.FrontEnd.Server
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddControllers();
+            AddProviders(builder.Services);
+            AddBrokers(builder.Services);
+            AddFoundationServices(builder.Services);
+            AddProcessingServices(builder.Services);
+            AddOrchestrationServices(builder.Services);
+            AddCoordinationServices(builder.Services);
 
             // Register IConfiguration to be available for dependency injection
             builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
@@ -51,10 +57,29 @@ namespace ISL.Reidentification.FrontEnd.Server
 
             app.MapControllers().WithOpenApi();
 
-
             app.MapFallbackToFile("/index.html");
 
             app.Run();
         }
+
+        private static void AddProviders(IServiceCollection services)
+        { }
+
+        private static void AddBrokers(IServiceCollection services)
+        {
+            services.AddTransient<ISL.Reidentification.Core.Brokers.DateTimes.IDateTimeBroker, DateTimeBroker>();
+        }
+
+        private static void AddFoundationServices(IServiceCollection services)
+        { }
+
+        private static void AddProcessingServices(IServiceCollection services)
+        { }
+
+        private static void AddOrchestrationServices(IServiceCollection services)
+        { }
+
+        private static void AddCoordinationServices(IServiceCollection services)
+        { }
     }
 }

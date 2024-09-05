@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\ISL.Reidentification.Core\ISL.Reidentification.Core.csproj" />
     <ProjectReference Include="..\isl.reidentification.frontend.client\ISL.Reidentification.FrontEnd.Client.esproj" />
   </ItemGroup>
 
