@@ -1,7 +1,7 @@
 import { AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
 import { Outlet } from "react-router-dom";
 import NavbarComponent from "./layouts/navbar";
-import { Button, Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import FooterComponent from "./layouts/footer";
 import { useState } from "react";
 import SideBarComponent from "./layouts/sidebar";
