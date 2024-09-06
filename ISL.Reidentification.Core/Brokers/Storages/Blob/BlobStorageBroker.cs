@@ -6,7 +6,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace LHDS.Core.Brokers.Storages.Blobs
+namespace ISL.Reidentification.Core.Brokers.Storages.Blob
 {
     public class BlobStorageBroker : IBlobStorageBroker
     {
