@@ -25,6 +25,7 @@
 	</ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ISL.Reidentification.Configurations.Client\ISL.Reidentification.Configurations.Client.esproj" />
     <ProjectReference Include="..\ISL.Reidentification.Configurations.Server\ISL.Reidentification.Configurations.Server.csproj" />
   </ItemGroup>
 

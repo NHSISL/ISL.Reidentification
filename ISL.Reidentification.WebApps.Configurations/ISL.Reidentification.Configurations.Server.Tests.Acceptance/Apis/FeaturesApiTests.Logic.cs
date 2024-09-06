@@ -11,10 +11,10 @@ namespace ISL.Reidentification.Configurations.Server.Tests.Acceptance.Apis.Home
     {
 
         [Fact]
-        public async Task ShouldGetHomeAsync()
+        public async Task ShouldGetFeaturesAsync()
         {
             // Given
-            string expectedResult = "Hello, Mario. The princess is in another castle.";
+            string expectedResult = "[\"Configuration\",\"Test\"]";
 
             // When
             string actualResult = await this.apiBroker.GetFeaturesAsync();
