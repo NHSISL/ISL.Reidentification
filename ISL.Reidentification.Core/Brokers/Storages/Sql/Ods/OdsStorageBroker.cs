@@ -8,13 +8,13 @@ using EFxceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace ISL.Reidentification.Core.Brokers.Storages
+namespace ISL.Reidentification.Core.Brokers.Storages.Sql.Ods
 {
-    public partial class StorageBroker : EFxceptionsContext, IStorageBroker
+    public partial class OdsStorageBroker : EFxceptionsContext, IOdsStorageBroker
     {
         private readonly IConfiguration configuration;
 
-        public StorageBroker(IConfiguration configuration)
+        public OdsStorageBroker(IConfiguration configuration)
         {
             this.configuration = configuration;
             Database.Migrate();
@@ -25,7 +25,7 @@ namespace ISL.Reidentification.Core.Brokers.Storages
             optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 
             string connectionString = configuration
-                .GetConnectionString(name: "DefaultConnection");
+                .GetConnectionString(name: "OdsConnection");
 
             optionsBuilder.UseSqlServer(connectionString);
         }
