@@ -27,9 +27,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ISL.Reidentification.Client
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Clients", "Clients", "{959E2D1E-E4F8-462F-B4B3-8AB0DAF0416B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ISL.Reidentification.FrontEnd.Server", "ISL.Reidentification.FrontEnd\ISL.Reidentification.FrontEnd.Server\ISL.Reidentification.FrontEnd.Server.csproj", "{304DB718-6C9D-401D-BFE1-AB59D3907FEC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ISL.Reidentification.FrontEnd.Configurations.Server", "ISL.Reidentification.FrontEnd\ISL.Reidentification.FrontEnd.Server\ISL.Reidentification.FrontEnd.Configurations.Server.csproj", "{304DB718-6C9D-401D-BFE1-AB59D3907FEC}"
 EndProject
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "ISL.Reidentification.FrontEnd.Client", "ISL.Reidentification.FrontEnd\isl.reidentification.frontend.client\ISL.Reidentification.FrontEnd.Client.esproj", "{729E5460-28E5-48F4-BB15-56783931164C}"
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "ISL.Reidentification.FrontEnd.Configurations.Client", "ISL.Reidentification.FrontEnd\isl.reidentification.frontend.client\ISL.Reidentification.FrontEnd.Configurations.Client.esproj", "{729E5460-28E5-48F4-BB15-56783931164C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configurations", "Configurations", "{440D0DFC-09BA-4D10-8512-FE29C83E9099}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -87,8 +89,9 @@ Global
 		{4738B57B-7085-46F6-BB08-14A51A26896C} = {0B4CF0B3-C90F-4F0C-8D99-3C67A454DCA0}
 		{8630A32D-E7B9-4256-B535-075B253B56BB} = {648C7C28-216F-4C3F-8E7D-F08DE9A87F89}
 		{7A1035B7-53B9-437D-B5FE-82CE0CF4973D} = {959E2D1E-E4F8-462F-B4B3-8AB0DAF0416B}
-		{304DB718-6C9D-401D-BFE1-AB59D3907FEC} = {57C650B0-0156-4E70-AE12-113039EF15D3}
-		{729E5460-28E5-48F4-BB15-56783931164C} = {57C650B0-0156-4E70-AE12-113039EF15D3}
+		{304DB718-6C9D-401D-BFE1-AB59D3907FEC} = {440D0DFC-09BA-4D10-8512-FE29C83E9099}
+		{729E5460-28E5-48F4-BB15-56783931164C} = {440D0DFC-09BA-4D10-8512-FE29C83E9099}
+		{440D0DFC-09BA-4D10-8512-FE29C83E9099} = {57C650B0-0156-4E70-AE12-113039EF15D3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0D717146-FA34-4806-92FA-B345A87F5D78}
