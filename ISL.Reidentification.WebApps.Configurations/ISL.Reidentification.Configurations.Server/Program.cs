@@ -8,9 +8,13 @@ using ISL.Reidentification.Core.Brokers.Loggings;
 using ISL.Reidentification.Core.Brokers.Storages.Sql.Ods;
 using ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
 
-namespace ISL.Reidentification.FrontEnd.Server
+namespace ISL.Reidentification.Configurations.Server
 {
     public class Program
     {
@@ -28,6 +32,7 @@ namespace ISL.Reidentification.FrontEnd.Server
             builder.Services.AddAuthorization();
             builder.Services.AddDbContext<ReidentificationStorageBroker>();
             builder.Services.AddDbContext<OdsStorageBroker>();
+            builder.Services.AddHttpContextAccessor();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

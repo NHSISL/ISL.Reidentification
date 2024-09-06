@@ -2,14 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
     <SpaRoot>..\ISL.Reidentification.FrontEnd.Client</SpaRoot>
     <SpaProxyLaunchCommand>npm run dev</SpaProxyLaunchCommand>
     <SpaProxyServerUrl>https://localhost:5173</SpaProxyServerUrl>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="6.12.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.SpaProxy">
@@ -22,7 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\ISL.Reidentification.Core\ISL.Reidentification.Core.csproj" />
-    <ProjectReference Include="..\isl.reidentification.frontend.client\ISL.Reidentification.FrontEnd.Client.esproj" />
+    <ProjectReference Include="..\isl.reidentification.configurations.client\ISL.Reidentification.Configurations.Client.esproj" />
   </ItemGroup>
 
 </Project>
