@@ -3,8 +3,10 @@
 // ---------------------------------------------------------
 
 using ISL.Reidentification.Core.Brokers.DateTimes;
+using ISL.Reidentification.Core.Brokers.Identifiers;
 using ISL.Reidentification.Core.Brokers.Loggings;
-using ISL.Reidentification.Core.Brokers.Storages;
+using ISL.Reidentification.Core.Brokers.Storages.Sql.Ods;
+using ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
 
@@ -24,8 +26,8 @@ namespace ISL.Reidentification.FrontEnd.Server
                 .AddMicrosoftIdentityWebApi(azureAdOptions);
 
             builder.Services.AddAuthorization();
-
-            //CreateHostBuilder(args).Build().Run();
+            builder.Services.AddDbContext<ReidentificationStorageBroker>();
+            builder.Services.AddDbContext<OdsStorageBroker>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -42,7 +44,6 @@ namespace ISL.Reidentification.FrontEnd.Server
             builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
             var app = builder.Build();
-
             app.UseDefaultFiles();
             app.UseStaticFiles();
 
@@ -70,8 +71,10 @@ namespace ISL.Reidentification.FrontEnd.Server
 
         private static void AddBrokers(IServiceCollection services)
         {
-            services.AddTransient<IStorageBroker, StorageBroker>();
+            services.AddTransient<IReidentificationStorageBroker, ReidentificationStorageBroker>();
+            services.AddTransient<IOdsStorageBroker, OdsStorageBroker>();
             services.AddTransient<IDateTimeBroker, DateTimeBroker>();
+            services.AddTransient<IIdentifierBroker, IdentifierBroker>();
             services.AddTransient<ILoggingBroker, LoggingBroker>();
         }
 
