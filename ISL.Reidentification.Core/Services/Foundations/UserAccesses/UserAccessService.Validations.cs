@@ -38,7 +38,9 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
                     updatedDate: userAccess.UpdatedDate,
                     nameof(UserAccess.CreatedDate)),
 
-                Parameter: nameof(UserAccess.UpdatedDate)));
+                Parameter: nameof(UserAccess.UpdatedDate)),
+
+                (Rule: await IsNotRecentAsync(userAccess.CreatedDate), Parameter: nameof(UserAccess.CreatedDate)));
         }
 
         private static void ValidateUserAccessIsNotNull(UserAccess userAccess)
@@ -84,6 +86,37 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
                 Condition = createBy != updatedBy,
                 Message = $"Text is not the same as {createdByName}"
             };
+
+        private async ValueTask<dynamic> IsNotRecentAsync(DateTimeOffset date)
+        {
+            var (isNotRecent, startDate, endDate) = await IsDateNotRecentAsync(date);
+
+            return new
+            {
+                Condition = isNotRecent,
+                Message = $"Date is not recent. Expected a value between {startDate} and {endDate} but found {date}"
+            };
+        }
+
+        private async ValueTask<(bool IsNotRecent, DateTimeOffset StartDate, DateTimeOffset EndDate)>
+            IsDateNotRecentAsync(DateTimeOffset date)
+        {
+            int pastSeconds = 60;
+            int futureSeconds = 0;
+            DateTimeOffset currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+
+            if (currentDateTime == default)
+            {
+                return (false, default, default);
+            }
+
+            TimeSpan timeDifference = currentDateTime.Subtract(date);
+            DateTimeOffset startDate = currentDateTime.AddSeconds(-pastSeconds);
+            DateTimeOffset endDate = currentDateTime.AddSeconds(futureSeconds);
+            bool isNotRecent = timeDifference.TotalSeconds is > 60 or < 0;
+
+            return (isNotRecent, startDate, endDate);
+        }
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {

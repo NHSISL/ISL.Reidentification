@@ -24,18 +24,23 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                 broker.InsertUserAccessAsync(inputUserAccess))
                     .ReturnsAsync(storageUserAccess);
 
+
             //when
             UserAccess actualUserAccess = await this.userAccessService.AddUserAccessAsync(inputUserAccess);
 
             //then
             actualUserAccess.Should().BeEquivalentTo(expectedUserAccess);
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
             this.reidentificationStorageBroker.Verify(broker =>
                 broker.InsertUserAccessAsync(inputUserAccess),
                     Times.Once);
 
-            this.reidentificationStorageBroker.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.reidentificationStorageBroker.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
