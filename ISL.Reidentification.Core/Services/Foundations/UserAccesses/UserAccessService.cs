@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using ISL.Reidentification.Core.Brokers.DateTimes;
 using ISL.Reidentification.Core.Brokers.Loggings;
@@ -27,7 +28,7 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<UserAccess> AddUserAccessAsync(UserAccess userAccess) =>
-            throw new NotImplementedException();
+        public async ValueTask<UserAccess> AddUserAccessAsync(UserAccess userAccess) => 
+            await this.reidentificationStorageBroker.InsertUserAccessAsync(userAccess);
     }
 }
