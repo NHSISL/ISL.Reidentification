@@ -29,18 +29,18 @@ namespace ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications
             builder.Property(delegatedAccess => delegatedAccess.IdentifierColumn)
                 .IsRequired();
 
-            builder.Property(audit => audit.CreatedBy)
+            builder.Property(delegatedAccess => delegatedAccess.CreatedBy)
                 .HasMaxLength(255)
                 .IsRequired();
 
-            builder.Property(audit => audit.CreatedDate)
+            builder.Property(delegatedAccess => delegatedAccess.CreatedDate)
                 .IsRequired();
 
-            builder.Property(audit => audit.UpdatedBy)
+            builder.Property(delegatedAccess => delegatedAccess.UpdatedBy)
                 .HasMaxLength(255)
                 .IsRequired();
 
-            builder.Property(audit => audit.UpdatedDate)
+            builder.Property(delegatedAccess => delegatedAccess.UpdatedDate)
                 .IsRequired();
         }
     }
