@@ -42,5 +42,93 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public async Task ShouldThrowValidationExceptionOnAddIfUserAccessIsInvalidAndLogItAsync(string invalidText)
+        {
+            // given
+            var invalidUserAccess = new UserAccess
+            {
+                UserEmail = invalidText,
+                RecipientEmail = invalidText,
+                OrgCode = invalidText,
+            };
+
+            var invalidUserAccessException =
+                new InvalidUserAccessException(
+                    message: "Invalid address. Please correct the errors and try again.");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.Id),
+                values: "Id is required");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.UserEmail),
+                values: "Text is required");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.RecipientEmail),
+                values: "Text is required");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.OrgCode),
+                values: "Text is required");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.ActiveFrom),
+                values: "Date is required");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.CreatedDate),
+                values: "Date is required");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.CreatedBy),
+                values: "Text is required");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.UpdatedDate),
+                values: "Date is required");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.UpdatedBy),
+                values: "Text is required");
+
+            var expectedUserAccessValidationException =
+                new UserAccessValidationException(
+                    message: "UserAccess validation errors occurred, please try again.",
+                    innerException: invalidUserAccessException);
+
+            // when
+            ValueTask<UserAccess> addUserAccessTask =
+                this.userAccessService.AddUserAccessAsync(invalidUserAccess);
+
+            UserAccessValidationException actualUserAccessValidationException =
+                await Assert.ThrowsAsync<UserAccessValidationException>(addUserAccessTask.AsTask);
+
+            // then
+            actualUserAccessValidationException.Should()
+                .BeEquivalentTo(expectedUserAccessValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedUserAccessValidationException))),
+                        Times.Once);
+
+            this.reidentificationStorageBroker.Verify(broker =>
+                broker.InsertUserAccessAsync(It.IsAny<UserAccess>()),
+                    Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
