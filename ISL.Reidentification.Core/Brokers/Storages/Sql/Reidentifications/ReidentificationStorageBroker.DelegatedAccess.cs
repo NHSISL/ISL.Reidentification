@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications
 {
-    public partial class ReidentificationStorageBroker : EFxceptionsContext, IReidentificationStorageBroker
+    public partial class ReidentificationStorageBroker
     {
        public DbSet<DelegatedAccess> DelegatedAccesses { get; set; }
     }
