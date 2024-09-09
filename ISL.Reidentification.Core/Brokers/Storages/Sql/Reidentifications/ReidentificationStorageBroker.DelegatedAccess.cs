@@ -24,8 +24,6 @@ namespace ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications
             await SelectAsync<DelegatedAccess>(delegateAccessId);
         public async ValueTask<DelegatedAccess> UpdateDelegatedAccessAsync(DelegatedAccess delegatedAccess) =>
             await UpdateAsync(delegatedAccess);
-        public async ValueTask BulkUpdateDelegatedAccessesAsync(List<DelegatedAccess> delegatedAccesses) =>
-            await UpdateAsync(delegatedAccesses);
         public async ValueTask<DelegatedAccess> DeleteDelegatedAccessAsync(DelegatedAccess delegatedAccess) =>
             await DeleteAsync(delegatedAccess);
     }
