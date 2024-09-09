@@ -5,7 +5,10 @@
 using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions;
+using ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses;
+using ISL.Reidentification.Core.Models.Foundations.UserAccesses;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Configuration;
 
 namespace ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications
@@ -31,7 +34,10 @@ namespace ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-        { }
+        {
+            AddDelegatedAccessConfigurations(modelBuilder.Entity<DelegatedAccess>());
+            AddUserAccessConfigurations(modelBuilder.Entity<UserAccess>());
+        }
 
         private async ValueTask<T> InsertAsync<T>(T @object)
         {
