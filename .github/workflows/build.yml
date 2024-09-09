@@ -127,7 +127,7 @@ jobs:
 
         sudo apt-get install xmlstarlet
 
-        version_number=$(xmlstarlet sel -t -v "//Version" -n ISL.Reidentification.Core/ISL.Reidentification.Core.csproj)
+        version_number=$(xmlstarlet sel -t -v "//Version" -n ISL.Reidentification.Core.csproj)
 
         echo "$version_number"
 
