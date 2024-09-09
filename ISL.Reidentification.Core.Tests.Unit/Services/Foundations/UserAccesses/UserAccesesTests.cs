@@ -37,10 +37,13 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
         private static UserAccess CreateRandomUserAccess() =>
-            CreateRandomUserAccesses(dateTimeOffset: GetRandomDateTimeOffset());
+            CreateRandomUserAccess(dateTimeOffset: GetRandomDateTimeOffset());
 
-        private static UserAccess CreateRandomUserAccesses(DateTimeOffset dateTimeOffset) =>
+        private static UserAccess CreateRandomUserAccess(DateTimeOffset dateTimeOffset) =>
             CreateUserAccessesFiller(dateTimeOffset).Create();
+
+        private static string GetRandomString() =>
+            new MnemonicString().GetValue();
 
         private static Filler<UserAccess> CreateUserAccessesFiller(DateTimeOffset dateTimeOffset)
         {
