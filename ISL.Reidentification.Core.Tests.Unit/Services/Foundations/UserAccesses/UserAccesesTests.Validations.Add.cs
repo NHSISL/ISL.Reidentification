@@ -59,47 +59,47 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
 
             var invalidUserAccessException =
                 new InvalidUserAccessException(
-                    message: "Invalid address. Please correct the errors and try again.");
+                    message: "Invalid user access. Please correct the errors and try again.");
 
             invalidUserAccessException.AddData(
                 key: nameof(UserAccess.Id),
-                values: "Id is required");
+                values: "Id is invalid");
 
             invalidUserAccessException.AddData(
                 key: nameof(UserAccess.UserEmail),
-                values: "Text is required");
+                values: "Text is invalid");
 
             invalidUserAccessException.AddData(
                 key: nameof(UserAccess.RecipientEmail),
-                values: "Text is required");
+                values: "Text is invalid");
 
             invalidUserAccessException.AddData(
                 key: nameof(UserAccess.OrgCode),
-                values: "Text is required");
+                values: "Text is invalid");
 
             invalidUserAccessException.AddData(
                 key: nameof(UserAccess.ActiveFrom),
-                values: "Date is required");
+                values: "Date is invalid");
 
             invalidUserAccessException.AddData(
                 key: nameof(UserAccess.CreatedDate),
-                values: "Date is required");
+                values: "Date is invalid");
 
             invalidUserAccessException.AddData(
                 key: nameof(UserAccess.CreatedBy),
-                values: "Text is required");
+                values: "Text is invalid");
 
             invalidUserAccessException.AddData(
                 key: nameof(UserAccess.UpdatedDate),
-                values: "Date is required");
+                values: "Date is invalid");
 
             invalidUserAccessException.AddData(
                 key: nameof(UserAccess.UpdatedBy),
-                values: "Text is required");
+                values: "Text is invalid");
 
             var expectedUserAccessValidationException =
                 new UserAccessValidationException(
-                    message: "UserAccess validation errors occurred, please try again.",
+                    message: "UserAccess validation error occurred, please fix errors and try again.",
                     innerException: invalidUserAccessException);
 
             // when
@@ -112,10 +112,6 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
             // then
             actualUserAccessValidationException.Should()
                 .BeEquivalentTo(expectedUserAccessValidationException);
-
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffsetAsync(),
-                    Times.Once());
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(

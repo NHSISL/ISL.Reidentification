@@ -29,7 +29,8 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
         public ValueTask<UserAccess> AddUserAccessAsync(UserAccess userAccess) =>
             TryCatch(async () =>
             {
-                ValidateUserAccessOnAdd(userAccess);
+                await ValidateUserAccessOnAddAsync(userAccess);
+
                 return await this.reidentificationStorageBroker.InsertUserAccessAsync(userAccess);
             });
     }

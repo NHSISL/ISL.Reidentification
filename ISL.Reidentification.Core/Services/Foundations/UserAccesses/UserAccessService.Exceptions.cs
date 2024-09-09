@@ -22,6 +22,10 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
             {
                 throw await CreateAndLogValidationExceptionAsync(nullUserAccessException);
             }
+            catch (InvalidUserAccessException invalidUserAccessException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(invalidUserAccessException);
+            }
         }
 
         private async ValueTask<UserAccessValidationException> CreateAndLogValidationExceptionAsync(
