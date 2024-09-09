@@ -2,8 +2,6 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
-using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using ISL.Reidentification.Core.Brokers.DateTimes;
 using ISL.Reidentification.Core.Brokers.Loggings;
@@ -12,7 +10,7 @@ using ISL.Reidentification.Core.Models.Foundations.UserAccesses;
 
 namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
 {
-    internal class UserAccessService : IUserAccessService
+    public partial class UserAccessService : IUserAccessService
     {
         private readonly IReidentificationStorageBroker reidentificationStorageBroker;
         private readonly IDateTimeBroker dateTimeBroker;
@@ -28,7 +26,11 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<UserAccess> AddUserAccessAsync(UserAccess userAccess) => 
-            await this.reidentificationStorageBroker.InsertUserAccessAsync(userAccess);
+        public ValueTask<UserAccess> AddUserAccessAsync(UserAccess userAccess) =>
+            TryCatch(async () =>
+            {
+                ValidateUserAccessOnAdd(userAccess);
+                return await this.reidentificationStorageBroker.InsertUserAccessAsync(userAccess);
+            });
     }
 }
