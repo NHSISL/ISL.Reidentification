@@ -2,9 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using EFxceptions;
 using ISL.Reidentification.Core.Models.Foundations.UserAccesses;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications
@@ -29,23 +27,23 @@ namespace ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications
                 .IsRequired(false);
 
             builder
-                .Property(audit => audit.CreatedBy)
+                .Property(userAccess => userAccess.CreatedBy)
                 .HasMaxLength(255)
                 .IsRequired();
 
             builder
-                .Property(audit => audit.CreatedDate)
+                .Property(userAccess => userAccess.CreatedDate)
                 .IsRequired();
 
             builder
-                .Property(audit => audit.UpdatedBy)
+                .Property(userAccess => userAccess.UpdatedBy)
                 .HasMaxLength(255)
                 .IsRequired();
 
             builder
-                .Property(audit => audit.UpdatedDate)
+                .Property(userAccess => userAccess.UpdatedDate)
                 .IsRequired();
         }
     }
-    
+
 }
