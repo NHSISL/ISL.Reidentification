@@ -24,7 +24,21 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
                 (Rule: await IsInvalidAsync(userAccess.CreatedBy), Parameter: nameof(UserAccess.CreatedBy)),
                 (Rule: await IsInvalidAsync(userAccess.UpdatedBy), Parameter: nameof(UserAccess.UpdatedBy)),
                 (Rule: await IsInvalidAsync(userAccess.CreatedDate), Parameter: nameof(UserAccess.CreatedDate)),
-                (Rule: await IsInvalidAsync(userAccess.UpdatedDate), Parameter: nameof(UserAccess.UpdatedDate)));
+                (Rule: await IsInvalidAsync(userAccess.UpdatedDate), Parameter: nameof(UserAccess.UpdatedDate)),
+
+                (Rule: await IsNotSameAsync(
+                    createBy: userAccess.UpdatedBy,
+                    updatedBy: userAccess.CreatedBy,
+                    createdByName: nameof(UserAccess.CreatedBy)),
+
+                Parameter: nameof(UserAccess.UpdatedBy)),
+
+                (Rule: await IsNotSameAsync(
+                    createdDate: userAccess.CreatedDate,
+                    updatedDate: userAccess.UpdatedDate,
+                    nameof(UserAccess.CreatedDate)),
+
+                Parameter: nameof(UserAccess.UpdatedDate)));
         }
 
         private static void ValidateUserAccessIsNotNull(UserAccess userAccess)
@@ -52,6 +66,24 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
             Condition = date == default,
             Message = "Date is invalid"
         };
+
+        private static async ValueTask<dynamic> IsNotSameAsync(
+            DateTimeOffset createdDate,
+            DateTimeOffset updatedDate,
+            string createdDateName) => new
+            {
+                Condition = createdDate != updatedDate,
+                Message = $"Date is not the same as {createdDateName}"
+            };
+
+        private static async ValueTask<dynamic> IsNotSameAsync(
+            string createBy,
+            string updatedBy,
+            string createdByName) => new
+            {
+                Condition = createBy != updatedBy,
+                Message = $"Text is not the same as {createdByName}"
+            };
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
