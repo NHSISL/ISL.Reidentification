@@ -30,6 +30,10 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
             //then
             actualDelegatedAccess.Should().BeEquivalentTo(expectedDelegatedAccess);
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
             this.reidentificationStorageBroker.Verify(broker =>
                 broker.InsertDelegatedAccessAsync(inputDelegatedAccess),
                     Times.Once);
