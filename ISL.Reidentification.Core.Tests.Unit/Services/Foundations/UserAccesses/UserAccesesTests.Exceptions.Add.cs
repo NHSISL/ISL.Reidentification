@@ -69,7 +69,7 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
         [Fact]
         public async Task ShouldThrowDependencyValidationExceptionOnAddIfUserAccessAlreadyExistsAndLogItAsync()
         {
-            //given
+            // given
             UserAccess someUserAccess = CreateRandomUserAccess();
 
             var duplicateKeyException =
@@ -91,7 +91,7 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ThrowsAsync(duplicateKeyException);
 
-            //when
+            // when
             ValueTask<UserAccess> addUserAccessTask =
                 this.userAccessService.AddUserAccessAsync(someUserAccess);
 
@@ -99,7 +99,7 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                 await Assert.ThrowsAsync<UserAccessDependencyValidationException>(
                     testCode: addUserAccessTask.AsTask);
 
-            //then
+            // then
             actualUserAccessDependencyValidationException.Should().BeEquivalentTo(
                 expectedUserAccessDependencyValidationException);
 
@@ -176,7 +176,7 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
         [Fact]
         public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccurredAndLogItAsync()
         {
-            //given
+            // given
             UserAccess someUserAccess = CreateRandomUserAccess();
             var serviceException = new Exception();
 
@@ -194,7 +194,7 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ThrowsAsync(serviceException);
 
-            //when
+            // when
             ValueTask<UserAccess> addUserAccessTask =
                 this.userAccessService.AddUserAccessAsync(someUserAccess);
 

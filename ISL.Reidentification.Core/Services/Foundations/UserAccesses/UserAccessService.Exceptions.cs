@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using ISL.Reidentification.Core.Models.Foundations.UserAccesses;
@@ -56,6 +57,15 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
 
                 throw await CreateAndLogDependencyExceptionAsync(failedOperationUserAccessException);
             }
+            catch (Exception exception)
+            {
+                var failedServiceUserAccessException =
+                    new FailedServiceUserAccessException(
+                        message: "Failed service user access error occurred, contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedServiceUserAccessException);
+            }
         }
 
         private async ValueTask<UserAccessValidationException> CreateAndLogValidationExceptionAsync(
@@ -104,6 +114,18 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
             await this.loggingBroker.LogErrorAsync(userAccessDependencyException);
 
             return userAccessDependencyException;
+        }
+
+        private async ValueTask<UserAccessServiceException> CreateAndLogServiceExceptionAsync(
+           Xeption exception)
+        {
+            var userAccessServiceException = new UserAccessServiceException(
+                message: "Service error occurred, contact support.",
+                innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(userAccessServiceException);
+
+            return userAccessServiceException;
         }
     }
 }
