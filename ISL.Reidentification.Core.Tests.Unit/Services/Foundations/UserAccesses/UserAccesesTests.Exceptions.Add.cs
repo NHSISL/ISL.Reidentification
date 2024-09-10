@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using EFxceptions.Models.Exceptions;
 using FluentAssertions;
 using ISL.Reidentification.Core.Models.Foundations.UserAccesses;
 using ISL.Reidentification.Core.Models.Foundations.UserAccesses.Exceptions;
@@ -53,6 +54,61 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCriticalAsync(It.Is(SameExceptionAs(
                     expectedUserAccessDependencyException))),
+                        Times.Once);
+
+            this.reidentificationStorageBroker.Verify(broker =>
+                broker.InsertUserAccessAsync(It.IsAny<UserAccess>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyValidationExceptionOnAddIfUserAccessAlreadyExistsAndLogItAsync()
+        {
+            //given
+            UserAccess someUserAccess = CreateRandomUserAccess();
+
+            var duplicateKeyException =
+                new DuplicateKeyException(
+                    message: "Duplicate key error occurred");
+
+            var alreadyExistsUserAccessException =
+                new AlreadyExistsUserAccessException(
+                    message: "UserAccess already exists error occurred.",
+                    innerException: duplicateKeyException,
+                    data: duplicateKeyException.Data);
+
+            var expectedUserAccessDependencyValidationException =
+                new UserAccessDependencyValidationException(
+                    message: "UserAccess dependency validation error occurred, fix errors and try again.",
+                    innerException: alreadyExistsUserAccessException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ThrowsAsync(duplicateKeyException);
+
+            //when
+            ValueTask<UserAccess> addUserAccessTask =
+                this.userAccessService.AddUserAccessAsync(someUserAccess);
+
+            UserAccessDependencyValidationException actualUserAccessDependencyValidationException =
+                await Assert.ThrowsAsync<UserAccessDependencyValidationException>(
+                    testCode: addUserAccessTask.AsTask);
+
+            //then
+            actualUserAccessDependencyValidationException.Should().BeEquivalentTo(
+                expectedUserAccessDependencyValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedUserAccessDependencyValidationException))),
                         Times.Once);
 
             this.reidentificationStorageBroker.Verify(broker =>
