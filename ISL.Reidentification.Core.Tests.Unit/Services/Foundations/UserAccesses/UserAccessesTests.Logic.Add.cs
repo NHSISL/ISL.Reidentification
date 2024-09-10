@@ -14,7 +14,7 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
         [Fact]
         public async Task ShouldAddUserAccessAsync()
         {
-            //given
+            // given
             UserAccess randomUserAccess = CreateRandomUserAccess();
             UserAccess inputUserAccess = randomUserAccess;
             UserAccess storageUserAccess = inputUserAccess.DeepClone();
@@ -24,11 +24,10 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                 broker.InsertUserAccessAsync(inputUserAccess))
                     .ReturnsAsync(storageUserAccess);
 
-
-            //when
+            // when
             UserAccess actualUserAccess = await this.userAccessService.AddUserAccessAsync(inputUserAccess);
 
-            //then
+            // then
             actualUserAccess.Should().BeEquivalentTo(expectedUserAccess);
 
             this.dateTimeBrokerMock.Verify(broker =>
