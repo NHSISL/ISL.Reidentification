@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System.Linq.Expressions;
 using ISL.Reidentification.Core.Brokers.DateTimes;
 using ISL.Reidentification.Core.Brokers.Loggings;
 using ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications;
@@ -9,6 +10,7 @@ using ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses;
 using ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses;
 using Moq;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAccesses
 {
@@ -52,6 +54,13 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
                 .OnProperty(delegatedAccess => delegatedAccess.UpdatedBy).Use(user);
 
             return filler;
+        }
+
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(
+            Xeption expectedException)
+        {
+            return actualException =>
+                actualException.SameExceptionAs(expectedException);
         }
     }
 }
