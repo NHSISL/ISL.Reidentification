@@ -7,6 +7,7 @@ using EFxceptions.Models.Exceptions;
 using ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses;
 using ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Xeptions;
 
 namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
@@ -46,6 +47,15 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
 
                 throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsDelegatedAccessException);
             }
+            catch (DbUpdateException dbUpdateException)
+            {
+                var failedOperationDelegatedAccessException =
+                    new FailedOperationDelegatedAccessException(
+                        message: "Failed operation delegated access error occurred, contact support.",
+                        innerException: dbUpdateException);
+
+                throw await CreateAndLogDependencyExceptionAsync(failedOperationDelegatedAccessException);
+            }
         }
 
         private async ValueTask<DelegatedAccessValidationException> CreateAndLogValidationExceptionAsync(
@@ -82,6 +92,18 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
             await this.loggingBroker.LogErrorAsync(delegatedAccessDependencyValidationException);
 
             return delegatedAccessDependencyValidationException;
+        }
+
+        private async ValueTask<DelegatedAccessDependencyException> CreateAndLogDependencyExceptionAsync(
+            Xeption exception)
+        {
+            var delegatedAccessDependencyException = new DelegatedAccessDependencyException(
+                message: "DelegatedAccess dependency error occurred, contact support.",
+                innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(delegatedAccessDependencyException);
+
+            return delegatedAccessDependencyException;
         }
     }
 }
