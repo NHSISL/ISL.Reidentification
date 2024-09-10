@@ -42,5 +42,97 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public async Task ShouldThrowValidationExceptionOnAddIfDelegatedAccessIsInvalidAndLogItAsync(string invalidText)
+        {
+            // given
+            var invalidDelegatedAccess = new DelegatedAccess
+            {
+                RequesterEmail = invalidText,
+                RecipientEmail = invalidText,
+                IdentifierColumn = invalidText,
+            };
+
+            var invalidDelegatedAccessException =
+                new InvalidDelegatedAccessException(
+                    message: "Invalid address. Please correct the errors and try again.");
+
+            invalidDelegatedAccessException.AddData(
+                key: nameof(DelegatedAccess.Id),
+                values: "Id is required");
+
+            invalidDelegatedAccessException.AddData(
+                key: nameof(DelegatedAccess.RequesterEmail),
+                values: "Text is required");
+
+            invalidDelegatedAccessException.AddData(
+                key: nameof(DelegatedAccess.RecipientEmail),
+                values: "Text is required");
+
+            invalidDelegatedAccessException.AddData(
+                key: nameof(DelegatedAccess.IsDelegatedAccess),
+                values: "Boolean is required");
+
+            invalidDelegatedAccessException.AddData(
+                key: nameof(DelegatedAccess.IsApproved),
+                values: "Boolean is required");
+
+            invalidDelegatedAccessException.AddData(
+                key: nameof(DelegatedAccess.IdentifierColumn),
+                values: "Text is required");
+
+            invalidDelegatedAccessException.AddData(
+                key: nameof(DelegatedAccess.CreatedDate),
+                values: "Date is required");
+
+            invalidDelegatedAccessException.AddData(
+                key: nameof(DelegatedAccess.CreatedBy),
+                values: "Text is required");
+
+            invalidDelegatedAccessException.AddData(
+                key: nameof(DelegatedAccess.UpdatedDate),
+                values: "Date is required");
+
+            invalidDelegatedAccessException.AddData(
+                key: nameof(DelegatedAccess.UpdatedBy),
+                values: "Text is required");
+
+            var expectedDelegatedAccessValidationException =
+                new DelegatedAccessValidationException(
+                    message: "DelegatedAccess validation errors occurred, please try again.",
+                    innerException: invalidDelegatedAccessException);
+
+            // when
+            ValueTask<DelegatedAccess> addDelegatedAccessTask =
+                this.delegatedAccessService.AddDelegatedAccessAsync(invalidDelegatedAccess);
+
+            DelegatedAccessValidationException actualDelegatedAccessValidationException =
+                await Assert.ThrowsAsync<DelegatedAccessValidationException>(addDelegatedAccessTask.AsTask);
+
+            // then
+            actualDelegatedAccessValidationException.Should()
+                .BeEquivalentTo(expectedDelegatedAccessValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedDelegatedAccessValidationException))),
+                        Times.Once);
+
+            this.reidentificationStorageBroker.Verify(broker =>
+                broker.InsertDelegatedAccessAsync(It.IsAny<DelegatedAccess>()),
+                    Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
