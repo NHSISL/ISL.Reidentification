@@ -9,7 +9,7 @@ using Moq;
 
 namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
 {
-    public partial class UserAccesesTests
+    public partial class UserAccessesTests
     {
         [Fact]
         public async Task ShouldAddUserAccessAsync()

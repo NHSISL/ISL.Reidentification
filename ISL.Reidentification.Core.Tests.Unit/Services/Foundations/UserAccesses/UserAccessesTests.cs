@@ -16,14 +16,14 @@ using Xeptions;
 
 namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
 {
-    public partial class UserAccesesTests
+    public partial class UserAccessesTests
     {
         private readonly Mock<IReidentificationStorageBroker> reidentificationStorageBroker;
         private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly UserAccessService userAccessService;
 
-        public UserAccesesTests()
+        public UserAccessesTests()
         {
             this.reidentificationStorageBroker = new Mock<IReidentificationStorageBroker>();
             this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
