@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses;
@@ -56,6 +57,15 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
 
                 throw await CreateAndLogDependencyExceptionAsync(failedOperationDelegatedAccessException);
             }
+            catch (Exception exception)
+            {
+                var failedServiceDelegatedAccessException =
+                    new FailedServiceDelegatedAccessException(
+                        message: "Failed service delegated access error occurred, contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedServiceDelegatedAccessException);
+            }
         }
 
         private async ValueTask<DelegatedAccessValidationException> CreateAndLogValidationExceptionAsync(
@@ -104,6 +114,18 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
             await this.loggingBroker.LogErrorAsync(delegatedAccessDependencyException);
 
             return delegatedAccessDependencyException;
+        }
+
+        private async ValueTask<DelegatedAccessServiceException> CreateAndLogServiceExceptionAsync(
+           Xeption exception)
+        {
+            var delegatedAccessServiceException = new DelegatedAccessServiceException(
+                message: "Service error occurred, contact support.",
+                innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(delegatedAccessServiceException);
+
+            return delegatedAccessServiceException;
         }
     }
 }
