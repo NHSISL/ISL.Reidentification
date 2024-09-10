@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses;
 using ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -35,6 +36,16 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
 
                 throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageDelegatedAccessException);
             }
+            catch (DuplicateKeyException duplicateKeyException)
+            {
+                var alreadyExistsDelegatedAccessException =
+                    new AlreadyExistsDelegatedAccessException(
+                        message: "DelegatedAccess already exists error occurred.",
+                        innerException: duplicateKeyException,
+                        data: duplicateKeyException.Data);
+
+                throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsDelegatedAccessException);
+            }
         }
 
         private async ValueTask<DelegatedAccessValidationException> CreateAndLogValidationExceptionAsync(
@@ -52,13 +63,25 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
         private async ValueTask<DelegatedAccessDependencyException> CreateAndLogCriticalDependencyExceptionAsync(
             Xeption exception)
         {
-            var userAccessDependencyException = new DelegatedAccessDependencyException(
+            var delegatedAccessDependencyException = new DelegatedAccessDependencyException(
                 message: "DelegatedAccess dependency error occurred, contact support.",
                 innerException: exception);
 
-            await this.loggingBroker.LogCriticalAsync(userAccessDependencyException);
+            await this.loggingBroker.LogCriticalAsync(delegatedAccessDependencyException);
 
-            return userAccessDependencyException;
+            return delegatedAccessDependencyException;
+        }
+
+        private async ValueTask<DelegatedAccessDependencyValidationException> CreateAndLogDependencyValidationExceptionAsync(
+            Xeption exception)
+        {
+            var delegatedAccessDependencyValidationException = new DelegatedAccessDependencyValidationException(
+                message: "DelegatedAccess dependency validation error occurred, fix errors and try again.",
+                innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(delegatedAccessDependencyValidationException);
+
+            return delegatedAccessDependencyValidationException;
         }
     }
 }
