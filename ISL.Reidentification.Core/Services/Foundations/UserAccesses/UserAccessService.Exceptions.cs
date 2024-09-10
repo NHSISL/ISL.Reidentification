@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using ISL.Reidentification.Core.Models.Foundations.UserAccesses;
 using ISL.Reidentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -35,6 +36,16 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
 
                 throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageUserAccessException);
             }
+            catch (DuplicateKeyException duplicateKeyException)
+            {
+                var alreadyExistsUserAccessException =
+                    new AlreadyExistsUserAccessException(
+                        message: "UserAccess already exists error occurred.",
+                        innerException: duplicateKeyException,
+                        data: duplicateKeyException.Data);
+
+                throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsUserAccessException);
+            }
         }
 
         private async ValueTask<UserAccessValidationException> CreateAndLogValidationExceptionAsync(
@@ -52,13 +63,25 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
         private async ValueTask<UserAccessDependencyException> CreateAndLogCriticalDependencyExceptionAsync(
             Xeption exception)
         {
-            var sourceDependencyException = new UserAccessDependencyException(
+            var userAccessDependencyException = new UserAccessDependencyException(
                 message: "UserAccess dependency error occurred, contact support.",
                 innerException: exception);
 
-            await this.loggingBroker.LogCriticalAsync(sourceDependencyException);
+            await this.loggingBroker.LogCriticalAsync(userAccessDependencyException);
 
-            return sourceDependencyException;
+            return userAccessDependencyException;
+        }
+
+        private async ValueTask<UserAccessDependencyValidationException> CreateAndLogDependencyValidationExceptionAsync(
+            Xeption exception)
+        {
+            var userAccessDependencyValidationException = new UserAccessDependencyValidationException(
+                message: "UserAccess dependency validation error occurred, fix errors and try again.",
+                innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(userAccessDependencyValidationException);
+
+            return userAccessDependencyValidationException;
         }
     }
 }

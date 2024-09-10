@@ -7,6 +7,7 @@ using FluentAssertions;
 using ISL.Reidentification.Core.Models.Foundations.UserAccesses;
 using ISL.Reidentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 
 namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
@@ -109,6 +110,58 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedUserAccessDependencyValidationException))),
+                        Times.Once);
+
+            this.reidentificationStorageBroker.Verify(broker =>
+                broker.InsertUserAccessAsync(It.IsAny<UserAccess>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyExceptionOnAddIfDependencyErrorOccurredAndLogItAsync()
+        {
+            // given
+            UserAccess someUserAccess = CreateRandomUserAccess();
+            var dbUpdateException = new DbUpdateException();
+
+            var failedOperationUserAccessException =
+                new FailedOperationUserAccessException(
+                    message: "Failed operation user access error occurred, contact support.",
+                    innerException: dbUpdateException);
+
+            var expectedUserAccessDependencyException =
+                new UserAccessDependencyException(
+                    message: "UserAccess dependency error occurred, contact support.",
+                    innerException: failedOperationUserAccessException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ThrowsAsync(dbUpdateException);
+
+            // when
+            ValueTask<UserAccess> addUserAccessTask =
+                this.userAccessService.AddUserAccessAsync(
+                    someUserAccess);
+
+            UserAccessDependencyException actualUserAccessDependencyException =
+                await Assert.ThrowsAsync<UserAccessDependencyException>(
+                    testCode: addUserAccessTask.AsTask);
+
+            // then
+            actualUserAccessDependencyException.Should().BeEquivalentTo(
+                expectedUserAccessDependencyException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedUserAccessDependencyException))),
                         Times.Once);
 
             this.reidentificationStorageBroker.Verify(broker =>
