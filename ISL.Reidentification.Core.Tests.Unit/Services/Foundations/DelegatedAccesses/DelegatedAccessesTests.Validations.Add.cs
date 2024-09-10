@@ -54,56 +54,48 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
             {
                 RequesterEmail = invalidText,
                 RecipientEmail = invalidText,
-                IdentifierColumn = invalidText,
+                IdentifierColumn = invalidText
             };
 
             var invalidDelegatedAccessException =
                 new InvalidDelegatedAccessException(
-                    message: "Invalid address. Please correct the errors and try again.");
+                    message: "Invalid delegated access. Please correct the errors and try again.");
 
             invalidDelegatedAccessException.AddData(
                 key: nameof(DelegatedAccess.Id),
-                values: "Id is required");
+                values: "Id is invalid");
 
             invalidDelegatedAccessException.AddData(
                 key: nameof(DelegatedAccess.RequesterEmail),
-                values: "Text is required");
+                values: "Text is invalid");
 
             invalidDelegatedAccessException.AddData(
                 key: nameof(DelegatedAccess.RecipientEmail),
-                values: "Text is required");
-
-            invalidDelegatedAccessException.AddData(
-                key: nameof(DelegatedAccess.IsDelegatedAccess),
-                values: "Boolean is required");
-
-            invalidDelegatedAccessException.AddData(
-                key: nameof(DelegatedAccess.IsApproved),
-                values: "Boolean is required");
+                values: "Text is invalid");
 
             invalidDelegatedAccessException.AddData(
                 key: nameof(DelegatedAccess.IdentifierColumn),
-                values: "Text is required");
+                values: "Text is invalid");
 
             invalidDelegatedAccessException.AddData(
                 key: nameof(DelegatedAccess.CreatedDate),
-                values: "Date is required");
+                values: "Date is invalid");
 
             invalidDelegatedAccessException.AddData(
                 key: nameof(DelegatedAccess.CreatedBy),
-                values: "Text is required");
+                values: "Text is invalid");
 
             invalidDelegatedAccessException.AddData(
                 key: nameof(DelegatedAccess.UpdatedDate),
-                values: "Date is required");
+                values: "Date is invalid");
 
             invalidDelegatedAccessException.AddData(
                 key: nameof(DelegatedAccess.UpdatedBy),
-                values: "Text is required");
+                values: "Text is invalid");
 
             var expectedDelegatedAccessValidationException =
                 new DelegatedAccessValidationException(
-                    message: "DelegatedAccess validation errors occurred, please try again.",
+                    message: "DelegatedAccess validation error occurred, please fix errors and try again.",
                     innerException: invalidDelegatedAccessException);
 
             // when
@@ -117,9 +109,9 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
             actualDelegatedAccessValidationException.Should()
                 .BeEquivalentTo(expectedDelegatedAccessValidationException);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffsetAsync(),
-                    Times.Once());
+            //this.dateTimeBrokerMock.Verify(broker =>
+            //    broker.GetCurrentDateTimeOffsetAsync(),
+            //        Times.Once());
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(

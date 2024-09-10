@@ -22,6 +22,10 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
             {
                 throw await CreateAndLogValidationExceptionAsync(nullDelegatedAccessException);
             }
+            catch (InvalidDelegatedAccessException invalidDelegatedAccessException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(invalidDelegatedAccessException);
+            }
         }
 
         private async ValueTask<DelegatedAccessValidationException> CreateAndLogValidationExceptionAsync(
