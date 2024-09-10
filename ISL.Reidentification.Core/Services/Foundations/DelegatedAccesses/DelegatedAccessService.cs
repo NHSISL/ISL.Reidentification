@@ -25,7 +25,11 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
             this.dateTimeBroker = dateTimeBroker;
             this.loggingBroker = loggingBroker;
         }
-        public async ValueTask<DelegatedAccess> AddDelegatedAccessAsync(DelegatedAccess delegatedAccess) =>
-            await this.reidentificationStorageBroker.InsertDelegatedAccessAsync(delegatedAccess);
+        public ValueTask<DelegatedAccess> AddDelegatedAccessAsync(DelegatedAccess delegatedAccess) =>
+            TryCatch(async () =>
+            {
+                ValidateDelegatedAccessOnAdd(delegatedAccess);
+                return await this.reidentificationStorageBroker.InsertDelegatedAccessAsync(delegatedAccess);
+            });
     }
 }

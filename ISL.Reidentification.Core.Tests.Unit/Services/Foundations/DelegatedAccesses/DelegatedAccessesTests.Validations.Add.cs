@@ -16,7 +16,7 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
         {
             //given
             DelegatedAccess nullDelegatedAccess = null;
-            var nullDelegatedAccessException = new NullDelegatedAccessException(message: "User access is null.");
+            var nullDelegatedAccessException = new NullDelegatedAccessException(message: "Delegated access is null.");
 
             var expectedDelegatedAccessValidationException =
                 new DelegatedAccessValidationException(
