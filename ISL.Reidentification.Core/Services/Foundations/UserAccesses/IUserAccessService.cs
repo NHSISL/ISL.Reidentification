@@ -7,7 +7,7 @@ using ISL.Reidentification.Core.Models.Foundations.UserAccesses;
 
 namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
 {
-    internal interface IUserAccessService
+    public interface IUserAccessService
     {
         ValueTask<UserAccess> AddUserAccessAsync(UserAccess userAccess);
     }
