@@ -5,6 +5,7 @@
 using System.Threading.Tasks;
 using ISL.Reidentification.Core.Models.Foundations.UserAccesses;
 using ISL.Reidentification.Core.Models.Foundations.UserAccesses.Exceptions;
+using Microsoft.Data.SqlClient;
 using Xeptions;
 
 namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
@@ -26,6 +27,14 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
             {
                 throw await CreateAndLogValidationExceptionAsync(invalidUserAccessException);
             }
+            catch (SqlException sqlException)
+            {
+                var failedStorageUserAccessException = new FailedStorageUserAccessException(
+                    message: "Failed user access storage error occurred, contact support.",
+                    innerException: sqlException);
+
+                throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageUserAccessException);
+            }
         }
 
         private async ValueTask<UserAccessValidationException> CreateAndLogValidationExceptionAsync(
@@ -38,6 +47,18 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
             await this.loggingBroker.LogErrorAsync(userAccessValidationException);
 
             return userAccessValidationException;
+        }
+
+        private async ValueTask<UserAccessDependencyException> CreateAndLogCriticalDependencyExceptionAsync(
+            Xeption exception)
+        {
+            var sourceDependencyException = new UserAccessDependencyException(
+                message: "UserAccess dependency error occurred, contact support.",
+                innerException: exception);
+
+            await this.loggingBroker.LogCriticalAsync(sourceDependencyException);
+
+            return sourceDependencyException;
         }
     }
 }

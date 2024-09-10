@@ -26,7 +26,7 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
 
             var expectedUserAccessDependencyException =
                 new UserAccessDependencyException(
-                    message: "User Access dependency error occurred, contact suport.",
+                    message: "UserAccess dependency error occurred, contact support.",
                     innerException: failedStorageUserAccessException);
 
             this.dateTimeBrokerMock.Setup(broker =>
