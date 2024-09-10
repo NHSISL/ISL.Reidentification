@@ -37,10 +37,13 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
         private static DelegatedAccess CreateRandomDelegatedAccess() =>
-            CreateRandomDelegatedAccesses(dateTimeOffset: GetRandomDateTimeOffset());
+            CreateRandomDelegatedAccess(dateTimeOffset: GetRandomDateTimeOffset());
 
-        private static DelegatedAccess CreateRandomDelegatedAccesses(DateTimeOffset dateTimeOffset) =>
+        private static DelegatedAccess CreateRandomDelegatedAccess(DateTimeOffset dateTimeOffset) =>
             CreateDelegatedAccessesFiller(dateTimeOffset).Create();
+
+        private static string GetRandomString() =>
+            new MnemonicString().GetValue();
 
         private static Filler<DelegatedAccess> CreateDelegatedAccessesFiller(DateTimeOffset dateTimeOffset)
         {
