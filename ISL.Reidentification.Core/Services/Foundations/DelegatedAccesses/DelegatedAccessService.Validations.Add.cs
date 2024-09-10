@@ -6,7 +6,6 @@ using System;
 using System.Threading.Tasks;
 using ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses;
 using ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses.Exceptions;
-using ISL.Reidentification.Core.Models.Foundations.UserAccesses;
 
 namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
 {
@@ -49,18 +48,18 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
                 (Rule: await IsNotSameAsync(
                     createBy: delegatedAccess.UpdatedBy,
                     updatedBy: delegatedAccess.CreatedBy,
-                    createdByName: nameof(UserAccess.CreatedBy)),
+                    createdByName: nameof(DelegatedAccess.CreatedBy)),
 
-                Parameter: nameof(UserAccess.UpdatedBy)),
+                Parameter: nameof(DelegatedAccess.UpdatedBy)),
 
                 (Rule: await IsNotSameAsync(
                     createdDate: delegatedAccess.CreatedDate,
                     updatedDate: delegatedAccess.UpdatedDate,
-                    nameof(UserAccess.CreatedDate)),
+                    nameof(DelegatedAccess.CreatedDate)),
 
-                Parameter: nameof(UserAccess.UpdatedDate)),
+                Parameter: nameof(DelegatedAccess.UpdatedDate)),
 
-                (Rule: await IsNotRecentAsync(delegatedAccess.CreatedDate), Parameter: nameof(UserAccess.CreatedDate)));
+                (Rule: await IsNotRecentAsync(delegatedAccess.CreatedDate), Parameter: nameof(DelegatedAccess.CreatedDate)));
         }
 
         private static void ValidateDelegatedAccessIsNotNull(DelegatedAccess delegatedAccess)
