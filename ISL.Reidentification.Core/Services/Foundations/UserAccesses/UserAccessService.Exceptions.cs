@@ -7,6 +7,7 @@ using EFxceptions.Models.Exceptions;
 using ISL.Reidentification.Core.Models.Foundations.UserAccesses;
 using ISL.Reidentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Xeptions;
 
 namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
@@ -46,6 +47,15 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
 
                 throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsUserAccessException);
             }
+            catch (DbUpdateException dbUpdateException)
+            {
+                var failedOperationUserAccessException =
+                    new FailedOperationUserAccessException(
+                        message: "Failed operation user access error occurred, contact support.",
+                        innerException: dbUpdateException);
+
+                throw await CreateAndLogDependencyExceptionAsync(failedOperationUserAccessException);
+            }
         }
 
         private async ValueTask<UserAccessValidationException> CreateAndLogValidationExceptionAsync(
@@ -82,6 +92,18 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
             await this.loggingBroker.LogErrorAsync(userAccessDependencyValidationException);
 
             return userAccessDependencyValidationException;
+        }
+
+        private async ValueTask<UserAccessDependencyException> CreateAndLogDependencyExceptionAsync(
+            Xeption exception)
+        {
+            var userAccessDependencyException = new UserAccessDependencyException(
+                message: "UserAccess dependency error occurred, contact support.",
+                innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(userAccessDependencyException);
+
+            return userAccessDependencyException;
         }
     }
 }
