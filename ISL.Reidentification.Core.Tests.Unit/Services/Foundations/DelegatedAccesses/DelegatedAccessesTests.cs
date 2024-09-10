@@ -3,11 +3,13 @@
 // ---------------------------------------------------------
 
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using ISL.Reidentification.Core.Brokers.DateTimes;
 using ISL.Reidentification.Core.Brokers.Loggings;
 using ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications;
 using ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses;
 using ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses;
+using Microsoft.Data.SqlClient;
 using Moq;
 using Tynamix.ObjectFiller;
 using Xeptions;
@@ -44,6 +46,12 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
 
         private static string GetRandomString() =>
             new MnemonicString().GetValue();
+
+        private SqlException CreateSqlException()
+        {
+            return (SqlException)RuntimeHelpers.GetUninitializedObject(
+                type: typeof(SqlException));
+        }
 
         private static Filler<DelegatedAccess> CreateDelegatedAccessesFiller(DateTimeOffset dateTimeOffset)
         {
