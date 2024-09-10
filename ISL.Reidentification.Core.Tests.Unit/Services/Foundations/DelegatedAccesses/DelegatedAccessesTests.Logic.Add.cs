@@ -25,7 +25,8 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
                     .ReturnsAsync(storageDelegatedAccess);
 
             //when
-            DelegatedAccess actualDelegatedAccess = await this.delegatedAccessService.AddDelegatedAccessAsync(inputDelegatedAccess);
+            DelegatedAccess actualDelegatedAccess =
+                await this.delegatedAccessService.AddDelegatedAccessAsync(inputDelegatedAccess);
 
             //then
             actualDelegatedAccess.Should().BeEquivalentTo(expectedDelegatedAccess);

@@ -59,7 +59,8 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
 
                 Parameter: nameof(DelegatedAccess.UpdatedDate)),
 
-                (Rule: await IsNotRecentAsync(delegatedAccess.CreatedDate), Parameter: nameof(DelegatedAccess.CreatedDate)));
+                (Rule: await IsNotRecentAsync(delegatedAccess.CreatedDate),
+                    Parameter: nameof(DelegatedAccess.CreatedDate)));
         }
 
         private static void ValidateDelegatedAccessIsNotNull(DelegatedAccess delegatedAccess)

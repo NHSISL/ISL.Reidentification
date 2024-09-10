@@ -24,13 +24,16 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
                     innerException: nullDelegatedAccessException);
 
             //when
-            ValueTask<DelegatedAccess> addDelegatedAccessTask = this.delegatedAccessService.AddDelegatedAccessAsync(nullDelegatedAccess);
+            ValueTask<DelegatedAccess> addDelegatedAccessTask =
+                this.delegatedAccessService.AddDelegatedAccessAsync(nullDelegatedAccess);
 
             DelegatedAccessValidationException actualDelegatedAccessValidationException =
                 await Assert.ThrowsAsync<DelegatedAccessValidationException>(addDelegatedAccessTask.AsTask);
 
             //then
-            actualDelegatedAccessValidationException.Should().BeEquivalentTo(expectedDelegatedAccessValidationException);
+            actualDelegatedAccessValidationException.Should()
+                .BeEquivalentTo(expectedDelegatedAccessValidationException);
+
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(expectedDelegatedAccessValidationException))), Times.Once());
 

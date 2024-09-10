@@ -16,7 +16,9 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
     public partial class DelegatedAccessService
     {
         private delegate ValueTask<DelegatedAccess> ReturningDelegatedAccessFunction();
-        private async ValueTask<DelegatedAccess> TryCatch(ReturningDelegatedAccessFunction returningDelegatedAccessFunction)
+        private async ValueTask<DelegatedAccess> TryCatch(
+            ReturningDelegatedAccessFunction returningDelegatedAccessFunction
+        )
         {
             try
             {
