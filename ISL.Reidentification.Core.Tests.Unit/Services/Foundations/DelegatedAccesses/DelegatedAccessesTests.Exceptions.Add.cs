@@ -7,6 +7,7 @@ using FluentAssertions;
 using ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses;
 using ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 
 namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAccesses
@@ -109,6 +110,58 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedDelegatedAccessDependencyValidationException))),
+                        Times.Once);
+
+            this.reidentificationStorageBroker.Verify(broker =>
+                broker.InsertDelegatedAccessAsync(It.IsAny<DelegatedAccess>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyExceptionOnAddIfDependencyErrorOccurredAndLogItAsync()
+        {
+            // given
+            DelegatedAccess someDelegatedAccess = CreateRandomDelegatedAccess();
+            var dbUpdateException = new DbUpdateException();
+
+            var failedOperationDelegatedAccessException =
+                new FailedOperationDelegatedAccessException(
+                    message: "Failed operation delegated access error occurred, contact support.",
+                    innerException: dbUpdateException);
+
+            var expectedDelegatedAccessDependencyException =
+                new DelegatedAccessDependencyException(
+                    message: "DelegatedAccess dependency error occurred, contact support.",
+                    innerException: failedOperationDelegatedAccessException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ThrowsAsync(dbUpdateException);
+
+            // when
+            ValueTask<DelegatedAccess> addDelegatedAccessTask =
+                this.delegatedAccessService.AddDelegatedAccessAsync(
+                    someDelegatedAccess);
+
+            DelegatedAccessDependencyException actualDelegatedAccessDependencyException =
+                await Assert.ThrowsAsync<DelegatedAccessDependencyException>(
+                    testCode: addDelegatedAccessTask.AsTask);
+
+            // then
+            actualDelegatedAccessDependencyException.Should().BeEquivalentTo(
+                expectedDelegatedAccessDependencyException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedDelegatedAccessDependencyException))),
                         Times.Once);
 
             this.reidentificationStorageBroker.Verify(broker =>
