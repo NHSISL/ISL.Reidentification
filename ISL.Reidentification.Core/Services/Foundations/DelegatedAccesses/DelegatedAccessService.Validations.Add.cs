@@ -6,6 +6,7 @@ using System;
 using System.Threading.Tasks;
 using ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses;
 using ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses.Exceptions;
+using ISL.Reidentification.Core.Models.Foundations.UserAccesses;
 
 namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
 {
@@ -16,13 +17,48 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
             ValidateDelegatedAccessIsNotNull(delegatedAccess);
             Validate(
                 (Rule: await IsInvalidAsync(delegatedAccess.Id), Parameter: nameof(DelegatedAccess.Id)),
-                (Rule: await IsInvalidAsync(delegatedAccess.RequesterEmail), Parameter: nameof(DelegatedAccess.RequesterEmail)),
-                (Rule: await IsInvalidAsync(delegatedAccess.RecipientEmail), Parameter: nameof(DelegatedAccess.RecipientEmail)),
-                (Rule: await IsInvalidAsync(delegatedAccess.IdentifierColumn), Parameter: nameof(DelegatedAccess.IdentifierColumn)),
+
+                (Rule: await IsInvalidAsync(
+                    delegatedAccess.RequesterEmail),
+
+                Parameter: nameof(DelegatedAccess.RequesterEmail)),
+
+                (Rule: await IsInvalidAsync(
+                    delegatedAccess.RecipientEmail),
+
+                Parameter: nameof(DelegatedAccess.RecipientEmail)),
+
+                (Rule: await IsInvalidAsync(
+                    delegatedAccess.IdentifierColumn),
+
+                Parameter: nameof(DelegatedAccess.IdentifierColumn)),
+
                 (Rule: await IsInvalidAsync(delegatedAccess.CreatedBy), Parameter: nameof(DelegatedAccess.CreatedBy)),
                 (Rule: await IsInvalidAsync(delegatedAccess.UpdatedBy), Parameter: nameof(DelegatedAccess.UpdatedBy)),
-                (Rule: await IsInvalidAsync(delegatedAccess.CreatedDate), Parameter: nameof(DelegatedAccess.CreatedDate)),
-                (Rule: await IsInvalidAsync(delegatedAccess.UpdatedDate), Parameter: nameof(DelegatedAccess.UpdatedDate)));
+
+                (Rule: await IsInvalidAsync(
+                    delegatedAccess.CreatedDate),
+
+                Parameter: nameof(DelegatedAccess.CreatedDate)),
+
+                (Rule: await IsInvalidAsync(
+                    delegatedAccess.UpdatedDate),
+
+                Parameter: nameof(DelegatedAccess.UpdatedDate)),
+
+                (Rule: await IsNotSameAsync(
+                    createBy: delegatedAccess.UpdatedBy,
+                    updatedBy: delegatedAccess.CreatedBy,
+                    createdByName: nameof(UserAccess.CreatedBy)),
+
+                Parameter: nameof(UserAccess.UpdatedBy)),
+
+                (Rule: await IsNotSameAsync(
+                    createdDate: delegatedAccess.CreatedDate,
+                    updatedDate: delegatedAccess.UpdatedDate,
+                    nameof(UserAccess.CreatedDate)),
+
+                Parameter: nameof(UserAccess.UpdatedDate)));
         }
 
         private static void ValidateDelegatedAccessIsNotNull(DelegatedAccess delegatedAccess)
@@ -50,6 +86,24 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
             Condition = date == default,
             Message = "Date is invalid"
         };
+
+        private static async ValueTask<dynamic> IsNotSameAsync(
+            DateTimeOffset createdDate,
+            DateTimeOffset updatedDate,
+            string createdDateName) => new
+            {
+                Condition = createdDate != updatedDate,
+                Message = $"Date is not the same as {createdDateName}"
+            };
+
+        private static async ValueTask<dynamic> IsNotSameAsync(
+            string createBy,
+            string updatedBy,
+            string createdByName) => new
+            {
+                Condition = createBy != updatedBy,
+                Message = $"Text is not the same as {createdByName}"
+            };
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
