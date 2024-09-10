@@ -172,5 +172,56 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.reidentificationStorageBroker.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccurredAndLogItAsync()
+        {
+            //given
+            DelegatedAccess someDelegatedAccess = CreateRandomDelegatedAccess();
+            var serviceException = new Exception();
+
+            var failedServiceDelegatedAccessException =
+                new FailedServiceDelegatedAccessException(
+                    message: "Failed service delegated access error occurred, contact support.",
+                    innerException: serviceException);
+
+            var expectedDelegatedAccessServiceException =
+                new DelegatedAccessServiceException(
+                    message: "Service error occurred, contact support.",
+                    innerException: failedServiceDelegatedAccessException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ThrowsAsync(serviceException);
+
+            //when
+            ValueTask<DelegatedAccess> addDelegatedAccessTask =
+                this.delegatedAccessService.AddDelegatedAccessAsync(someDelegatedAccess);
+
+            DelegatedAccessServiceException actualDelegatedAccessServiceException =
+                await Assert.ThrowsAsync<DelegatedAccessServiceException>(
+                    testCode: addDelegatedAccessTask.AsTask);
+
+            // then
+            actualDelegatedAccessServiceException.Should().BeEquivalentTo(
+                expectedDelegatedAccessServiceException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                        Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedDelegatedAccessServiceException))),
+                        Times.Once);
+
+            this.reidentificationStorageBroker.Verify(broker =>
+                broker.InsertDelegatedAccessAsync(It.IsAny<DelegatedAccess>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+        }
     }
 }
