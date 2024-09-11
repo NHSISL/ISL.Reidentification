@@ -45,6 +45,11 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
                 (Rule: await IsNotRecentAsync(userAccess.CreatedDate), Parameter: nameof(UserAccess.CreatedDate)));
         }
 
+        private async ValueTask ValidateUserAccessOnModifyAsync(UserAccess userAccess)
+        {
+            ValidateUserAccessIsNotNull(userAccess);
+        }
+
         private static void ValidateUserAccessIsNotNull(UserAccess userAccess)
         {
             if (userAccess is null)
