@@ -24,10 +24,10 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                     innerException: nullUserAccessException);
 
             // when
-            ValueTask<UserAccess> addUserAccessTask = this.userAccessService.ModifyUserAccessAsync(nullUserAccess);
+            ValueTask<UserAccess> modifyUserAccessTask = this.userAccessService.ModifyUserAccessAsync(nullUserAccess);
 
             UserAccessValidationException actualUserAccessValidationException =
-                await Assert.ThrowsAsync<UserAccessValidationException>(addUserAccessTask.AsTask);
+                await Assert.ThrowsAsync<UserAccessValidationException>(modifyUserAccessTask.AsTask);
 
             // then
             actualUserAccessValidationException.Should().BeEquivalentTo(expectedUserAccessValidationException);
@@ -41,6 +41,90 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
             this.reidentificationStorageBroker.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public async Task ShouldThrowValidationExceptionOnModifyIfUserAccessIsInvalidAndLogItAsync(string invalidText)
+        {
+            // given
+            var invalidUserAccess = new UserAccess
+            {
+                UserEmail = invalidText,
+                RecipientEmail = invalidText,
+                OrgCode = invalidText,
+            };
+
+            var invalidUserAccessException =
+                new InvalidUserAccessException(
+                    message: "Invalid user access. Please correct the errors and try again.");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.Id),
+                values: "Id is invalid");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.UserEmail),
+                values: "Text is invalid");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.RecipientEmail),
+                values: "Text is invalid");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.OrgCode),
+                values: "Text is invalid");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.ActiveFrom),
+                values: "Date is invalid");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.CreatedDate),
+                values: "Date is invalid");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.CreatedBy),
+                values: "Text is invalid");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.UpdatedDate),
+                values: "Date is invalid");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.UpdatedBy),
+                values: "Text is invalid");
+
+            var expectedUserAccessValidationException =
+                new UserAccessValidationException(
+                    message: "UserAccess validation error occurred, please fix errors and try again.",
+                    innerException: invalidUserAccessException);
+
+            // when
+            ValueTask<UserAccess> modifyUserAccessTask =
+                this.userAccessService.ModifyUserAccessAsync(invalidUserAccess);
+
+            UserAccessValidationException actualUserAccessValidationException =
+                await Assert.ThrowsAsync<UserAccessValidationException>(modifyUserAccessTask.AsTask);
+
+            // then
+            actualUserAccessValidationException.Should()
+                .BeEquivalentTo(expectedUserAccessValidationException);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedUserAccessValidationException))),
+                        Times.Once);
+
+            this.reidentificationStorageBroker.Verify(broker =>
+                broker.InsertUserAccessAsync(It.IsAny<UserAccess>()),
+                    Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
 }

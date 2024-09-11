@@ -46,6 +46,17 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
         private async ValueTask ValidateUserAccessOnModifyAsync(UserAccess userAccess)
         {
             ValidateUserAccessIsNotNull(userAccess);
+
+            Validate(
+                (Rule: await IsInvalidAsync(userAccess.Id), Parameter: nameof(UserAccess.Id)),
+                (Rule: await IsInvalidAsync(userAccess.UserEmail), Parameter: nameof(UserAccess.UserEmail)),
+                (Rule: await IsInvalidAsync(userAccess.RecipientEmail), Parameter: nameof(UserAccess.RecipientEmail)),
+                (Rule: await IsInvalidAsync(userAccess.OrgCode), Parameter: nameof(UserAccess.OrgCode)),
+                (Rule: await IsInvalidAsync(userAccess.ActiveFrom), Parameter: nameof(UserAccess.ActiveFrom)),
+                (Rule: await IsInvalidAsync(userAccess.CreatedBy), Parameter: nameof(UserAccess.CreatedBy)),
+                (Rule: await IsInvalidAsync(userAccess.UpdatedBy), Parameter: nameof(UserAccess.UpdatedBy)),
+                (Rule: await IsInvalidAsync(userAccess.CreatedDate), Parameter: nameof(UserAccess.CreatedDate)),
+                (Rule: await IsInvalidAsync(userAccess.UpdatedDate), Parameter: nameof(UserAccess.UpdatedDate)));
         }
 
         private static void ValidateUserAccessIsNotNull(UserAccess userAccess)
