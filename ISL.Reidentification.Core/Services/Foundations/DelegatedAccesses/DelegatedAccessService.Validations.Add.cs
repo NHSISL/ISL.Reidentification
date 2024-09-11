@@ -14,7 +14,7 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
         private async ValueTask ValidateDelegatedAccessOnAdd(DelegatedAccess delegatedAccess)
         {
             ValidateDelegatedAccessIsNotNull(delegatedAccess);
-            
+
             Validate(
                 (Rule: await IsInvalidAsync(delegatedAccess.Id), Parameter: nameof(DelegatedAccess.Id)),
 
@@ -61,7 +61,32 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
                 Parameter: nameof(DelegatedAccess.UpdatedDate)),
 
                 (Rule: await IsNotRecentAsync(delegatedAccess.CreatedDate),
-                    Parameter: nameof(DelegatedAccess.CreatedDate)));
+                    Parameter: nameof(DelegatedAccess.CreatedDate)),
+
+                (Rule: await IsInvalidLengthAsync(
+                    delegatedAccess.RequesterEmail, 320),
+
+                Parameter: nameof(DelegatedAccess.RequesterEmail)),
+
+                (Rule: await IsInvalidLengthAsync(
+                    delegatedAccess.RecipientEmail, 320),
+
+                Parameter: nameof(DelegatedAccess.RecipientEmail)),
+
+                (Rule: await IsInvalidLengthAsync(
+                    delegatedAccess.IdentifierColumn, 50),
+
+                Parameter: nameof(DelegatedAccess.IdentifierColumn)),
+
+                (Rule: await IsInvalidLengthAsync(
+                    delegatedAccess.CreatedBy, 255),
+
+                Parameter: nameof(DelegatedAccess.CreatedBy)),
+
+                (Rule: await IsInvalidLengthAsync(
+                    delegatedAccess.UpdatedBy, 255),
+
+                Parameter: nameof(DelegatedAccess.UpdatedBy)));
         }
 
         private static void ValidateDelegatedAccessIsNotNull(DelegatedAccess delegatedAccess)
@@ -89,6 +114,15 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
             Condition = date == default,
             Message = "Date is invalid"
         };
+
+        private static async ValueTask<dynamic> IsInvalidLengthAsync(string text, int maxLength) => new
+        {
+            Condition = await IsExceedingLengthAsync(text, maxLength),
+            Message = $"Text exceed max length of {maxLength} characters"
+        };
+
+        private static async ValueTask<bool> IsExceedingLengthAsync(string text, int maxLength) =>
+            (text ?? string.Empty).Length > maxLength;
 
         private static async ValueTask<dynamic> IsNotSameAsync(
             DateTimeOffset createdDate,
