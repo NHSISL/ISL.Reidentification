@@ -34,7 +34,12 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
                 return await this.reidentificationStorageBroker.InsertUserAccessAsync(userAccess);
             });
 
-        public async ValueTask<UserAccess> ModifyUserAccessAsync(UserAccess userAccess) =>
-            await this.reidentificationStorageBroker.UpdateUserAccessAsync(userAccess);
+        public ValueTask<UserAccess> ModifyUserAccessAsync(UserAccess userAccess) =>
+            TryCatch(async () =>
+            {
+                await ValidateUserAccessOnModifyAsync(userAccess);
+
+                return await this.reidentificationStorageBroker.UpdateUserAccessAsync(userAccess);
+            });
     }
 }
