@@ -1,29 +1,23 @@
 import { Guid } from 'guid-typescript';
 
-export class OptOut {
+export class Lookup {
     public id: Guid;
-    public nhsNumber: string;
-    public status: string;
-    public cacheTime: Date | undefined;
-    public lastSentToMesh: Date | undefined;
-    public uniqueReference?: string;
-    public batchReference?: number;
-    public createdDate?: Date | undefined;
+    public lookupType: string;
+    public name: string;
+    public value: string;
     public createdBy?: string;
-    public updatedDate?: Date | undefined;
+    public createdDate?: Date | undefined;
     public updatedBy?: string;
+    public updatedDate?: Date | undefined;
 
-    constructor(optout: any) {
-        this.id = optout.id ? Guid.parse(optout.id) : Guid.parse(Guid.EMPTY);
-        this.nhsNumber = optout.nhsNumber;
-        this.status = optout.status || "";
-        this.uniqueReference = optout.uniqueReference || "";
-        this.batchReference = optout.batchReference;
-        this.cacheTime = optout.cacheTime ? new Date(optout.cacheTime) : undefined;
-        this.lastSentToMesh = optout.lastSentToMesh ? new Date(optout.lastSentToMesh) : undefined;
-        this.createdDate = optout.createdDate ? new Date(optout.createdDate) : undefined;
-        this.createdBy = optout.createdBy || "";
-        this.updatedDate = optout.updatedDate ? new Date(optout.updatedDate) : undefined;
-        this.updatedBy = optout.updatedBy || "";
+    constructor(lookup: any) {
+        this.id = lookup.id ? Guid.parse(lookup.id) : Guid.parse(Guid.EMPTY);
+        this.lookupType = lookup.lookupType;
+        this.name = lookup.name || "";
+        this.value = lookup.value || "";
+        this.createdDate = lookup.createdDate ? new Date(lookup.createdDate) : undefined;
+        this.createdBy = lookup.createdBy || "";
+        this.updatedDate = lookup.updatedDate ? new Date(lookup.updatedDate) : undefined;
+        this.updatedBy = lookup.updatedBy || "";
     }
 }

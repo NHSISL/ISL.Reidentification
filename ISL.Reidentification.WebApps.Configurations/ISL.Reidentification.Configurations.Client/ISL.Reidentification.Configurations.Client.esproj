@@ -10,8 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="src\components\accessControls\" />
-    <Folder Include="src\models\views\" />
     <Folder Include="src\services\views\" />
-	<Folder Include="dependencies\guid-typescript\node_modules\%40types\" />
+    <Folder Include="dependencies\guid-typescript\node_modules\%40types\" />
   </ItemGroup>
 </Project>
