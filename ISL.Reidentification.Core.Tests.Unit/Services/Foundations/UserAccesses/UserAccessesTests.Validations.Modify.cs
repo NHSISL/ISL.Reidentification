@@ -126,5 +126,70 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
             this.reidentificationStorageBroker.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfUserAccessHasInvalidLengthProperty()
+        {
+            // given
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            var invalidUserAccess = CreateRandomModifyUserAccess(randomDateTimeOffset);
+            var inputCreatedByUpdatedByString = GetRandomStringWithLength(256);
+            invalidUserAccess.UserEmail = GetRandomStringWithLength(321);
+            invalidUserAccess.RecipientEmail = GetRandomStringWithLength(321);
+            invalidUserAccess.OrgCode = GetRandomStringWithLength(11);
+            invalidUserAccess.CreatedBy = inputCreatedByUpdatedByString;
+            invalidUserAccess.UpdatedBy = inputCreatedByUpdatedByString;
+
+            var invalidUserAccessException = new InvalidUserAccessException(
+                message: "Invalid user access. Please correct the errors and try again.");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.UserEmail),
+                values: $"Text exceed max length of {invalidUserAccess.UserEmail.Length - 1} characters");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.RecipientEmail),
+                values: $"Text exceed max length of {invalidUserAccess.RecipientEmail.Length - 1} characters");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.OrgCode),
+                values: $"Text exceed max length of {invalidUserAccess.OrgCode.Length - 1} characters");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.CreatedBy),
+                values: $"Text exceed max length of {invalidUserAccess.CreatedBy.Length - 1} characters");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.UpdatedBy),
+                values: $"Text exceed max length of {invalidUserAccess.UpdatedBy.Length - 1} characters");
+
+            var expectedUserAccessException = new
+                UserAccessValidationException(
+                    message: "UserAccess validation error occurred, please fix errors and try again.",
+                    innerException: invalidUserAccessException);
+
+            // when
+            ValueTask<UserAccess> modifyUserAccessTask =
+                this.userAccessService.ModifyUserAccessAsync(invalidUserAccess);
+
+            UserAccessValidationException actualUserAccessValidationException =
+                await Assert.ThrowsAsync<UserAccessValidationException>(modifyUserAccessTask.AsTask);
+
+            // then
+            actualUserAccessValidationException.Should().BeEquivalentTo(expectedUserAccessException);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedUserAccessException))),
+                        Times.Once);
+
+            this.reidentificationStorageBroker.Verify(broker =>
+                broker.InsertUserAccessAsync(It.IsAny<UserAccess>()),
+                    Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
