@@ -16,6 +16,11 @@ class LookupBroker {
         return { data, nextPage }
     }
 
+    async PostLookupAsync(lookup: Lookup) {
+        return await this.apiBroker.PostAsync(this.relativeLookupUrl, lookup)
+            .then(result => new Lookup(result.data));
+    }
+
     async GetAllLookupsAsync(queryString: string) {
         var url = this.relativeLookupUrl + queryString;
 
@@ -28,7 +33,7 @@ class LookupBroker {
         return this.processOdataResult(await this.apiBroker.GetAsync(url));
     }
 
-    async GetILookupSubsequentPagesAsync(absoluteUri: string) {
+    async GetLookupSubsequentPagesAsync(absoluteUri: string) {
         return this.processOdataResult(await this.apiBroker.GetAsyncAbsolute(absoluteUri));
     }
 
@@ -41,6 +46,13 @@ class LookupBroker {
 
     async PutLookupAsync(lookup: Lookup) {
         return await this.apiBroker.PutAsync(this.relativeLookupUrl, lookup)
+            .then(result => new Lookup(result.data));
+    }
+
+    async DeleteLookupByIdAsync(id: Guid) {
+        const url = `${this.relativeLookupUrl}/${id}`;
+
+        return await this.apiBroker.DeleteAsync(url)
             .then(result => new Lookup(result.data));
     }
 }
