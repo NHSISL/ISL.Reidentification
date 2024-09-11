@@ -53,10 +53,23 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
         private static string GetRandomString() =>
             new MnemonicString().GetValue();
 
+        private static int GetRandomNegativeNumber() =>
+            -1 * new IntRange(min: 2, max: 10).GetValue();
+
         private SqlException CreateSqlException()
         {
             return (SqlException)RuntimeHelpers.GetUninitializedObject(
                 type: typeof(SqlException));
+        }
+
+        private static UserAccess CreateRandomModifyUserAccess(DateTimeOffset dateTimeOffset)
+        {
+            int randomDaysInThePast = GetRandomNegativeNumber();
+            UserAccess randomUserAccess = CreateRandomUserAccess(dateTimeOffset);
+
+            randomUserAccess.CreatedDate = dateTimeOffset.AddDays(randomDaysInThePast);
+
+            return randomUserAccess;
         }
 
         private static Filler<UserAccess> CreateUserAccessesFiller(DateTimeOffset dateTimeOffset)

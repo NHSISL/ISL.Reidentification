@@ -12,20 +12,36 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
     public partial class UserAccessesTests
     {
         [Fact]
-        public async Task ShouldAddUserAccessAsync()
+        public async Task ShouldModifyUserAccessAsync()
         {
             // given
-            UserAccess randomUserAccess = CreateRandomUserAccess();
-            UserAccess inputUserAccess = randomUserAccess;
-            UserAccess storageUserAccess = inputUserAccess.DeepClone();
-            UserAccess expectedUserAccess = inputUserAccess.DeepClone();
+            //given
+            DateTimeOffset randomDateOffset = GetRandomDateTimeOffset();
+
+            UserAccess randomModifyUserAccess =
+                CreateRandomModifyUserAccess(randomDateOffset);
+
+            UserAccess inputUserAccess = randomModifyUserAccess.DeepClone();
+            UserAccess storageUserAccess = randomModifyUserAccess.DeepClone();
+            storageUserAccess.UpdatedDate = storageUserAccess.CreatedDate;
+            UserAccess updatedUserAccess = inputUserAccess.DeepClone();
+            UserAccess expectedUserAccess = updatedUserAccess.DeepClone();
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateOffset);
 
             this.reidentificationStorageBroker.Setup(broker =>
-                broker.InsertUserAccessAsync(inputUserAccess))
+                broker.SelectUserAccessByIdAsync(inputUserAccess.Id))
                     .ReturnsAsync(storageUserAccess);
 
+            this.reidentificationStorageBroker.Setup(broker =>
+                broker.UpdateUserAccessAsync(inputUserAccess))
+                    .ReturnsAsync(updatedUserAccess);
+
             // when
-            UserAccess actualUserAccess = await this.userAccessService.AddUserAccessAsync(inputUserAccess);
+            UserAccess actualUserAccess =
+                await this.userAccessService.ModifyUserAccessAsync(inputUserAccess);
 
             // then
             actualUserAccess.Should().BeEquivalentTo(expectedUserAccess);
@@ -35,7 +51,7 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                     Times.Once);
 
             this.reidentificationStorageBroker.Verify(broker =>
-                broker.InsertUserAccessAsync(inputUserAccess),
+                broker.UpdateUserAccessAsync(inputUserAccess),
                     Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
