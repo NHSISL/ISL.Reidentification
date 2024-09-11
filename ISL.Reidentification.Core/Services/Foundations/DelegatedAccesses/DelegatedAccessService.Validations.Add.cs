@@ -64,19 +64,14 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
                     Parameter: nameof(DelegatedAccess.CreatedDate)),
 
                 (Rule: await IsInvalidLengthAsync(
-                    delegatedAccess.RequesterEmail, 255),
+                    delegatedAccess.CreatedBy, 255),
 
-                Parameter: nameof(DelegatedAccess.RequesterEmail)),
-
-                (Rule: await IsInvalidLengthAsync(
-                    delegatedAccess.RecipientEmail, 255),
-
-                Parameter: nameof(DelegatedAccess.RecipientEmail)),
+                Parameter: nameof(DelegatedAccess.CreatedBy)),
 
                 (Rule: await IsInvalidLengthAsync(
-                    delegatedAccess.IdentifierColumn, 255),
+                    delegatedAccess.UpdatedBy, 255),
 
-                Parameter: nameof(DelegatedAccess.IdentifierColumn)));
+                Parameter: nameof(DelegatedAccess.UpdatedBy)));
         }
 
         private static void ValidateDelegatedAccessIsNotNull(DelegatedAccess delegatedAccess)
