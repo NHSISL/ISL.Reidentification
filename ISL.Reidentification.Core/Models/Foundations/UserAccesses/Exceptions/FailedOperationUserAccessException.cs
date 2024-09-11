@@ -2,7 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using Microsoft.EntityFrameworkCore;
+using System;
 using Xeptions;
 
 namespace ISL.Reidentification.Core.Models.Foundations.UserAccesses.Exceptions
