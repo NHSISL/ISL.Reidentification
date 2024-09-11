@@ -16,9 +16,9 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
     public partial class DelegatedAccessService
     {
         private delegate ValueTask<DelegatedAccess> ReturningDelegatedAccessFunction();
+
         private async ValueTask<DelegatedAccess> TryCatch(
-            ReturningDelegatedAccessFunction returningDelegatedAccessFunction
-        )
+            ReturningDelegatedAccessFunction returningDelegatedAccessFunction)
         {
             try
             {
@@ -94,8 +94,8 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
             return delegatedAccessDependencyException;
         }
 
-        private async ValueTask<DelegatedAccessDependencyValidationException> CreateAndLogDependencyValidationExceptionAsync(
-            Xeption exception)
+        private async ValueTask<DelegatedAccessDependencyValidationException> 
+            CreateAndLogDependencyValidationExceptionAsync(Xeption exception)
         {
             var delegatedAccessDependencyValidationException = new DelegatedAccessDependencyValidationException(
                 message: "DelegatedAccess dependency validation error occurred, fix errors and try again.",

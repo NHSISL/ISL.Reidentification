@@ -67,8 +67,7 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
             return filler;
         }
 
-        private static Expression<Func<Xeption, bool>> SameExceptionAs(
-            Xeption expectedException)
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException)
         {
             return actualException =>
                 actualException.SameExceptionAs(expectedException);

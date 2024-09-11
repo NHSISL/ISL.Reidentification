@@ -9,9 +9,6 @@ namespace ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses.Excepti
 {
     internal class FailedOperationDelegatedAccessException : Xeption
     {
-        private string message;
-        private DbUpdateException innerException;
-
         public FailedOperationDelegatedAccessException(string message, DbUpdateException innerException)
             : base(message, innerException)
         { }

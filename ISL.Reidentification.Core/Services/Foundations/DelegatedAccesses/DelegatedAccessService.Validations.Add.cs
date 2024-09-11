@@ -14,6 +14,7 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
         private async ValueTask ValidateDelegatedAccessOnAdd(DelegatedAccess delegatedAccess)
         {
             ValidateDelegatedAccessIsNotNull(delegatedAccess);
+            
             Validate(
                 (Rule: await IsInvalidAsync(delegatedAccess.Id), Parameter: nameof(DelegatedAccess.Id)),
 

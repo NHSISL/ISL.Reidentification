@@ -10,13 +10,8 @@ namespace ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses.Excepti
 {
     public class AlreadyExistsDelegatedAccessException : Xeption
     {
-        public AlreadyExistsDelegatedAccessException(
-            string message,
-            Exception innerException,
-            IDictionary data)
-                : base(message,
-                  innerException,
-                  data)
+        public AlreadyExistsDelegatedAccessException(string message, Exception innerException, IDictionary data)
+                : base(message, innerException, data)
         { }
     }
 }
