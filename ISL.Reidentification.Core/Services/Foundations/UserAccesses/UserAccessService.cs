@@ -2,7 +2,6 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
 using System.Threading.Tasks;
 using ISL.Reidentification.Core.Brokers.DateTimes;
 using ISL.Reidentification.Core.Brokers.Loggings;
@@ -35,10 +34,7 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
                 return await this.reidentificationStorageBroker.InsertUserAccessAsync(userAccess);
             });
 
-        public ValueTask<UserAccess> ModifyUserAccessAsync(UserAccess userAccess)
-        {
-            throw new NotImplementedException();
-        }
-
+        public async ValueTask<UserAccess> ModifyUserAccessAsync(UserAccess userAccess) =>
+            await this.reidentificationStorageBroker.UpdateUserAccessAsync(userAccess);
     }
 }
