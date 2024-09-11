@@ -10,13 +10,8 @@ namespace ISL.Reidentification.Core.Models.Foundations.UserAccesses.Exceptions
 {
     public class AlreadyExistsUserAccessException : Xeption
     {
-        public AlreadyExistsUserAccessException(
-            string message,
-            Exception innerException,
-            IDictionary data)
-                : base(message,
-                  innerException,
-                  data)
+        public AlreadyExistsUserAccessException(string message, Exception innerException, IDictionary data)
+            : base(message, innerException, data)
         { }
     }
 }
