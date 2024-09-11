@@ -132,6 +132,61 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
         }
 
         [Fact]
+        public async Task ShouldThrowValidationExceptionOnAddIfUserAccessHasInvalidLengthProperty()
+        {
+            // given
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            string randomString = GetRandomStringWithLengthOf(256);
+            var invalidUserAccess = CreateRandomUserAccess(dateTimeOffset: randomDateTimeOffset);
+            invalidUserAccess.CreatedBy = randomString;
+            invalidUserAccess.UpdatedBy = randomString;
+
+            var invalidUserAccessException = new InvalidUserAccessException(
+                message: "Invalid user access. Please correct the errors and try again.");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.CreatedBy),
+                values: $"Text exceed max length of {invalidUserAccess.CreatedBy.Length - 1} characters");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.UpdatedBy),
+                values: $"Text exceed max length of {invalidUserAccess.UpdatedBy.Length - 1} characters");
+
+            var expectedUserAccessValidationException =
+                new UserAccessValidationException(
+                    message: "UserAccess validation error occurred, please fix errors and try again.",
+                    innerException: invalidUserAccessException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            // when
+            ValueTask<UserAccess> addUserAccessTask =
+                this.userAccessService.AddUserAccessAsync(invalidUserAccess);
+
+            UserAccessValidationException actualUserAccessValidationException =
+                await Assert.ThrowsAsync<UserAccessValidationException>(
+                    addUserAccessTask.AsTask);
+
+            // then
+            actualUserAccessValidationException.Should()
+                .BeEquivalentTo(expectedUserAccessValidationException);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedUserAccessValidationException))),
+                        Times.Once);
+
+            this.reidentificationStorageBroker.Verify(broker =>
+                broker.InsertUserAccessAsync(It.IsAny<UserAccess>()),
+                    Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+        }
+
+        [Fact]
         public async Task ShouldThrowValidationExceptionOnAddIfAuditPropertiesIsNotTheSameAndLogItAsync()
         {
             // given

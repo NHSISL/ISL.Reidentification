@@ -44,6 +44,12 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
         private static UserAccess CreateRandomUserAccess(DateTimeOffset dateTimeOffset) =>
             CreateUserAccessesFiller(dateTimeOffset).Create();
 
+        private static string GetRandomStringWithLengthOf(int length)
+        {
+            return new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length)
+                .GetValue();
+        }
+
         private static string GetRandomString() =>
             new MnemonicString().GetValue();
 
