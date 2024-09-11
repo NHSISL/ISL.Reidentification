@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Visual Studio 2015 cache/options directory
+.vs/
+/wwwroot/dist/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
