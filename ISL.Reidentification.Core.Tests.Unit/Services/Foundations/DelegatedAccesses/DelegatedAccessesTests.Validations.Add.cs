@@ -136,12 +136,14 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
             // given
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
             var invalidDelegatedAccess = CreateRandomDelegatedAccess(dateTimeOffset: randomDateTimeOffset);
-            var invalidLengthString = GetRandomStringWithLengthOf(256);
-            invalidDelegatedAccess.RequesterEmail = invalidLengthString;
-            invalidDelegatedAccess.RecipientEmail = invalidLengthString;
-            invalidDelegatedAccess.IdentifierColumn = invalidLengthString;
-            invalidDelegatedAccess.CreatedBy = invalidLengthString;
-            invalidDelegatedAccess.UpdatedBy = invalidLengthString;
+            var username = GetRandomStringWithLengthOf(256);
+            var email = GetRandomStringWithLengthOf(321);
+            var identifierColumn = GetRandomStringWithLengthOf(51);
+            invalidDelegatedAccess.RequesterEmail = email;
+            invalidDelegatedAccess.RecipientEmail = email;
+            invalidDelegatedAccess.IdentifierColumn = identifierColumn;
+            invalidDelegatedAccess.CreatedBy = username;
+            invalidDelegatedAccess.UpdatedBy = username;
 
             var invalidDelegatedAccessException =
                 new InvalidDelegatedAccessException(

@@ -64,6 +64,21 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
                     Parameter: nameof(DelegatedAccess.CreatedDate)),
 
                 (Rule: await IsInvalidLengthAsync(
+                    delegatedAccess.RequesterEmail, 320),
+
+                Parameter: nameof(DelegatedAccess.RequesterEmail)),
+
+                (Rule: await IsInvalidLengthAsync(
+                    delegatedAccess.RecipientEmail, 320),
+
+                Parameter: nameof(DelegatedAccess.RecipientEmail)),
+
+                (Rule: await IsInvalidLengthAsync(
+                    delegatedAccess.IdentifierColumn, 50),
+
+                Parameter: nameof(DelegatedAccess.IdentifierColumn)),
+
+                (Rule: await IsInvalidLengthAsync(
                     delegatedAccess.CreatedBy, 255),
 
                 Parameter: nameof(DelegatedAccess.CreatedBy)),
