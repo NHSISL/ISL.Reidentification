@@ -47,6 +47,12 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
         private static string GetRandomString() =>
             new MnemonicString().GetValue();
 
+        private static string GetRandomStringWithLengthOf(int length)
+        {
+            return new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length)
+                .GetValue();
+        }
+
         private SqlException CreateSqlException()
         {
             return (SqlException)RuntimeHelpers.GetUninitializedObject(
