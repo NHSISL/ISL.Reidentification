@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using FluentAssertions;
+using Force.DeepCloner;
 using ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses;
 using ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses.Exceptions;
 using Moq;
@@ -392,6 +393,73 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
 
             this.reidentificationStorageBroker.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfCreatedAuditInfoHasChangedAndLogItAsync()
+        {
+            //given
+            int randomMinutes = GetRandomNegativeNumber();
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            DelegatedAccess randomDelegatedAccess = CreateRandomModifyDelegatedAccess(randomDateTimeOffset);
+            DelegatedAccess invalidDelegatedAccess = randomDelegatedAccess;
+            DelegatedAccess storedDelegatedAccess = randomDelegatedAccess.DeepClone();
+            storedDelegatedAccess.CreatedBy = GetRandomString();
+            storedDelegatedAccess.CreatedDate = storedDelegatedAccess.CreatedDate.AddMinutes(randomMinutes);
+            storedDelegatedAccess.UpdatedDate = storedDelegatedAccess.UpdatedDate.AddMinutes(randomMinutes);
+            Guid DelegatedAccessId = invalidDelegatedAccess.Id;
+
+            var invalidDelegatedAccessException = new InvalidDelegatedAccessException(
+                message: "Invalid delegated access. Please correct the errors and try again.");
+
+            invalidDelegatedAccessException.AddData(
+                key: nameof(DelegatedAccess.CreatedBy),
+                values: $"Text is not the same as {nameof(DelegatedAccess.CreatedBy)}");
+
+            invalidDelegatedAccessException.AddData(
+                key: nameof(DelegatedAccess.CreatedDate),
+                values: $"Date is not the same as {nameof(DelegatedAccess.CreatedDate)}");
+
+            var expectedDelegatedAccessValidationException = new DelegatedAccessValidationException(
+                message: "DelegatedAccess validation error occurred, please fix errors and try again.",
+                innerException: invalidDelegatedAccessException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            this.reidentificationStorageBroker.Setup(broker =>
+                broker.SelectDelegatedAccessByIdAsync(DelegatedAccessId))
+                    .ReturnsAsync(storedDelegatedAccess);
+
+            // when
+            ValueTask<DelegatedAccess> modifyDelegatedAccessTask =
+                this.delegatedAccessService.ModifyDelegatedAccessAsync(invalidDelegatedAccess);
+
+            DelegatedAccessValidationException actualDelegatedAccessValidationException =
+                await Assert.ThrowsAsync<DelegatedAccessValidationException>(
+                    modifyDelegatedAccessTask.AsTask);
+
+            // then
+            actualDelegatedAccessValidationException.Should().BeEquivalentTo(
+                expectedDelegatedAccessValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.reidentificationStorageBroker.Verify(broker =>
+                broker.SelectDelegatedAccessByIdAsync(invalidDelegatedAccess.Id),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(
+                    SameExceptionAs(expectedDelegatedAccessValidationException))),
+                        Times.Once);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.reidentificationStorageBroker.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
