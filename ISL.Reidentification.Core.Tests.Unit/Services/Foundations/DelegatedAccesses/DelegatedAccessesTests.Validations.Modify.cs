@@ -56,7 +56,8 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public async Task ShouldThrowValidationExceptionOnModifyIfDelegatedAccessIsInvalidAndLogItAsync(string invalidString)
+        public async Task ShouldThrowValidationExceptionOnModifyIfDelegatedAccessIsInvalidAndLogItAsync(
+            string invalidString)
         {
             //given
             var invalidDelegatedAccess = new DelegatedAccess
@@ -141,7 +142,8 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
         }
 
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnModifyIfDelegatedAccessHasInvalidLengthPropertiesAndLogItAsync()
+        public async Task
+            ShouldThrowValidationExceptionOnModifyIfDelegatedAccessHasInvalidLengthPropertiesAndLogItAsync()
         {
             // given
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
