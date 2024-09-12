@@ -76,8 +76,9 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
                     updatedDate: userAccess.UpdatedDate,
                     createdDateName: nameof(UserAccess.CreatedDate)),
 
-                Parameter: nameof(UserAccess.UpdatedDate))
-                );
+                Parameter: nameof(UserAccess.UpdatedDate)),
+
+                (Rule: await IsNotRecentAsync(userAccess.UpdatedDate), Parameter: nameof(UserAccess.UpdatedDate)));
         }
 
         private static void ValidateUserAccessIsNotNull(UserAccess userAccess)
