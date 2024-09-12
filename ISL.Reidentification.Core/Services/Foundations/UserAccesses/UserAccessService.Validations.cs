@@ -27,7 +27,7 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
                 (Rule: await IsInvalidAsync(userAccess.UpdatedDate), Parameter: nameof(UserAccess.UpdatedDate)),
 
                 (Rule: await IsNotSameAsync(
-                    createBy: userAccess.UpdatedBy,
+                    createdBy: userAccess.UpdatedBy,
                     updatedBy: userAccess.CreatedBy,
                     createdByName: nameof(UserAccess.CreatedBy)),
 
@@ -67,7 +67,14 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
 
                 Parameter: nameof(UserAccess.RecipientEmail)),
 
-                (Rule: await IsInvalidLengthAsync(userAccess.OrgCode, 15), Parameter: nameof(UserAccess.OrgCode))
+                (Rule: await IsInvalidLengthAsync(userAccess.OrgCode, 15), Parameter: nameof(UserAccess.OrgCode)),
+
+                (Rule: await IsSameAsync(
+                    createdDate: userAccess.CreatedDate,
+                    updatedDate: userAccess.UpdatedDate,
+                    createdDateName: nameof(UserAccess.CreatedDate)),
+
+                Parameter: nameof(UserAccess.UpdatedDate))
                 );
         }
 
@@ -116,12 +123,21 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
             };
 
         private static async ValueTask<dynamic> IsNotSameAsync(
-            string createBy,
+            string createdBy,
             string updatedBy,
             string createdByName) => new
             {
-                Condition = createBy != updatedBy,
+                Condition = createdBy != updatedBy,
                 Message = $"Text is not the same as {createdByName}"
+            };
+
+        private static async ValueTask<dynamic> IsSameAsync(
+            DateTimeOffset createdDate,
+            DateTimeOffset updatedDate,
+            string createdDateName) => new
+            {
+                Condition = createdDate == updatedDate,
+                Message = $"Date is the same as {createdDateName}"
             };
 
         private async ValueTask<dynamic> IsNotRecentAsync(DateTimeOffset date)
