@@ -30,6 +30,10 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
             {
                 throw await CreateAndLogValidationExceptionAsync(invalidUserAccessException);
             }
+            catch (NotFoundUserAccessException notFoundUserAccessException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(notFoundUserAccessException);
+            }
             catch (SqlException sqlException)
             {
                 var failedStorageUserAccessException = new FailedStorageUserAccessException(

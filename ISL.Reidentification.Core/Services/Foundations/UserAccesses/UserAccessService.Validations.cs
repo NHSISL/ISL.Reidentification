@@ -81,6 +81,14 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
                 (Rule: await IsNotRecentAsync(userAccess.UpdatedDate), Parameter: nameof(UserAccess.UpdatedDate)));
         }
 
+        private static async ValueTask ValidateStorageUserAccessAsync(UserAccess maybeUserAccess, Guid maybeId)
+        {
+            if (maybeUserAccess is null)
+            {
+                throw new NotFoundUserAccessException($"User access not found with id: {maybeId}");
+            }
+        }
+
         private static void ValidateUserAccessIsNotNull(UserAccess userAccess)
         {
             if (userAccess is null)
