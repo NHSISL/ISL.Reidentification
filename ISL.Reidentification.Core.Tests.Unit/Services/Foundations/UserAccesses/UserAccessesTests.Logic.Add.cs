@@ -12,45 +12,30 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
     public partial class UserAccessesTests
     {
         [Fact]
-        public async Task ShouldModifyUserAccessAsync()
+        public async Task ShouldAddUserAccessAsync()
         {
             // given
-            DateTimeOffset randomDateOffset = GetRandomDateTimeOffset();
-
-            UserAccess randomModifyUserAccess =
-                CreateRandomModifyUserAccess(randomDateOffset);
-
-            UserAccess inputUserAccess = randomModifyUserAccess.DeepClone();
-            UserAccess storageUserAccess = randomModifyUserAccess.DeepClone();
-            storageUserAccess.UpdatedDate = storageUserAccess.CreatedDate;
-            UserAccess updatedUserAccess = inputUserAccess.DeepClone();
-            UserAccess expectedUserAccess = updatedUserAccess.DeepClone();
-
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffsetAsync())
-                    .ReturnsAsync(randomDateOffset);
+            UserAccess randomUserAccess = CreateRandomUserAccess();
+            UserAccess inputUserAccess = randomUserAccess;
+            UserAccess storageUserAccess = inputUserAccess.DeepClone();
+            UserAccess expectedUserAccess = inputUserAccess.DeepClone();
 
             this.reidentificationStorageBroker.Setup(broker =>
-                broker.SelectUserAccessByIdAsync(inputUserAccess.Id))
+                broker.InsertUserAccessAsync(inputUserAccess))
                     .ReturnsAsync(storageUserAccess);
 
-            this.reidentificationStorageBroker.Setup(broker =>
-                broker.UpdateUserAccessAsync(inputUserAccess))
-                    .ReturnsAsync(updatedUserAccess);
-
             // when
-            UserAccess actualUserAccess =
-                await this.userAccessService.ModifyUserAccessAsync(inputUserAccess);
+            UserAccess actualUserAccess = await this.userAccessService.AddUserAccessAsync(inputUserAccess);
 
             // then
             actualUserAccess.Should().BeEquivalentTo(expectedUserAccess);
 
-            //this.dateTimeBrokerMock.Verify(broker =>
-            //    broker.GetCurrentDateTimeOffsetAsync(),
-            //        Times.Once);
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
 
             this.reidentificationStorageBroker.Verify(broker =>
-                broker.UpdateUserAccessAsync(inputUserAccess),
+                broker.InsertUserAccessAsync(inputUserAccess),
                     Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();

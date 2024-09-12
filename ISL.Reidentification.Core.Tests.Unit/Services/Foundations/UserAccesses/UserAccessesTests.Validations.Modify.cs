@@ -119,6 +119,10 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
             actualUserAccessValidationException.Should()
                 .BeEquivalentTo(expectedUserAccessValidationException);
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedUserAccessValidationException))),
@@ -184,6 +188,10 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
             // then
             actualUserAccessValidationException.Should().BeEquivalentTo(expectedUserAccessException);
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedUserAccessException))),
@@ -226,6 +234,10 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
 
             // then
             actualUserAccessVaildationException.Should().BeEquivalentTo(expectedUserAccessValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                broker.LogErrorAsync(It.Is(
