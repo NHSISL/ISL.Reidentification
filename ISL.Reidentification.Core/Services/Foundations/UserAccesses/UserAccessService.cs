@@ -42,6 +42,7 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
                 var maybeUserAccess = await this.reidentificationStorageBroker.SelectUserAccessByIdAsync(userAccess.Id);
 
                 await ValidateStorageUserAccessAsync(maybeUserAccess, userAccess.Id);
+                await ValidateAgainstStorageUserAccessOnModifyAsync(userAccess, maybeUserAccess);
 
                 return await this.reidentificationStorageBroker.UpdateUserAccessAsync(userAccess);
             });

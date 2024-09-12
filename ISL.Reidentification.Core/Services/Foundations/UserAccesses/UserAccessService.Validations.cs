@@ -89,6 +89,19 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
             }
         }
 
+        private async ValueTask ValidateAgainstStorageUserAccessOnModifyAsync(
+            UserAccess userAccess,
+            UserAccess maybeUserAccess)
+        {
+            Validate(
+                (Rule: await IsNotSameAsync(
+                    userAccess.CreatedDate,
+                    maybeUserAccess.CreatedDate,
+                    nameof(maybeUserAccess.CreatedDate)),
+
+                Parameter: nameof(UserAccess.CreatedDate)));
+        }
+
         private static void ValidateUserAccessIsNotNull(UserAccess userAccess)
         {
             if (userAccess is null)
