@@ -5,7 +5,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace ISL.Reidentification.Core.Brokers.Identifiers
+namespace ISL.ReIdentification.Core.Brokers.Identifiers
 {
     public interface IIdentifierBroker
     {

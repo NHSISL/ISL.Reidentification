@@ -6,11 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses;
+using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
 
-namespace ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications
+namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications
 {
-    public partial interface IReidentificationStorageBroker
+    public partial interface IReIdentificationStorageBroker
     {
         ValueTask<DelegatedAccess> InsertDelegatedAccessAsync(DelegatedAccess delegatedAccess);
         ValueTask<IQueryable<DelegatedAccess>> SelectAllDelegatedAccessesAsync();

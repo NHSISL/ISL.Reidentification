@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ISL.Reidentification.Core.Migrations
+namespace ISL.ReIdentification.Core.Migrations
 {
     /// <inheritdoc />
     public partial class AddDelegatedAccess : Migration

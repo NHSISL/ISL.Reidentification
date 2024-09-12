@@ -6,7 +6,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
-namespace ISL.Reidentification.Core.Brokers.Loggings
+namespace ISL.ReIdentification.Core.Brokers.Loggings
 {
     public class LoggingBroker : ILoggingBroker
     {

@@ -2,9 +2,9 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using ISL.Providers.Storages.Infrastructure.Services;
+using ISL.ReIdentification.Infrastructure.Services;
 
-namespace ISL.Reidentification.Infrastructure
+namespace ISL.ReIdentification.Infrastructure
 {
     internal class Program
     {
@@ -14,7 +14,7 @@ namespace ISL.Reidentification.Infrastructure
 
             scriptGenerationService.GenerateBuildScript(
                 branchName: "main",
-                projectName: "ISL.Reidentification.Core");
+                projectName: "ISL.ReIdentification.Core");
         }
     }
 }

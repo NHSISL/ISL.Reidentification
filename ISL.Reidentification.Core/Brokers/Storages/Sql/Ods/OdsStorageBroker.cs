@@ -8,7 +8,7 @@ using EFxceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace ISL.Reidentification.Core.Brokers.Storages.Sql.Ods
+namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.Ods
 {
     public partial class OdsStorageBroker : EFxceptionsContext, IOdsStorageBroker
     {

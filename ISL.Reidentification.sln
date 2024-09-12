@@ -5,31 +5,29 @@ VisualStudioVersion = 17.12.35209.166
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Core", "_Core", "{84F16610-F68A-42B8-A7C0-839F4B02A4C5}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "APIs", "APIs", "{648C7C28-216F-4C3F-8E7D-F08DE9A87F89}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Functions", "Functions", "{0B4CF0B3-C90F-4F0C-8D99-3C67A454DCA0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebApps", "WebApps", "{57C650B0-0156-4E70-AE12-113039EF15D3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ISL.Reidentification.Core", "ISL.Reidentification.Core\ISL.Reidentification.Core.csproj", "{F943467A-A2A7-492C-94FD-DC763537F31B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ISL.ReIdentification.Core", "ISL.Reidentification.Core\ISL.ReIdentification.Core.csproj", "{F943467A-A2A7-492C-94FD-DC763537F31B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ISL.Reidentification.Core.Tests.Unit", "ISL.Reidentification.Core.Tests.Unit\ISL.Reidentification.Core.Tests.Unit.csproj", "{BAD10164-EB32-4B36-8AF4-FCBDBCFB024B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ISL.ReIdentification.Core.Tests.Unit", "ISL.Reidentification.Core.Tests.Unit\ISL.ReIdentification.Core.Tests.Unit.csproj", "{BAD10164-EB32-4B36-8AF4-FCBDBCFB024B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ISL.Reidentification.Functions", "ISL.Reidentification.Functions\ISL.Reidentification.Functions.csproj", "{4738B57B-7085-46F6-BB08-14A51A26896C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ISL.ReIdentification.Functions", "ISL.Reidentification.Functions\ISL.ReIdentification.Functions.csproj", "{4738B57B-7085-46F6-BB08-14A51A26896C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ISL.Reidentification.Clients", "ISL.Reidentification.Clients\ISL.Reidentification.Clients.csproj", "{7A1035B7-53B9-437D-B5FE-82CE0CF4973D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ISL.ReIdentification.Clients", "ISL.Reidentification.Clients\ISL.ReIdentification.Clients.csproj", "{7A1035B7-53B9-437D-B5FE-82CE0CF4973D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Clients", "Clients", "{959E2D1E-E4F8-462F-B4B3-8AB0DAF0416B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configurations", "Configurations", "{6521DC95-959B-4EDA-98C1-8D6E1B14576F}"
 EndProject
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "ISL.Reidentification.Configurations.Client", "ISL.Reidentification.WebApps.Configurations\ISL.Reidentification.Configurations.Client\ISL.Reidentification.Configurations.Client.esproj", "{0EEBCE83-F94E-4571-B114-FF1426279F60}"
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "ISL.ReIdentification.Configurations.Client", "ISL.Reidentification.WebApps.Configurations\ISL.Reidentification.Configurations.Client\ISL.ReIdentification.Configurations.Client.esproj", "{0EEBCE83-F94E-4571-B114-FF1426279F60}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ISL.Reidentification.Configurations.Server", "ISL.Reidentification.WebApps.Configurations\ISL.Reidentification.Configurations.Server\ISL.Reidentification.Configurations.Server.csproj", "{60BB73D7-D01C-4E4B-ADFD-BE9F88DC695E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ISL.ReIdentification.Configurations.Server", "ISL.Reidentification.WebApps.Configurations\ISL.Reidentification.Configurations.Server\ISL.ReIdentification.Configurations.Server.csproj", "{60BB73D7-D01C-4E4B-ADFD-BE9F88DC695E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ISL.Reidentification.Configurations.Server.Tests.Acceptance", "ISL.Reidentification.WebApps.Configurations\ISL.Reidentification.Configurations.Server.Tests.Acceptance\ISL.Reidentification.Configurations.Server.Tests.Acceptance.csproj", "{57D74F54-41AE-44D0-BC16-7E16DB8F3CD4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ISL.ReIdentification.Configurations.Server.Tests.Acceptance", "ISL.Reidentification.WebApps.Configurations\ISL.Reidentification.Configurations.Server.Tests.Acceptance\ISL.ReIdentification.Configurations.Server.Tests.Acceptance.csproj", "{57D74F54-41AE-44D0-BC16-7E16DB8F3CD4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ISL.Reidentification.Infrastructure", "ISL.Reidentification.Infrastructure\ISL.Reidentification.Infrastructure.csproj", "{51DCBB01-F93A-4C15-AD64-C8D39EBD2D8E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ISL.ReIdentification.Infrastructure", "ISL.Reidentification.Infrastructure\ISL.ReIdentification.Infrastructure.csproj", "{51DCBB01-F93A-4C15-AD64-C8D39EBD2D8E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -80,7 +78,6 @@ Global
 		{BAD10164-EB32-4B36-8AF4-FCBDBCFB024B} = {84F16610-F68A-42B8-A7C0-839F4B02A4C5}
 		{4738B57B-7085-46F6-BB08-14A51A26896C} = {0B4CF0B3-C90F-4F0C-8D99-3C67A454DCA0}
 		{7A1035B7-53B9-437D-B5FE-82CE0CF4973D} = {959E2D1E-E4F8-462F-B4B3-8AB0DAF0416B}
-		{959E2D1E-E4F8-462F-B4B3-8AB0DAF0416B} = {648C7C28-216F-4C3F-8E7D-F08DE9A87F89}
 		{6521DC95-959B-4EDA-98C1-8D6E1B14576F} = {57C650B0-0156-4E70-AE12-113039EF15D3}
 		{0EEBCE83-F94E-4571-B114-FF1426279F60} = {6521DC95-959B-4EDA-98C1-8D6E1B14576F}
 		{60BB73D7-D01C-4E4B-ADFD-BE9F88DC695E} = {6521DC95-959B-4EDA-98C1-8D6E1B14576F}
