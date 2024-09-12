@@ -2,12 +2,12 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using ISL.Reidentification.Core.Models.Foundations.UserAccesses;
+using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications
+namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications
 {
-    public partial class ReidentificationStorageBroker
+    public partial class ReIdentificationStorageBroker
     {
         private void AddUserAccessConfigurations(EntityTypeBuilder<UserAccess> builder)
         {

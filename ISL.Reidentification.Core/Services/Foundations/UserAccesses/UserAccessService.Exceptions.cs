@@ -5,13 +5,13 @@
 using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
-using ISL.Reidentification.Core.Models.Foundations.UserAccesses;
-using ISL.Reidentification.Core.Models.Foundations.UserAccesses.Exceptions;
+using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
+using ISL.ReIdentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Xeptions;
 
-namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
+namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
 {
     public partial class UserAccessService
     {

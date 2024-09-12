@@ -3,25 +3,25 @@
 // ---------------------------------------------------------
 
 using System.Threading.Tasks;
-using ISL.Reidentification.Core.Brokers.DateTimes;
-using ISL.Reidentification.Core.Brokers.Loggings;
-using ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications;
-using ISL.Reidentification.Core.Models.Foundations.UserAccesses;
+using ISL.ReIdentification.Core.Brokers.DateTimes;
+using ISL.ReIdentification.Core.Brokers.Loggings;
+using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
+using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 
-namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
+namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
 {
     public partial class UserAccessService : IUserAccessService
     {
-        private readonly IReidentificationStorageBroker reidentificationStorageBroker;
+        private readonly IReIdentificationStorageBroker ReIdentificationStorageBroker;
         private readonly IDateTimeBroker dateTimeBroker;
         private readonly ILoggingBroker loggingBroker;
 
         public UserAccessService(
-            IReidentificationStorageBroker reidentificationStorageBroker,
+            IReIdentificationStorageBroker ReIdentificationStorageBroker,
             IDateTimeBroker dateTimeBroker,
             ILoggingBroker loggingBroker)
         {
-            this.reidentificationStorageBroker = reidentificationStorageBroker;
+            this.ReIdentificationStorageBroker = ReIdentificationStorageBroker;
             this.dateTimeBroker = dateTimeBroker;
             this.loggingBroker = loggingBroker;
         }
@@ -31,7 +31,7 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
             {
                 await ValidateUserAccessOnAddAsync(userAccess);
 
-                return await this.reidentificationStorageBroker.InsertUserAccessAsync(userAccess);
+                return await this.ReIdentificationStorageBroker.InsertUserAccessAsync(userAccess);
             });
 
         public ValueTask<UserAccess> ModifyUserAccessAsync(UserAccess userAccess) =>

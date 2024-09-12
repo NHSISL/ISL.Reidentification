@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>disable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
-    <SpaRoot>..\ISL.Reidentification.FrontEnd.Client</SpaRoot>
+    <SpaRoot>..\ISL.ReIdentification.FrontEnd.Client</SpaRoot>
     <SpaProxyLaunchCommand>npm run dev</SpaProxyLaunchCommand>
     <SpaProxyServerUrl>https://localhost:5173</SpaProxyServerUrl>
   </PropertyGroup>
@@ -22,8 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ISL.Reidentification.Core\ISL.Reidentification.Core.csproj" />
-    <ProjectReference Include="..\isl.reidentification.configurations.client\ISL.Reidentification.Configurations.Client.esproj" />
+    <ProjectReference Include="..\..\ISL.ReIdentification.Core\ISL.ReIdentification.Core.csproj" />
+    <ProjectReference Include="..\ISL.ReIdentification.Configurations.Client\ISL.ReIdentification.Configurations.Client.esproj" />
   </ItemGroup>
 
 </Project>

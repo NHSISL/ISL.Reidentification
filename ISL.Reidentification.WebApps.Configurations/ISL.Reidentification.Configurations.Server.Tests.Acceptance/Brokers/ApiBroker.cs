@@ -6,7 +6,7 @@ using System.Net.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
 using RESTFulSense.Clients;
 
-namespace ISL.Reidentification.Configurations.Server.Tests.Acceptance.Brokers
+namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Brokers
 {
     public partial class ApiBroker
     {
