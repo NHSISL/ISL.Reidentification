@@ -37,7 +37,6 @@ export const lookupViewService = {
                     x.data.forEach((lookup: LookupView) => {
                         lookups.push(new LookupView(
                             lookup.id,
-                            lookup.lookupType,
                             lookup.name,
                             lookup.value,
                             lookup.createdBy,
@@ -75,7 +74,6 @@ export const lookupViewService = {
                 const lookup = response.data.pages[0].data[0];
                 const lookupView = new LookupView(
                     lookup.id,
-                    lookup.lookupType,
                     lookup.name,
                     lookup.value,
                     lookup.createdBy,

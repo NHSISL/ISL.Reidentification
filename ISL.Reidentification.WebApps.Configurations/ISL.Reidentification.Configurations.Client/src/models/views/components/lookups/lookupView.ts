@@ -2,7 +2,6 @@ import { Guid } from 'guid-typescript';
 
 export class LookupView {
     public id: Guid;
-    public lookupType: string;
     public name: string;
     public value: string;
     public createdBy?: string;
@@ -12,7 +11,6 @@ export class LookupView {
 
     constructor(
         id: Guid,
-        lookupType?: string,
         name?: string,
         value?: string,
         createdBy?: string,
@@ -21,7 +19,6 @@ export class LookupView {
         updatedDate?: Date,
     ) {
         this.id = id;
-        this.lookupType = lookupType || "";
         this.name = name || "";
         this.value = value || "";
         this.createdBy = createdBy !== undefined ? createdBy : '';
