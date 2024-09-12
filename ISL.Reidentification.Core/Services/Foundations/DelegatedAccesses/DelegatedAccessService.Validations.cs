@@ -178,31 +178,31 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
             }
         }
 
-        //private static async ValueTask ValidateAgainstStorageDelegatedAccessOnModifyAsync(
-        //    DelegatedAccess inputDelegatedAccess, DelegatedAccess storageDelegatedAccess)
-        //{
-        //    Validate(
-        //        (Rule: await IsNotSameAsync(
-        //            first: inputDelegatedAccess.CreatedBy,
-        //            second: storageDelegatedAccess.CreatedBy,
-        //            secondName: nameof(DelegatedAccess.CreatedBy)),
+        private static async ValueTask ValidateAgainstStorageDelegatedAccessOnModifyAsync(
+            DelegatedAccess inputDelegatedAccess, DelegatedAccess storageDelegatedAccess)
+        {
+            Validate(
+                (Rule: await IsNotSameAsync(
+                    first: inputDelegatedAccess.CreatedBy,
+                    second: storageDelegatedAccess.CreatedBy,
+                    secondName: nameof(DelegatedAccess.CreatedBy)),
 
-        //        Parameter: nameof(DelegatedAccess.CreatedBy)),
+                Parameter: nameof(DelegatedAccess.CreatedBy)),
 
-        //        (Rule: await IsNotSameAsync(
-        //            firstDate: inputDelegatedAccess.CreatedDate,
-        //            secondDate: storageDelegatedAccess.CreatedDate,
-        //            secondDateName: nameof(DelegatedAccess.CreatedDate)),
+                (Rule: await IsNotSameAsync(
+                    firstDate: inputDelegatedAccess.CreatedDate,
+                    secondDate: storageDelegatedAccess.CreatedDate,
+                    secondDateName: nameof(DelegatedAccess.CreatedDate)),
 
-        //        Parameter: nameof(DelegatedAccess.CreatedDate)),
+                Parameter: nameof(DelegatedAccess.CreatedDate)),
 
-        //        (Rule: await IsSameAsync(
-        //            firstDate: inputDelegatedAccess.UpdatedDate,
-        //            secondDate: storageDelegatedAccess.UpdatedDate,
-        //            secondDateName: nameof(DelegatedAccess.UpdatedDate)),
+                (Rule: await IsSameAsync(
+                    firstDate: inputDelegatedAccess.UpdatedDate,
+                    secondDate: storageDelegatedAccess.UpdatedDate,
+                    secondDateName: nameof(DelegatedAccess.UpdatedDate)),
 
-        //        Parameter: nameof(DelegatedAccess.UpdatedDate)));
-        //}
+                Parameter: nameof(DelegatedAccess.UpdatedDate)));
+        }
 
         private static async ValueTask<dynamic> IsInvalidAsync(Guid id) => new
         {
