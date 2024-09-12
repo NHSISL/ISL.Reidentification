@@ -91,7 +91,12 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
 
             invalidUserAccessException.AddData(
                 key: nameof(UserAccess.UpdatedDate),
-                values: "Date is invalid");
+                values:
+                    new[]
+                    {
+                        "Date is invalid",
+                        $"Date is the same as {nameof(UserAccess.CreatedDate)}"
+                    });
 
             invalidUserAccessException.AddData(
                 key: nameof(UserAccess.UpdatedBy),
@@ -195,6 +200,7 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
         [Fact]
         public async Task ShouldThrowValidationExceptionOnModiyIfUserAccessHasSameCreatedDateUpdatedDateAndLogItAsync()
         {
+            // given
             DateTimeOffset randomDatTimeOffset = GetRandomDateTimeOffset();
             UserAccess randomUserAccess = CreateRandomUserAccess(randomDatTimeOffset);
             var invalidUserAccess = randomUserAccess;
@@ -219,6 +225,64 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
 
             // then
             actualUserAccessVaildationException.Should().BeEquivalentTo(expectedUserAccessValidationException);
+
+            this.loggingBrokerMock.Verify(broker =>
+               broker.LogErrorAsync(It.Is(
+                   SameExceptionAs(expectedUserAccessValidationException))),
+                       Times.Once);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+        }
+
+        [Theory]
+        [InlineData(1)]
+        [InlineData(-61)]
+        public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsNotRecentAndLogItAsync(
+            int invalidSeconds)
+        {
+            // given
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            DateTimeOffset now = randomDateTimeOffset;
+            DateTimeOffset startDate = now.AddSeconds(-60);
+            DateTimeOffset endDate = now.AddSeconds(0);
+            UserAccess randomUserAccess = CreateRandomUserAccess(randomDateTimeOffset);
+            UserAccess invalidUserAccess = randomUserAccess;
+            invalidUserAccess.UpdatedDate = randomDateTimeOffset.AddSeconds(invalidSeconds);
+
+            var invalidUserAccessException = new InvalidUserAccessException(
+                message: "Invalid user access. Please correct the errors and try again.");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.UpdatedDate),
+                values:
+                [
+                    $"Date is not recent." +
+                    $" Expected a value between {startDate} and {endDate} but found {randomUserAccess.UpdatedDate}"
+                ]);
+
+            var expectedUserAccessValidationException = new UserAccessValidationException(
+                message: "UserAccess validation error occurred, please fix errors and try again.",
+                innerException: invalidUserAccessException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            // when
+            ValueTask<UserAccess> modifyUserAccessTask =
+                this.userAccessService.ModifyUserAccessAsync(invalidUserAccess);
+
+            UserAccessValidationException actualUserAccessVaildationException =
+                await Assert.ThrowsAsync<UserAccessValidationException>(modifyUserAccessTask.AsTask);
+
+            // then
+            actualUserAccessVaildationException.Should().BeEquivalentTo(expectedUserAccessValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                broker.LogErrorAsync(It.Is(
