@@ -4,10 +4,10 @@
 
 using FluentAssertions;
 using Force.DeepCloner;
-using ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses;
+using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
 using Moq;
 
-namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAccesses
+namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAccesses
 {
     public partial class DelegatedAccessesTests
     {
@@ -28,11 +28,11 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(randomDateOffset);
 
-            this.reidentificationStorageBroker.Setup(broker =>
+            this.ReIdentificationStorageBroker.Setup(broker =>
                 broker.SelectDelegatedAccessByIdAsync(inputDelegatedAccess.Id))
                     .ReturnsAsync(storageDelegatedAccess);
 
-            this.reidentificationStorageBroker.Setup(broker =>
+            this.ReIdentificationStorageBroker.Setup(broker =>
                 broker.UpdateDelegatedAccessAsync(inputDelegatedAccess))
                     .ReturnsAsync(updatedDelegatedAccess);
 
@@ -47,15 +47,15 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
-            this.reidentificationStorageBroker.Verify(broker =>
+            this.ReIdentificationStorageBroker.Verify(broker =>
                 broker.SelectDelegatedAccessByIdAsync(inputDelegatedAccess.Id),
                     Times.Once);
 
-            this.reidentificationStorageBroker.Verify(broker =>
+            this.ReIdentificationStorageBroker.Verify(broker =>
                 broker.UpdateDelegatedAccessAsync(inputDelegatedAccess),
                     Times.Once);
 
-            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }

@@ -4,7 +4,7 @@
 
 using Xeptions;
 
-namespace ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses.Exceptions
+namespace ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses.Exceptions
 {
     public class NotFoundDelegatedAccessException : Xeption
     {
