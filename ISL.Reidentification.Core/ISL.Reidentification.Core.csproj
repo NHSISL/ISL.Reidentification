@@ -30,10 +30,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="ISL.Reidentification.Core.Tests.Unit" />
-		<InternalsVisibleTo Include="ISL.Reidentification.Api" />
-		<InternalsVisibleTo Include="ISL.Reidentification.Api.Tests.Acceptance" />
-		<InternalsVisibleTo Include="ISL.Reidentification.Clients" />
+		<InternalsVisibleTo Include="ISL.ReIdentification.Core.Tests.Unit" />
+		<InternalsVisibleTo Include="ISL.ReIdentification.Api" />
+		<InternalsVisibleTo Include="ISL.ReIdentification.Api.Tests.Acceptance" />
+		<InternalsVisibleTo Include="ISL.ReIdentification.Clients" />
 		<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
 	</ItemGroup>
 

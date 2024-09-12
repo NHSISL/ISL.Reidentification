@@ -3,25 +3,25 @@
 // ---------------------------------------------------------
 
 using System.Threading.Tasks;
-using ISL.Reidentification.Core.Brokers.DateTimes;
-using ISL.Reidentification.Core.Brokers.Loggings;
-using ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications;
-using ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses;
+using ISL.ReIdentification.Core.Brokers.DateTimes;
+using ISL.ReIdentification.Core.Brokers.Loggings;
+using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
+using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
 
-namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
+namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
 {
     public partial class DelegatedAccessService : IDelegatedAccessService
     {
-        private readonly IReidentificationStorageBroker reidentificationStorageBroker;
+        private readonly IReIdentificationStorageBroker ReIdentificationStorageBroker;
         private readonly IDateTimeBroker dateTimeBroker;
         private readonly ILoggingBroker loggingBroker;
 
         public DelegatedAccessService(
-            IReidentificationStorageBroker reidentificationStorageBroker,
+            IReIdentificationStorageBroker ReIdentificationStorageBroker,
             IDateTimeBroker dateTimeBroker,
             ILoggingBroker loggingBroker)
         {
-            this.reidentificationStorageBroker = reidentificationStorageBroker;
+            this.ReIdentificationStorageBroker = ReIdentificationStorageBroker;
             this.dateTimeBroker = dateTimeBroker;
             this.loggingBroker = loggingBroker;
         }
@@ -29,7 +29,7 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
             TryCatch(async () =>
             {
                 await ValidateDelegatedAccessOnAdd(delegatedAccess);
-                return await this.reidentificationStorageBroker.InsertDelegatedAccessAsync(delegatedAccess);
+                return await this.ReIdentificationStorageBroker.InsertDelegatedAccessAsync(delegatedAccess);
             });
 
         public ValueTask<DelegatedAccess> ModifyDelegatedAccessAsync(DelegatedAccess delegatedAccess) =>
