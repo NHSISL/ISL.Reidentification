@@ -1,5 +1,5 @@
 {
-  "name": "isl.reidentification.frontend.client",
+  "name": "isl.ReIdentification.frontend.client",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -18,7 +18,7 @@
     "@tanstack/react-query-devtools": "^5.54.1",
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
-    "isl.reidentification.frontend.client": "file:",
+    "isl.ReIdentification.frontend.client": "file:",
     "moment": "2.30.1",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.4",

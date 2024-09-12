@@ -5,13 +5,13 @@
 using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
-using ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses;
-using ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses.Exceptions;
+using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
+using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses.Exceptions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Xeptions;
 
-namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
+namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
 {
     public partial class DelegatedAccessService
     {

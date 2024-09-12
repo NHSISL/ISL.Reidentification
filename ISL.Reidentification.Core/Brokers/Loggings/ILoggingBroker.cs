@@ -5,7 +5,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace ISL.Reidentification.Core.Brokers.Loggings
+namespace ISL.ReIdentification.Core.Brokers.Loggings
 {
     public interface ILoggingBroker
     {

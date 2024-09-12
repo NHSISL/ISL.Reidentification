@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
-namespace ISL.Reidentification.Configurations.Server.Controllers
+namespace ISL.ReIdentification.Configurations.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

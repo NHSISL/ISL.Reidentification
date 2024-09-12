@@ -4,10 +4,10 @@
 
 using System;
 
-namespace ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses
+namespace ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses
 {
 
-    public class DelegatedAccess
+    public class DelegatedAccess : IKey, IAudit
     {
         public Guid Id { get; set; }
         public string RequesterEmail { get; set; }

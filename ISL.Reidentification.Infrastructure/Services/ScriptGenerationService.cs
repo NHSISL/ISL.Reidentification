@@ -9,7 +9,7 @@ using ADotNet.Models.Pipelines.GithubPipelines.DotNets;
 using ADotNet.Models.Pipelines.GithubPipelines.DotNets.Tasks;
 using ADotNet.Models.Pipelines.GithubPipelines.DotNets.Tasks.SetupDotNetTaskV3s;
 
-namespace ISL.Providers.Storages.Infrastructure.Services
+namespace ISL.ReIdentification.Infrastructure.Services
 {
     internal class ScriptGenerationService
     {
