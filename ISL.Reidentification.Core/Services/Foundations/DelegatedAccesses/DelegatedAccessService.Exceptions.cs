@@ -54,6 +54,15 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
 
                 throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsDelegatedAccessException);
             }
+            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
+            {
+                var concurrencyGemException =
+                    new LockedDelegatedAccessException(
+                        message: "Locked delegated access record error occurred, please try again.",
+                        innerException: dbUpdateConcurrencyException);
+
+                throw await CreateAndLogDependencyValidationExceptionAsync(concurrencyGemException);
+            }
             catch (DbUpdateException dbUpdateException)
             {
                 var failedOperationDelegatedAccessException =
