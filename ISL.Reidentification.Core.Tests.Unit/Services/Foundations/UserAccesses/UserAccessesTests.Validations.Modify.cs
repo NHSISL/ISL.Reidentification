@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using FluentAssertions;
+using Force.DeepCloner;
 using ISL.Reidentification.Core.Models.Foundations.UserAccesses;
 using ISL.Reidentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using Moq;
@@ -346,6 +347,65 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.reidentificationStorageBroker.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task
+            ShouldThrowValidationExceptionIfStorageUserAccessCreatedDateIsNotSameAsUserAccessCreatedDateAndLogItAsync()
+        {
+            // given
+            int randomNegativeNumber = GetRandomNegativeNumber();
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            UserAccess randomUserAccess = CreateRandomModifyUserAccess(randomDateTimeOffset);
+            UserAccess invalidUserAccess = randomUserAccess;
+            UserAccess storageUserAccess = invalidUserAccess.DeepClone();
+            storageUserAccess.CreatedDate = randomDateTimeOffset.AddMinutes(randomNegativeNumber);
+            storageUserAccess.UpdatedDate = randomDateTimeOffset.AddMinutes(randomNegativeNumber);
+
+            var invalidUserAccessException = new InvalidUserAccessException(
+                message: "Invalid user access. Please correct the errors and try again.");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.CreatedDate),
+                values: $"Date is not the same as {nameof(UserAccess.CreatedDate)}");
+
+            var expectedUserAccessValidationException = new UserAccessValidationException(
+                message: "UserAccess validation error occurred, please fix errors and try again.",
+                innerException: invalidUserAccessException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            this.reidentificationStorageBroker.Setup(broker =>
+                broker.SelectUserAccessByIdAsync(invalidUserAccess.Id))
+                    .ReturnsAsync(storageUserAccess);
+
+            // when
+            ValueTask<UserAccess> modifyUserAccessTask =
+                this.userAccessService.ModifyUserAccessAsync(invalidUserAccess);
+
+            UserAccessValidationException actualUserAccessValidationException =
+                await Assert.ThrowsAsync<UserAccessValidationException>(modifyUserAccessTask.AsTask);
+
+            // then
+            actualUserAccessValidationException.Should().BeEquivalentTo(expectedUserAccessValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.reidentificationStorageBroker.Verify(broker =>
+                broker.SelectUserAccessByIdAsync(invalidUserAccess.Id),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(expectedUserAccessValidationException))),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
