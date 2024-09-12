@@ -4,6 +4,7 @@ using ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ISL.Reidentification.Core.Migrations
 {
     [DbContext(typeof(ReidentificationStorageBroker))]
-    partial class ReidentificationStorageBrokerModelSnapshot : ModelSnapshot
+    [Migration("20240912121507_AccessAudit")]
+    partial class AccessAudit
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -18,7 +18,7 @@ namespace ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications
                 .IsRequired();
 
             builder.Property(accessAudit => accessAudit.HasAccess)
-                .IsRequired(false);
+                .IsRequired();
 
             builder.Property(accessAudit => accessAudit.CreatedBy)
                 .HasMaxLength(255)

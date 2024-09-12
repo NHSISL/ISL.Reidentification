@@ -12,7 +12,7 @@ namespace ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications
     public partial interface IReidentificationStorageBroker
     {
         ValueTask<AccessAudit> InsertAccessAuditAsync(AccessAudit accessAudit);
-        ValueTask<IQueryable<AccessAudit>> SelectAllAccessAuditAsync();
+        ValueTask<IQueryable<AccessAudit>> SelectAllAccessAuditsAsync();
         ValueTask<AccessAudit> SelectAccessAuditByIdAsync(Guid accessAuditId);
         ValueTask<AccessAudit> UpdateAccessAuditAsync(AccessAudit accessAudit);
         ValueTask<AccessAudit> DeleteAccessAuditAsync(AccessAudit accessAudit);

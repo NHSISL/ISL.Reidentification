@@ -15,19 +15,19 @@ namespace ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications
     {
        public DbSet<AccessAudit> AccessAudit { get; set; }
 
-        public async ValueTask<AccessAudit> InsertAccessAuditsAsync(AccessAudit accessAudit) =>
+        public async ValueTask<AccessAudit> InsertAccessAuditAsync(AccessAudit accessAudit) =>
             await InsertAsync(accessAudit);
 
-        public async ValueTask<IQueryable<AccessAudit>> SelectAllAccessAuditsesAsync() =>
+        public async ValueTask<IQueryable<AccessAudit>> SelectAllAccessAuditsAsync() =>
             await SelectAllAsync<AccessAudit>();
 
-        public async ValueTask<AccessAudit> SelectAccessAuditsByIdAsync(Guid accessAuditId) =>
+        public async ValueTask<AccessAudit> SelectAccessAuditByIdAsync(Guid accessAuditId) =>
             await SelectAsync<AccessAudit>(accessAuditId);
 
-        public async ValueTask<AccessAudit> UpdateAccessAuditsAsync(AccessAudit accessAudit) =>
+        public async ValueTask<AccessAudit> UpdateAccessAuditAsync(AccessAudit accessAudit) =>
             await UpdateAsync(accessAudit);
             
-        public async ValueTask<AccessAudit> DeleteAccessAuditsAsync(AccessAudit accessAudit) =>
+        public async ValueTask<AccessAudit> DeleteAccessAuditAsync(AccessAudit accessAudit) =>
             await DeleteAsync(accessAudit);
     }
 }
