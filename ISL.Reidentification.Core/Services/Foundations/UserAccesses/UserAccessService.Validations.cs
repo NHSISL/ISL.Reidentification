@@ -99,7 +99,14 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
                     maybeUserAccess.CreatedDate,
                     nameof(maybeUserAccess.CreatedDate)),
 
-                Parameter: nameof(UserAccess.CreatedDate)));
+                Parameter: nameof(UserAccess.CreatedDate)),
+
+                (Rule: await IsSameAsync(
+                    userAccess.UpdatedDate,
+                    maybeUserAccess.UpdatedDate,
+                    nameof(maybeUserAccess.UpdatedDate)),
+
+                Parameter: nameof(UserAccess.UpdatedDate)));
         }
 
         private static void ValidateUserAccessIsNotNull(UserAccess userAccess)
