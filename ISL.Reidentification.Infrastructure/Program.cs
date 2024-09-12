@@ -2,7 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using ISL.Providers.Storages.Infrastructure.Services;
+using ISL.ReIdentification.Infrastructure.Services;
 
 namespace ISL.ReIdentification.Infrastructure
 {
