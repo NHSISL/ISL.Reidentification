@@ -293,5 +293,59 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.reidentificationStorageBroker.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfStorageUserAccessDoesNotExistAndLogItAsync()
+        {
+            // given
+            int randomNegativeNumber = GetRandomNegativeNumber();
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            UserAccess randomUserAccess = CreateRandomUserAccess(randomDateTimeOffset);
+            UserAccess nonExistingUserAccess = randomUserAccess;
+            nonExistingUserAccess.CreatedDate = randomDateTimeOffset.AddMinutes(randomNegativeNumber);
+            UserAccess nullUserAccess = null;
+
+            var notFoundUserAccessException = new NotFoundUserAccessException(
+                message: $"User access not found with id: {nonExistingUserAccess.Id}");
+
+            var expectedUserAccessValidationException = new UserAccessValidationException(
+                message: "UserAccess validation error occurred, please fix errors and try again.",
+                innerException: notFoundUserAccessException);
+
+            this.reidentificationStorageBroker.Setup(broker =>
+                broker.SelectUserAccessByIdAsync(nonExistingUserAccess.Id))
+                    .ReturnsAsync(nullUserAccess);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            // when
+            ValueTask<UserAccess> modifyUserAccessTask =
+                this.userAccessService.ModifyUserAccessAsync(nonExistingUserAccess);
+
+            UserAccessValidationException actualUserAccessVaildationException =
+                await Assert.ThrowsAsync<UserAccessValidationException>(modifyUserAccessTask.AsTask);
+
+            // then
+            actualUserAccessVaildationException.Should().BeEquivalentTo(expectedUserAccessValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.reidentificationStorageBroker.Verify(broker =>
+                broker.SelectUserAccessByIdAsync(nonExistingUserAccess.Id),
+                Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+               broker.LogErrorAsync(It.Is(
+                   SameExceptionAs(expectedUserAccessValidationException))),
+                       Times.Once);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+        }
     }
 }

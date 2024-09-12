@@ -6,9 +6,9 @@ using Xeptions;
 
 namespace ISL.Reidentification.Core.Models.Foundations.UserAccesses.Exceptions
 {
-    public class NullUserAccessException : Xeption
+    public class NotFoundUserAccessException : Xeption
     {
-        public NullUserAccessException(string message)
+        public NotFoundUserAccessException(string message)
             : base(message)
         { }
     }
