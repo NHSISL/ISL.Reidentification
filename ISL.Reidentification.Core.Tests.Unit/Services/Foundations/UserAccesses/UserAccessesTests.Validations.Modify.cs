@@ -191,5 +191,43 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
             this.reidentificationStorageBroker.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModiyIfUserAccessHasSameCreatedDateUpdatedDateAndLogItAsync()
+        {
+            DateTimeOffset randomDatTimeOffset = GetRandomDateTimeOffset();
+            UserAccess randomUserAccess = CreateRandomUserAccess(randomDatTimeOffset);
+            var invalidUserAccess = randomUserAccess;
+
+            var invalidUserAccessException = new InvalidUserAccessException(
+                message: "Invalid user access. Please correct the errors and try again.");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.UpdatedDate),
+                values: $"Date is the same as {nameof(UserAccess.CreatedDate)}");
+
+            var expectedUserAccessValidationException = new UserAccessValidationException(
+                message: "UserAccess validation error occurred, please fix errors and try again.",
+                innerException: invalidUserAccessException);
+
+            // when
+            ValueTask<UserAccess> modifyUserAccessTask =
+                this.userAccessService.ModifyUserAccessAsync(invalidUserAccess);
+
+            UserAccessValidationException actualUserAccessVaildationException =
+                await Assert.ThrowsAsync<UserAccessValidationException>(modifyUserAccessTask.AsTask);
+
+            // then
+            actualUserAccessVaildationException.Should().BeEquivalentTo(expectedUserAccessValidationException);
+
+            this.loggingBrokerMock.Verify(broker =>
+               broker.LogErrorAsync(It.Is(
+                   SameExceptionAs(expectedUserAccessValidationException))),
+                       Times.Once);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+        }
     }
 }
