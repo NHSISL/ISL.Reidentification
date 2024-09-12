@@ -119,5 +119,54 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.reidentificationStorageBroker.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowDependencyValidationExceptionOnModifyIfDbUpdateConcurrencyOccursAndLogItAsync()
+        {
+            // given
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            UserAccess randomUserAccess = CreateRandomUserAccess(randomDateTimeOffset);
+            var dbUpdateConcurrencyException = new DbUpdateConcurrencyException();
+
+            var lockedUserAccessException = new LockedUserAccessException(
+                message: "Locked user access record error occurred, please try again.",
+                innerException: dbUpdateConcurrencyException);
+
+            var expectedUserAccessDependencyValidationException = new UserAccessDependencyValidationException(
+                message: "UserAccess dependency validation error occurred, fix errors and try again.",
+                innerException: lockedUserAccessException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ThrowsAsync(dbUpdateConcurrencyException);
+
+            // when
+            ValueTask<UserAccess> modifyUserAccessTask =
+                this.userAccessService.ModifyUserAccessAsync(randomUserAccess);
+
+            UserAccessDependencyValidationException actualUserAccessDependencyValidationException =
+                await Assert.ThrowsAsync<UserAccessDependencyValidationException>(modifyUserAccessTask.AsTask);
+
+            // then
+            actualUserAccessDependencyValidationException.Should()
+                .BeEquivalentTo(expectedUserAccessDependencyValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedUserAccessDependencyValidationException))),
+                        Times.Once);
+
+            this.reidentificationStorageBroker.Verify(broker =>
+                broker.SelectUserAccessByIdAsync(randomUserAccess.Id),
+                    Times.Never());
+
+            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
