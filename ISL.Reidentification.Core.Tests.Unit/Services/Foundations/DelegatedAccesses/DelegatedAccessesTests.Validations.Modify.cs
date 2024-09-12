@@ -66,7 +66,7 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
             };
 
             var invalidDelegatedAccessException = new InvalidDelegatedAccessException(
-                message: "DelegatedAccess is invalid, please fix the errors and try again.");
+                message: "Invalid delegated access. Please correct the errors and try again.");
 
             invalidDelegatedAccessException.AddData(
                 key: nameof(DelegatedAccess.Id),
@@ -78,7 +78,7 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
 
             invalidDelegatedAccessException.AddData(
                 key: nameof(DelegatedAccess.RecipientEmail),
-                values: "Url is invalid");
+                values: "Text is invalid");
 
             invalidDelegatedAccessException.AddData(
                 key: nameof(DelegatedAccess.IdentifierColumn),

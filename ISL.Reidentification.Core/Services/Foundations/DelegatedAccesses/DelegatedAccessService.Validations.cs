@@ -92,6 +92,37 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
         private async ValueTask ValidateDelegatedAccessOnModify(DelegatedAccess delegatedAccess)
         {
             ValidateDelegatedAccessIsNotNull(delegatedAccess);
+
+            Validate(
+                (Rule: await IsInvalidAsync(delegatedAccess.Id), Parameter: nameof(DelegatedAccess.Id)),
+
+                (Rule: await IsInvalidAsync(
+                    delegatedAccess.RequesterEmail),
+
+                Parameter: nameof(DelegatedAccess.RequesterEmail)),
+
+                (Rule: await IsInvalidAsync(
+                    delegatedAccess.RecipientEmail),
+
+                Parameter: nameof(DelegatedAccess.RecipientEmail)),
+
+                (Rule: await IsInvalidAsync(
+                    delegatedAccess.IdentifierColumn),
+
+                Parameter: nameof(DelegatedAccess.IdentifierColumn)),
+
+                (Rule: await IsInvalidAsync(delegatedAccess.CreatedBy), Parameter: nameof(DelegatedAccess.CreatedBy)),
+                (Rule: await IsInvalidAsync(delegatedAccess.UpdatedBy), Parameter: nameof(DelegatedAccess.UpdatedBy)),
+
+                (Rule: await IsInvalidAsync(
+                    delegatedAccess.CreatedDate),
+
+                Parameter: nameof(DelegatedAccess.CreatedDate)),
+
+                (Rule: await IsInvalidAsync(
+                    delegatedAccess.UpdatedDate),
+
+                Parameter: nameof(DelegatedAccess.UpdatedDate)));
         }
 
         private static void ValidateDelegatedAccessIsNotNull(DelegatedAccess delegatedAccess)
