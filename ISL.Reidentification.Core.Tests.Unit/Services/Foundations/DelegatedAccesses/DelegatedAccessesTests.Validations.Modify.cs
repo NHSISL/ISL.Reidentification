@@ -354,7 +354,7 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
 
             var expectedDelegatedAccessValidationException =
                 new DelegatedAccessValidationException(
-                    message: "DelegatedAccess validation error occurred, fix errors and try again.",
+                    message: "DelegatedAccess validation error occurred, please fix errors and try again.",
                     innerException: notFoundDelegatedAccessException);
 
             this.reidentificationStorageBroker.Setup(broker =>

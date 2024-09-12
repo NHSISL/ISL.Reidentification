@@ -47,15 +47,15 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
                 Parameter: nameof(DelegatedAccess.UpdatedDate)),
 
                 (Rule: await IsNotSameAsync(
-                    createBy: delegatedAccess.UpdatedBy,
-                    updatedBy: delegatedAccess.CreatedBy,
-                    createdByName: nameof(DelegatedAccess.CreatedBy)),
+                    first: delegatedAccess.UpdatedBy,
+                    second: delegatedAccess.CreatedBy,
+                    secondName: nameof(DelegatedAccess.CreatedBy)),
 
                 Parameter: nameof(DelegatedAccess.UpdatedBy)),
 
                 (Rule: await IsNotSameAsync(
-                    createdDate: delegatedAccess.CreatedDate,
-                    updatedDate: delegatedAccess.UpdatedDate,
+                    firstDate: delegatedAccess.CreatedDate,
+                    secondDate: delegatedAccess.UpdatedDate,
                     nameof(DelegatedAccess.CreatedDate)),
 
                 Parameter: nameof(DelegatedAccess.UpdatedDate)),
@@ -168,6 +168,42 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
             }
         }
 
+        private static async ValueTask ValidateStorageDelegatedAccessAsync(DelegatedAccess maybeDelegatedAccess,
+            Guid id)
+        {
+            if (maybeDelegatedAccess is null)
+            {
+                throw new NotFoundDelegatedAccessException(
+                    message: $"DelegatedAccess not found with id: {id}");
+            }
+        }
+
+        private static async ValueTask ValidateAgainstStorageDelegatedAccessOnModifyAsync(
+            DelegatedAccess inputDelegatedAccess, DelegatedAccess storageDelegatedAccess)
+        {
+            Validate(
+                (Rule: await IsNotSameAsync(
+                    first: inputDelegatedAccess.CreatedBy,
+                    second: storageDelegatedAccess.CreatedBy,
+                    secondName: nameof(DelegatedAccess.CreatedBy)),
+
+                Parameter: nameof(DelegatedAccess.CreatedBy)),
+
+                (Rule: await IsNotSameAsync(
+                    firstDate: inputDelegatedAccess.CreatedDate,
+                    secondDate: storageDelegatedAccess.CreatedDate,
+                    secondDateName: nameof(DelegatedAccess.CreatedDate)),
+
+                Parameter: nameof(DelegatedAccess.CreatedDate)),
+
+                (Rule: await IsSameAsync(
+                    firstDate: inputDelegatedAccess.UpdatedDate,
+                    secondDate: storageDelegatedAccess.UpdatedDate,
+                    secondDateName: nameof(DelegatedAccess.UpdatedDate)),
+
+                Parameter: nameof(DelegatedAccess.UpdatedDate)));
+        }
+
         private static async ValueTask<dynamic> IsInvalidAsync(Guid id) => new
         {
             Condition = id == Guid.Empty,
@@ -205,21 +241,21 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
             };
 
         private static async ValueTask<dynamic> IsNotSameAsync(
-            DateTimeOffset createdDate,
-            DateTimeOffset updatedDate,
-            string createdDateName) => new
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
             {
-                Condition = createdDate != updatedDate,
-                Message = $"Date is not the same as {createdDateName}"
+                Condition = firstDate != secondDate,
+                Message = $"Date is not the same as {secondDateName}"
             };
 
         private static async ValueTask<dynamic> IsNotSameAsync(
-            string createBy,
-            string updatedBy,
-            string createdByName) => new
+            string first,
+            string second,
+            string secondName) => new
             {
-                Condition = createBy != updatedBy,
-                Message = $"Text is not the same as {createdByName}"
+                Condition = first != second,
+                Message = $"Text is not the same as {secondName}"
             };
 
         private async ValueTask<dynamic> IsNotRecentAsync(DateTimeOffset date)

@@ -18,9 +18,19 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
             DateTimeOffset randomDateOffset = GetRandomDateTimeOffset();
 
             DelegatedAccess randomDelegatedAccess = CreateRandomModifyDelegatedAccess(randomDateOffset);
-            DelegatedAccess inputDelegatedAccess = randomDelegatedAccess;
+            DelegatedAccess inputDelegatedAccess = randomDelegatedAccess.DeepClone();
+            DelegatedAccess storageDelegatedAccess = randomDelegatedAccess.DeepClone();
+            storageDelegatedAccess.UpdatedDate = storageDelegatedAccess.CreatedDate;
             DelegatedAccess updatedDelegatedAccess = inputDelegatedAccess.DeepClone();
-            DelegatedAccess expectedDelegatedAccess = inputDelegatedAccess.DeepClone();
+            DelegatedAccess expectedDelegatedAccess = updatedDelegatedAccess.DeepClone();
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateOffset);
+
+            this.reidentificationStorageBroker.Setup(broker =>
+                broker.SelectDelegatedAccessByIdAsync(inputDelegatedAccess.Id))
+                    .ReturnsAsync(storageDelegatedAccess);
 
             this.reidentificationStorageBroker.Setup(broker =>
                 broker.UpdateDelegatedAccessAsync(inputDelegatedAccess))
@@ -35,6 +45,10 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.reidentificationStorageBroker.Verify(broker =>
+                broker.SelectDelegatedAccessByIdAsync(inputDelegatedAccess.Id),
                     Times.Once);
 
             this.reidentificationStorageBroker.Verify(broker =>

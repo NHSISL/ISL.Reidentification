@@ -32,6 +32,10 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
             {
                 throw await CreateAndLogValidationExceptionAsync(invalidDelegatedAccessException);
             }
+            catch (NotFoundDelegatedAccessException notFoundDelegatedAccessException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(notFoundDelegatedAccessException);
+            }
             catch (SqlException sqlException)
             {
                 var failedStorageDelegatedAccessException = new FailedStorageDelegatedAccessException(
@@ -94,7 +98,7 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
             return delegatedAccessDependencyException;
         }
 
-        private async ValueTask<DelegatedAccessDependencyValidationException> 
+        private async ValueTask<DelegatedAccessDependencyValidationException>
             CreateAndLogDependencyValidationExceptionAsync(Xeption exception)
         {
             var delegatedAccessDependencyValidationException = new DelegatedAccessDependencyValidationException(
