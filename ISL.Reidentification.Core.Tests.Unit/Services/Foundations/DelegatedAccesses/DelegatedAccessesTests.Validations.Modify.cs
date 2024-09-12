@@ -98,7 +98,11 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
 
             invalidDelegatedAccessException.AddData(
                 key: nameof(DelegatedAccess.UpdatedDate),
-                values: "Date is invalid");
+                new[]
+                    {
+                        "Date is invalid",
+                        $"Date is the same as {nameof(DelegatedAccess.CreatedDate)}"
+                    });
 
             var expectedDelegatedAccessValidationException =
                 new DelegatedAccessValidationException(
@@ -173,6 +177,10 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
             invalidDelegatedAccessException.AddData(
                 key: nameof(DelegatedAccess.UpdatedBy),
                 values: $"Text exceed max length of {invalidDelegatedAccess.UpdatedBy.Length - 1} characters");
+
+            invalidDelegatedAccessException.AddData(
+                key: nameof(DelegatedAccess.UpdatedDate),
+                values: $"Date is the same as {nameof(DelegatedAccess.CreatedDate)}");
 
             var expectedDelegatedAccessValidationException =
                 new DelegatedAccessValidationException(

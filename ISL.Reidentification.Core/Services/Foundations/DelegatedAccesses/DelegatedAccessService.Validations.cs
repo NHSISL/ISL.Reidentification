@@ -147,7 +147,14 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
                 (Rule: await IsInvalidLengthAsync(
                     delegatedAccess.UpdatedBy, 255),
 
-                Parameter: nameof(DelegatedAccess.UpdatedBy)));
+                Parameter: nameof(DelegatedAccess.UpdatedBy)),
+
+                (Rule: await IsSameAsync(
+                    firstDate: delegatedAccess.UpdatedDate,
+                    secondDate: delegatedAccess.CreatedDate,
+                    nameof(DelegatedAccess.CreatedDate)),
+
+                Parameter: nameof(DelegatedAccess.UpdatedDate)));
         }
 
         private static void ValidateDelegatedAccessIsNotNull(DelegatedAccess delegatedAccess)
@@ -184,6 +191,15 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
 
         private static async ValueTask<bool> IsExceedingLengthAsync(string text, int maxLength) =>
             (text ?? string.Empty).Length > maxLength;
+
+        private static async ValueTask<dynamic> IsSameAsync(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
+            {
+                Condition = firstDate == secondDate,
+                Message = $"Date is the same as {secondDateName}"
+            };
 
         private static async ValueTask<dynamic> IsNotSameAsync(
             DateTimeOffset createdDate,

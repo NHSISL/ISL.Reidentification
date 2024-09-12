@@ -15,7 +15,9 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
         public async Task ShouldModifyDelegatedAccessAsync()
         {
             //given
-            DelegatedAccess randomDelegatedAccess = CreateRandomDelegatedAccess();
+            DateTimeOffset randomDateOffset = GetRandomDateTimeOffset();
+
+            DelegatedAccess randomDelegatedAccess = CreateRandomModifyDelegatedAccess(randomDateOffset);
             DelegatedAccess inputDelegatedAccess = randomDelegatedAccess;
             DelegatedAccess updatedDelegatedAccess = inputDelegatedAccess.DeepClone();
             DelegatedAccess expectedDelegatedAccess = inputDelegatedAccess.DeepClone();
