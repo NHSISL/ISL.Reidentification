@@ -13,8 +13,8 @@ namespace ISL.Reidentification.Core.Models.Foundations.AccessAudit
         public string UserEmail { get; set; }
         public bool HasAccess { get; set; }
         public string CreatedBy { get; set; }
-        public DateTimeOffset CreatedWhen { get; set; }
+        public DateTimeOffset CreatedDate { get; set; }
         public string UpdatedBy { get; set; }
-        public DateTimeOffset UpdatedWhen { get; set; }
+        public DateTimeOffset UpdatedDate { get; set; }
     }
 }
