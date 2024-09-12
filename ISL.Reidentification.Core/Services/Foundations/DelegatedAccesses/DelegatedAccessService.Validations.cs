@@ -89,6 +89,11 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
                 Parameter: nameof(DelegatedAccess.UpdatedBy)));
         }
 
+        private async ValueTask ValidateDelegatedAccessOnModify(DelegatedAccess delegatedAccess)
+        {
+            ValidateDelegatedAccessIsNotNull(delegatedAccess);
+        }
+
         private static void ValidateDelegatedAccessIsNotNull(DelegatedAccess delegatedAccess)
         {
             if (delegatedAccess is null)
