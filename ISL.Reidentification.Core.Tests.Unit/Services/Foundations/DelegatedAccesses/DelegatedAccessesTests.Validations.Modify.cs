@@ -336,5 +336,63 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.reidentificationStorageBroker.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfStorageDelegatedAccessDoesNotExistAndLogItAsync()
+        {
+            //given
+            int randomNegative = GetRandomNegativeNumber();
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            DelegatedAccess randomDelegatedAccess = CreateRandomDelegatedAccess(randomDateTimeOffset);
+            DelegatedAccess nonExistingDelegatedAccess = randomDelegatedAccess;
+            nonExistingDelegatedAccess.CreatedDate = randomDateTimeOffset.AddMinutes(randomNegative);
+            DelegatedAccess nullDelegatedAccess = null;
+
+            var notFoundDelegatedAccessException =
+                new NotFoundDelegatedAccessException(
+                    message: $"DelegatedAccess not found with id: {nonExistingDelegatedAccess.Id}");
+
+            var expectedDelegatedAccessValidationException =
+                new DelegatedAccessValidationException(
+                    message: "DelegatedAccess validation error occurred, fix errors and try again.",
+                    innerException: notFoundDelegatedAccessException);
+
+            this.reidentificationStorageBroker.Setup(broker =>
+                broker.SelectDelegatedAccessByIdAsync(nonExistingDelegatedAccess.Id))
+                    .ReturnsAsync(nullDelegatedAccess);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            // when
+            ValueTask<DelegatedAccess> modifyDelegatedAccessTask =
+                this.delegatedAccessService.ModifyDelegatedAccessAsync(nonExistingDelegatedAccess);
+
+            DelegatedAccessValidationException actualDelegatedAccessValidationException =
+                await Assert.ThrowsAsync<DelegatedAccessValidationException>(
+                    modifyDelegatedAccessTask.AsTask);
+
+            // then
+            actualDelegatedAccessValidationException.Should().BeEquivalentTo(
+                expectedDelegatedAccessValidationException);
+
+            this.reidentificationStorageBroker.Verify(broker =>
+                broker.SelectDelegatedAccessByIdAsync(nonExistingDelegatedAccess.Id),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedDelegatedAccessValidationException))),
+                    Times.Once);
+
+            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
