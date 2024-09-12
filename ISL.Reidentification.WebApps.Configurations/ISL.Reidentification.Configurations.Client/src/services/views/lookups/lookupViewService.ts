@@ -1,129 +1,104 @@
 import { useEffect, useState } from "react";
-import { DataSetView } from "../../../models/views/components/dataSets/dataSetView";
-import { dataSetService } from "../../foundations/dataSetService";
-import { DataSet } from "../../../models/dataSets/dataSet";
+import { lookupService } from "../../foundations/lookupService";
+import { LookupView } from "../../../models/views/components/lookups/lookupView";
 import { Guid } from "guid-typescript";
 
-
-type DataSetViewServiceResponse = {
-    mappedDataSets: DataSetView[] | undefined;
-    pages: any;
+type LookupViewServiceResponse = {
+    mappedLookUps: LookupView[] | undefined;
+    pages: Array<{ data: LookupView[] }>;
     isLoading: boolean;
     fetchNextPage: () => void;
     isFetchingNextPage: boolean;
     hasNextPage: boolean;
-    data: any;
-    refetch: () => void
-}
+    data: { pages: Array<{ data: LookupView[] }> } | undefined;
+    refetch: () => void;
+};
 
-export const dataSetViewService = {
-    useCreateDataSet: () => {
-        return dataSetService.useCreateDataSet();
+export const lookupViewService = {
+    useCreateLookup: () => {
+        return lookupService.useCreatelookup();
     },
 
-    useGetAllDataSets: (searchTerm?: string): DataSetViewServiceResponse => {
-        try {
-            let query = `?$orderby=createdDate desc`;
+    useGetAllLookups: (searchTerm?: string): LookupViewServiceResponse => {
+        let query = `?$orderby=createdDate desc`;
 
-            if (searchTerm) {
-                query = query + `&$filter=contains(dataSetName,'${searchTerm}')`;
-            }
+        if (searchTerm) {
+            query = query + `&$filter=contains(Name,'${searchTerm}')`;
+        }
 
-            const response = dataSetService.useRetrieveAllDataSetPages(query);
-            const [mappedDataSets, setMappedDataSets] = useState<Array<DataSetView>>();
-            const [pages, setPages] = useState<any>([]);
+        const response = lookupService.useRetrieveAllLookupPages(query);
+        const [mappedLookUps, setMappedLookups] = useState<Array<LookupView>>();
+        const [pages, setPages] = useState<Array<{ data: LookupView[] }>>([]);
 
-            useEffect(() => {
-                if (response.data && response.data.pages) {
-                    const dataSets: Array<DataSetView> = [];
-                    response.data.pages.forEach(x => {
-                        x.data.forEach((dataSet: DataSet) => {
-                            dataSets.push(new DataSetView(
-                                dataSet.id,
-                                dataSet.dataSetName,
-                                dataSet.dataSetAliases,
-                                dataSet.dataSetSupplier,
-                                dataSet.dataSetAuthor,
-                                dataSet.specifiedBy,
-                                dataSet.IsNationallySpecified,
-                                dataSet.collectedBy,
-                                dataSet.isNationallyCollected,
-                                dataSet.dataSourceType,
-                                dataSet.isActive,
-                                dataSet.activeFrom,
-                                dataSet.activeTo,
-                                dataSet.createdBy,
-                                dataSet.createdDate,
-                                dataSet.updatedBy,
-                                dataSet.updatedDate,
-                            ));
-                        });
+        useEffect(() => {
+            if (response.data && response.data.pages) {
+                const lookups: Array<LookupView> = [];
+                response.data.pages.forEach((x: { data: LookupView[] }) => {
+                    x.data.forEach((lookup: LookupView) => {
+                        lookups.push(new LookupView(
+                            lookup.id,
+                            lookup.lookupType,
+                            lookup.name,
+                            lookup.value,
+                            lookup.createdBy,
+                            lookup.createdDate,
+                            lookup.updatedBy,
+                            lookup.updatedDate,
+                        ));
                     });
+                });
 
-                    setMappedDataSets(dataSets);
-                    setPages(response.data.pages);
-                }
-            }, [response.data]);
-
-            return {
-                mappedDataSets,
-                pages,
-                isLoading: response.isLoading,
-                fetchNextPage: response.fetchNextPage,
-                isFetchingNextPage: response.isFetchingNextPage,
-                hasNextPage: !!response.hasNextPage,
-                data: response.data,
-                refetch: response.refetch
-            };
-        } catch (err) {
-            throw err;
-        }
-    },
-
-    useGetDataSetById: (id: Guid) => {
-        try {
-            const query = `?$filter=id eq ${id}`
-            const response = dataSetService.useRetrieveAllDataSet(query)
-            const [mappedDataSet, setMappedDataSet] = useState<DataSetView>();
-
-            useEffect(() => {
-                if (response.data && response.data[0]) {
-                    const dataSet = new DataSetView(
-                        response.data[0].id,
-                        response.data[0].dataSetName,
-                        response.data[0].dataSetAliases,
-                        response.data[0].dataSetSupplier,
-                        response.data[0].dataSetAuthor,
-                        response.data[0].specifiedBy,
-                        response.data[0].IsNationallySpecified,
-                        response.data[0].collectedBy,
-                        response.data[0].isNationallyCollected,
-                        response.data[0].dataSourceType,
-                        response.data[0].isActive,
-                        response.data[0].activeFrom,
-                        response.data[0].activeTo,
-                        response.data[0].createdBy,
-                        response.data[0].createdDate,
-                        response.data[0].updatedBy,
-                        response.data[0].updatedDate);
-
-                    setMappedDataSet(dataSet);
-                }
-            }, [response.data]);
-
-            return {
-                mappedDataSet, ...response
+                setMappedLookups(lookups);
+                setPages(response.data.pages);
             }
-        } catch (err) {
-            throw err;
-        }
+        }, [response.data]);
+
+        return {
+            mappedLookUps,
+            pages,
+            isLoading: response.isLoading,
+            fetchNextPage: response.fetchNextPage,
+            isFetchingNextPage: response.isFetchingNextPage,
+            hasNextPage: !!response.hasNextPage,
+            data: response.data,
+            refetch: response.refetch
+        };
     },
 
-    useUpdateDataSet: () => {
-        return dataSetService.useModifyDataSet();
+    useGetLookupById: (id: Guid) => {
+        const query = `?$filter=id eq ${id}`;
+        const response = lookupService.useRetrieveAllLookupPages(query);
+        const [mappedLookup, setMappedLookup] = useState<LookupView>();
+
+        useEffect(() => {
+            if (response.data && response.data.pages && response.data.pages[0].data[0]) {
+                const lookup = response.data.pages[0].data[0];
+                const lookupView = new LookupView(
+                    lookup.id,
+                    lookup.lookupType,
+                    lookup.name,
+                    lookup.value,
+                    lookup.createdBy,
+                    lookup.createdDate,
+                    lookup.updatedBy,
+                    lookup.updatedDate
+                );
+
+                setMappedLookup(lookupView);
+            }
+        }, [response.data]);
+
+        return {
+            mappedLookup,
+            ...response
+        };
     },
 
-    useRemoveDataSet: () => {
-        return dataSetService.useRemoveDataSet();
+    useUpdateLookup: () => {
+        return lookupService.useModifyLookup();
+    },
+
+    useRemoveLookup: () => {
+        return lookupService.useRemoveLookup();
     },
 };
