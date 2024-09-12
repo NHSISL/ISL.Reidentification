@@ -52,6 +52,15 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
 
                 throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsUserAccessException);
             }
+            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
+            {
+                var lockedUserAccessException =
+                    new LockedUserAccessException(
+                        message: "Locked user access record error occurred, please try again.",
+                        innerException: dbUpdateConcurrencyException);
+
+                throw await CreateAndLogDependencyValidationExceptionAsync(lockedUserAccessException);
+            }
             catch (DbUpdateException dbUpdateException)
             {
                 var failedOperationUserAccessException =
