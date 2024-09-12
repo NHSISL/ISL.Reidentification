@@ -168,5 +168,57 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnModifyIfServiceErrorOccurredAndLogItAsync()
+        {
+            // given
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            UserAccess someUserAccess = CreateRandomModifyUserAccess(randomDateTimeOffset);
+            var serviceException = new Exception();
+
+            var failedServiceUserAccessException =
+                new FailedServiceUserAccessException(
+                    message: "Failed service user access error occurred, contact support.",
+                    innerException: serviceException);
+
+            var expectedUserAccessServiceException =
+                new UserAccessServiceException(
+                    message: "Service error occurred, contact support.",
+                    innerException: failedServiceUserAccessException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ThrowsAsync(serviceException);
+
+            // when
+            ValueTask<UserAccess> addUserAccessTask =
+                this.userAccessService.AddUserAccessAsync(someUserAccess);
+
+            UserAccessServiceException actualUserAccessServiceException =
+                await Assert.ThrowsAsync<UserAccessServiceException>(
+                    testCode: addUserAccessTask.AsTask);
+
+            // then
+            actualUserAccessServiceException.Should().BeEquivalentTo(
+                expectedUserAccessServiceException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                        Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedUserAccessServiceException))),
+                        Times.Once);
+
+            this.reidentificationStorageBroker.Verify(broker =>
+                broker.InsertUserAccessAsync(It.IsAny<UserAccess>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+        }
     }
 }
