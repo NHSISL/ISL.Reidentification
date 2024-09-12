@@ -132,11 +132,11 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
         {
             // given
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
-            var invalidUserAccess = CreateRandomModifyUserAccess(randomDateTimeOffset);
+            UserAccess invalidUserAccess = CreateRandomModifyUserAccess(randomDateTimeOffset);
             var inputCreatedByUpdatedByString = GetRandomStringWithLength(256);
             invalidUserAccess.UserEmail = GetRandomStringWithLength(321);
             invalidUserAccess.RecipientEmail = GetRandomStringWithLength(321);
-            invalidUserAccess.OrgCode = GetRandomStringWithLength(11);
+            invalidUserAccess.OrgCode = GetRandomStringWithLength(16);
             invalidUserAccess.CreatedBy = inputCreatedByUpdatedByString;
             invalidUserAccess.UpdatedBy = inputCreatedByUpdatedByString;
 

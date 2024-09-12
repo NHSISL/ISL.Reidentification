@@ -58,7 +58,19 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
                 (Rule: await IsInvalidAsync(userAccess.CreatedBy), Parameter: nameof(UserAccess.CreatedBy)),
                 (Rule: await IsInvalidAsync(userAccess.UpdatedBy), Parameter: nameof(UserAccess.UpdatedBy)),
                 (Rule: await IsInvalidAsync(userAccess.CreatedDate), Parameter: nameof(UserAccess.CreatedDate)),
-                (Rule: await IsInvalidAsync(userAccess.UpdatedDate), Parameter: nameof(UserAccess.UpdatedDate)));
+                (Rule: await IsInvalidAsync(userAccess.UpdatedDate), Parameter: nameof(UserAccess.UpdatedDate)),
+                (Rule: await IsInvalidLengthAsync(userAccess.CreatedBy, 255), Parameter: nameof(UserAccess.CreatedBy)),
+                (Rule: await IsInvalidLengthAsync(userAccess.UpdatedBy, 255), Parameter: nameof(UserAccess.UpdatedBy)),
+                (Rule: await IsInvalidLengthAsync(userAccess.UserEmail, 320), Parameter: nameof(UserAccess.UserEmail)),
+
+                (Rule: await IsInvalidLengthAsync(
+                    userAccess.RecipientEmail,
+                    320),
+
+                Parameter: nameof(UserAccess.RecipientEmail)),
+
+                (Rule: await IsInvalidLengthAsync(userAccess.OrgCode, 15), Parameter: nameof(UserAccess.OrgCode))
+                );
         }
 
         private static void ValidateUserAccessIsNotNull(UserAccess userAccess)
