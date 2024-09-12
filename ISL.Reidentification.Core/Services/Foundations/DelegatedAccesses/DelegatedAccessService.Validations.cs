@@ -194,7 +194,14 @@ namespace ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses
                     secondDate: storageDelegatedAccess.CreatedDate,
                     secondDateName: nameof(DelegatedAccess.CreatedDate)),
 
-                Parameter: nameof(DelegatedAccess.CreatedDate)));
+                Parameter: nameof(DelegatedAccess.CreatedDate)),
+
+                (Rule: await IsSameAsync(
+                    firstDate: inputDelegatedAccess.UpdatedDate,
+                    secondDate: storageDelegatedAccess.UpdatedDate,
+                    secondDateName: nameof(DelegatedAccess.UpdatedDate)),
+
+                Parameter: nameof(DelegatedAccess.UpdatedDate)));
         }
 
         private static async ValueTask<dynamic> IsInvalidAsync(Guid id) => new
