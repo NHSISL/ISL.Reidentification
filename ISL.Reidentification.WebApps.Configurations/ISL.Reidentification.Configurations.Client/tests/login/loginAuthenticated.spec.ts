@@ -22,6 +22,9 @@ test('check title and login', async ({ browser }) => {
     const context = await browser.newContext({ ignoreHTTPSErrors: true });
     const page = await context.newPage();
 
+    // Call the network interceptor function
+    //await createNetworkInterceptor(page);
+
     await page.goto('https://localhost:5173/home');
 
     // Click the "Sign In" button which triggers the AAD login popup
