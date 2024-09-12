@@ -2,11 +2,11 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using ISL.Reidentification.Core.Brokers.DateTimes;
-using ISL.Reidentification.Core.Brokers.Identifiers;
-using ISL.Reidentification.Core.Brokers.Loggings;
-using ISL.Reidentification.Core.Brokers.Storages.Sql.Ods;
-using ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications;
+using ISL.ReIdentification.Core.Brokers.DateTimes;
+using ISL.ReIdentification.Core.Brokers.Identifiers;
+using ISL.ReIdentification.Core.Brokers.Loggings;
+using ISL.ReIdentification.Core.Brokers.Storages.Sql.Ods;
+using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -14,7 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
 
-namespace ISL.Reidentification.Configurations.Server
+namespace ISL.ReIdentification.Configurations.Server
 {
     public class Program
     {
@@ -30,7 +30,7 @@ namespace ISL.Reidentification.Configurations.Server
                 .AddMicrosoftIdentityWebApi(azureAdOptions);
 
             builder.Services.AddAuthorization();
-            builder.Services.AddDbContext<ReidentificationStorageBroker>();
+            builder.Services.AddDbContext<ReIdentificationStorageBroker>();
             builder.Services.AddDbContext<OdsStorageBroker>();
             builder.Services.AddHttpContextAccessor();
 
@@ -76,7 +76,7 @@ namespace ISL.Reidentification.Configurations.Server
 
         private static void AddBrokers(IServiceCollection services)
         {
-            services.AddTransient<IReidentificationStorageBroker, ReidentificationStorageBroker>();
+            services.AddTransient<IReIdentificationStorageBroker, ReIdentificationStorageBroker>();
             services.AddTransient<IOdsStorageBroker, OdsStorageBroker>();
             services.AddTransient<IDateTimeBroker, DateTimeBroker>();
             services.AddTransient<IIdentifierBroker, IdentifierBroker>();

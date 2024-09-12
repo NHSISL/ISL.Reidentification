@@ -4,33 +4,33 @@
 
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
-using ISL.Reidentification.Core.Brokers.DateTimes;
-using ISL.Reidentification.Core.Brokers.Loggings;
-using ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications;
-using ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses;
-using ISL.Reidentification.Core.Services.Foundations.DelegatedAccesses;
+using ISL.ReIdentification.Core.Brokers.DateTimes;
+using ISL.ReIdentification.Core.Brokers.Loggings;
+using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
+using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
+using ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses;
 using Microsoft.Data.SqlClient;
 using Moq;
 using Tynamix.ObjectFiller;
 using Xeptions;
 
-namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAccesses
+namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAccesses
 {
     public partial class DelegatedAccessesTests
     {
-        private readonly Mock<IReidentificationStorageBroker> reidentificationStorageBroker;
+        private readonly Mock<IReIdentificationStorageBroker> ReIdentificationStorageBroker;
         private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly DelegatedAccessService delegatedAccessService;
 
         public DelegatedAccessesTests()
         {
-            this.reidentificationStorageBroker = new Mock<IReidentificationStorageBroker>();
+            this.ReIdentificationStorageBroker = new Mock<IReIdentificationStorageBroker>();
             this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
             this.delegatedAccessService = new DelegatedAccessService(
-                reidentificationStorageBroker.Object,
+                ReIdentificationStorageBroker.Object,
                 dateTimeBrokerMock.Object,
                 loggingBrokerMock.Object);
         }
@@ -46,6 +46,12 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
 
         private static string GetRandomString() =>
             new MnemonicString().GetValue();
+
+        private static string GetRandomStringWithLengthOf(int length)
+        {
+            return new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length)
+                .GetValue();
+        }
 
         private SqlException CreateSqlException()
         {

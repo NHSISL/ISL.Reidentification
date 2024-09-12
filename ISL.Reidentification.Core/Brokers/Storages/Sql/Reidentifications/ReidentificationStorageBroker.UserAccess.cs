@@ -2,21 +2,21 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using System;
 using EFxceptions;
-using ISL.Reidentification.Core.Models.Foundations.UserAccesses;
+using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using Microsoft.EntityFrameworkCore;
 
-namespace ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications
+namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications
 {
-    public partial class ReidentificationStorageBroker : EFxceptionsContext, IReidentificationStorageBroker
+    public partial class ReIdentificationStorageBroker : EFxceptionsContext, IReIdentificationStorageBroker
     {
         public DbSet<UserAccess> UserAccesses { get; set; }
 
         public async ValueTask<UserAccess> InsertUserAccessAsync(UserAccess userAccess) =>
-            await InsertAsync<UserAccess>(userAccess);
+            await InsertAsync(userAccess);
 
         public async ValueTask<IQueryable<UserAccess>> SelectAllUserAccessAsync() =>
             await SelectAllAsync<UserAccess>();
@@ -25,9 +25,9 @@ namespace ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications
             await SelectAsync<UserAccess>(userAccessId);
 
         public async ValueTask<UserAccess> UpdateUserAccessAsync(UserAccess userAccess) =>
-            await UpdateAsync<UserAccess>(userAccess);
-            
+            await UpdateAsync(userAccess);
+
         public async ValueTask<UserAccess> DeleteUserAccessAsync(UserAccess userAccess) =>
-            await DeleteAsync<UserAccess>(userAccess);
+            await DeleteAsync(userAccess);
     }
 }

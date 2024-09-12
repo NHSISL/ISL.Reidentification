@@ -5,7 +5,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace ISL.Reidentification.Core.Brokers.DateTimes
+namespace ISL.ReIdentification.Core.Brokers.DateTimes
 {
     public interface IDateTimeBroker
     {

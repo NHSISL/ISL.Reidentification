@@ -4,13 +4,13 @@
 
 using EFxceptions.Models.Exceptions;
 using FluentAssertions;
-using ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses;
-using ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses.Exceptions;
+using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
+using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses.Exceptions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 
-namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAccesses
+namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAccesses
 {
     public partial class DelegatedAccessesTests
     {
@@ -57,13 +57,13 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
                     expectedDelegatedAccessDependencyException))),
                         Times.Once);
 
-            this.reidentificationStorageBroker.Verify(broker =>
+            this.ReIdentificationStorageBroker.Verify(broker =>
                 broker.InsertDelegatedAccessAsync(It.IsAny<DelegatedAccess>()),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -112,13 +112,13 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
                     expectedDelegatedAccessDependencyValidationException))),
                         Times.Once);
 
-            this.reidentificationStorageBroker.Verify(broker =>
+            this.ReIdentificationStorageBroker.Verify(broker =>
                 broker.InsertDelegatedAccessAsync(It.IsAny<DelegatedAccess>()),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -164,13 +164,13 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
                     expectedDelegatedAccessDependencyException))),
                         Times.Once);
 
-            this.reidentificationStorageBroker.Verify(broker =>
+            this.ReIdentificationStorageBroker.Verify(broker =>
                 broker.InsertDelegatedAccessAsync(It.IsAny<DelegatedAccess>()),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -215,13 +215,13 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
                     expectedDelegatedAccessServiceException))),
                         Times.Once);
 
-            this.reidentificationStorageBroker.Verify(broker =>
+            this.ReIdentificationStorageBroker.Verify(broker =>
                 broker.InsertDelegatedAccessAsync(It.IsAny<DelegatedAccess>()),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
         }
     }
 }

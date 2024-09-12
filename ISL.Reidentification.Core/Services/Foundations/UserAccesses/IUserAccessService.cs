@@ -3,9 +3,9 @@
 // ---------------------------------------------------------
 
 using System.Threading.Tasks;
-using ISL.Reidentification.Core.Models.Foundations.UserAccesses;
+using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 
-namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
+namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
 {
     public interface IUserAccessService
     {

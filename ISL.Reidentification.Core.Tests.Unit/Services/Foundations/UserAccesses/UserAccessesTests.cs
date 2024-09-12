@@ -4,33 +4,33 @@
 
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
-using ISL.Reidentification.Core.Brokers.DateTimes;
-using ISL.Reidentification.Core.Brokers.Loggings;
-using ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications;
-using ISL.Reidentification.Core.Models.Foundations.UserAccesses;
-using ISL.Reidentification.Core.Services.Foundations.UserAccesses;
+using ISL.ReIdentification.Core.Brokers.DateTimes;
+using ISL.ReIdentification.Core.Brokers.Loggings;
+using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
+using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
+using ISL.ReIdentification.Core.Services.Foundations.UserAccesses;
 using Microsoft.Data.SqlClient;
 using Moq;
 using Tynamix.ObjectFiller;
 using Xeptions;
 
-namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
+namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
 {
     public partial class UserAccessesTests
     {
-        private readonly Mock<IReidentificationStorageBroker> reidentificationStorageBroker;
+        private readonly Mock<IReIdentificationStorageBroker> ReIdentificationStorageBroker;
         private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly UserAccessService userAccessService;
 
         public UserAccessesTests()
         {
-            this.reidentificationStorageBroker = new Mock<IReidentificationStorageBroker>();
+            this.ReIdentificationStorageBroker = new Mock<IReIdentificationStorageBroker>();
             this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
             this.userAccessService = new UserAccessService(
-                reidentificationStorageBroker.Object,
+                ReIdentificationStorageBroker.Object,
                 dateTimeBrokerMock.Object,
                 loggingBrokerMock.Object);
         }
@@ -43,6 +43,12 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
 
         private static UserAccess CreateRandomUserAccess(DateTimeOffset dateTimeOffset) =>
             CreateUserAccessesFiller(dateTimeOffset).Create();
+
+        private static string GetRandomStringWithLengthOf(int length)
+        {
+            return new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length)
+                .GetValue();
+        }
 
         private static string GetRandomString() =>
             new MnemonicString().GetValue();

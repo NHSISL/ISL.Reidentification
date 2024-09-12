@@ -1,5 +1,5 @@
 {
-  "name": "isl.reidentification.frontend.client",
+  "name": "isl.ReIdentification.frontend.client",
   "private": true,
   "version": "0.0.0",
   "type": "module",

@@ -2,9 +2,9 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using ISL.Reidentification.Configurations.Server.Tests.Acceptance.Brokers;
+using ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Brokers;
 
-namespace ISL.Reidentification.Configurations.Server.Tests.Acceptance.Apis.Home
+namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis.Home
 {
     [Collection(nameof(ApiTestCollection))]
     public partial class FeaturesApiTests

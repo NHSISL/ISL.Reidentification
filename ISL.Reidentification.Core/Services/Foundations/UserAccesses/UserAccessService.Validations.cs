@@ -4,10 +4,10 @@
 
 using System;
 using System.Threading.Tasks;
-using ISL.Reidentification.Core.Models.Foundations.UserAccesses;
-using ISL.Reidentification.Core.Models.Foundations.UserAccesses.Exceptions;
+using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
+using ISL.ReIdentification.Core.Models.Foundations.UserAccesses.Exceptions;
 
-namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
+namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
 {
     public partial class UserAccessService
     {
@@ -25,6 +25,8 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
                 (Rule: await IsInvalidAsync(userAccess.UpdatedBy), Parameter: nameof(UserAccess.UpdatedBy)),
                 (Rule: await IsInvalidAsync(userAccess.CreatedDate), Parameter: nameof(UserAccess.CreatedDate)),
                 (Rule: await IsInvalidAsync(userAccess.UpdatedDate), Parameter: nameof(UserAccess.UpdatedDate)),
+                (Rule: await IsInvalidLengthAsync(userAccess.CreatedBy, 255), Parameter: nameof(UserAccess.CreatedBy)),
+                (Rule: await IsInvalidLengthAsync(userAccess.UpdatedBy, 255), Parameter: nameof(UserAccess.UpdatedBy)),
 
                 (Rule: await IsNotSameAsync(
                     createBy: userAccess.UpdatedBy,
@@ -68,6 +70,15 @@ namespace ISL.Reidentification.Core.Services.Foundations.UserAccesses
             Condition = date == default,
             Message = "Date is invalid"
         };
+
+        private static async ValueTask<dynamic> IsInvalidLengthAsync(string text, int maxLength) => new
+        {
+            Condition = await IsExceedingLengthAsync(text, maxLength),
+            Message = $"Text exceed max length of {maxLength} characters"
+        };
+
+        private static async ValueTask<bool> IsExceedingLengthAsync(string text, int maxLength) =>
+            (text ?? string.Empty).Length > maxLength;
 
         private static async ValueTask<dynamic> IsNotSameAsync(
             DateTimeOffset createdDate,

@@ -3,21 +3,21 @@
 // ---------------------------------------------------------
 
 using System.Collections.Generic;
-using ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications;
+using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
-namespace ISL.Reidentification.Core
+namespace ISL.ReIdentification.Core
 {
-    internal class ReidentificationContextFactory : IDesignTimeDbContextFactory<ReidentificationStorageBroker>
+    internal class ReIdentificationContextFactory : IDesignTimeDbContextFactory<ReIdentificationStorageBroker>
     {
-        public ReidentificationStorageBroker CreateDbContext(string[] args)
+        public ReIdentificationStorageBroker CreateDbContext(string[] args)
         {
             List<KeyValuePair<string, string>> config = new List<KeyValuePair<string, string>>
             {
                 new KeyValuePair<string, string>(
-                    key: "ConnectionStrings:ReidentificationConnection",
-                    value: "Server=(localdb)\\MSSQLLocalDB;Database=Reidentification;" +
+                    key: "ConnectionStrings:ReIdentificationConnection",
+                    value: "Server=(localdb)\\MSSQLLocalDB;Database=ReIdentification;" +
                         "Trusted_Connection=True;MultipleActiveResultSets=true"),
             };
 
@@ -25,7 +25,7 @@ namespace ISL.Reidentification.Core
                 .AddInMemoryCollection(initialData: config);
 
             IConfiguration configuration = configurationBuilder.Build();
-            return new ReidentificationStorageBroker(configuration);
+            return new ReIdentificationStorageBroker(configuration);
         }
     }
 }

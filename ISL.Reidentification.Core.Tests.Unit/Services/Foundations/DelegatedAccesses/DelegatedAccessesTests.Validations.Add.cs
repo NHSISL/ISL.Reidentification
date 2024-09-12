@@ -3,11 +3,11 @@
 // ---------------------------------------------------------
 
 using FluentAssertions;
-using ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses;
-using ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses.Exceptions;
+using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
+using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses.Exceptions;
 using Moq;
 
-namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAccesses
+namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAccesses
 {
     public partial class DelegatedAccessesTests
     {
@@ -37,11 +37,11 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(expectedDelegatedAccessValidationException))), Times.Once());
 
-            this.reidentificationStorageBroker.Verify(broker =>
+            this.ReIdentificationStorageBroker.Verify(broker =>
                 broker.InsertDelegatedAccessAsync(It.IsAny<DelegatedAccess>()),
                     Times.Never);
 
-            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
@@ -121,13 +121,91 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
                     expectedDelegatedAccessValidationException))),
                         Times.Once);
 
-            this.reidentificationStorageBroker.Verify(broker =>
+            this.ReIdentificationStorageBroker.Verify(broker =>
                 broker.InsertDelegatedAccessAsync(It.IsAny<DelegatedAccess>()),
                     Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnAddIfDelegatedAccessHasInvalidLengthPropertiesAndLogItAsync()
+        {
+            // given
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            var invalidDelegatedAccess = CreateRandomDelegatedAccess(dateTimeOffset: randomDateTimeOffset);
+            var username = GetRandomStringWithLengthOf(256);
+            var email = GetRandomStringWithLengthOf(321);
+            var identifierColumn = GetRandomStringWithLengthOf(51);
+            invalidDelegatedAccess.RequesterEmail = email;
+            invalidDelegatedAccess.RecipientEmail = email;
+            invalidDelegatedAccess.IdentifierColumn = identifierColumn;
+            invalidDelegatedAccess.CreatedBy = username;
+            invalidDelegatedAccess.UpdatedBy = username;
+
+            var invalidDelegatedAccessException =
+                new InvalidDelegatedAccessException(
+                    message: "Invalid delegated access. Please correct the errors and try again.");
+
+            invalidDelegatedAccessException.AddData(
+                key: nameof(DelegatedAccess.RequesterEmail),
+                values: $"Text exceed max length of {invalidDelegatedAccess.RequesterEmail.Length - 1} characters");
+
+            invalidDelegatedAccessException.AddData(
+                key: nameof(DelegatedAccess.RecipientEmail),
+                values: $"Text exceed max length of {invalidDelegatedAccess.RecipientEmail.Length - 1} characters");
+
+            invalidDelegatedAccessException.AddData(
+                key: nameof(DelegatedAccess.IdentifierColumn),
+                values: $"Text exceed max length of {invalidDelegatedAccess.IdentifierColumn.Length - 1} characters");
+
+            invalidDelegatedAccessException.AddData(
+                key: nameof(DelegatedAccess.CreatedBy),
+                values: $"Text exceed max length of {invalidDelegatedAccess.CreatedBy.Length - 1} characters");
+
+            invalidDelegatedAccessException.AddData(
+                key: nameof(DelegatedAccess.UpdatedBy),
+                values: $"Text exceed max length of {invalidDelegatedAccess.UpdatedBy.Length - 1} characters");
+
+            var expectedDelegatedAccessValidationException =
+                new DelegatedAccessValidationException(
+                    message: "DelegatedAccess validation error occurred, please fix errors and try again.",
+                    innerException: invalidDelegatedAccessException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            // when
+            ValueTask<DelegatedAccess> addDelegatedAccessTask =
+                this.delegatedAccessService.AddDelegatedAccessAsync(invalidDelegatedAccess);
+
+            DelegatedAccessValidationException actualDelegatedAccessValidationException =
+                await Assert.ThrowsAsync<DelegatedAccessValidationException>(
+                    addDelegatedAccessTask.AsTask);
+
+            // then
+            actualDelegatedAccessValidationException.Should()
+                .BeEquivalentTo(expectedDelegatedAccessValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedDelegatedAccessValidationException))),
+                        Times.Once);
+
+            this.ReIdentificationStorageBroker.Verify(broker =>
+                broker.InsertDelegatedAccessAsync(It.IsAny<DelegatedAccess>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -184,13 +262,13 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
                     SameExceptionAs(expectedDelegatedAccessValidationException))),
                         Times.Once);
 
-            this.reidentificationStorageBroker.Verify(broker =>
+            this.ReIdentificationStorageBroker.Verify(broker =>
                 broker.InsertDelegatedAccessAsync(It.IsAny<DelegatedAccess>()),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
         }
 
         [Theory]
@@ -254,13 +332,13 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
                     SameExceptionAs(expectedDelegatedAccessValidationException))),
                         Times.Once);
 
-            this.reidentificationStorageBroker.Verify(broker =>
+            this.ReIdentificationStorageBroker.Verify(broker =>
                 broker.InsertDelegatedAccessAsync(It.IsAny<DelegatedAccess>()),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
         }
     }
 }

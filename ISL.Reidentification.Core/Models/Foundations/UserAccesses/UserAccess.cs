@@ -4,7 +4,7 @@
 
 using System;
 
-namespace ISL.Reidentification.Core.Models.Foundations.UserAccesses
+namespace ISL.ReIdentification.Core.Models.Foundations.UserAccesses
 {
     public class UserAccess
     {

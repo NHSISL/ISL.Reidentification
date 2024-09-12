@@ -4,10 +4,10 @@
 
 using FluentAssertions;
 using Force.DeepCloner;
-using ISL.Reidentification.Core.Models.Foundations.UserAccesses;
+using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using Moq;
 
-namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
+namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
 {
     public partial class UserAccessesTests
     {
@@ -20,7 +20,7 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
             UserAccess storageUserAccess = inputUserAccess.DeepClone();
             UserAccess expectedUserAccess = inputUserAccess.DeepClone();
 
-            this.reidentificationStorageBroker.Setup(broker =>
+            this.ReIdentificationStorageBroker.Setup(broker =>
                 broker.InsertUserAccessAsync(inputUserAccess))
                     .ReturnsAsync(storageUserAccess);
 
@@ -34,12 +34,12 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
-            this.reidentificationStorageBroker.Verify(broker =>
+            this.ReIdentificationStorageBroker.Verify(broker =>
                 broker.InsertUserAccessAsync(inputUserAccess),
                     Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
