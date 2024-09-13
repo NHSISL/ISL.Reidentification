@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ISL.ReIdentification.Core.Migrations
 {
     [DbContext(typeof(ReIdentificationStorageBroker))]
-    [Migration("20240913114054_ModifyAccessAudit")]
-    partial class ModifyAccessAudit
+    [Migration("20240913115307_AddAccessAudit")]
+    partial class AddAccessAudit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
