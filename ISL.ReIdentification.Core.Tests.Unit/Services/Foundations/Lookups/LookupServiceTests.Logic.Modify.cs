@@ -28,6 +28,10 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
                     .Returns(randomDateTimeOffset);
 
             this.storageBrokerMock.Setup(broker =>
+                broker.SelectLookupByIdAsync(lookupId))
+                    .ReturnsAsync(storageLookup);
+
+            this.storageBrokerMock.Setup(broker =>
                 broker.UpdateLookupAsync(inputLookup))
                     .ReturnsAsync(updatedLookup);
 
@@ -43,12 +47,16 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
                     Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
+                broker.SelectLookupByIdAsync(inputLookup.Id),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
                 broker.UpdateLookupAsync(inputLookup),
                     Times.Once);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
 }

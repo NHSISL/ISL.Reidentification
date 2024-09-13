@@ -1,59 +1,62 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
-using ISL.ReIdentification.Core.Brokers.DateTimes;
-using ISL.ReIdentification.Core.Brokers.Loggings;
-using ISL.ReIdentification.Core.Brokers.Storages.Sql;
+using FluentAssertions;
+using Force.DeepCloner;
+using Moq;
 using ISL.ReIdentification.Core.Models.Foundations.Lookups;
+using Xunit;
 
-namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
+namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
 {
-    public partial class LookupService : ILookupService
+    public partial class LookupServiceTests
     {
-        private readonly IStorageBroker storageBroker;
-        private readonly IDateTimeBroker dateTimeBroker;
-        private readonly ILoggingBroker loggingBroker;
-
-        public LookupService(
-            IStorageBroker storageBroker,
-            IDateTimeBroker dateTimeBroker,
-            ILoggingBroker loggingBroker)
+        [Fact]
+        public async Task ShouldModifyLookupAsync()
         {
-            this.storageBroker = storageBroker;
-            this.dateTimeBroker = dateTimeBroker;
-            this.loggingBroker = loggingBroker;
+            // given
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            Lookup randomLookup = CreateRandomModifyLookup(randomDateTimeOffset);
+            Lookup inputLookup = randomLookup;
+            Lookup storageLookup = inputLookup.DeepClone();
+            storageLookup.UpdatedDate = randomLookup.CreatedDate;
+            Lookup updatedLookup = inputLookup;
+            Lookup expectedLookup = updatedLookup.DeepClone();
+            Guid lookupId = inputLookup.Id;
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(randomDateTimeOffset);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectLookupByIdAsync(lookupId))
+                    .ReturnsAsync(storageLookup);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.UpdateLookupAsync(inputLookup))
+                    .ReturnsAsync(updatedLookup);
+
+            // when
+            Lookup actualLookup =
+                await this.lookupService.ModifyLookupAsync(inputLookup);
+
+            // then
+            actualLookup.Should().BeEquivalentTo(expectedLookup);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectLookupByIdAsync(inputLookup.Id),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.UpdateLookupAsync(inputLookup),
+                    Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
-
-        public ValueTask<Lookup> AddLookupAsync(Lookup lookup) =>
-            TryCatch(async () =>
-            {
-                ValidateLookupOnAdd(lookup);
-
-                return await this.storageBroker.InsertLookupAsync(lookup);
-            });
-
-        public IQueryable<Lookup> RetrieveAllLookups() =>
-            TryCatch(() => this.storageBroker.SelectAllLookups());
-
-        public ValueTask<Lookup> RetrieveLookupByIdAsync(Guid lookupId) =>
-            TryCatch(async () =>
-            {
-                ValidateLookupId(lookupId);
-
-                Lookup maybeLookup = await this.storageBroker
-                    .SelectLookupByIdAsync(lookupId);
-
-                ValidateStorageLookup(maybeLookup, lookupId);
-
-                return maybeLookup;
-            });
-
-        public ValueTask<Lookup> ModifyLookupAsync(Lookup lookup) =>
-            TryCatch(async () =>
-            {
-                ValidateLookupOnModify(lookup);
-
-                return await this.storageBroker.UpdateLookupAsync(lookup);
-            });
     }
 }
