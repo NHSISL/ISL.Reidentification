@@ -10,5 +10,6 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
         ValueTask<Lookup> AddLookupAsync(Lookup lookup);
         IQueryable<Lookup> RetrieveAllLookups();
         ValueTask<Lookup> RetrieveLookupByIdAsync(Guid lookupId);
+        ValueTask<Lookup> ModifyLookupAsync(Lookup lookup);
     }
 }

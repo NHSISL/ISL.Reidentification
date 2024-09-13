@@ -47,5 +47,8 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
 
                 return maybeLookup;
             });
+
+        public ValueTask<Lookup> ModifyLookupAsync(Lookup lookup) =>
+            throw new NotImplementedException();
     }
 }

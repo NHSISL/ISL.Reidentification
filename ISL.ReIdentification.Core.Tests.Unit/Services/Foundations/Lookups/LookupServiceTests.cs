@@ -64,6 +64,17 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
+        private static Lookup CreateRandomModifyLookup(DateTimeOffset dateTimeOffset)
+        {
+            int randomDaysInPast = GetRandomNegativeNumber();
+            Lookup randomLookup = CreateRandomLookup(dateTimeOffset);
+
+            randomLookup.CreatedDate =
+                randomLookup.CreatedDate.AddDays(randomDaysInPast);
+
+            return randomLookup;
+        }
+
         private static IQueryable<Lookup> CreateRandomLookups()
         {
             return CreateLookupFiller(dateTimeOffset: GetRandomDateTimeOffset())
