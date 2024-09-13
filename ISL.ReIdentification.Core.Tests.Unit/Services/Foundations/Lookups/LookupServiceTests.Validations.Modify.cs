@@ -112,7 +112,8 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
                     modifyLookupTask.AsTask);
 
             //then
-            actualLookupValidationException.Should().BeEquivalentTo(expectedLookupValidationException);
+            actualLookupValidationException.Should()
+                .BeEquivalentTo(expectedLookupValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
@@ -158,7 +159,8 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
                     modifyLookupTask.AsTask);
 
             // then
-            actualLookupValidationException.Should().BeEquivalentTo(expectedLookupValidationException);
+            actualLookupValidationException.Should()
+                .BeEquivalentTo(expectedLookupValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
@@ -172,6 +174,61 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Theory]
+        [MemberData(nameof(MinutesBeforeOrAfter))]
+        public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsNotRecentAndLogItAsync(int minutes)
+        {
+            // given
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            Lookup randomLookup = CreateRandomLookup(randomDateTimeOffset);
+            randomLookup.UpdatedDate = randomDateTimeOffset.AddMinutes(minutes);
+
+            var invalidLookupException = 
+                new InvalidLookupException(
+                    message: "Invalid lookup. Please correct the errors and try again.");
+
+            invalidLookupException.AddData(
+                key: nameof(Lookup.UpdatedDate),
+                values: "Date is not recent");
+
+            var expectedLookupValidatonException =
+                new LookupValidationException(
+                    message: "Lookup validation errors occurred, please try again.",
+                    innerException: invalidLookupException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                .Returns(randomDateTimeOffset);
+
+            // when
+            ValueTask<Lookup> modifyLookupTask =
+                this.lookupService.ModifyLookupAsync(randomLookup);
+
+            LookupValidationException actualLookupValidationException =
+                await Assert.ThrowsAsync<LookupValidationException>(
+                    modifyLookupTask.AsTask);
+
+            // then
+            actualLookupValidationException.Should().BeEquivalentTo(expectedLookupValidatonException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedLookupValidatonException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectLookupByIdAsync(It.IsAny<Guid>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
