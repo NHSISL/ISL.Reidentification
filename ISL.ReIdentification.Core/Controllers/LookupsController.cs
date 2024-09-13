@@ -1,11 +1,15 @@
+// ---------------------------------------------------------
+// Copyright (c) North East London ICB. All rights reserved.
+// ---------------------------------------------------------
+
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using RESTFulSense.Controllers;
 using ISL.ReIdentification.Core.Models.Foundations.Lookups;
 using ISL.ReIdentification.Core.Models.Foundations.Lookups.Exceptions;
 using ISL.ReIdentification.Core.Services.Foundations.Lookups;
+using Microsoft.AspNetCore.Mvc;
+using RESTFulSense.Controllers;
 
 namespace ISL.ReIdentification.Core.Controllers
 {
@@ -53,12 +57,12 @@ namespace ISL.ReIdentification.Core.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IQueryable<Lookup>> GetAllLookups()
+        public async ValueTask<ActionResult<IQueryable<Lookup>>> Get()
         {
             try
             {
                 IQueryable<Lookup> retrievedLookups =
-                    this.lookupService.RetrieveAllLookups();
+                    await this.lookupService.RetrieveAllLookupsAsync();
 
                 return Ok(retrievedLookups);
             }

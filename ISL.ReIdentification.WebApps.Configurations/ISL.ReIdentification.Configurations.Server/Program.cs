@@ -7,6 +7,9 @@ using ISL.ReIdentification.Core.Brokers.Identifiers;
 using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.Ods;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
+using ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses;
+using ISL.ReIdentification.Core.Services.Foundations.Lookups;
+using ISL.ReIdentification.Core.Services.Foundations.UserAccesses;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -76,15 +79,19 @@ namespace ISL.ReIdentification.Configurations.Server
 
         private static void AddBrokers(IServiceCollection services)
         {
-            services.AddTransient<IReIdentificationStorageBroker, ReIdentificationStorageBroker>();
-            services.AddTransient<IOdsStorageBroker, OdsStorageBroker>();
             services.AddTransient<IDateTimeBroker, DateTimeBroker>();
             services.AddTransient<IIdentifierBroker, IdentifierBroker>();
             services.AddTransient<ILoggingBroker, LoggingBroker>();
+            services.AddTransient<IOdsStorageBroker, OdsStorageBroker>();
+            services.AddTransient<IReIdentificationStorageBroker, ReIdentificationStorageBroker>();
         }
 
         private static void AddFoundationServices(IServiceCollection services)
-        { }
+        {
+            services.AddTransient<IDelegatedAccessService, DelegatedAccessService>();
+            services.AddTransient<ILookupService, LookupService>();
+            services.AddTransient<IUserAccessService, UserAccessService>();
+        }
 
         private static void AddProcessingServices(IServiceCollection services)
         { }
