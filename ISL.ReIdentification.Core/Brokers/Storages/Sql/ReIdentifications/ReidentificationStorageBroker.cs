@@ -5,6 +5,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions;
+using ISL.ReIdentification.Core.Models.Foundations.AccessAudits;
 using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
 using ISL.ReIdentification.Core.Models.Foundations.Lookups;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
@@ -37,6 +38,7 @@ namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications
         {
             AddDelegatedAccessConfigurations(modelBuilder.Entity<DelegatedAccess>());
             AddUserAccessConfigurations(modelBuilder.Entity<UserAccess>());
+            AddAccessAuditConfigurations(modelBuilder.Entity<AccessAudit>());
             AddLookupConfigurations(modelBuilder.Entity<Lookup>());
         }
 
