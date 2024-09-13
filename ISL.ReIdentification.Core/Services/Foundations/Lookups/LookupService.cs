@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
@@ -33,5 +34,8 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
 
         public IQueryable<Lookup> RetrieveAllLookups() =>
             TryCatch(() => this.storageBroker.SelectAllLookups());
+
+        public ValueTask<Lookup> RetrieveLookupByIdAsync(Guid lookupId) =>
+            throw new NotImplementedException();
     }
 }
