@@ -88,7 +88,11 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
 
             invalidLookupException.AddData(
                 key: nameof(Lookup.UpdatedDate),
-                values: "Date is required");
+                values:
+                new[] {
+                    "Date is required",
+                    $"Date is the same as {nameof(Lookup.CreatedDate)}"
+                });
 
             invalidLookupException.AddData(
                 key: nameof(Lookup.UpdatedBy),
@@ -131,6 +135,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
             Lookup randomLookup = CreateRandomLookup(randomDateTimeOffset);
             Lookup invalidLookup = randomLookup;
+            
             var invalidLookupException = 
                 new InvalidLookupException(
                     message: "Invalid lookup. Please correct the errors and try again.");
