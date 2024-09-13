@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
@@ -18,19 +19,19 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
 {
     public partial class DelegatedAccessesTests
     {
-        private readonly Mock<IReIdentificationStorageBroker> ReIdentificationStorageBroker;
+        private readonly Mock<IReIdentificationStorageBroker> reIdentificationStorageBroker;
         private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly DelegatedAccessService delegatedAccessService;
 
         public DelegatedAccessesTests()
         {
-            this.ReIdentificationStorageBroker = new Mock<IReIdentificationStorageBroker>();
+            this.reIdentificationStorageBroker = new Mock<IReIdentificationStorageBroker>();
             this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
             this.delegatedAccessService = new DelegatedAccessService(
-                ReIdentificationStorageBroker.Object,
+                reIdentificationStorageBroker.Object,
                 dateTimeBrokerMock.Object,
                 loggingBrokerMock.Object);
         }
@@ -76,11 +77,8 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
         private static int GetRandomNegativeNumber() =>
             -1 * new IntRange(min: 2, max: 10).GetValue();
 
-        private SqlException CreateSqlException()
-        {
-            return (SqlException)RuntimeHelpers.GetUninitializedObject(
-                type: typeof(SqlException));
-        }
+        private SqlException CreateSqlException() =>
+            (SqlException)RuntimeHelpers.GetUninitializedObject(type: typeof(SqlException));
 
         private static Filler<DelegatedAccess> CreateDelegatedAccessesFiller(DateTimeOffset dateTimeOffset)
         {
@@ -90,6 +88,10 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnType<DateTimeOffset?>().Use(dateTimeOffset)
+
+                .OnProperty(delegatedAccess => delegatedAccess.IdentifierColumn)
+                    .Use(() => GetRandomStringWithLengthOf(10))
+
                 .OnProperty(delegatedAccess => delegatedAccess.CreatedBy).Use(user)
                 .OnProperty(delegatedAccess => delegatedAccess.UpdatedBy).Use(user);
 

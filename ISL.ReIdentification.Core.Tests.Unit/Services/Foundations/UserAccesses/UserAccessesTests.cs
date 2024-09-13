@@ -2,6 +2,8 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
@@ -18,19 +20,19 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
 {
     public partial class UserAccessesTests
     {
-        private readonly Mock<IReIdentificationStorageBroker> ReIdentificationStorageBroker;
+        private readonly Mock<IReIdentificationStorageBroker> reIdentificationStorageBroker;
         private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly UserAccessService userAccessService;
 
         public UserAccessesTests()
         {
-            this.ReIdentificationStorageBroker = new Mock<IReIdentificationStorageBroker>();
+            this.reIdentificationStorageBroker = new Mock<IReIdentificationStorageBroker>();
             this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
             this.userAccessService = new UserAccessService(
-                ReIdentificationStorageBroker.Object,
+                reIdentificationStorageBroker.Object,
                 dateTimeBrokerMock.Object,
                 loggingBrokerMock.Object);
         }
@@ -69,11 +71,8 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
         private static int GetRandomNumber() =>
             new IntRange(max: 15, min: 2).GetValue();
 
-        private SqlException CreateSqlException()
-        {
-            return (SqlException)RuntimeHelpers.GetUninitializedObject(
-                type: typeof(SqlException));
-        }
+        private SqlException CreateSqlException() =>
+            (SqlException)RuntimeHelpers.GetUninitializedObject(type: typeof(SqlException));
 
         private static UserAccess CreateRandomModifyUserAccess(DateTimeOffset dateTimeOffset)
         {
