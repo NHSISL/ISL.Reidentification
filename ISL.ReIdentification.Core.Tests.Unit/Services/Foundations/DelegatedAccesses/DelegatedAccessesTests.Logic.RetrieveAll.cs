@@ -11,7 +11,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
     public partial class DelegatedAccessesTests
     {
         [Fact]
-        public async Task ShouldRetrieveAllDelegatedAccessAsync()
+        public async Task ShouldRetrieveAllDelegatedAccessesAsync()
         {
             //given
             IQueryable<DelegatedAccess> randomDelegatedAccesses = CreateRandomDelegatedAccesses();
