@@ -32,6 +32,6 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
             });
 
         public IQueryable<Lookup> RetrieveAllLookups() =>
-            throw new System.NotImplementedException();
+            this.storageBroker.SelectAllLookups();
     }
 }
