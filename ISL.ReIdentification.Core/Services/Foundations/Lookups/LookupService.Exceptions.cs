@@ -60,6 +60,15 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
 
                 throw CreateAndLogDependencyValidationException(invalidLookupReferenceException);
             }
+            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
+            {
+                var lockedLookupException = 
+                    new LockedLookupException(
+                        message: "Locked lookup record exception, please try again later",
+                        innerException: dbUpdateConcurrencyException);
+
+                throw CreateAndLogDependencyValidationException(lockedLookupException);
+            }
             catch (DbUpdateException databaseUpdateException)
             {
                 var failedLookupStorageException =
@@ -123,7 +132,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
             var lookupDependencyException = 
                 new LookupDependencyException(
                     message: "Lookup dependency error occurred, contact support.",
-                    innerException: exception);
+                    innerException: exception); 
 
             this.loggingBroker.LogCritical(lookupDependencyException);
 
@@ -148,7 +157,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
             var lookupDependencyException = 
                 new LookupDependencyException(
                     message: "Lookup dependency error occurred, contact support.",
-                    innerException: exception);
+                    innerException: exception); 
 
             this.loggingBroker.LogError(lookupDependencyException);
 
