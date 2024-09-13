@@ -179,5 +179,60 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowDependencyValidationExceptionOnModifyIfDbUpdateConcurrencyErrorOccursAndLogAsync()
+        {
+            // given
+            Lookup randomLookup = CreateRandomLookup();
+            var databaseUpdateConcurrencyException = new DbUpdateConcurrencyException();
+
+            var lockedLookupException =
+                new LockedLookupException(
+                    message: "Locked lookup record exception, please try again later",
+                    innerException: databaseUpdateConcurrencyException);
+
+            var expectedLookupDependencyValidationException =
+                new LookupDependencyValidationException(
+                    message: "Lookup dependency validation occurred, please try again.",
+                    innerException: lockedLookupException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Throws(databaseUpdateConcurrencyException);
+
+            // when
+            ValueTask<Lookup> modifyLookupTask =
+                this.lookupService.ModifyLookupAsync(randomLookup);
+
+            LookupDependencyValidationException actualLookupDependencyValidationException =
+                await Assert.ThrowsAsync<LookupDependencyValidationException>(
+                    modifyLookupTask.AsTask);
+
+            // then
+            actualLookupDependencyValidationException.Should()
+                .BeEquivalentTo(expectedLookupDependencyValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectLookupByIdAsync(randomLookup.Id),
+                    Times.Never);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedLookupDependencyValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.UpdateLookupAsync(randomLookup),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
