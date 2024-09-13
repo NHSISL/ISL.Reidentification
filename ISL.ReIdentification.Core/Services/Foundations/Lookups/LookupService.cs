@@ -70,6 +70,8 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
                 Lookup maybeLookup = await this.storageBroker
                     .SelectLookupByIdAsync(lookupId);
 
+                ValidateStorageLookup(maybeLookup, lookupId);
+
                 return await this.storageBroker.DeleteLookupAsync(maybeLookup);
             });
     }
