@@ -77,6 +77,16 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
             }
         }
 
+        private static void ValidateAgainstStorageLookupOnModify(Lookup inputLookup, Lookup storageLookup)
+        {
+            Validate(
+                (Rule: IsNotSame(
+                    firstDate: inputLookup.CreatedDate,
+                    secondDate: storageLookup.CreatedDate,
+                    secondDateName: nameof(Lookup.CreatedDate)),
+                Parameter: nameof(Lookup.CreatedDate)));
+        }
+
         private static dynamic IsInvalid(Guid id) => new
         {
             Condition = id == Guid.Empty,
