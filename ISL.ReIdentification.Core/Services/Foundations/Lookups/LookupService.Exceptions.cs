@@ -19,6 +19,10 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
             {
                 throw CreateAndLogValidationException(nullLookupException);
             }
+            catch (InvalidLookupException invalidLookupException)
+            {
+                throw CreateAndLogValidationException(invalidLookupException);
+            }
         }
 
         private LookupValidationException CreateAndLogValidationException(Xeption exception)
