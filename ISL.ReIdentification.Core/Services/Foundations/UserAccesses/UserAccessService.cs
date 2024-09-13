@@ -36,8 +36,8 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
                 return await this.ReIdentificationStorageBroker.InsertUserAccessAsync(userAccess);
             });
 
-        public ValueTask<UserAccess> RetrieveUserAccessByIdAsync(Guid userAccessId) =>
-            throw new NotImplementedException();
+        public async ValueTask<UserAccess> RetrieveUserAccessByIdAsync(Guid userAccessId) =>
+            await this.ReIdentificationStorageBroker.SelectUserAccessByIdAsync(userAccessId);
 
         public ValueTask<IQueryable<UserAccess>> RetrieveAllUserAccessesAsync() =>
             TryCatch(async () =>
