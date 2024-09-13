@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Moq;
@@ -25,7 +26,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             var expectedLookupDependencyException =
                 new LookupDependencyException(
                     message: "Lookup dependency error occurred, contact support.",
-                    innerException: failedLookupStorageException);
+                    innerException: failedLookupStorageException);             
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
@@ -54,6 +55,61 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
                     expectedLookupDependencyException))),
+                        Times.Once);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyValidationExceptionOnAddIfLookupAlreadyExsitsAndLogItAsync()
+        {
+            // given
+            Lookup randomLookup = CreateRandomLookup();
+            Lookup alreadyExistsLookup = randomLookup;
+            string randomMessage = GetRandomString();
+
+            var duplicateKeyException =
+                new DuplicateKeyException(randomMessage);
+
+            var alreadyExistsLookupException =
+                new AlreadyExistsLookupException(
+                    message: "Lookup with the same Id already exists.",
+                    innerException: duplicateKeyException);
+
+            var expectedLookupDependencyValidationException =
+                new LookupDependencyValidationException(
+                    message: "Lookup dependency validation occurred, please try again.",
+                    innerException: alreadyExistsLookupException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Throws(duplicateKeyException);
+
+            // when
+            ValueTask<Lookup> addLookupTask =
+                this.lookupService.AddLookupAsync(alreadyExistsLookup);
+
+            // then
+            LookupDependencyValidationException actualLookupDependencyValidationException =
+                await Assert.ThrowsAsync<LookupDependencyValidationException>(
+                    addLookupTask.AsTask);
+
+            actualLookupDependencyValidationException.Should()
+                .BeEquivalentTo(expectedLookupDependencyValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertLookupAsync(It.IsAny<Lookup>()),
+                    Times.Never);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedLookupDependencyValidationException))),
                         Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
