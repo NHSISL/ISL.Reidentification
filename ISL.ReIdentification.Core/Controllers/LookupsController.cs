@@ -99,5 +99,44 @@ namespace ISL.ReIdentification.Core.Controllers
                 return InternalServerError(lookupServiceException);
             }
         }
+
+        [HttpPut]
+        public async ValueTask<ActionResult<Lookup>> PutLookupAsync(Lookup lookup)
+        {
+            try
+            {
+                Lookup modifiedLookup =
+                    await this.lookupService.ModifyLookupAsync(lookup);
+
+                return Ok(modifiedLookup);
+            }
+            catch (LookupValidationException lookupValidationException)
+                when (lookupValidationException.InnerException is NotFoundLookupException)
+            {
+                return NotFound(lookupValidationException.InnerException);
+            }
+            catch (LookupValidationException lookupValidationException)
+            {
+                return BadRequest(lookupValidationException.InnerException);
+            }
+            catch (LookupDependencyValidationException lookupValidationException)
+                when (lookupValidationException.InnerException is InvalidLookupReferenceException)
+            {
+                return FailedDependency(lookupValidationException.InnerException);
+            }
+            catch (LookupDependencyValidationException lookupDependencyValidationException)
+               when (lookupDependencyValidationException.InnerException is AlreadyExistsLookupException)
+            {
+                return Conflict(lookupDependencyValidationException.InnerException);
+            }
+            catch (LookupDependencyException lookupDependencyException)
+            {
+                return InternalServerError(lookupDependencyException);
+            }
+            catch (LookupServiceException lookupServiceException)
+            {
+                return InternalServerError(lookupServiceException);
+            }
+        }
     }
 }
