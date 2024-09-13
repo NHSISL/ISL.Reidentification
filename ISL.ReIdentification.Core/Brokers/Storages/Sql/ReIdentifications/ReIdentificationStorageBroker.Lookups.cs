@@ -18,7 +18,7 @@ namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications
         public async ValueTask<Lookup> InsertLookupAsync(Lookup lookup) =>
             await InsertAsync(lookup);
 
-        public async ValueTask<IQueryable<Lookup>> SelectAllLookupAsync() =>
+        public async ValueTask<IQueryable<Lookup>> SelectAllLookupsAsync() =>
             await SelectAllAsync<Lookup>();
 
         public async ValueTask<Lookup> SelectLookupByIdAsync(Guid lookupId) =>
