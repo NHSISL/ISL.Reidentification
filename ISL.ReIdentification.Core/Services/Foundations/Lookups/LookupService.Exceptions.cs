@@ -38,6 +38,10 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
 
                 throw CreateAndLogCriticalDependencyException(failedLookupStorageException);
             }
+            catch (NotFoundLookupException notFoundLookupException)
+            {
+                throw CreateAndLogValidationException(notFoundLookupException);
+            }
             catch (DuplicateKeyException duplicateKeyException)
             {
                 var alreadyExistsLookupException =

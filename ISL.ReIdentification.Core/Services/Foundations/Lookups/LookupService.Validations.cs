@@ -38,6 +38,14 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
         public void ValidateLookupId(Guid lookupId) =>
             Validate((Rule: IsInvalid(lookupId), Parameter: nameof(Lookup.Id)));
 
+        private static void ValidateStorageLookup(Lookup maybeLookup, Guid lookupId)
+        {
+            if (maybeLookup is null)
+            {
+                throw new NotFoundLookupException(lookupId);
+            }
+        }
+
         private static void ValidateLookupIsNotNull(Lookup lookup)
         {
             if (lookup is null)
