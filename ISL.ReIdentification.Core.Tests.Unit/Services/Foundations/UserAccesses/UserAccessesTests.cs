@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
@@ -70,11 +71,8 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
         private static int GetRandomNumber() =>
             new IntRange(max: 15, min: 2).GetValue();
 
-        private SqlException CreateSqlException()
-        {
-            return (SqlException)RuntimeHelpers.GetUninitializedObject(
-                type: typeof(SqlException));
-        }
+        private SqlException CreateSqlException() =>
+            (SqlException)RuntimeHelpers.GetUninitializedObject(type: typeof(SqlException));
 
         private static UserAccess CreateRandomModifyUserAccess(DateTimeOffset dateTimeOffset)
         {
