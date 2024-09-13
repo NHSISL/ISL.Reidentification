@@ -23,7 +23,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             var expectedLookupDependencyException =
                 new LookupDependencyException(
                     message: "Lookup dependency error occurred, contact support.",
-                    innerException: failedLookupStorageException); 
+                    innerException: failedLookupStorageException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectAllLookups())
@@ -52,6 +52,51 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public void ShouldThrowServiceExceptionOnRetrieveAllIfServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            string exceptionMessage = GetRandomString();
+            var serviceException = new Exception(exceptionMessage);
+
+            var failedLookupServiceException =
+                new FailedLookupServiceException(
+                    message: "Failed lookup service occurred, please contact support", 
+                    innerException: serviceException);
+
+            var expectedLookupServiceException =
+                new LookupServiceException(
+                    message: "Lookup service error occurred, contact support.",
+                    innerException: failedLookupServiceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectAllLookups())
+                    .Throws(serviceException);
+
+            // when
+            Action retrieveAllLookupsAction = () =>
+                this.lookupService.RetrieveAllLookups();
+
+            LookupServiceException actualLookupServiceException =
+                Assert.Throws<LookupServiceException>(retrieveAllLookupsAction);
+
+            // then
+            actualLookupServiceException.Should()
+                .BeEquivalentTo(expectedLookupServiceException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectAllLookups(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedLookupServiceException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
