@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
@@ -65,7 +66,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
 
             var invalidLookupException = 
                 new InvalidLookupException(
-                        message: "Invalid lookup. Please correct the errors and try again.");
+                    message: "Invalid lookup. Please correct the errors and try again.");
 
             invalidLookupException.AddData(
                 key: nameof(Lookup.Id),
@@ -116,6 +117,51 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
 
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdateLookupAsync(It.IsAny<Lookup>()),
+                    Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsSameAsCreatedDateAndLogItAsync()
+        {
+            // given
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            Lookup randomLookup = CreateRandomLookup(randomDateTimeOffset);
+            Lookup invalidLookup = randomLookup;
+            var invalidLookupException = 
+                new InvalidLookupException(
+                    message: "Invalid lookup. Please correct the errors and try again.");
+
+            invalidLookupException.AddData(
+                key: nameof(Lookup.UpdatedDate),
+                values: $"Date is the same as {nameof(Lookup.CreatedDate)}");
+
+            var expectedLookupValidationException =
+                new LookupValidationException(
+                    message: "Lookup validation errors occurred, please try again.",
+                    innerException: invalidLookupException);
+
+            // when
+            ValueTask<Lookup> modifyLookupTask =
+                this.lookupService.ModifyLookupAsync(invalidLookup);
+
+            LookupValidationException actualLookupValidationException =
+                await Assert.ThrowsAsync<LookupValidationException>(
+                    modifyLookupTask.AsTask);
+
+            // then
+            actualLookupValidationException.Should().BeEquivalentTo(expectedLookupValidationException);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedLookupValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectLookupByIdAsync(invalidLookup.Id),
                     Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
