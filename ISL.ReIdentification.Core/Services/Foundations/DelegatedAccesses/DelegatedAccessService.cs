@@ -34,10 +34,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
             });
 
         public ValueTask<IQueryable<DelegatedAccess>> RetrieveAllDelegatedAccessesAsync() =>
-            TryCatch(async () =>
-            {
-                return await this.ReIdentificationStorageBroker.SelectAllDelegatedAccessesAsync();
-            });
+            TryCatch(async () => await this.ReIdentificationStorageBroker.SelectAllDelegatedAccessesAsync());
 
         public ValueTask<DelegatedAccess> ModifyDelegatedAccessAsync(DelegatedAccess delegatedAccess) =>
             TryCatch(async () =>
