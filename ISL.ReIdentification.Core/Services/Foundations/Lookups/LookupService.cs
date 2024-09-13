@@ -22,7 +22,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<Lookup> AddLookupAsync(Lookup lookup) =>
-            throw new System.NotImplementedException();
+        public async ValueTask<Lookup> AddLookupAsync(Lookup lookup) =>
+            await this.storageBroker.InsertLookupAsync(lookup);
     }
 }
