@@ -91,6 +91,15 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
 
                 throw CreateAndLogCriticalDependencyException(failedLookupStorageException);
             }
+            catch (Exception exception)
+            {
+                var failedLookupServiceException =
+                    new FailedLookupServiceException(
+                        message: "Failed lookup service occurred, please contact support", 
+                        innerException: exception);
+
+                throw CreateAndLogServiceException(failedLookupServiceException);
+            }
         }
 
         private LookupValidationException CreateAndLogValidationException(Xeption exception)
