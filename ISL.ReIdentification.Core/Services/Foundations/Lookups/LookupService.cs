@@ -35,7 +35,15 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
         public IQueryable<Lookup> RetrieveAllLookups() =>
             TryCatch(() => this.storageBroker.SelectAllLookups());
 
-        public async ValueTask<Lookup> RetrieveLookupByIdAsync(Guid lookupId) =>
-            await this.storageBroker.SelectLookupByIdAsync(lookupId);
+        public ValueTask<Lookup> RetrieveLookupByIdAsync(Guid lookupId) =>
+            TryCatch(async () =>
+            {
+                ValidateLookupId(lookupId);
+
+                Lookup maybeLookup = await this.storageBroker
+                    .SelectLookupByIdAsync(lookupId);
+
+                return maybeLookup;
+            });
     }
 }
