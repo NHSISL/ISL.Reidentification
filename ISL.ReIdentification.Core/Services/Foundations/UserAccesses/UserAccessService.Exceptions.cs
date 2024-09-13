@@ -98,6 +98,15 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
 
                 throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageUserAccessException);
             }
+            catch (Exception exception)
+            {
+                var failedServiceUserAccessException =
+                    new FailedServiceUserAccessException(
+                        message: "Failed service user access error occurred, contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedServiceUserAccessException);
+            }
         }
 
         private async ValueTask<UserAccessValidationException> CreateAndLogValidationExceptionAsync(
