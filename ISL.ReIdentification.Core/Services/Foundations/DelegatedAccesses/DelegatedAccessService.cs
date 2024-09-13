@@ -31,5 +31,19 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
                 await ValidateDelegatedAccessOnAdd(delegatedAccess);
                 return await this.ReIdentificationStorageBroker.InsertDelegatedAccessAsync(delegatedAccess);
             });
+
+        public ValueTask<DelegatedAccess> ModifyDelegatedAccessAsync(DelegatedAccess delegatedAccess) =>
+            TryCatch(async () =>
+            {
+                await ValidateDelegatedAccessOnModify(delegatedAccess);
+
+                DelegatedAccess maybeDelegatedAccess =
+                    await this.ReIdentificationStorageBroker.SelectDelegatedAccessByIdAsync(delegatedAccess.Id);
+
+                await ValidateStorageDelegatedAccessAsync(maybeDelegatedAccess, delegatedAccess.Id);
+                await ValidateAgainstStorageDelegatedAccessOnModifyAsync(delegatedAccess, maybeDelegatedAccess);
+
+                return await this.ReIdentificationStorageBroker.UpdateDelegatedAccessAsync(delegatedAccess);
+            });
     }
 }

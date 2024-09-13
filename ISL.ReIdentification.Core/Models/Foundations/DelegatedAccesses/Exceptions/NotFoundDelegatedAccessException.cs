@@ -4,11 +4,11 @@
 
 using Xeptions;
 
-namespace ISL.ReIdentification.Core.Models.Foundations.UserAccesses.Exceptions
+namespace ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses.Exceptions
 {
-    public class NullUserAccessException : Xeption
+    public class NotFoundDelegatedAccessException : Xeption
     {
-        public NullUserAccessException(string message)
+        public NotFoundDelegatedAccessException(string message)
             : base(message)
         { }
     }

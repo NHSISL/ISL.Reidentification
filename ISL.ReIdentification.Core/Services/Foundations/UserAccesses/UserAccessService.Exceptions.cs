@@ -5,6 +5,7 @@
 using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
+using ISL.Reidentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -30,6 +31,10 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
             {
                 throw await CreateAndLogValidationExceptionAsync(invalidUserAccessException);
             }
+            catch (NotFoundUserAccessException notFoundUserAccessException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(notFoundUserAccessException);
+            }
             catch (SqlException sqlException)
             {
                 var failedStorageUserAccessException = new FailedStorageUserAccessException(
@@ -47,6 +52,15 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
                         data: duplicateKeyException.Data);
 
                 throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsUserAccessException);
+            }
+            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
+            {
+                var lockedUserAccessException =
+                    new LockedUserAccessException(
+                        message: "Locked user access record error occurred, please try again.",
+                        innerException: dbUpdateConcurrencyException);
+
+                throw await CreateAndLogDependencyValidationExceptionAsync(lockedUserAccessException);
             }
             catch (DbUpdateException dbUpdateException)
             {
