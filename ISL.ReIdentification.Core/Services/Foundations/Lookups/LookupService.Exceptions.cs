@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 using ISL.ReIdentification.Core.Models.Foundations.Lookups;
 using ISL.ReIdentification.Core.Models.Foundations.Lookups.Exceptions;
 using Xeptions;
@@ -23,6 +24,15 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
             {
                 throw CreateAndLogValidationException(invalidLookupException);
             }
+            catch (SqlException sqlException)
+            {
+                var failedLookupStorageException =
+                    new FailedLookupStorageException(
+                        message: "Failed lookup storage error occurred, contact support.",
+                        innerException: sqlException);
+
+                throw CreateAndLogCriticalDependencyException(failedLookupStorageException);
+            }
         }
 
         private LookupValidationException CreateAndLogValidationException(Xeption exception)
@@ -35,6 +45,18 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
             this.loggingBroker.LogError(lookupValidationException);
 
             return lookupValidationException;
+        }
+
+        private LookupDependencyException CreateAndLogCriticalDependencyException(Xeption exception)
+        {
+            var lookupDependencyException = 
+                new LookupDependencyException(
+                    message: "Lookup dependency error occurred, contact support.",
+                    innerException: exception);
+
+            this.loggingBroker.LogCritical(lookupDependencyException);
+
+            return lookupDependencyException;
         }
     }
 }
