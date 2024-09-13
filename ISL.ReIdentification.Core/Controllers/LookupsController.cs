@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
@@ -39,6 +40,26 @@ namespace ISL.ReIdentification.Core.Controllers
                when (lookupDependencyValidationException.InnerException is AlreadyExistsLookupException)
             {
                 return Conflict(lookupDependencyValidationException.InnerException);
+            }
+            catch (LookupDependencyException lookupDependencyException)
+            {
+                return InternalServerError(lookupDependencyException);
+            }
+            catch (LookupServiceException lookupServiceException)
+            {
+                return InternalServerError(lookupServiceException);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult<IQueryable<Lookup>> GetAllLookups()
+        {
+            try
+            {
+                IQueryable<Lookup> retrievedLookups =
+                    this.lookupService.RetrieveAllLookups();
+
+                return Ok(retrievedLookups);
             }
             catch (LookupDependencyException lookupDependencyException)
             {
