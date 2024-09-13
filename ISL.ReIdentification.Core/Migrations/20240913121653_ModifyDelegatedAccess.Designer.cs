@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ISL.ReIdentification.Core.Migrations
 {
     [DbContext(typeof(ReIdentificationStorageBroker))]
-    [Migration("20240913105106_ModifyDelegatedAccess")]
+    [Migration("20240913121653_ModifyDelegatedAccess")]
     partial class ModifyDelegatedAccess
     {
         /// <inheritdoc />
@@ -44,8 +44,8 @@ namespace ISL.ReIdentification.Core.Migrations
 
                     b.Property<string>("IdentifierColumn")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<bool>("IsApproved")
                         .HasColumnType("bit");
