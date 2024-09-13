@@ -43,6 +43,15 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
 
                 throw CreateAndLogDependencyValidationException(alreadyExistsLookupException);
             }
+            catch (ForeignKeyConstraintConflictException foreignKeyConstraintConflictException)
+            {
+                var invalidLookupReferenceException =
+                    new InvalidLookupReferenceException(
+                        message: "Invalid lookup reference error occurred.", 
+                        innerException: foreignKeyConstraintConflictException);
+
+                throw CreateAndLogDependencyValidationException(invalidLookupReferenceException);
+            }
         }
 
         private LookupValidationException CreateAndLogValidationException(Xeption exception)
@@ -62,7 +71,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
             var lookupDependencyException = 
                 new LookupDependencyException(
                     message: "Lookup dependency error occurred, contact support.",
-                    innerException: exception);
+                    innerException: exception); 
 
             this.loggingBroker.LogCritical(lookupDependencyException);
 
