@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using Microsoft.Data.SqlClient;
@@ -62,6 +63,13 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
+
+        private static IQueryable<Lookup> CreateRandomLookups()
+        {
+            return CreateLookupFiller(dateTimeOffset: GetRandomDateTimeOffset())
+                .Create(count: GetRandomNumber())
+                    .AsQueryable();
+        }
 
         private static Lookup CreateRandomLookup() =>
             CreateLookupFiller(dateTimeOffset: GetRandomDateTimeOffset()).Create();
