@@ -138,5 +138,43 @@ namespace ISL.ReIdentification.Core.Controllers
                 return InternalServerError(lookupServiceException);
             }
         }
+
+        [HttpDelete("{lookupId}")]
+        public async ValueTask<ActionResult<Lookup>> DeleteLookupByIdAsync(Guid lookupId)
+        {
+            try
+            {
+                Lookup deletedLookup =
+                    await this.lookupService.RemoveLookupByIdAsync(lookupId);
+
+                return Ok(deletedLookup);
+            }
+            catch (LookupValidationException lookupValidationException)
+                when (lookupValidationException.InnerException is NotFoundLookupException)
+            {
+                return NotFound(lookupValidationException.InnerException);
+            }
+            catch (LookupValidationException lookupValidationException)
+            {
+                return BadRequest(lookupValidationException.InnerException);
+            }
+            catch (LookupDependencyValidationException lookupDependencyValidationException)
+                when (lookupDependencyValidationException.InnerException is LockedLookupException)
+            {
+                return Locked(lookupDependencyValidationException.InnerException);
+            }
+            catch (LookupDependencyValidationException lookupDependencyValidationException)
+            {
+                return BadRequest(lookupDependencyValidationException);
+            }
+            catch (LookupDependencyException lookupDependencyException)
+            {
+                return InternalServerError(lookupDependencyException);
+            }
+            catch (LookupServiceException lookupServiceException)
+            {
+                return InternalServerError(lookupServiceException);
+            }
+        }
     }
 }
