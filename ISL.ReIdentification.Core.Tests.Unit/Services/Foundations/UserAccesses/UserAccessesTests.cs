@@ -69,7 +69,6 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
         {
             int randomDaysInThePast = GetRandomNegativeNumber();
             UserAccess randomUserAccess = CreateRandomUserAccess(dateTimeOffset);
-
             randomUserAccess.CreatedDate = dateTimeOffset.AddDays(randomDaysInThePast);
 
             return randomUserAccess;
