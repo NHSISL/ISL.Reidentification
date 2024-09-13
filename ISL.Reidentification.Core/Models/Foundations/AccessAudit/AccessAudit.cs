@@ -2,11 +2,9 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
-
 namespace ISL.Reidentification.Core.Models.Foundations.AccessAudit
 {
-    public class AccessAudit
+    public class AccessAudit : IKey, IAudit
     {
         public Guid Id { get; set; }
         public string PseudoIdentifier { get; set; }
