@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using FluentAssertions;
+using ISL.Reidentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using Moq;
@@ -43,6 +44,43 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
             this.ReIdentificationStorageBroker.Verify(broker =>
                 broker.SelectUserAccessByIdAsync(invalidUserAccessId),
                     Times.Never);
+
+            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnRetrieveByIdIfUserAccessNotFoundAndLogItAsync()
+        {
+            // given
+            Guid someUserAccessId = Guid.NewGuid();
+            UserAccess nullUserAccess = null;
+
+            var notFoundUserAccessException = new NotFoundUserAccessException(
+                message: $"User access not found with id: {someUserAccessId}");
+
+            var expectedUserAccessValidationException = new UserAccessValidationException(
+                message: "UserAccess validation error occurred, please fix errors and try again.",
+                innerException: notFoundUserAccessException);
+
+            this.ReIdentificationStorageBroker.Setup(broker =>
+                broker.SelectUserAccessByIdAsync(someUserAccessId))
+                    .ReturnsAsync(nullUserAccess);
+
+            // when
+            ValueTask<UserAccess> retrieveByIdUserAccessTask =
+                this.userAccessService.RetrieveUserAccessByIdAsync(someUserAccessId);
+
+            UserAccessValidationException actualUserAccessValidationException =
+                await Assert.ThrowsAsync<UserAccessValidationException>(retrieveByIdUserAccessTask.AsTask);
+
+            // then
+            actualUserAccessValidationException.Should().BeEquivalentTo(expectedUserAccessValidationException);
+
+            this.ReIdentificationStorageBroker.Verify(broker =>
+                broker.SelectUserAccessByIdAsync(someUserAccessId),
+                    Times.Once());
 
             this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
