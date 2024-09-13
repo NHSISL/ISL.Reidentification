@@ -2,12 +2,12 @@ import { Feature } from "../models/features/feature";
 import ApiBroker from "./apiBroker";
 
 class FeatureBroker {
-    relativeAuditUrl = '/api/features';
+    relativeFeatureUrl = '/api/features';
 
     private apiBroker: ApiBroker = new ApiBroker();
 
     async GetAllFeatureAsync(): Promise<Feature[]> {
-        const url = this.relativeAuditUrl;
+        const url = this.relativeFeatureUrl;
 
         const result = await this.apiBroker.GetAsync(url);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
