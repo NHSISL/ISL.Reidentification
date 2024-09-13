@@ -27,10 +27,12 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
                 Parameter: nameof(Lookup.UpdatedDate)),
 
                 (Rule: IsNotSame(
-                    firstId: lookup.UpdatedBy,
-                    secondId: lookup.CreatedBy,
-                    secondIdName: nameof(Lookup.CreatedBy)),
-                Parameter: nameof(Lookup.UpdatedBy)));
+                    first: lookup.UpdatedBy,
+                    second: lookup.CreatedBy,
+                    secondName: nameof(Lookup.CreatedBy)),
+                Parameter: nameof(Lookup.UpdatedBy)),
+
+                (Rule: IsNotRecent(lookup.CreatedDate), Parameter: nameof(Lookup.CreatedDate)));
         }
 
         private static void ValidateLookupIsNotNull(Lookup lookup)
@@ -85,6 +87,23 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
                Condition = first != second,
                Message = $"Text is not the same as {secondName}"
            };
+
+        private dynamic IsNotRecent(DateTimeOffset date) => new
+        {
+            Condition = IsDateNotRecent(date),
+            Message = "Date is not recent"
+        };
+
+        private bool IsDateNotRecent(DateTimeOffset date)
+        {
+            DateTimeOffset currentDateTime =
+                this.dateTimeBroker.GetCurrentDateTimeOffset();
+
+            TimeSpan timeDifference = currentDateTime.Subtract(date);
+            TimeSpan oneMinute = TimeSpan.FromMinutes(1);
+
+            return timeDifference.Duration() > oneMinute;
+        }
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {

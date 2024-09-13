@@ -22,6 +22,10 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             Lookup storageLookup = inputLookup;
             Lookup expectedLookup = storageLookup.DeepClone();
 
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(randomDateTimeOffset);
+
             this.storageBrokerMock.Setup(broker =>
                 broker.InsertLookupAsync(inputLookup))
                     .ReturnsAsync(storageLookup);
@@ -33,13 +37,17 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             // then
             actualLookup.Should().BeEquivalentTo(expectedLookup);
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once());
+
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertLookupAsync(inputLookup),
                     Times.Once);
 
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
