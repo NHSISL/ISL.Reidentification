@@ -16,6 +16,7 @@ namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications
                 .IsRequired();
 
             builder.Property(accessAudit => accessAudit.UserEmail)
+                .HasMaxLength(320)
                 .IsRequired();
 
             builder.Property(accessAudit => accessAudit.HasAccess)
