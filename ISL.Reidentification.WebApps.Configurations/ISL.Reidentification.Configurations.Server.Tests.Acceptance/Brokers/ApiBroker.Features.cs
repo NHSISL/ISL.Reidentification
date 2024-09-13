@@ -4,7 +4,7 @@
 
 using System.Threading.Tasks;
 
-namespace ISL.Reidentification.Configurations.Server.Tests.Acceptance.Brokers
+namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Brokers
 {
     public partial class ApiBroker
     {

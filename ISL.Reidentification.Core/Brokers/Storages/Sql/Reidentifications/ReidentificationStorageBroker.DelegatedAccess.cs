@@ -6,12 +6,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
-using ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses;
+using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
 using Microsoft.EntityFrameworkCore;
 
-namespace ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications
+namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications
 {
-    public partial class ReidentificationStorageBroker
+    public partial class ReIdentificationStorageBroker
     {
        public DbSet<DelegatedAccess> DelegatedAccesses { get; set; }
 

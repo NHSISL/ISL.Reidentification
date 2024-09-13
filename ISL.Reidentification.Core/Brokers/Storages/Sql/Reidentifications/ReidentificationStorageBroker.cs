@@ -8,16 +8,17 @@ using EFxceptions;
 using ISL.Reidentification.Core.Models.Foundations.AccessAudit;
 using ISL.Reidentification.Core.Models.Foundations.DelegatedAccesses;
 using ISL.Reidentification.Core.Models.Foundations.UserAccesses;
+using ISL.ReIdentification.Core.Models.Foundations.Lookups;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications
+namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications
 {
-    public partial class ReidentificationStorageBroker : EFxceptionsContext, IReidentificationStorageBroker
+    public partial class ReIdentificationStorageBroker : EFxceptionsContext, IReIdentificationStorageBroker
     {
         private readonly IConfiguration configuration;
 
-        public ReidentificationStorageBroker(IConfiguration configuration)
+        public ReIdentificationStorageBroker(IConfiguration configuration)
         {
             this.configuration = configuration;
             Database.Migrate();
@@ -28,7 +29,7 @@ namespace ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications
             optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 
             string connectionString = configuration
-                .GetConnectionString(name: "ReidentificationConnection");
+                .GetConnectionString(name: "ReIdentificationConnection");
 
             optionsBuilder.UseSqlServer(connectionString);
         }
@@ -38,6 +39,7 @@ namespace ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications
             AddDelegatedAccessConfigurations(modelBuilder.Entity<DelegatedAccess>());
             AddUserAccessConfigurations(modelBuilder.Entity<UserAccess>());
             AddAccessAuditConfigurations(modelBuilder.Entity<AccessAudit>());
+            AddLookupConfigurations(modelBuilder.Entity<Lookup>());
         }
 
         private async ValueTask<T> InsertAsync<T>(T @object)

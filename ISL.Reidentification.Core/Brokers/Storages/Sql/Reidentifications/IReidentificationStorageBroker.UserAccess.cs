@@ -6,11 +6,11 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ISL.Reidentification.Core.Models.Foundations.UserAccesses;
+using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 
-namespace ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications
+namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications
 {
-    public partial interface IReidentificationStorageBroker
+    public partial interface IReIdentificationStorageBroker
     {
         ValueTask<UserAccess> InsertUserAccessAsync(UserAccess userAccess);
         ValueTask<IQueryable<UserAccess>> SelectAllUserAccessAsync();
