@@ -14,6 +14,8 @@ import { queryClientGlobalOptions } from './brokers/apiBroker.globals';
 import { Page4 } from './pages/page4';
 import { Page5 } from './pages/page5';
 import { Home } from './pages/home';
+import { ConfigurationHome } from './pages/configuration/configurationHome';
+import LookupTable from './components/configurations/lookupTable';
 
 // TODO:
 //      - API Secured Routes
@@ -29,6 +31,14 @@ function App({ instance }: any) {
                 {
                     path: "home",
                     element: <Home />
+                },
+                {
+                    path: "configuration/home",
+                    element: <ConfigurationHome />
+                },
+                {
+                    path: "configuration/lookups",
+                    element: <LookupTable allowedToAdd={true} allowedToEdit={true} allowedToDelete={true} />
                 },
                 {
                     path: "page1/:id",
