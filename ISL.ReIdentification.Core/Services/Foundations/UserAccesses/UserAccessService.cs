@@ -34,6 +34,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
 
                 return await this.ReIdentificationStorageBroker.InsertUserAccessAsync(userAccess);
             });
+            
         public ValueTask<IQueryable<UserAccess>> RetrieveAllUserAccessesAsync() =>
             TryCatch(async () =>
             {
