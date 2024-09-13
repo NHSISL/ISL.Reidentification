@@ -54,5 +54,49 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowNotFoundExceptionOnRetrieveByIdIfLookupIsNotFoundAndLogItAsync()
+        {
+            //given
+            Guid someLookupId = Guid.NewGuid();
+            Lookup noLookup = null;
+
+            var notFoundLookupException =
+                new NotFoundLookupException(someLookupId);
+
+            var expectedLookupValidationException =
+                new LookupValidationException(
+                    message: "Lookup validation errors occurred, please try again.",
+                    innerException: notFoundLookupException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectLookupByIdAsync(It.IsAny<Guid>()))
+                    .ReturnsAsync(noLookup);
+
+            //when
+            ValueTask<Lookup> retrieveLookupByIdTask =
+                this.lookupService.RetrieveLookupByIdAsync(someLookupId);
+
+            LookupValidationException actualLookupValidationException =
+                await Assert.ThrowsAsync<LookupValidationException>(
+                    retrieveLookupByIdTask.AsTask);
+
+            //then
+            actualLookupValidationException.Should().BeEquivalentTo(expectedLookupValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectLookupByIdAsync(It.IsAny<Guid>()),
+                    Times.Once());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedLookupValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
