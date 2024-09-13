@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
 using ISL.ReIdentification.Core.Models.Foundations.Lookups;
 using ISL.ReIdentification.Core.Models.Foundations.Lookups.Exceptions;
@@ -33,6 +34,15 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
 
                 throw CreateAndLogCriticalDependencyException(failedLookupStorageException);
             }
+            catch (DuplicateKeyException duplicateKeyException)
+            {
+                var alreadyExistsLookupException =
+                    new AlreadyExistsLookupException(
+                        message: "Lookup with the same Id already exists.",
+                        innerException: duplicateKeyException);
+
+                throw CreateAndLogDependencyValidationException(alreadyExistsLookupException);
+            }
         }
 
         private LookupValidationException CreateAndLogValidationException(Xeption exception)
@@ -57,6 +67,18 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
             this.loggingBroker.LogCritical(lookupDependencyException);
 
             return lookupDependencyException;
+        }
+
+        private LookupDependencyValidationException CreateAndLogDependencyValidationException(Xeption exception)
+        {
+            var lookupDependencyValidationException =
+                new LookupDependencyValidationException(
+                    message: "Lookup dependency validation occurred, please try again.",
+                    innerException: exception);
+
+            this.loggingBroker.LogError(lookupDependencyValidationException);
+
+            return lookupDependencyValidationException;
         }
     }
 }
