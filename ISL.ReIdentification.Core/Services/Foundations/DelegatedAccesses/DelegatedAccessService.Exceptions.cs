@@ -94,11 +94,11 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
             }
             catch (SqlException sqlException)
             {
-                var failedStorageSourceException = new FailedStorageDelegatedAccessException(
+                var failedStorageDelegatedAccessException = new FailedStorageDelegatedAccessException(
                    message: "Failed delegated access storage error occurred, contact support.",
                    innerException: sqlException);
 
-                throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageSourceException);
+                throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageDelegatedAccessException);
             }
             catch (Exception exception)
             {
