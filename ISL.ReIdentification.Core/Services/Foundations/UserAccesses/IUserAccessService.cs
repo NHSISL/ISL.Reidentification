@@ -10,5 +10,6 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
     public interface IUserAccessService
     {
         ValueTask<UserAccess> AddUserAccessAsync(UserAccess userAccess);
+        ValueTask<UserAccess> ModifyUserAccessAsync(UserAccess userAccess);
     }
 }
