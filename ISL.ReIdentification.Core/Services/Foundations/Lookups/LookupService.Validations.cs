@@ -53,7 +53,9 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
                     firstDate: lookup.UpdatedDate,
                     secondDate: lookup.CreatedDate,
                     secondDateName: nameof(Lookup.CreatedDate)),
-                Parameter: nameof(Lookup.UpdatedDate)));
+                Parameter: nameof(Lookup.UpdatedDate)),
+
+                (Rule: IsNotRecent(lookup.UpdatedDate), Parameter: nameof(lookup.UpdatedDate)));
         }
 
         public void ValidateLookupId(Guid lookupId) =>

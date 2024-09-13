@@ -115,6 +115,10 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             actualLookupValidationException.Should()
                 .BeEquivalentTo(expectedLookupValidationException);
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedLookupValidationException))),
@@ -124,9 +128,9 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
                 broker.UpdateLookupAsync(It.IsAny<Lookup>()),
                     Times.Never);
 
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -136,7 +140,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
             Lookup randomLookup = CreateRandomLookup(randomDateTimeOffset);
             Lookup invalidLookup = randomLookup;
-            
+
             var invalidLookupException = 
                 new InvalidLookupException(
                     message: "Invalid lookup. Please correct the errors and try again.");
@@ -150,6 +154,10 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
                     message: "Lookup validation errors occurred, please try again.",
                     innerException: invalidLookupException);
 
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(randomDateTimeOffset);
+
             // when
             ValueTask<Lookup> modifyLookupTask =
                 this.lookupService.ModifyLookupAsync(invalidLookup);
@@ -162,6 +170,10 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             actualLookupValidationException.Should()
                 .BeEquivalentTo(expectedLookupValidationException);
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedLookupValidationException))),
@@ -171,9 +183,9 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
                 broker.SelectLookupByIdAsync(invalidLookup.Id),
                     Times.Never);
 
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
         [Theory]
