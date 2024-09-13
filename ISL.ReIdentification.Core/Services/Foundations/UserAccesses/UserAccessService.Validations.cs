@@ -29,16 +29,16 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
                 (Rule: await IsInvalidLengthAsync(userAccess.UpdatedBy, 255), Parameter: nameof(UserAccess.UpdatedBy)),
 
                 (Rule: await IsNotSameAsync(
-                    createBy: userAccess.UpdatedBy,
-                    updatedBy: userAccess.CreatedBy,
-                    createdByName: nameof(UserAccess.CreatedBy)),
+                    first: userAccess.UpdatedBy,
+                    second: userAccess.CreatedBy,
+                    secondName: nameof(UserAccess.CreatedBy)),
 
                 Parameter: nameof(UserAccess.UpdatedBy)),
 
                 (Rule: await IsNotSameAsync(
-                    createdDate: userAccess.CreatedDate,
-                    updatedDate: userAccess.UpdatedDate,
-                    nameof(UserAccess.CreatedDate)),
+                    first: userAccess.UpdatedDate,
+                    second: userAccess.CreatedDate,
+                    secondName: nameof(UserAccess.CreatedDate)),
 
                 Parameter: nameof(UserAccess.UpdatedDate)),
 
@@ -81,21 +81,21 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
             (text ?? string.Empty).Length > maxLength;
 
         private static async ValueTask<dynamic> IsNotSameAsync(
-            DateTimeOffset createdDate,
-            DateTimeOffset updatedDate,
-            string createdDateName) => new
+            DateTimeOffset first,
+            DateTimeOffset second,
+            string secondName) => new
             {
-                Condition = createdDate != updatedDate,
-                Message = $"Date is not the same as {createdDateName}"
+                Condition = first != second,
+                Message = $"Date is not the same as {secondName}"
             };
 
         private static async ValueTask<dynamic> IsNotSameAsync(
-            string createBy,
-            string updatedBy,
-            string createdByName) => new
+            string first,
+            string second,
+            string secondName) => new
             {
-                Condition = createBy != updatedBy,
-                Message = $"Text is not the same as {createdByName}"
+                Condition = first != second,
+                Message = $"Text is not the same as {secondName}"
             };
 
         private async ValueTask<dynamic> IsNotRecentAsync(DateTimeOffset date)

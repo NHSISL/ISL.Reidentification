@@ -18,75 +18,55 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
             Validate(
                 (Rule: await IsInvalidAsync(delegatedAccess.Id), Parameter: nameof(DelegatedAccess.Id)),
 
-                (Rule: await IsInvalidAsync(
-                    delegatedAccess.RequesterEmail),
-
+                (Rule: await IsInvalidAsync(delegatedAccess.RequesterEmail),
                 Parameter: nameof(DelegatedAccess.RequesterEmail)),
 
-                (Rule: await IsInvalidAsync(
-                    delegatedAccess.RecipientEmail),
-
+                (Rule: await IsInvalidAsync(delegatedAccess.RecipientEmail),
                 Parameter: nameof(DelegatedAccess.RecipientEmail)),
 
-                (Rule: await IsInvalidAsync(
-                    delegatedAccess.IdentifierColumn),
-
+                (Rule: await IsInvalidAsync(delegatedAccess.IdentifierColumn),
                 Parameter: nameof(DelegatedAccess.IdentifierColumn)),
 
                 (Rule: await IsInvalidAsync(delegatedAccess.CreatedBy), Parameter: nameof(DelegatedAccess.CreatedBy)),
                 (Rule: await IsInvalidAsync(delegatedAccess.UpdatedBy), Parameter: nameof(DelegatedAccess.UpdatedBy)),
 
-                (Rule: await IsInvalidAsync(
-                    delegatedAccess.CreatedDate),
-
+                (Rule: await IsInvalidAsync(delegatedAccess.CreatedDate),
                 Parameter: nameof(DelegatedAccess.CreatedDate)),
 
-                (Rule: await IsInvalidAsync(
-                    delegatedAccess.UpdatedDate),
-
+                (Rule: await IsInvalidAsync(delegatedAccess.UpdatedDate),
                 Parameter: nameof(DelegatedAccess.UpdatedDate)),
 
+                (Rule: await IsInvalidLengthAsync(delegatedAccess.RequesterEmail, 320),
+                Parameter: nameof(DelegatedAccess.RequesterEmail)),
+
+                (Rule: await IsInvalidLengthAsync(delegatedAccess.RecipientEmail, 320),
+                Parameter: nameof(DelegatedAccess.RecipientEmail)),
+
+                (Rule: await IsInvalidLengthAsync(delegatedAccess.IdentifierColumn, 50),
+                Parameter: nameof(DelegatedAccess.IdentifierColumn)),
+
+                (Rule: await IsInvalidLengthAsync(delegatedAccess.CreatedBy, 255),
+                Parameter: nameof(DelegatedAccess.CreatedBy)),
+
+                (Rule: await IsInvalidLengthAsync(delegatedAccess.UpdatedBy, 255),
+                Parameter: nameof(DelegatedAccess.UpdatedBy)),
+
                 (Rule: await IsNotSameAsync(
-                    createBy: delegatedAccess.UpdatedBy,
-                    updatedBy: delegatedAccess.CreatedBy,
-                    createdByName: nameof(DelegatedAccess.CreatedBy)),
+                    first: delegatedAccess.UpdatedBy,
+                    second: delegatedAccess.CreatedBy,
+                    secondName: nameof(DelegatedAccess.CreatedBy)),
 
                 Parameter: nameof(DelegatedAccess.UpdatedBy)),
 
                 (Rule: await IsNotSameAsync(
-                    createdDate: delegatedAccess.CreatedDate,
-                    updatedDate: delegatedAccess.UpdatedDate,
-                    nameof(DelegatedAccess.CreatedDate)),
+                    first: delegatedAccess.CreatedDate,
+                    second: delegatedAccess.UpdatedDate,
+                    secondName: nameof(DelegatedAccess.CreatedDate)),
 
                 Parameter: nameof(DelegatedAccess.UpdatedDate)),
 
                 (Rule: await IsNotRecentAsync(delegatedAccess.CreatedDate),
-                    Parameter: nameof(DelegatedAccess.CreatedDate)),
-
-                (Rule: await IsInvalidLengthAsync(
-                    delegatedAccess.RequesterEmail, 320),
-
-                Parameter: nameof(DelegatedAccess.RequesterEmail)),
-
-                (Rule: await IsInvalidLengthAsync(
-                    delegatedAccess.RecipientEmail, 320),
-
-                Parameter: nameof(DelegatedAccess.RecipientEmail)),
-
-                (Rule: await IsInvalidLengthAsync(
-                    delegatedAccess.IdentifierColumn, 50),
-
-                Parameter: nameof(DelegatedAccess.IdentifierColumn)),
-
-                (Rule: await IsInvalidLengthAsync(
-                    delegatedAccess.CreatedBy, 255),
-
-                Parameter: nameof(DelegatedAccess.CreatedBy)),
-
-                (Rule: await IsInvalidLengthAsync(
-                    delegatedAccess.UpdatedBy, 255),
-
-                Parameter: nameof(DelegatedAccess.UpdatedBy)));
+                Parameter: nameof(DelegatedAccess.CreatedDate)));
         }
 
         private static void ValidateDelegatedAccessIsNotNull(DelegatedAccess delegatedAccess)
@@ -125,21 +105,21 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
             (text ?? string.Empty).Length > maxLength;
 
         private static async ValueTask<dynamic> IsNotSameAsync(
-            DateTimeOffset createdDate,
-            DateTimeOffset updatedDate,
-            string createdDateName) => new
+            DateTimeOffset first,
+            DateTimeOffset second,
+            string secondName) => new
             {
-                Condition = createdDate != updatedDate,
-                Message = $"Date is not the same as {createdDateName}"
+                Condition = first != second,
+                Message = $"Date is not the same as {secondName}"
             };
 
         private static async ValueTask<dynamic> IsNotSameAsync(
-            string createBy,
-            string updatedBy,
-            string createdByName) => new
+            string first,
+            string second,
+            string secondName) => new
             {
-                Condition = createBy != updatedBy,
-                Message = $"Text is not the same as {createdByName}"
+                Condition = first != second,
+                Message = $"Text is not the same as {secondName}"
             };
 
         private async ValueTask<dynamic> IsNotRecentAsync(DateTimeOffset date)

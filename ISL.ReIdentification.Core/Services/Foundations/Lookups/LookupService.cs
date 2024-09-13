@@ -37,7 +37,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
             });
 
         public ValueTask<IQueryable<Lookup>> RetrieveAllLookupsAsync() =>
-            TryCatch(() => await this.reIdentificationStorageBroker.SelectAllLookupsAsync());
+            TryCatch(this.reIdentificationStorageBroker.SelectAllLookupsAsync);
 
         public ValueTask<Lookup> RetrieveLookupByIdAsync(Guid lookupId) =>
             TryCatch(async () =>

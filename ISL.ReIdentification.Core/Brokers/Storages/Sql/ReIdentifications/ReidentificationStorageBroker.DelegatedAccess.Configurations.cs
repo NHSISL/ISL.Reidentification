@@ -27,6 +27,7 @@ namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications
                 .IsRequired(false);
 
             builder.Property(delegatedAccess => delegatedAccess.IdentifierColumn)
+                .HasMaxLength(10)
                 .IsRequired();
 
             builder.Property(delegatedAccess => delegatedAccess.CreatedBy)
