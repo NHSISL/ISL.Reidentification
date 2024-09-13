@@ -62,12 +62,15 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
                 return await this.storageBroker.UpdateLookupAsync(lookup);
             });
 
-        public async ValueTask<Lookup> RemoveLookupByIdAsync(Guid lookupId)
-        {
-            Lookup maybeLookup = await this.storageBroker
+        public ValueTask<Lookup> RemoveLookupByIdAsync(Guid lookupId) =>
+            TryCatch(async () =>
+            {
+                ValidateLookupId(lookupId);
+
+                Lookup maybeLookup = await this.storageBroker
                     .SelectLookupByIdAsync(lookupId);
 
-            return await this.storageBroker.DeleteLookupAsync(maybeLookup);
-        }
+                return await this.storageBroker.DeleteLookupAsync(maybeLookup);
+            });
     }
 }
