@@ -5,6 +5,7 @@
 using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
+using ISL.Reidentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using Microsoft.Data.SqlClient;
