@@ -12,5 +12,6 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
     {
         ValueTask<UserAccess> AddUserAccessAsync(UserAccess userAccess);
         ValueTask<IQueryable<UserAccess>> RetrieveAllUserAccessesAsync();
+        ValueTask<UserAccess> ModifyUserAccessAsync(UserAccess userAccess);
     }
 }

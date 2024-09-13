@@ -60,6 +60,12 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
         private static string GetRandomString() =>
             new MnemonicString().GetValue();
 
+        private static string GetRandomStringWithLength(int length) =>
+            new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length).GetValue();
+
+        private static int GetRandomNegativeNumber() =>
+            -1 * new IntRange(min: 2, max: 10).GetValue();
+
         private static int GetRandomNumber() =>
             new IntRange(max: 15, min: 2).GetValue();
 
@@ -67,6 +73,15 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
         {
             return (SqlException)RuntimeHelpers.GetUninitializedObject(
                 type: typeof(SqlException));
+        }
+
+        private static UserAccess CreateRandomModifyUserAccess(DateTimeOffset dateTimeOffset)
+        {
+            int randomDaysInThePast = GetRandomNegativeNumber();
+            UserAccess randomUserAccess = CreateRandomUserAccess(dateTimeOffset);
+            randomUserAccess.CreatedDate = dateTimeOffset.AddDays(randomDaysInThePast);
+
+            return randomUserAccess;
         }
 
         private static Filler<UserAccess> CreateUserAccessesFiller(DateTimeOffset dateTimeOffset)
