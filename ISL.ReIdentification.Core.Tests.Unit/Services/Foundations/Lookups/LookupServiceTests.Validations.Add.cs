@@ -169,5 +169,53 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnAddIfCreateAndUpdateUsersIsNotSameAndLogItAsync()
+        {
+            // given
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            Lookup randomLookup = CreateRandomLookup(randomDateTimeOffset);
+            Lookup invalidLookup = randomLookup;
+            invalidLookup.UpdatedBy = Guid.NewGuid().ToString();
+
+            var invalidLookupException =
+                new InvalidLookupException(
+                    message: "Invalid lookup. Please correct the errors and try again.");
+
+            invalidLookupException.AddData(
+                key: nameof(Lookup.UpdatedBy),
+                values: $"Text is not the same as {nameof(Lookup.CreatedBy)}");
+
+            var expectedLookupValidationException =
+                new LookupValidationException(
+                    message: "Lookup validation errors occurred, please try again.",
+                    innerException: invalidLookupException);
+
+            // when
+            ValueTask<Lookup> addLookupTask =
+                this.lookupService.AddLookupAsync(invalidLookup);
+
+            LookupValidationException actualLookupValidationException =
+                await Assert.ThrowsAsync<LookupValidationException>(
+                    addLookupTask.AsTask);
+
+            // then
+            actualLookupValidationException.Should()
+                .BeEquivalentTo(expectedLookupValidationException);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedLookupValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertLookupAsync(It.IsAny<Lookup>()),
+                    Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
