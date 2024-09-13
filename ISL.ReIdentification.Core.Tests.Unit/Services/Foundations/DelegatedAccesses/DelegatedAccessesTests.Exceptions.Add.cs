@@ -2,6 +2,8 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
+using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using FluentAssertions;
 using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
@@ -57,13 +59,13 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
                     expectedDelegatedAccessDependencyException))),
                         Times.Once);
 
-            this.ReIdentificationStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.InsertDelegatedAccessAsync(It.IsAny<DelegatedAccess>()),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -112,13 +114,13 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
                     expectedDelegatedAccessDependencyValidationException))),
                         Times.Once);
 
-            this.ReIdentificationStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.InsertDelegatedAccessAsync(It.IsAny<DelegatedAccess>()),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -164,13 +166,13 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
                     expectedDelegatedAccessDependencyException))),
                         Times.Once);
 
-            this.ReIdentificationStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.InsertDelegatedAccessAsync(It.IsAny<DelegatedAccess>()),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -215,13 +217,13 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
                     expectedDelegatedAccessServiceException))),
                         Times.Once);
 
-            this.ReIdentificationStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.InsertDelegatedAccessAsync(It.IsAny<DelegatedAccess>()),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
         }
     }
 }

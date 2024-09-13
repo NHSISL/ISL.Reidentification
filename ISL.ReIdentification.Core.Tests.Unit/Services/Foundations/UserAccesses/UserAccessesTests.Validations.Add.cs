@@ -2,6 +2,8 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
+using System.Threading.Tasks;
 using FluentAssertions;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses.Exceptions;
@@ -34,11 +36,11 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(expectedUserAccessValidationException))), Times.Once());
 
-            this.ReIdentificationStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.InsertUserAccessAsync(It.IsAny<UserAccess>()),
                     Times.Never);
 
-            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
@@ -122,12 +124,12 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                     expectedUserAccessValidationException))),
                         Times.Once);
 
-            this.ReIdentificationStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.InsertUserAccessAsync(It.IsAny<UserAccess>()),
                     Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
@@ -136,13 +138,28 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
         {
             // given
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
-            string randomString = GetRandomStringWithLengthOf(256);
-            var invalidUserAccess = CreateRandomUserAccess(dateTimeOffset: randomDateTimeOffset);
-            invalidUserAccess.CreatedBy = randomString;
-            invalidUserAccess.UpdatedBy = randomString;
+            UserAccess invalidUserAccess = CreateRandomUserAccess(dateTimeOffset: randomDateTimeOffset);
+            var inputCreatedByUpdatedByString = GetRandomStringWithLength(256);
+            invalidUserAccess.UserEmail = GetRandomStringWithLength(321);
+            invalidUserAccess.RecipientEmail = GetRandomStringWithLength(321);
+            invalidUserAccess.OrgCode = GetRandomStringWithLength(16);
+            invalidUserAccess.CreatedBy = inputCreatedByUpdatedByString;
+            invalidUserAccess.UpdatedBy = inputCreatedByUpdatedByString;
 
             var invalidUserAccessException = new InvalidUserAccessException(
                 message: "Invalid user access. Please correct the errors and try again.");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.UserEmail),
+                values: $"Text exceed max length of {invalidUserAccess.UserEmail.Length - 1} characters");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.RecipientEmail),
+                values: $"Text exceed max length of {invalidUserAccess.RecipientEmail.Length - 1} characters");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.OrgCode),
+                values: $"Text exceed max length of {invalidUserAccess.OrgCode.Length - 1} characters");
 
             invalidUserAccessException.AddData(
                 key: nameof(UserAccess.CreatedBy),
@@ -173,17 +190,22 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
             actualUserAccessValidationException.Should()
                 .BeEquivalentTo(expectedUserAccessValidationException);
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedUserAccessValidationException))),
                         Times.Once);
 
-            this.ReIdentificationStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.InsertUserAccessAsync(It.IsAny<UserAccess>()),
                     Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -240,13 +262,13 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                     SameExceptionAs(expectedUserAccessValidationException))),
                         Times.Once);
 
-            this.ReIdentificationStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.InsertUserAccessAsync(It.IsAny<UserAccess>()),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
         }
 
         [Theory]
@@ -310,13 +332,13 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                     SameExceptionAs(expectedUserAccessValidationException))),
                         Times.Once);
 
-            this.ReIdentificationStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.InsertUserAccessAsync(It.IsAny<UserAccess>()),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
         }
     }
 }

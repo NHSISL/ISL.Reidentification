@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
 using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
@@ -20,7 +21,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
             DelegatedAccess storageDelegatedAccess = inputDelegatedAccess.DeepClone();
             DelegatedAccess expectedDelegatedAccess = inputDelegatedAccess.DeepClone();
 
-            this.ReIdentificationStorageBroker.Setup(broker =>
+            this.reIdentificationStorageBroker.Setup(broker =>
                 broker.InsertDelegatedAccessAsync(inputDelegatedAccess))
                     .ReturnsAsync(storageDelegatedAccess);
 
@@ -35,11 +36,11 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
-            this.ReIdentificationStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.InsertDelegatedAccessAsync(inputDelegatedAccess),
                     Times.Once);
 
-            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
