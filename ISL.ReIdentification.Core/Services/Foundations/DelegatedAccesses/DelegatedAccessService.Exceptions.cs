@@ -32,6 +32,10 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
             {
                 throw await CreateAndLogValidationExceptionAsync(invalidDelegatedAccessException);
             }
+            catch (NotFoundDelegatedAccessException notFoundDelegatedAccessException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(notFoundDelegatedAccessException);
+            }
             catch (SqlException sqlException)
             {
                 var failedStorageDelegatedAccessException = new FailedStorageDelegatedAccessException(
@@ -49,6 +53,15 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
                         data: duplicateKeyException.Data);
 
                 throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsDelegatedAccessException);
+            }
+            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
+            {
+                var concurrencyGemException =
+                    new LockedDelegatedAccessException(
+                        message: "Locked delegated access record error occurred, please try again.",
+                        innerException: dbUpdateConcurrencyException);
+
+                throw await CreateAndLogDependencyValidationExceptionAsync(concurrencyGemException);
             }
             catch (DbUpdateException dbUpdateException)
             {
@@ -94,7 +107,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
             return delegatedAccessDependencyException;
         }
 
-        private async ValueTask<DelegatedAccessDependencyValidationException> 
+        private async ValueTask<DelegatedAccessDependencyValidationException>
             CreateAndLogDependencyValidationExceptionAsync(Xeption exception)
         {
             var delegatedAccessDependencyValidationException = new DelegatedAccessDependencyValidationException(
