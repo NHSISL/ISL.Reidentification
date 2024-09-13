@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -60,6 +61,34 @@ namespace ISL.ReIdentification.Core.Controllers
                     this.lookupService.RetrieveAllLookups();
 
                 return Ok(retrievedLookups);
+            }
+            catch (LookupDependencyException lookupDependencyException)
+            {
+                return InternalServerError(lookupDependencyException);
+            }
+            catch (LookupServiceException lookupServiceException)
+            {
+                return InternalServerError(lookupServiceException);
+            }
+        }
+
+        [HttpGet("{lookupId}")]
+        public async ValueTask<ActionResult<Lookup>> GetLookupByIdAsync(Guid lookupId)
+        {
+            try
+            {
+                Lookup lookup = await this.lookupService.RetrieveLookupByIdAsync(lookupId);
+
+                return Ok(lookup);
+            }
+            catch (LookupValidationException lookupValidationException)
+                when (lookupValidationException.InnerException is NotFoundLookupException)
+            {
+                return NotFound(lookupValidationException.InnerException);
+            }
+            catch (LookupValidationException lookupValidationException)
+            {
+                return BadRequest(lookupValidationException.InnerException);
             }
             catch (LookupDependencyException lookupDependencyException)
             {
