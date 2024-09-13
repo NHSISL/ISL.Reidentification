@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -12,6 +13,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
     public partial class LookupService
     {
         private delegate ValueTask<Lookup> ReturningLookupFunction();
+        private delegate IQueryable<Lookup> ReturningLookupsFunction();
 
         private async ValueTask<Lookup> TryCatch(ReturningLookupFunction returningLookupFunction)
         {
@@ -74,6 +76,23 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
             }
         }
 
+        private IQueryable<Lookup> TryCatch(ReturningLookupsFunction returningLookupsFunction)
+        {
+            try
+            {
+                return returningLookupsFunction();
+            }
+            catch (SqlException sqlException)
+            {
+                var failedLookupStorageException =
+                    new FailedLookupStorageException(
+                        message: "Failed lookup storage error occurred, contact support.",
+                        innerException: sqlException);
+
+                throw CreateAndLogCriticalDependencyException(failedLookupStorageException);
+            }
+        }
+
         private LookupValidationException CreateAndLogValidationException(Xeption exception)
         {
             var lookupValidationException =
@@ -91,7 +110,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
             var lookupDependencyException = 
                 new LookupDependencyException(
                     message: "Lookup dependency error occurred, contact support.",
-                    innerException: exception); 
+                    innerException: exception);
 
             this.loggingBroker.LogCritical(lookupDependencyException);
 
@@ -116,7 +135,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
             var lookupDependencyException = 
                 new LookupDependencyException(
                     message: "Lookup dependency error occurred, contact support.",
-                    innerException: exception); 
+                    innerException: exception);
 
             this.loggingBroker.LogError(lookupDependencyException);
 
