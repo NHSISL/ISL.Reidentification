@@ -84,7 +84,13 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
                     firstDate: inputLookup.CreatedDate,
                     secondDate: storageLookup.CreatedDate,
                     secondDateName: nameof(Lookup.CreatedDate)),
-                Parameter: nameof(Lookup.CreatedDate)));
+                Parameter: nameof(Lookup.CreatedDate)),
+
+                (Rule: IsNotSame(
+                    first: inputLookup.CreatedBy,
+                    second: storageLookup.CreatedBy,
+                    secondName: nameof(Lookup.CreatedBy)),
+                Parameter: nameof(Lookup.CreatedBy)));
         }
 
         private static dynamic IsInvalid(Guid id) => new
