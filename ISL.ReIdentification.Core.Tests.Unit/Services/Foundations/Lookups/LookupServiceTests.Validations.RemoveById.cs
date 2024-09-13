@@ -1,10 +1,13 @@
+// ---------------------------------------------------------
+// Copyright (c) North East London ICB. All rights reserved.
+// ---------------------------------------------------------
+
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Moq;
 using ISL.ReIdentification.Core.Models.Foundations.Lookups;
 using ISL.ReIdentification.Core.Models.Foundations.Lookups.Exceptions;
-using Xunit;
+using Moq;
 
 namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
 {
@@ -16,7 +19,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             // given
             Guid invalidLookupId = Guid.Empty;
 
-            var invalidLookupException = 
+            var invalidLookupException =
                 new InvalidLookupException(
                     message: "Invalid lookup. Please correct the errors and try again.");
 
@@ -42,16 +45,16 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
                 .BeEquivalentTo(expectedLookupValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedLookupValidationException))),
                         Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.DeleteLookupAsync(It.IsAny<Lookup>()),
                     Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }

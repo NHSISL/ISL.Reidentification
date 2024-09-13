@@ -1,10 +1,13 @@
+// ---------------------------------------------------------
+// Copyright (c) North East London ICB. All rights reserved.
+// ---------------------------------------------------------
+
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
-using Moq;
 using ISL.ReIdentification.Core.Models.Foundations.Lookups;
-using Xunit;
+using Moq;
 
 namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
 {
@@ -23,10 +26,10 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             Lookup expectedLookup = storageLookup.DeepClone();
 
             this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Returns(randomDateTimeOffset);
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
 
-            this.storageBrokerMock.Setup(broker =>
+            this.reIdentificationStorageBroker.Setup(broker =>
                 broker.InsertLookupAsync(inputLookup))
                     .ReturnsAsync(storageLookup);
 
@@ -38,15 +41,15 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             actualLookup.Should().BeEquivalentTo(expectedLookup);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once());
 
-            this.storageBrokerMock.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.InsertLookupAsync(inputLookup),
                     Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }

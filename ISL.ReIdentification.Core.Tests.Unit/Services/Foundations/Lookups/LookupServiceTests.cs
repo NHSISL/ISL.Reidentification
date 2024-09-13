@@ -1,35 +1,38 @@
+// ---------------------------------------------------------
+// Copyright (c) North East London ICB. All rights reserved.
+// ---------------------------------------------------------
+
 using System;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.Serialization;
-using Microsoft.Data.SqlClient;
-using Moq;
+using System.Runtime.CompilerServices;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
 using ISL.ReIdentification.Core.Brokers.Loggings;
-using ISL.ReIdentification.Core.Brokers.Storages.Sql;
+using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
 using ISL.ReIdentification.Core.Models.Foundations.Lookups;
 using ISL.ReIdentification.Core.Services.Foundations.Lookups;
+using Microsoft.Data.SqlClient;
+using Moq;
 using Tynamix.ObjectFiller;
 using Xeptions;
-using Xunit;
 
 namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
 {
     public partial class LookupServiceTests
     {
-        private readonly Mock<IStorageBroker> storageBrokerMock;
+        private readonly Mock<IReIdentificationStorageBroker> reIdentificationStorageBroker;
         private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly ILookupService lookupService;
 
         public LookupServiceTests()
         {
-            this.storageBrokerMock = new Mock<IStorageBroker>();
+            this.reIdentificationStorageBroker = new Mock<IReIdentificationStorageBroker>();
             this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
             this.lookupService = new LookupService(
-                storageBroker: this.storageBrokerMock.Object,
+                reIdentificationStorageBroker: this.reIdentificationStorageBroker.Object,
                 dateTimeBroker: this.dateTimeBrokerMock.Object,
                 loggingBroker: this.loggingBrokerMock.Object);
         }
@@ -40,20 +43,11 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
         private static string GetRandomString() =>
             new MnemonicString(wordCount: GetRandomNumber()).GetValue();
 
-        public static TheoryData MinutesBeforeOrAfter()
-        {
-            int randomNumber = GetRandomNumber();
-            int randomNegativeNumber = GetRandomNegativeNumber();
+        private static string GetRandomStringWithLengthOf(int length) =>
+            new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length).GetValue();
 
-            return new TheoryData<int>
-            {
-                randomNumber,
-                randomNegativeNumber
-            };
-        }
-
-        private static SqlException GetSqlException() =>
-            (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
+        private SqlException CreateSqlException() =>
+            (SqlException)RuntimeHelpers.GetUninitializedObject(type: typeof(SqlException));
 
         private static int GetRandomNumber() =>
             new IntRange(min: 2, max: 10).GetValue();
@@ -97,8 +91,6 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnProperty(lookup => lookup.CreatedBy).Use(user)
                 .OnProperty(lookup => lookup.UpdatedBy).Use(user);
-
-            // TODO: Complete the filler setup e.g. ignore related properties etc...
 
             return filler;
         }

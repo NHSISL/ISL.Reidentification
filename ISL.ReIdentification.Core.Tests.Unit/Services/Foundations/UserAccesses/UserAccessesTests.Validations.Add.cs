@@ -2,6 +2,8 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
+using System.Threading.Tasks;
 using FluentAssertions;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses.Exceptions;
@@ -34,11 +36,11 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(expectedUserAccessValidationException))), Times.Once());
 
-            this.ReIdentificationStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.InsertUserAccessAsync(It.IsAny<UserAccess>()),
                     Times.Never);
 
-            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
@@ -122,12 +124,12 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                     expectedUserAccessValidationException))),
                         Times.Once);
 
-            this.ReIdentificationStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.InsertUserAccessAsync(It.IsAny<UserAccess>()),
                     Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
@@ -178,12 +180,12 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                     expectedUserAccessValidationException))),
                         Times.Once);
 
-            this.ReIdentificationStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.InsertUserAccessAsync(It.IsAny<UserAccess>()),
                     Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -240,13 +242,13 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                     SameExceptionAs(expectedUserAccessValidationException))),
                         Times.Once);
 
-            this.ReIdentificationStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.InsertUserAccessAsync(It.IsAny<UserAccess>()),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
         }
 
         [Theory]
@@ -310,13 +312,13 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                     SameExceptionAs(expectedUserAccessValidationException))),
                         Times.Once);
 
-            this.ReIdentificationStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.InsertUserAccessAsync(It.IsAny<UserAccess>()),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
         }
     }
 }

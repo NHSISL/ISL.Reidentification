@@ -13,7 +13,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
     {
         private async ValueTask ValidateLookupOnAdd(Lookup lookup)
         {
-            ValidateLookupIsNotNull(lookup);
+            await ValidateLookupIsNotNull(lookup);
 
             Validate(
                 (Rule: await IsInvalidAsync(lookup.Id), Parameter: nameof(Lookup.Id)),
@@ -45,7 +45,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
 
         private async ValueTask ValidateLookupOnModify(Lookup lookup)
         {
-            ValidateLookupIsNotNull(lookup);
+            await ValidateLookupIsNotNull(lookup);
 
             Validate(
                 (Rule: await IsInvalidAsync(lookup.Id), Parameter: nameof(Lookup.Id)),
@@ -76,7 +76,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
         public async ValueTask ValidateLookupId(Guid lookupId) =>
             Validate((Rule: await IsInvalidAsync(lookupId), Parameter: nameof(Lookup.Id)));
 
-        private static void ValidateStorageLookup(Lookup maybeLookup, Guid lookupId)
+        private async static ValueTask ValidateStorageLookup(Lookup maybeLookup, Guid lookupId)
         {
             if (maybeLookup is null)
             {
@@ -84,7 +84,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
             }
         }
 
-        private static void ValidateLookupIsNotNull(Lookup lookup)
+        private async static ValueTask ValidateLookupIsNotNull(Lookup lookup)
         {
             if (lookup is null)
             {

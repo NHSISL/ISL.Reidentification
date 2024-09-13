@@ -22,11 +22,11 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             Lookup deletedLookup = expectedInputLookup;
             Lookup expectedLookup = deletedLookup.DeepClone();
 
-            this.storageBrokerMock.Setup(broker =>
+            this.reIdentificationStorageBroker.Setup(broker =>
                 broker.SelectLookupByIdAsync(inputLookupId))
                     .ReturnsAsync(storageLookup);
 
-            this.storageBrokerMock.Setup(broker =>
+            this.reIdentificationStorageBroker.Setup(broker =>
                 broker.DeleteLookupAsync(expectedInputLookup))
                     .ReturnsAsync(deletedLookup);
 
@@ -37,15 +37,15 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             // then
             actualLookup.Should().BeEquivalentTo(expectedLookup);
 
-            this.storageBrokerMock.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.SelectLookupByIdAsync(inputLookupId),
                     Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.DeleteLookupAsync(expectedInputLookup),
                     Times.Once);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }

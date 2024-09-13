@@ -1,11 +1,14 @@
+// ---------------------------------------------------------
+// Copyright (c) North East London ICB. All rights reserved.
+// ---------------------------------------------------------
+
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.Data.SqlClient;
-using Moq;
 using ISL.ReIdentification.Core.Models.Foundations.Lookups;
 using ISL.ReIdentification.Core.Models.Foundations.Lookups.Exceptions;
-using Xunit;
+using Microsoft.Data.SqlClient;
+using Moq;
 
 namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
 {
@@ -16,7 +19,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
         {
             // given
             Guid someId = Guid.NewGuid();
-            SqlException sqlException = GetSqlException();
+            SqlException sqlException = CreateSqlException();
 
             var failedLookupStorageException =
                 new FailedLookupStorageException(
@@ -28,7 +31,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
                     message: "Lookup dependency error occurred, contact support.",
                     innerException: failedLookupStorageException);
 
-            this.storageBrokerMock.Setup(broker =>
+            this.reIdentificationStorageBroker.Setup(broker =>
                 broker.SelectLookupByIdAsync(It.IsAny<Guid>()))
                     .ThrowsAsync(sqlException);
 
@@ -44,16 +47,16 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             actualLookupDependencyException.Should()
                 .BeEquivalentTo(expectedLookupDependencyException);
 
-            this.storageBrokerMock.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.SelectLookupByIdAsync(It.IsAny<Guid>()),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogCritical(It.Is(SameExceptionAs(
+                broker.LogCriticalAsync(It.Is(SameExceptionAs(
                     expectedLookupDependencyException))),
                         Times.Once);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
@@ -67,7 +70,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
 
             var failedLookupServiceException =
                 new FailedLookupServiceException(
-                    message: "Failed lookup service occurred, please contact support", 
+                    message: "Failed lookup service occurred, please contact support",
                     innerException: serviceException);
 
             var expectedLookupServiceException =
@@ -75,7 +78,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
                     message: "Lookup service error occurred, contact support.",
                     innerException: failedLookupServiceException);
 
-            this.storageBrokerMock.Setup(broker =>
+            this.reIdentificationStorageBroker.Setup(broker =>
                 broker.SelectLookupByIdAsync(It.IsAny<Guid>()))
                     .ThrowsAsync(serviceException);
 
@@ -91,16 +94,16 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             actualLookupServiceException.Should()
                 .BeEquivalentTo(expectedLookupServiceException);
 
-            this.storageBrokerMock.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.SelectLookupByIdAsync(It.IsAny<Guid>()),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-               broker.LogError(It.Is(SameExceptionAs(
+               broker.LogErrorAsync(It.Is(SameExceptionAs(
                    expectedLookupServiceException))),
                         Times.Once);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }

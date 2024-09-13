@@ -8,7 +8,7 @@ namespace ISL.ReIdentification.Core.Models.Foundations.UserAccesses.Exceptions
 {
     public class NullUserAccessException : Xeption
     {
-        public NullUserAccessException(string message) 
+        public NullUserAccessException(string message)
             : base(message)
         { }
     }

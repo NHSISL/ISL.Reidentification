@@ -12,16 +12,16 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
 {
     public partial class DelegatedAccessService : IDelegatedAccessService
     {
-        private readonly IReIdentificationStorageBroker ReIdentificationStorageBroker;
+        private readonly IReIdentificationStorageBroker reIdentificationStorageBroker;
         private readonly IDateTimeBroker dateTimeBroker;
         private readonly ILoggingBroker loggingBroker;
 
         public DelegatedAccessService(
-            IReIdentificationStorageBroker ReIdentificationStorageBroker,
+            IReIdentificationStorageBroker reIdentificationStorageBroker,
             IDateTimeBroker dateTimeBroker,
             ILoggingBroker loggingBroker)
         {
-            this.ReIdentificationStorageBroker = ReIdentificationStorageBroker;
+            this.reIdentificationStorageBroker = reIdentificationStorageBroker;
             this.dateTimeBroker = dateTimeBroker;
             this.loggingBroker = loggingBroker;
         }
@@ -29,7 +29,21 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
             TryCatch(async () =>
             {
                 await ValidateDelegatedAccessOnAdd(delegatedAccess);
-                return await this.ReIdentificationStorageBroker.InsertDelegatedAccessAsync(delegatedAccess);
+                return await this.reIdentificationStorageBroker.InsertDelegatedAccessAsync(delegatedAccess);
+            });
+
+        public ValueTask<DelegatedAccess> ModifyDelegatedAccessAsync(DelegatedAccess delegatedAccess) =>
+            TryCatch(async () =>
+            {
+                await ValidateDelegatedAccessOnModify(delegatedAccess);
+
+                DelegatedAccess maybeDelegatedAccess =
+                    await this.reIdentificationStorageBroker.SelectDelegatedAccessByIdAsync(delegatedAccess.Id);
+
+                await ValidateStorageDelegatedAccessAsync(maybeDelegatedAccess, delegatedAccess.Id);
+                await ValidateAgainstStorageDelegatedAccessOnModifyAsync(delegatedAccess, maybeDelegatedAccess);
+
+                return await this.reIdentificationStorageBroker.UpdateDelegatedAccessAsync(delegatedAccess);
             });
     }
 }

@@ -2,6 +2,8 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
+using System.Threading.Tasks;
 using FluentAssertions;
 using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
 using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses.Exceptions;
@@ -37,11 +39,11 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(expectedDelegatedAccessValidationException))), Times.Once());
 
-            this.ReIdentificationStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.InsertDelegatedAccessAsync(It.IsAny<DelegatedAccess>()),
                     Times.Never);
 
-            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
@@ -121,12 +123,12 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
                     expectedDelegatedAccessValidationException))),
                         Times.Once);
 
-            this.ReIdentificationStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.InsertDelegatedAccessAsync(It.IsAny<DelegatedAccess>()),
                     Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
@@ -199,13 +201,13 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
                     expectedDelegatedAccessValidationException))),
                         Times.Once);
 
-            this.ReIdentificationStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.InsertDelegatedAccessAsync(It.IsAny<DelegatedAccess>()),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -262,13 +264,13 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
                     SameExceptionAs(expectedDelegatedAccessValidationException))),
                         Times.Once);
 
-            this.ReIdentificationStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.InsertDelegatedAccessAsync(It.IsAny<DelegatedAccess>()),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
         }
 
         [Theory]
@@ -332,13 +334,13 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
                     SameExceptionAs(expectedDelegatedAccessValidationException))),
                         Times.Once);
 
-            this.ReIdentificationStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.InsertDelegatedAccessAsync(It.IsAny<DelegatedAccess>()),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
         }
     }
 }

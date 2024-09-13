@@ -1,37 +1,41 @@
+// ---------------------------------------------------------
+// Copyright (c) North East London ICB. All rights reserved.
+// ---------------------------------------------------------
+
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
-using Moq;
 using ISL.ReIdentification.Core.Models.Foundations.Lookups;
-using Xunit;
+using Moq;
 
 namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
 {
     public partial class LookupServiceTests
     {
         [Fact]
-        public void ShouldReturnLookups()
+        public async Task ShouldReturnLookups()
         {
             // given
             IQueryable<Lookup> randomLookups = CreateRandomLookups();
             IQueryable<Lookup> storageLookups = randomLookups;
             IQueryable<Lookup> expectedLookups = storageLookups;
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectAllLookups())
-                    .Returns(storageLookups);
+            this.reIdentificationStorageBroker.Setup(broker =>
+                broker.SelectAllLookupsAsync())
+                    .ReturnsAsync(storageLookups);
 
             // when
             IQueryable<Lookup> actualLookups =
-                this.lookupService.RetrieveAllLookups();
+                await this.lookupService.RetrieveAllLookupsAsync();
 
             // then
             actualLookups.Should().BeEquivalentTo(expectedLookups);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectAllLookups(),
+            this.reIdentificationStorageBroker.Verify(broker =>
+                broker.SelectAllLookupsAsync(),
                     Times.Once);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
