@@ -223,7 +223,8 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
                     modifyLookupTask.AsTask);
 
             // then
-            actualLookupValidationException.Should().BeEquivalentTo(expectedLookupValidatonException);
+            actualLookupValidationException.Should()
+                .BeEquivalentTo(expectedLookupValidatonException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
@@ -241,6 +242,61 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfLookupDoesNotExistAndLogItAsync()
+        {
+            // given
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            Lookup randomLookup = CreateRandomModifyLookup(randomDateTimeOffset);
+            Lookup nonExistLookup = randomLookup;
+            Lookup nullLookup = null;
+
+            var notFoundLookupException =
+                new NotFoundLookupException(nonExistLookup.Id);
+
+            var expectedLookupValidationException =
+                new LookupValidationException(
+                    message: "Lookup validation errors occurred, please try again.",
+                    innerException: notFoundLookupException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectLookupByIdAsync(nonExistLookup.Id))
+                .ReturnsAsync(nullLookup);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                .Returns(randomDateTimeOffset);
+
+            // when 
+            ValueTask<Lookup> modifyLookupTask =
+                this.lookupService.ModifyLookupAsync(nonExistLookup);
+
+            LookupValidationException actualLookupValidationException =
+                await Assert.ThrowsAsync<LookupValidationException>(
+                    modifyLookupTask.AsTask);
+
+            // then
+            actualLookupValidationException.Should()
+                .BeEquivalentTo(expectedLookupValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectLookupByIdAsync(nonExistLookup.Id),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedLookupValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
