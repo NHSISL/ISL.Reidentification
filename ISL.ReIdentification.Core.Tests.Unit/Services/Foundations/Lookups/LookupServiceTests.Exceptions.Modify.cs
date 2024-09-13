@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Moq;
@@ -58,6 +59,64 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
 
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdateLookupAsync(randomLookup),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async void ShouldThrowValidationExceptionOnModifyIfReferenceErrorOccursAndLogItAsync()
+        {
+            // given
+            Lookup someLookup = CreateRandomLookup();
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+
+            var foreignKeyConstraintConflictException =
+                new ForeignKeyConstraintConflictException(exceptionMessage);
+
+            var invalidLookupReferenceException =
+                new InvalidLookupReferenceException(
+                    message: "Invalid lookup reference error occurred.", 
+                    innerException: foreignKeyConstraintConflictException);
+
+            LookupDependencyValidationException expectedLookupDependencyValidationException =
+                new LookupDependencyValidationException(
+                    message: "Lookup dependency validation occurred, please try again.",
+                    innerException: invalidLookupReferenceException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Throws(foreignKeyConstraintConflictException);
+
+            // when
+            ValueTask<Lookup> modifyLookupTask =
+                this.lookupService.ModifyLookupAsync(someLookup);
+
+            LookupDependencyValidationException actualLookupDependencyValidationException =
+                await Assert.ThrowsAsync<LookupDependencyValidationException>(
+                    modifyLookupTask.AsTask);
+
+            // then
+            actualLookupDependencyValidationException.Should()
+                .BeEquivalentTo(expectedLookupDependencyValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectLookupByIdAsync(someLookup.Id),
+                    Times.Never);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(expectedLookupDependencyValidationException))),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.UpdateLookupAsync(someLookup),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
