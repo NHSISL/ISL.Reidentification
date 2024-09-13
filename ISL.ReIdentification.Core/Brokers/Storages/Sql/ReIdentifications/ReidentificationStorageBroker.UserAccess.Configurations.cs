@@ -48,5 +48,4 @@ namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications
                 .IsRequired();
         }
     }
-
 }
