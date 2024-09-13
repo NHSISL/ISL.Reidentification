@@ -12,9 +12,11 @@ namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications
         private void AddDelegatedAccessConfigurations(EntityTypeBuilder<DelegatedAccess> builder)
         {
             builder.Property(delegatedAccess => delegatedAccess.RequesterEmail)
+                .HasMaxLength(320)
                 .IsRequired();
 
             builder.Property(delegatedAccess => delegatedAccess.RecipientEmail)
+                .HasMaxLength(320)
                 .IsRequired();
 
             builder.Property(delegatedAccess => delegatedAccess.IsDelegatedAccess)
