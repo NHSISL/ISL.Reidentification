@@ -1,11 +1,15 @@
+// ---------------------------------------------------------
+// Copyright (c) North East London ICB. All rights reserved.
+// ---------------------------------------------------------
+
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 using ISL.ReIdentification.Core.Models.Foundations.Lookups;
 using ISL.ReIdentification.Core.Models.Foundations.Lookups.Exceptions;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Xeptions;
 
 namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
@@ -13,7 +17,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
     public partial class LookupService
     {
         private delegate ValueTask<Lookup> ReturningLookupFunction();
-        private delegate IQueryable<Lookup> ReturningLookupsFunction();
+        private delegate ValueTask<IQueryable<Lookup>> ReturningLookupsFunction();
 
         private async ValueTask<Lookup> TryCatch(ReturningLookupFunction returningLookupFunction)
         {
@@ -55,14 +59,14 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
             {
                 var invalidLookupReferenceException =
                     new InvalidLookupReferenceException(
-                        message: "Invalid lookup reference error occurred.", 
+                        message: "Invalid lookup reference error occurred.",
                         innerException: foreignKeyConstraintConflictException);
 
                 throw CreateAndLogDependencyValidationException(invalidLookupReferenceException);
             }
             catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
             {
-                var lockedLookupException = 
+                var lockedLookupException =
                     new LockedLookupException(
                         message: "Locked lookup record exception, please try again later",
                         innerException: dbUpdateConcurrencyException);
@@ -82,18 +86,18 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
             {
                 var failedLookupServiceException =
                     new FailedLookupServiceException(
-                        message: "Failed lookup service occurred, please contact support", 
+                        message: "Failed lookup service occurred, please contact support",
                         innerException: exception);
 
                 throw CreateAndLogServiceException(failedLookupServiceException);
             }
         }
 
-        private IQueryable<Lookup> TryCatch(ReturningLookupsFunction returningLookupsFunction)
+        private async ValueTask<IQueryable<Lookup>> TryCatch(ReturningLookupsFunction returningLookupsFunction)
         {
             try
             {
-                return returningLookupsFunction();
+                return await returningLookupsFunction();
             }
             catch (SqlException sqlException)
             {
@@ -108,7 +112,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
             {
                 var failedLookupServiceException =
                     new FailedLookupServiceException(
-                        message: "Failed lookup service occurred, please contact support", 
+                        message: "Failed lookup service occurred, please contact support",
                         innerException: exception);
 
                 throw CreateAndLogServiceException(failedLookupServiceException);
@@ -122,19 +126,19 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
                     message: "Lookup validation errors occurred, please try again.",
                     innerException: exception);
 
-            this.loggingBroker.LogError(lookupValidationException);
+            this.loggingBroker.LogErrorAsync(lookupValidationException);
 
             return lookupValidationException;
         }
 
         private LookupDependencyException CreateAndLogCriticalDependencyException(Xeption exception)
         {
-            var lookupDependencyException = 
+            var lookupDependencyException =
                 new LookupDependencyException(
                     message: "Lookup dependency error occurred, contact support.",
-                    innerException: exception); 
+                    innerException: exception);
 
-            this.loggingBroker.LogCritical(lookupDependencyException);
+            this.loggingBroker.LogCriticalAsync(lookupDependencyException);
 
             return lookupDependencyException;
         }
@@ -146,33 +150,31 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
                     message: "Lookup dependency validation occurred, please try again.",
                     innerException: exception);
 
-            this.loggingBroker.LogError(lookupDependencyValidationException);
+            this.loggingBroker.LogErrorAsync(lookupDependencyValidationException);
 
             return lookupDependencyValidationException;
         }
 
-        private LookupDependencyException CreateAndLogDependencyException(
-            Xeption exception)
+        private LookupDependencyException CreateAndLogDependencyException(Xeption exception)
         {
-            var lookupDependencyException = 
+            var lookupDependencyException =
                 new LookupDependencyException(
                     message: "Lookup dependency error occurred, contact support.",
-                    innerException: exception); 
+                    innerException: exception);
 
-            this.loggingBroker.LogError(lookupDependencyException);
+            this.loggingBroker.LogErrorAsync(lookupDependencyException);
 
             return lookupDependencyException;
         }
 
-        private LookupServiceException CreateAndLogServiceException(
-            Xeption exception)
+        private LookupServiceException CreateAndLogServiceException(Xeption exception)
         {
-            var lookupServiceException = 
+            var lookupServiceException =
                 new LookupServiceException(
                     message: "Lookup service error occurred, contact support.",
                     innerException: exception);
 
-            this.loggingBroker.LogError(lookupServiceException);
+            this.loggingBroker.LogErrorAsync(lookupServiceException);
 
             return lookupServiceException;
         }

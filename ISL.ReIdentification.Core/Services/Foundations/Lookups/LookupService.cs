@@ -1,25 +1,29 @@
+// ---------------------------------------------------------
+// Copyright (c) North East London ICB. All rights reserved.
+// ---------------------------------------------------------
+
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
 using ISL.ReIdentification.Core.Brokers.Loggings;
-using ISL.ReIdentification.Core.Brokers.Storages.Sql;
+using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
 using ISL.ReIdentification.Core.Models.Foundations.Lookups;
 
 namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
 {
     public partial class LookupService : ILookupService
     {
-        private readonly IStorageBroker storageBroker;
+        private readonly IReIdentificationStorageBroker reIdentificationStorageBroker;
         private readonly IDateTimeBroker dateTimeBroker;
         private readonly ILoggingBroker loggingBroker;
 
         public LookupService(
-            IStorageBroker storageBroker,
+            IReIdentificationStorageBroker reIdentificationStorageBroker,
             IDateTimeBroker dateTimeBroker,
             ILoggingBroker loggingBroker)
         {
-            this.storageBroker = storageBroker;
+            this.reIdentificationStorageBroker = reIdentificationStorageBroker;
             this.dateTimeBroker = dateTimeBroker;
             this.loggingBroker = loggingBroker;
         }
@@ -29,18 +33,18 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
             {
                 ValidateLookupOnAdd(lookup);
 
-                return await this.storageBroker.InsertLookupAsync(lookup);
+                return await this.reIdentificationStorageBroker.InsertLookupAsync(lookup);
             });
 
-        public IQueryable<Lookup> RetrieveAllLookups() =>
-            TryCatch(() => this.storageBroker.SelectAllLookups());
+        public ValueTask<IQueryable<Lookup>> RetrieveAllLookupsAsync() =>
+            TryCatch(() => await this.reIdentificationStorageBroker.SelectAllLookupsAsync());
 
         public ValueTask<Lookup> RetrieveLookupByIdAsync(Guid lookupId) =>
             TryCatch(async () =>
             {
                 ValidateLookupId(lookupId);
 
-                Lookup maybeLookup = await this.storageBroker
+                Lookup maybeLookup = await this.reIdentificationStorageBroker
                     .SelectLookupByIdAsync(lookupId);
 
                 ValidateStorageLookup(maybeLookup, lookupId);
@@ -54,12 +58,12 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
                 ValidateLookupOnModify(lookup);
 
                 Lookup maybeLookup =
-                    await this.storageBroker.SelectLookupByIdAsync(lookup.Id);
+                    await this.reIdentificationStorageBroker.SelectLookupByIdAsync(lookup.Id);
 
                 ValidateStorageLookup(maybeLookup, lookup.Id);
                 ValidateAgainstStorageLookupOnModify(inputLookup: lookup, storageLookup: maybeLookup);
 
-                return await this.storageBroker.UpdateLookupAsync(lookup);
+                return await this.reIdentificationStorageBroker.UpdateLookupAsync(lookup);
             });
 
         public ValueTask<Lookup> RemoveLookupByIdAsync(Guid lookupId) =>
@@ -67,12 +71,12 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
             {
                 ValidateLookupId(lookupId);
 
-                Lookup maybeLookup = await this.storageBroker
+                Lookup maybeLookup = await this.reIdentificationStorageBroker
                     .SelectLookupByIdAsync(lookupId);
 
                 ValidateStorageLookup(maybeLookup, lookupId);
 
-                return await this.storageBroker.DeleteLookupAsync(maybeLookup);
+                return await this.reIdentificationStorageBroker.DeleteLookupAsync(maybeLookup);
             });
     }
 }
