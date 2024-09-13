@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
 using ISL.ReIdentification.Core.Brokers.Loggings;
@@ -31,6 +32,9 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
                 await ValidateDelegatedAccessOnAdd(delegatedAccess);
                 return await this.reIdentificationStorageBroker.InsertDelegatedAccessAsync(delegatedAccess);
             });
+
+        public ValueTask<IQueryable<DelegatedAccess>> RetrieveAllDelegatedAccessesAsync() =>
+            TryCatch(this.reIdentificationStorageBroker.SelectAllDelegatedAccessesAsync);
 
         public ValueTask<DelegatedAccess> ModifyDelegatedAccessAsync(DelegatedAccess delegatedAccess) =>
             TryCatch(async () =>

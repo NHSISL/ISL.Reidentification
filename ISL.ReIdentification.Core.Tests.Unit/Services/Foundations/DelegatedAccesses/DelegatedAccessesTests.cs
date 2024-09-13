@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
@@ -45,6 +46,13 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
         private static DelegatedAccess CreateRandomDelegatedAccess(DateTimeOffset dateTimeOffset) =>
             CreateDelegatedAccessesFiller(dateTimeOffset).Create();
 
+        private static IQueryable<DelegatedAccess> CreateRandomDelegatedAccesses()
+        {
+            return CreateDelegatedAccessesFiller(GetRandomDateTimeOffset())
+                .Create(GetRandomNumber())
+                .AsQueryable();
+        }
+
         private static DelegatedAccess CreateRandomModifyDelegatedAccess(DateTimeOffset dateTimeOffset)
         {
             int randomDaysInThePast = GetRandomNegativeNumber();
@@ -63,6 +71,9 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
             return new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length)
                 .GetValue();
         }
+
+        private static int GetRandomNumber() =>
+            new IntRange(max: 15, min: 2).GetValue();
 
         private static int GetRandomNegativeNumber() =>
             -1 * new IntRange(min: 2, max: 10).GetValue();
