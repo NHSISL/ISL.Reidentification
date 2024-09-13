@@ -33,8 +33,11 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
                 return await this.ReIdentificationStorageBroker.InsertDelegatedAccessAsync(delegatedAccess);
             });
 
-        public async ValueTask<IQueryable<DelegatedAccess>> RetrieveAllDelegatedAccessesAsync() =>
-            await this.ReIdentificationStorageBroker.SelectAllDelegatedAccessesAsync();
+        public ValueTask<IQueryable<DelegatedAccess>> RetrieveAllDelegatedAccessesAsync() =>
+            TryCatch(async () =>
+            {
+                return await this.ReIdentificationStorageBroker.SelectAllDelegatedAccessesAsync();
+            });
 
         public ValueTask<DelegatedAccess> ModifyDelegatedAccessAsync(DelegatedAccess delegatedAccess) =>
             TryCatch(async () =>
