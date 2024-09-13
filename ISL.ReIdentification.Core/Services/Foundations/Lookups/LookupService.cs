@@ -48,7 +48,12 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
                 return maybeLookup;
             });
 
-        public async ValueTask<Lookup> ModifyLookupAsync(Lookup lookup) =>
-            await this.storageBroker.UpdateLookupAsync(lookup);
+        public ValueTask<Lookup> ModifyLookupAsync(Lookup lookup) =>
+            TryCatch(async () =>
+            {
+                ValidateLookupOnModify(lookup);
+
+                return await this.storageBroker.UpdateLookupAsync(lookup);
+            });
     }
 }

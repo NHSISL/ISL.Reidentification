@@ -35,6 +35,11 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
                 (Rule: IsNotRecent(lookup.CreatedDate), Parameter: nameof(Lookup.CreatedDate)));
         }
 
+        private void ValidateLookupOnModify(Lookup lookup)
+        {
+            ValidateLookupIsNotNull(lookup);
+        }
+
         public void ValidateLookupId(Guid lookupId) =>
             Validate((Rule: IsInvalid(lookupId), Parameter: nameof(Lookup.Id)));
 
@@ -89,7 +94,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
                 Condition = firstId != secondId,
                 Message = $"Id is not the same as {secondIdName}"
             };
-
+        
         private static dynamic IsNotSame(
            string first,
            string second,
