@@ -33,7 +33,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
                 return await this.ReIdentificationStorageBroker.InsertDelegatedAccessAsync(delegatedAccess);
             });
 
-        public ValueTask<IQueryable<DelegatedAccess>> RetrieveAllDelegatedAccessesAsync(DelegatedAccess delegatedAccess)
+        public ValueTask<IQueryable<DelegatedAccess>> RetrieveAllDelegatedAccessesAsync()
         {
             throw new System.NotImplementedException();
         }
