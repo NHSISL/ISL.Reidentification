@@ -4,11 +4,12 @@
 
 using FluentAssertions;
 using Force.DeepCloner;
-using ISL.Reidentification.Core.Models.Foundations.UserAccesses;
 using ISL.Reidentification.Core.Models.Foundations.UserAccesses.Exceptions;
+using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
+using ISL.ReIdentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using Moq;
 
-namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
+namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
 {
     public partial class UserAccessesTests
     {
@@ -35,11 +36,11 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(expectedUserAccessValidationException))), Times.Once());
 
-            this.reidentificationStorageBroker.Verify(broker =>
+            this.ReIdentificationStorageBroker.Verify(broker =>
                 broker.InsertUserAccessAsync(It.IsAny<UserAccess>()),
                     Times.Never);
 
-            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
@@ -128,12 +129,12 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                     expectedUserAccessValidationException))),
                         Times.Once);
 
-            this.reidentificationStorageBroker.Verify(broker =>
+            this.ReIdentificationStorageBroker.Verify(broker =>
                 broker.InsertUserAccessAsync(It.IsAny<UserAccess>()),
                     Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
@@ -197,12 +198,12 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                     expectedUserAccessException))),
                         Times.Once);
 
-            this.reidentificationStorageBroker.Verify(broker =>
+            this.ReIdentificationStorageBroker.Verify(broker =>
                 broker.InsertUserAccessAsync(It.IsAny<UserAccess>()),
                     Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
@@ -246,7 +247,7 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
         }
 
         [Theory]
@@ -304,7 +305,7 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -325,7 +326,7 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                 message: "UserAccess validation error occurred, please fix errors and try again.",
                 innerException: notFoundUserAccessException);
 
-            this.reidentificationStorageBroker.Setup(broker =>
+            this.ReIdentificationStorageBroker.Setup(broker =>
                 broker.SelectUserAccessByIdAsync(nonExistingUserAccess.Id))
                     .ReturnsAsync(nullUserAccess);
 
@@ -347,7 +348,7 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
-            this.reidentificationStorageBroker.Verify(broker =>
+            this.ReIdentificationStorageBroker.Verify(broker =>
                 broker.SelectUserAccessByIdAsync(nonExistingUserAccess.Id),
                 Times.Once);
 
@@ -358,7 +359,7 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -389,7 +390,7 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(randomDateTimeOffset);
 
-            this.reidentificationStorageBroker.Setup(broker =>
+            this.ReIdentificationStorageBroker.Setup(broker =>
                 broker.SelectUserAccessByIdAsync(invalidUserAccess.Id))
                     .ReturnsAsync(storageUserAccess);
 
@@ -407,7 +408,7 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
-            this.reidentificationStorageBroker.Verify(broker =>
+            this.ReIdentificationStorageBroker.Verify(broker =>
                 broker.SelectUserAccessByIdAsync(invalidUserAccess.Id),
                     Times.Once);
 
@@ -416,7 +417,7 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                     Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
 
@@ -445,7 +446,7 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(randomDateTimeOffset);
 
-            this.reidentificationStorageBroker.Setup(broker =>
+            this.ReIdentificationStorageBroker.Setup(broker =>
                 broker.SelectUserAccessByIdAsync(invalidUserAccess.Id))
                     .ReturnsAsync(storageUserAccess);
 
@@ -463,7 +464,7 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
-            this.reidentificationStorageBroker.Verify(broker =>
+            this.ReIdentificationStorageBroker.Verify(broker =>
                 broker.SelectUserAccessByIdAsync(invalidUserAccess.Id),
                     Times.Once);
 
@@ -472,7 +473,7 @@ namespace ISL.Reidentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                     Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.reidentificationStorageBroker.VerifyNoOtherCalls();
+            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
