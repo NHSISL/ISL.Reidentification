@@ -2,6 +2,8 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
 using Moq;
@@ -18,7 +20,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
             IQueryable<DelegatedAccess> storageDelegatedAccesses = randomDelegatedAccesses;
             IQueryable<DelegatedAccess> expectedDelegatedAccesses = storageDelegatedAccesses;
 
-            this.ReIdentificationStorageBroker.Setup(broker =>
+            this.reIdentificationStorageBroker.Setup(broker =>
                 broker.SelectAllDelegatedAccessesAsync())
                     .ReturnsAsync(storageDelegatedAccesses);
 
@@ -29,11 +31,11 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
             // then
             actualDelegatedAccesses.Should().BeEquivalentTo(expectedDelegatedAccesses);
 
-            this.ReIdentificationStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.SelectAllDelegatedAccessesAsync(),
                     Times.Once);
 
-            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
