@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ISL.Reidentification.Core.Brokers.Storages.Sql.Reidentifications
 {
-    public partial class ReidentificationStorageBroker
+    public partial class IReIdentificationStorageBroker
     {
         private void AddAccessAuditConfigurations(EntityTypeBuilder<AccessAudit> builder)
         {
