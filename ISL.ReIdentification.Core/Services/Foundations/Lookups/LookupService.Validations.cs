@@ -24,7 +24,13 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
                     firstDate: lookup.UpdatedDate,
                     secondDate: lookup.CreatedDate,
                     secondDateName: nameof(Lookup.CreatedDate)),
-                Parameter: nameof(Lookup.UpdatedDate)));
+                Parameter: nameof(Lookup.UpdatedDate)),
+
+                (Rule: IsNotSame(
+                    firstId: lookup.UpdatedBy,
+                    secondId: lookup.CreatedBy,
+                    secondIdName: nameof(Lookup.CreatedBy)),
+                Parameter: nameof(Lookup.UpdatedBy)));
         }
 
         private static void ValidateLookupIsNotNull(Lookup lookup)
@@ -61,6 +67,24 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
                 Condition = firstDate != secondDate,
                 Message = $"Date is not the same as {secondDateName}"
             };
+
+        private static dynamic IsNotSame(
+            Guid firstId,
+            Guid secondId,
+            string secondIdName) => new
+            {
+                Condition = firstId != secondId,
+                Message = $"Id is not the same as {secondIdName}"
+            };
+
+        private static dynamic IsNotSame(
+           string first,
+           string second,
+           string secondName) => new
+           {
+               Condition = first != second,
+               Message = $"Text is not the same as {secondName}"
+           };
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
