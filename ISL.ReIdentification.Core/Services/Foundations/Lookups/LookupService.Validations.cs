@@ -18,7 +18,13 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
                 (Rule: IsInvalid(lookup.CreatedDate), Parameter: nameof(Lookup.CreatedDate)),
                 (Rule: IsInvalid(lookup.CreatedBy), Parameter: nameof(Lookup.CreatedBy)),
                 (Rule: IsInvalid(lookup.UpdatedDate), Parameter: nameof(Lookup.UpdatedDate)),
-                (Rule: IsInvalid(lookup.UpdatedBy), Parameter: nameof(Lookup.UpdatedBy)));
+                (Rule: IsInvalid(lookup.UpdatedBy), Parameter: nameof(Lookup.UpdatedBy)),
+
+                (Rule: IsNotSame(
+                    firstDate: lookup.UpdatedDate,
+                    secondDate: lookup.CreatedDate,
+                    secondDateName: nameof(Lookup.CreatedDate)),
+                Parameter: nameof(Lookup.UpdatedDate)));
         }
 
         private static void ValidateLookupIsNotNull(Lookup lookup)
@@ -46,6 +52,15 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
             Condition = date == default,
             Message = "Date is required"
         };
+
+        private static dynamic IsNotSame(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
+            {
+                Condition = firstDate != secondDate,
+                Message = $"Date is not the same as {secondDateName}"
+            };
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
