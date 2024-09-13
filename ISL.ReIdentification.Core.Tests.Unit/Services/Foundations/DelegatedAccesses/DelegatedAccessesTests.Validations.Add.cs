@@ -140,7 +140,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
             var invalidDelegatedAccess = CreateRandomDelegatedAccess(dateTimeOffset: randomDateTimeOffset);
             var username = GetRandomStringWithLengthOf(256);
             var email = GetRandomStringWithLengthOf(321);
-            var identifierColumn = GetRandomStringWithLengthOf(51);
+            var identifierColumn = GetRandomStringWithLengthOf(11);
             invalidDelegatedAccess.RequesterEmail = email;
             invalidDelegatedAccess.RecipientEmail = email;
             invalidDelegatedAccess.IdentifierColumn = identifierColumn;

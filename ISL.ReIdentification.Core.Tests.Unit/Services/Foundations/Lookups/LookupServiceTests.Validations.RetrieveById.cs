@@ -25,11 +25,11 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
 
             invalidLookupException.AddData(
                 key: nameof(Lookup.Id),
-                values: "Id is required");
+                values: "Id is invalid");
 
             var expectedLookupValidationException =
                 new LookupValidationException(
-                    message: "Lookup validation errors occurred, please try again.",
+                    message: "Lookup validation error occurred, please fix errors and try again.",
                     innerException: invalidLookupException);
 
             // when
@@ -70,7 +70,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
 
             var expectedLookupValidationException =
                 new LookupValidationException(
-                    message: "Lookup validation errors occurred, please try again.",
+                    message: "Lookup validation error occurred, please fix errors and try again.",
                     innerException: notFoundLookupException);
 
             this.reIdentificationStorageBroker.Setup(broker =>

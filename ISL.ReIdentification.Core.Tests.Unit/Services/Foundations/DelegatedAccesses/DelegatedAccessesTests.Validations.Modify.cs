@@ -151,7 +151,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
             var invalidDelegatedAccess = CreateRandomDelegatedAccess(dateTimeOffset: randomDateTimeOffset);
             var email = GetRandomStringWithLengthOf(321);
-            var identifierColumn = GetRandomStringWithLengthOf(51);
+            var identifierColumn = GetRandomStringWithLengthOf(11);
             var username = GetRandomStringWithLengthOf(256);
             invalidDelegatedAccess.RequesterEmail = email;
             invalidDelegatedAccess.RecipientEmail = email;

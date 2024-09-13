@@ -24,7 +24,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
 
             var expectedLookupValidationException =
                 new LookupValidationException(
-                    message: "Lookup validation errors occurred, please try again.",
+                    message: "Lookup validation error occurred, please fix errors and try again.",
                     innerException: nullLookupException);
 
             // when
@@ -58,7 +58,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             // given
             var invalidLookup = new Lookup
             {
-                // TODO:  Add default values for your properties i.e. Name = invalidText
+                Name = invalidText
             };
 
             var invalidLookupException =
@@ -67,33 +67,31 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
 
             invalidLookupException.AddData(
                 key: nameof(Lookup.Id),
-                values: "Id is required");
+                values: "Id is invalid");
 
-            //invalidLookupException.AddData(
-            //    key: nameof(Lookup.Name),
-            //    values: "Text is required");
-
-            // TODO: Add or remove data here to suit the validation needs for the Lookup model
+            invalidLookupException.AddData(
+                key: nameof(Lookup.Name),
+                values: "Text is invalid");
 
             invalidLookupException.AddData(
                 key: nameof(Lookup.CreatedDate),
-                values: "Date is required");
+                values: "Date is invalid");
 
             invalidLookupException.AddData(
                 key: nameof(Lookup.CreatedBy),
-                values: "Text is required");
+                values: "Text is invalid");
 
             invalidLookupException.AddData(
                 key: nameof(Lookup.UpdatedDate),
-                values: "Date is required");
+                values: "Date is invalid");
 
             invalidLookupException.AddData(
                 key: nameof(Lookup.UpdatedBy),
-                values: "Text is required");
+                values: "Text is invalid");
 
             var expectedLookupValidationException =
                 new LookupValidationException(
-                    message: "Lookup validation errors occurred, please try again.",
+                    message: "Lookup validation error occurred, please fix errors and try again.",
                     innerException: invalidLookupException);
 
             // when
@@ -137,7 +135,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             invalidLookup.UpdatedBy = randomString;
 
             var invalidLookupException = new InvalidLookupException(
-                message: "Invalid user access. Please correct the errors and try again.");
+                message: "Invalid lookup. Please correct the errors and try again.");
 
             invalidLookupException.AddData(
                 key: nameof(Lookup.CreatedBy),
@@ -195,7 +193,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             invalidLookup.UpdatedDate = GetRandomDateTimeOffset();
 
             var invalidLookupException = new InvalidLookupException(
-                message: "Invalid user access. Please correct the errors and try again.");
+                message: "Invalid lookup. Please correct the errors and try again.");
 
             invalidLookupException.AddData(
                 key: nameof(Lookup.UpdatedBy),
@@ -267,7 +265,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             invalidLookup.UpdatedDate = invalidDate;
 
             var invalidLookupException = new InvalidLookupException(
-                message: "Invalid user access. Please correct the errors and try again.");
+                message: "Invalid lookup. Please correct the errors and try again.");
 
             invalidLookupException.AddData(
             key: nameof(Lookup.CreatedDate),

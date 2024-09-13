@@ -72,7 +72,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
 
                 (Rule: await IsInvalidLengthAsync(userAccess.OrgCode, 15), Parameter: nameof(UserAccess.OrgCode)),
 
-                (Rule: await IsSameAsync(
+                (Rule: await IsSameAsAsync(
                     createdDate: userAccess.CreatedDate,
                     updatedDate: userAccess.UpdatedDate,
                     createdDateName: nameof(UserAccess.CreatedDate)),
@@ -102,7 +102,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
 
                 Parameter: nameof(UserAccess.CreatedDate)),
 
-                (Rule: await IsSameAsync(
+                (Rule: await IsSameAsAsync(
                     userAccess.UpdatedDate,
                     maybeUserAccess.UpdatedDate,
                     nameof(maybeUserAccess.UpdatedDate)),
@@ -163,7 +163,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
                 Message = $"Text is not the same as {secondName}"
             };
 
-        private static async ValueTask<dynamic> IsSameAsync(
+        private static async ValueTask<dynamic> IsSameAsAsync(
             DateTimeOffset createdDate,
             DateTimeOffset updatedDate,
             string createdDateName) => new

@@ -58,13 +58,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
                 (Rule: await IsInvalidLengthAsync(lookup.CreatedBy, 255), Parameter: nameof(Lookup.CreatedBy)),
                 (Rule: await IsInvalidLengthAsync(lookup.UpdatedBy, 255), Parameter: nameof(Lookup.UpdatedBy)),
 
-                (Rule: IsSameAsAsync(
-                    firstDate: lookup.UpdatedDate,
-                    secondDate: lookup.CreatedDate,
-                    secondDateName: nameof(Lookup.CreatedDate)),
-                Parameter: nameof(Lookup.UpdatedDate)),
-
-                (Rule: IsSameAsAsync(
+                (Rule: await IsSameAsAsync(
                     firstDate: lookup.UpdatedDate,
                     secondDate: lookup.CreatedDate,
                     secondDateName: nameof(Lookup.CreatedDate)),
@@ -107,7 +101,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
                     secondName: nameof(Lookup.CreatedDate)),
                 Parameter: nameof(Lookup.CreatedDate)),
 
-                (Rule: IsSameAsAsync(
+                (Rule: await IsSameAsAsync(
                     firstDate: inputLookup.UpdatedDate,
                     secondDate: storageLookup.UpdatedDate,
                     secondDateName: nameof(Lookup.UpdatedDate)),

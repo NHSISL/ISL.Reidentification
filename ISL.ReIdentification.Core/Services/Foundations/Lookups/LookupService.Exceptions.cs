@@ -123,7 +123,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
         {
             var lookupValidationException =
                 new LookupValidationException(
-                    message: "Lookup validation errors occurred, please try again.",
+                    message: "Lookup validation error occurred, please fix errors and try again.",
                     innerException: exception);
 
             this.loggingBroker.LogErrorAsync(lookupValidationException);

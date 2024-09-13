@@ -78,6 +78,10 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnType<DateTimeOffset?>().Use(dateTimeOffset)
+
+                .OnProperty(delegatedAccess => delegatedAccess.IdentifierColumn)
+                    .Use(() => GetRandomStringWithLengthOf(10))
+
                 .OnProperty(delegatedAccess => delegatedAccess.CreatedBy).Use(user)
                 .OnProperty(delegatedAccess => delegatedAccess.UpdatedBy).Use(user);
 
