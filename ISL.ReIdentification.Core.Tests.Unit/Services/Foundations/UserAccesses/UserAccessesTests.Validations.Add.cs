@@ -136,13 +136,28 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
         {
             // given
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
-            string randomString = GetRandomStringWithLengthOf(256);
-            var invalidUserAccess = CreateRandomUserAccess(dateTimeOffset: randomDateTimeOffset);
-            invalidUserAccess.CreatedBy = randomString;
-            invalidUserAccess.UpdatedBy = randomString;
+            UserAccess invalidUserAccess = CreateRandomUserAccess(dateTimeOffset: randomDateTimeOffset);
+            var inputCreatedByUpdatedByString = GetRandomStringWithLength(256);
+            invalidUserAccess.UserEmail = GetRandomStringWithLength(321);
+            invalidUserAccess.RecipientEmail = GetRandomStringWithLength(321);
+            invalidUserAccess.OrgCode = GetRandomStringWithLength(16);
+            invalidUserAccess.CreatedBy = inputCreatedByUpdatedByString;
+            invalidUserAccess.UpdatedBy = inputCreatedByUpdatedByString;
 
             var invalidUserAccessException = new InvalidUserAccessException(
                 message: "Invalid user access. Please correct the errors and try again.");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.UserEmail),
+                values: $"Text exceed max length of {invalidUserAccess.UserEmail.Length - 1} characters");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.RecipientEmail),
+                values: $"Text exceed max length of {invalidUserAccess.RecipientEmail.Length - 1} characters");
+
+            invalidUserAccessException.AddData(
+                key: nameof(UserAccess.OrgCode),
+                values: $"Text exceed max length of {invalidUserAccess.OrgCode.Length - 1} characters");
 
             invalidUserAccessException.AddData(
                 key: nameof(UserAccess.CreatedBy),
