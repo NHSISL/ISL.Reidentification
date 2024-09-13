@@ -100,6 +100,15 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
 
                 throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageSourceException);
             }
+            catch (Exception exception)
+            {
+                var failedServiceDelegatedAccessException =
+                    new FailedServiceDelegatedAccessException(
+                       message: "Failed service delegated access error occurred, contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedServiceDelegatedAccessException);
+            }
         }
 
         private async ValueTask<DelegatedAccessValidationException> CreateAndLogValidationExceptionAsync(
