@@ -44,6 +44,16 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
         private static DelegatedAccess CreateRandomDelegatedAccess(DateTimeOffset dateTimeOffset) =>
             CreateDelegatedAccessesFiller(dateTimeOffset).Create();
 
+        private static DelegatedAccess CreateRandomModifyDelegatedAccess(DateTimeOffset dateTimeOffset)
+        {
+            int randomDaysInThePast = GetRandomNegativeNumber();
+            DelegatedAccess randomDelegatedAccess = CreateRandomDelegatedAccess(dateTimeOffset);
+
+            randomDelegatedAccess.CreatedDate = dateTimeOffset.AddDays(randomDaysInThePast);
+
+            return randomDelegatedAccess;
+        }
+
         private static string GetRandomString() =>
             new MnemonicString().GetValue();
 
@@ -52,6 +62,9 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
             return new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length)
                 .GetValue();
         }
+
+        private static int GetRandomNegativeNumber() =>
+            -1 * new IntRange(min: 2, max: 10).GetValue();
 
         private SqlException CreateSqlException()
         {
