@@ -65,6 +65,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.AccessAudits
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnType<DateTimeOffset?>().Use(dateTimeOffset)
+                .OnProperty(userAccess => userAccess.PseudoIdentifier).Use(GetRandomStringWithLength(9))
                 .OnProperty(userAccess => userAccess.CreatedBy).Use(user)
                 .OnProperty(userAccess => userAccess.UpdatedBy).Use(user);
 
