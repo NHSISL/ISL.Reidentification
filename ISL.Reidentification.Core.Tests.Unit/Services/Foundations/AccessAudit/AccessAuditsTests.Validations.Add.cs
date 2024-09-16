@@ -25,10 +25,10 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.AccessAudits
                     innerException: nullAccessAuditException);
 
             // when
-            ValueTask<AccessAudit> addUserAccessTask = this.accessAuditService.AddAccessAuditAsync(nullAccessAudit);
+            ValueTask<AccessAudit> addAccessAuditTask = this.accessAuditService.AddAccessAuditAsync(nullAccessAudit);
 
             AccessAuditValidationException actualAccessAuditValidationException =
-                await Assert.ThrowsAsync<AccessAuditValidationException>(addUserAccessTask.AsTask);
+                await Assert.ThrowsAsync<AccessAuditValidationException>(addAccessAuditTask.AsTask);
 
             // then
             actualAccessAuditValidationException.Should().BeEquivalentTo(expectedAccessAuditValidationException);
@@ -43,6 +43,85 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.AccessAudits
             this.reIdentificationStorageBroker.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public async Task ShouldThrowValidationExceptionOnAddIfAccessAuditIsInvalidAndLogItAsync(string invalidText)
+        {
+            // given
+            var invalidAccessAudit = new AccessAudit
+            {
+                PseudoIdentifier = invalidText,
+                UserEmail = invalidText,
+            };
+
+            var invalidAccessAuditException =
+                new InvalidAccessAuditException(
+                    message: "Invalid access audit. Please correct the errors and try again.");
+
+            invalidAccessAuditException.AddData(
+                key: nameof(AccessAudit.Id),
+                values: "Id is invalid");
+
+            invalidAccessAuditException.AddData(
+                key: nameof(AccessAudit.UserEmail),
+                values: "Text is invalid");
+
+            invalidAccessAuditException.AddData(
+                key: nameof(AccessAudit.PseudoIdentifier),
+                values: "Text is invalid");
+
+            invalidAccessAuditException.AddData(
+                key: nameof(AccessAudit.CreatedDate),
+                values: "Date is invalid");
+
+            invalidAccessAuditException.AddData(
+                key: nameof(AccessAudit.CreatedBy),
+                values: "Text is invalid");
+
+            invalidAccessAuditException.AddData(
+                key: nameof(AccessAudit.UpdatedDate),
+                values: "Date is invalid");
+
+            invalidAccessAuditException.AddData(
+                key: nameof(AccessAudit.UpdatedBy),
+                values: "Text is invalid");
+
+            var expectedAccessAuditValidationException =
+                new AccessAuditValidationException(
+                    message: "Access audit validation error occurred, please fix errors and try again.",
+                    innerException: invalidAccessAuditException);
+
+            // when
+            ValueTask<AccessAudit> addAccessAuditTask =
+                this.accessAuditService.AddAccessAuditAsync(invalidAccessAudit);
+
+            AccessAuditValidationException actualAccessAuditValidationException =
+                await Assert.ThrowsAsync<AccessAuditValidationException>(addAccessAuditTask.AsTask);
+
+            // then
+            actualAccessAuditValidationException.Should()
+                .BeEquivalentTo(expectedAccessAuditValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedAccessAuditValidationException))),
+                        Times.Once);
+
+            this.reIdentificationStorageBroker.Verify(broker =>
+                broker.InsertAccessAuditAsync(It.IsAny<AccessAudit>()),
+                    Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
