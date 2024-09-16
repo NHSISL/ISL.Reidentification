@@ -31,6 +31,9 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.User
         private static UserAccess CreateRandomUserAccess(DateTimeOffset dateTimeOffset) =>
             CreateUserAccessesFiller(dateTimeOffset).Create();
 
+        private static string GetRandomString() =>
+            new MnemonicString().GetValue();
+
         private static Filler<UserAccess> CreateUserAccessesFiller(DateTimeOffset dateTimeOffset)
         {
             string user = Guid.NewGuid().ToString();
