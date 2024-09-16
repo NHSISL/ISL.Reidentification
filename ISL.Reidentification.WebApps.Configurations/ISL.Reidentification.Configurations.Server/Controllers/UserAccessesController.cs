@@ -2,7 +2,6 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Services.Foundations.UserAccesses;
@@ -23,7 +22,9 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         [HttpPost]
         public async ValueTask<ActionResult<UserAccess>> PostUserAccessAsync(UserAccess userAccess)
         {
-            throw new NotImplementedException();
+            UserAccess addedUserAccess = await this.userAccessService.AddUserAccessAsync(userAccess);
+
+            return Created(addedUserAccess);
         }
     }
 }
