@@ -26,11 +26,12 @@ namespace ISL.ReIdentification.Core.Services.Foundations.AccessAudits
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<AccessAudit> AddAccessAuditAsync(AccessAudit accessAudit)
-        {
-            ValidateAccessAuditOnAddAsync(accessAudit);
+        public ValueTask<AccessAudit> AddAccessAuditAsync(AccessAudit accessAudit) =>
+            TryCatch(async () =>
+            {
+                await ValidateAccessAuditOnAddAsync(accessAudit);
 
-            return await this.reIdentificationStorageBroker.InsertAccessAuditAsync(accessAudit);
-        }
+                return await this.reIdentificationStorageBroker.InsertAccessAuditAsync(accessAudit);
+            });
     }
 }
