@@ -38,7 +38,9 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
             TryCatch(async () =>
             {
                 await ValidateDelegatedAccessIdAsync(delegatedAccessId);
-                DelegatedAccess maybeDelegatedAccess = await this.reIdentificationStorageBroker.SelectDelegatedAccessByIdAsync(delegatedAccessId);
+
+                DelegatedAccess maybeDelegatedAccess =
+                    await this.reIdentificationStorageBroker.SelectDelegatedAccessByIdAsync(delegatedAccessId);
 
                 await ValidateStorageDelegatedAccessAsync(maybeDelegatedAccess, delegatedAccessId);
 
