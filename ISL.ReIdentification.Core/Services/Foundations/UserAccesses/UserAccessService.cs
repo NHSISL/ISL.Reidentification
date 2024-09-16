@@ -53,12 +53,15 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
                 return await this.reIdentificationStorageBroker.UpdateUserAccessAsync(userAccess);
             });
 
-        public async ValueTask<UserAccess> RemoveUserAccessByIdAsync(Guid userAccessId)
-        {
-            var userAccess = await this.reIdentificationStorageBroker
-                .SelectUserAccessByIdAsync(userAccessId);
+        public ValueTask<UserAccess> RemoveUserAccessByIdAsync(Guid userAccessId) =>
+            TryCatch(async () =>
+            {
+                await ValidateUserAccessOnRemoveById(userAccessId);
 
-            return await this.reIdentificationStorageBroker.DeleteUserAccessAsync(userAccess);
-        }
+                var userAccess = await this.reIdentificationStorageBroker
+                    .SelectUserAccessByIdAsync(userAccessId);
+
+                return await this.reIdentificationStorageBroker.DeleteUserAccessAsync(userAccess);
+            });
     }
 }
