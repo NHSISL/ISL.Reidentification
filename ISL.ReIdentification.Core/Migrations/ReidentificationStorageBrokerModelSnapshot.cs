@@ -81,7 +81,8 @@ namespace ISL.ReIdentification.Core.Migrations
 
                     b.Property<string>("IdentifierColumn")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<bool>("IsApproved")
                         .HasColumnType("bit");
@@ -91,11 +92,13 @@ namespace ISL.ReIdentification.Core.Migrations
 
                     b.Property<string>("RecipientEmail")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(320)
+                        .HasColumnType("nvarchar(320)");
 
                     b.Property<string>("RequesterEmail")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(320)
+                        .HasColumnType("nvarchar(320)");
 
                     b.Property<string>("UpdatedBy")
                         .IsRequired()
