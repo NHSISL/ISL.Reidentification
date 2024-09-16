@@ -45,6 +45,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
                     .SelectUserAccessByIdAsync(userAccessId);
 
                 await ValidateStorageUserAccessAsync(maybeUserAccess, userAccessId);
+
                 return maybeUserAccess;
             });
 
