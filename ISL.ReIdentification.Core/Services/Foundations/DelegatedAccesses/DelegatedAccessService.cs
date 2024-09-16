@@ -66,7 +66,10 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
 
         public async ValueTask<DelegatedAccess> RemoveDelegatedAccessByIdAsync(Guid delegatedAccessId)
         {
-            throw new NotImplementedException();
+            DelegatedAccess maybeDelegatedAccess =
+                await this.reIdentificationStorageBroker.SelectDelegatedAccessByIdAsync(delegatedAccessId);
+
+            return await this.reIdentificationStorageBroker.DeleteDelegatedAccessAsync(maybeDelegatedAccess);
         }
     }
 }
