@@ -23,15 +23,15 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             Lookup randomLookup = CreateRandomLookup();
             SqlException sqlException = CreateSqlException();
 
-            var failedLookupStorageException =
-                new FailedLookupStorageException(
+            var failedStorageLookupException =
+                new FailedStorageLookupException(
                     message: "Failed lookup storage error occurred, contact support.",
                     innerException: sqlException);
 
             var expectedLookupDependencyException =
                 new LookupDependencyException(
                     message: "Lookup dependency error occurred, contact support.",
-                    innerException: failedLookupStorageException);
+                    innerException: failedStorageLookupException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
@@ -136,15 +136,15 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             Lookup randomLookup = CreateRandomLookup();
             var databaseUpdateException = new DbUpdateException();
 
-            var failedLookupStorageException =
-                new FailedLookupStorageException(
-                    message: "Failed lookup storage error occurred, contact support.",
+            var failedOperationLookupException =
+                new FailedOperationLookupException(
+                    message: "Failed lookup operation error occurred, contact support.",
                     innerException: databaseUpdateException);
 
             var expectedLookupDependencyException =
                 new LookupDependencyException(
                     message: "Lookup dependency error occurred, contact support.",
-                    innerException: failedLookupStorageException);
+                    innerException: failedOperationLookupException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
