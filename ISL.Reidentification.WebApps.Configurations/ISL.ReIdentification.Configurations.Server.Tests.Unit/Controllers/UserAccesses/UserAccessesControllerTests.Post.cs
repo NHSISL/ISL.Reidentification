@@ -61,5 +61,34 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.User
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
             badRequestResult.StatusCode.Should().Be(400);
         }
+
+        [Fact]
+        public async Task PostUserAccessAsyncShouldReturnConflictWhenAlreadyExistsUserAccessExceptionOccurs()
+        {
+            // given
+            UserAccess randomUserAccess = CreateRandomUserAccess();
+            UserAccess inputUserAccess = randomUserAccess;
+            Xeption randomXeption = new Xeption(message: GetRandomString());
+
+            var alreadyExistsUserAccessException = new AlreadyExistsUserAccessException(
+                message: GetRandomString(),
+                innerException: randomXeption,
+                data: randomXeption.Data);
+
+            var userAccessDependencyValidationException = new UserAccessDependencyValidationException(
+                message: GetRandomString(),
+                innerException: alreadyExistsUserAccessException);
+
+            mockUserAccessService.Setup(service =>
+                service.AddUserAccessAsync(inputUserAccess))
+                    .ThrowsAsync(userAccessDependencyValidationException);
+
+            // when
+            var result = userAccessesController.PostUserAccessAsync(inputUserAccess);
+
+            // then
+            var conflictResult = Assert.IsType<ConflictObjectResult>(result.Result);
+            conflictResult.StatusCode.Should().Be(409);
+        }
     }
 }
