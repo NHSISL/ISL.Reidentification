@@ -5,6 +5,7 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using ISL.Reidentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using Moq;
@@ -14,7 +15,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
     public partial class UserAccessesTests
     {
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnRemoveByIdUserAccessAsync()
+        public async Task ShouldThrowValidationExceptionOnRemoveByIdUserAccessWithInvalidIdAndLogItAsync()
         {
             // given
             Guid invalidUserAccessId = Guid.Empty;
@@ -51,6 +52,49 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
             this.reIdentificationStorageBroker.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnRemoveByIdIfStorageUserAccessDoesNotExistAndLogItAsync()
+        {
+            // given
+            UserAccess randomUserAccess = CreateRandomUserAccess();
+            UserAccess nonExistingUserAccess = randomUserAccess;
+            UserAccess nullUserAccess = null;
+
+            var notFoundUserAccessException = new NotFoundUserAccessException(
+                message: $"User access not found with id: {nonExistingUserAccess.Id}");
+
+            var expectedUserAccessValidationException = new UserAccessValidationException(
+                message: "UserAccess validation error occurred, please fix errors and try again.",
+                innerException: notFoundUserAccessException);
+
+            this.reIdentificationStorageBroker.Setup(broker =>
+                broker.SelectUserAccessByIdAsync(nonExistingUserAccess.Id))
+                    .ReturnsAsync(nullUserAccess);
+
+            // when
+            ValueTask<UserAccess> removeByIdUserAccessTask =
+                this.userAccessService.RemoveUserAccessByIdAsync(nonExistingUserAccess.Id);
+
+            UserAccessValidationException actualUserAccessVaildationException =
+                await Assert.ThrowsAsync<UserAccessValidationException>(removeByIdUserAccessTask.AsTask);
+
+            // then
+            actualUserAccessVaildationException.Should().BeEquivalentTo(expectedUserAccessValidationException);
+
+            this.reIdentificationStorageBroker.Verify(broker =>
+                broker.SelectUserAccessByIdAsync(nonExistingUserAccess.Id),
+                Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+               broker.LogErrorAsync(It.Is(
+                   SameExceptionAs(expectedUserAccessValidationException))),
+                       Times.Once);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
         }
     }
 }
