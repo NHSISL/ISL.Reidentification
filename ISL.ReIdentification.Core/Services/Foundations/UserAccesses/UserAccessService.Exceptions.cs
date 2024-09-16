@@ -3,8 +3,10 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
+using ISL.Reidentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -16,6 +18,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
     public partial class UserAccessService
     {
         private delegate ValueTask<UserAccess> ReturningUserAccessFunction();
+        private delegate ValueTask<IQueryable<UserAccess>> ReturningUserAccessesFunction();
         private async ValueTask<UserAccess> TryCatch(ReturningUserAccessFunction returningUserAccessFunction)
         {
             try
@@ -29,6 +32,10 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
             catch (InvalidUserAccessException invalidUserAccessException)
             {
                 throw await CreateAndLogValidationExceptionAsync(invalidUserAccessException);
+            }
+            catch (NotFoundUserAccessException notFoundUserAccessException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(notFoundUserAccessException);
             }
             catch (SqlException sqlException)
             {
@@ -48,6 +55,15 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
 
                 throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsUserAccessException);
             }
+            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
+            {
+                var lockedUserAccessException =
+                    new LockedUserAccessException(
+                        message: "Locked user access record error occurred, please try again.",
+                        innerException: dbUpdateConcurrencyException);
+
+                throw await CreateAndLogDependencyValidationExceptionAsync(lockedUserAccessException);
+            }
             catch (DbUpdateException dbUpdateException)
             {
                 var failedOperationUserAccessException =
@@ -56,6 +72,32 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
                         innerException: dbUpdateException);
 
                 throw await CreateAndLogDependencyExceptionAsync(failedOperationUserAccessException);
+            }
+            catch (Exception exception)
+            {
+                var failedServiceUserAccessException =
+                    new FailedServiceUserAccessException(
+                        message: "Failed service user access error occurred, contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedServiceUserAccessException);
+            }
+        }
+
+        private async ValueTask<IQueryable<UserAccess>> TryCatch(
+            ReturningUserAccessesFunction returningUserAccessesFunction)
+        {
+            try
+            {
+                return await returningUserAccessesFunction();
+            }
+            catch (SqlException sqlException)
+            {
+                var failedStorageUserAccessException = new FailedStorageUserAccessException(
+                    message: "Failed user access storage error occurred, contact support.",
+                    innerException: sqlException);
+
+                throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageUserAccessException);
             }
             catch (Exception exception)
             {

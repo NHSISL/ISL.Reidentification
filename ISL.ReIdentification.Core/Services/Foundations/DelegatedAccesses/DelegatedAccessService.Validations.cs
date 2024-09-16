@@ -18,6 +18,64 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
             Validate(
                 (Rule: await IsInvalidAsync(delegatedAccess.Id), Parameter: nameof(DelegatedAccess.Id)),
 
+                (Rule: await IsInvalidAsync(delegatedAccess.RequesterEmail),
+                Parameter: nameof(DelegatedAccess.RequesterEmail)),
+
+                (Rule: await IsInvalidAsync(delegatedAccess.RecipientEmail),
+                Parameter: nameof(DelegatedAccess.RecipientEmail)),
+
+                (Rule: await IsInvalidAsync(delegatedAccess.IdentifierColumn),
+                Parameter: nameof(DelegatedAccess.IdentifierColumn)),
+
+                (Rule: await IsInvalidAsync(delegatedAccess.CreatedBy), Parameter: nameof(DelegatedAccess.CreatedBy)),
+                (Rule: await IsInvalidAsync(delegatedAccess.UpdatedBy), Parameter: nameof(DelegatedAccess.UpdatedBy)),
+
+                (Rule: await IsInvalidAsync(delegatedAccess.CreatedDate),
+                Parameter: nameof(DelegatedAccess.CreatedDate)),
+
+                (Rule: await IsInvalidAsync(delegatedAccess.UpdatedDate),
+                Parameter: nameof(DelegatedAccess.UpdatedDate)),
+
+                (Rule: await IsInvalidLengthAsync(delegatedAccess.RequesterEmail, 320),
+                Parameter: nameof(DelegatedAccess.RequesterEmail)),
+
+                (Rule: await IsInvalidLengthAsync(delegatedAccess.RecipientEmail, 320),
+                Parameter: nameof(DelegatedAccess.RecipientEmail)),
+
+                (Rule: await IsInvalidLengthAsync(delegatedAccess.IdentifierColumn, 10),
+                Parameter: nameof(DelegatedAccess.IdentifierColumn)),
+
+                (Rule: await IsInvalidLengthAsync(delegatedAccess.CreatedBy, 255),
+                Parameter: nameof(DelegatedAccess.CreatedBy)),
+
+                (Rule: await IsInvalidLengthAsync(delegatedAccess.UpdatedBy, 255),
+                Parameter: nameof(DelegatedAccess.UpdatedBy)),
+
+                (Rule: await IsNotSameAsync(
+                    first: delegatedAccess.UpdatedBy,
+                    second: delegatedAccess.CreatedBy,
+                    secondName: nameof(DelegatedAccess.CreatedBy)),
+
+                Parameter: nameof(DelegatedAccess.UpdatedBy)),
+
+                (Rule: await IsNotSameAsync(
+                    first: delegatedAccess.CreatedDate,
+                    second: delegatedAccess.UpdatedDate,
+                    secondName: nameof(DelegatedAccess.CreatedDate)),
+
+                Parameter: nameof(DelegatedAccess.UpdatedDate)),
+
+                (Rule: await IsNotRecentAsync(delegatedAccess.CreatedDate),
+                Parameter: nameof(DelegatedAccess.CreatedDate)));
+        }
+
+        private async ValueTask ValidateDelegatedAccessOnModify(DelegatedAccess delegatedAccess)
+        {
+            ValidateDelegatedAccessIsNotNull(delegatedAccess);
+
+            Validate(
+                (Rule: await IsInvalidAsync(delegatedAccess.Id), Parameter: nameof(DelegatedAccess.Id)),
+
                 (Rule: await IsInvalidAsync(
                     delegatedAccess.RequesterEmail),
 
@@ -46,23 +104,6 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
 
                 Parameter: nameof(DelegatedAccess.UpdatedDate)),
 
-                (Rule: await IsNotSameAsync(
-                    createBy: delegatedAccess.UpdatedBy,
-                    updatedBy: delegatedAccess.CreatedBy,
-                    createdByName: nameof(DelegatedAccess.CreatedBy)),
-
-                Parameter: nameof(DelegatedAccess.UpdatedBy)),
-
-                (Rule: await IsNotSameAsync(
-                    createdDate: delegatedAccess.CreatedDate,
-                    updatedDate: delegatedAccess.UpdatedDate,
-                    nameof(DelegatedAccess.CreatedDate)),
-
-                Parameter: nameof(DelegatedAccess.UpdatedDate)),
-
-                (Rule: await IsNotRecentAsync(delegatedAccess.CreatedDate),
-                    Parameter: nameof(DelegatedAccess.CreatedDate)),
-
                 (Rule: await IsInvalidLengthAsync(
                     delegatedAccess.RequesterEmail, 320),
 
@@ -74,7 +115,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
                 Parameter: nameof(DelegatedAccess.RecipientEmail)),
 
                 (Rule: await IsInvalidLengthAsync(
-                    delegatedAccess.IdentifierColumn, 50),
+                    delegatedAccess.IdentifierColumn, 10),
 
                 Parameter: nameof(DelegatedAccess.IdentifierColumn)),
 
@@ -86,7 +127,17 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
                 (Rule: await IsInvalidLengthAsync(
                     delegatedAccess.UpdatedBy, 255),
 
-                Parameter: nameof(DelegatedAccess.UpdatedBy)));
+                Parameter: nameof(DelegatedAccess.UpdatedBy)),
+
+                (Rule: await IsSameAsync(
+                    firstDate: delegatedAccess.UpdatedDate,
+                    secondDate: delegatedAccess.CreatedDate,
+                    nameof(DelegatedAccess.CreatedDate)),
+
+                Parameter: nameof(DelegatedAccess.UpdatedDate)),
+
+                (Rule: await IsNotRecentAsync(delegatedAccess.UpdatedDate),
+                    Parameter: nameof(DelegatedAccess.UpdatedDate)));
         }
 
         private static void ValidateDelegatedAccessIsNotNull(DelegatedAccess delegatedAccess)
@@ -95,6 +146,42 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
             {
                 throw new NullDelegatedAccessException("Delegated access is null.");
             }
+        }
+
+        private static async ValueTask ValidateStorageDelegatedAccessAsync(DelegatedAccess maybeDelegatedAccess,
+            Guid id)
+        {
+            if (maybeDelegatedAccess is null)
+            {
+                throw new NotFoundDelegatedAccessException(
+                    message: $"DelegatedAccess not found with id: {id}");
+            }
+        }
+
+        private static async ValueTask ValidateAgainstStorageDelegatedAccessOnModifyAsync(
+            DelegatedAccess inputDelegatedAccess, DelegatedAccess storageDelegatedAccess)
+        {
+            Validate(
+                (Rule: await IsNotSameAsync(
+                    first: inputDelegatedAccess.CreatedBy,
+                    second: storageDelegatedAccess.CreatedBy,
+                    secondName: nameof(DelegatedAccess.CreatedBy)),
+
+                Parameter: nameof(DelegatedAccess.CreatedBy)),
+
+                (Rule: await IsNotSameAsync(
+                    first: inputDelegatedAccess.CreatedDate,
+                    second: storageDelegatedAccess.CreatedDate,
+                    secondName: nameof(DelegatedAccess.CreatedDate)),
+
+                Parameter: nameof(DelegatedAccess.CreatedDate)),
+
+                (Rule: await IsSameAsync(
+                    firstDate: inputDelegatedAccess.UpdatedDate,
+                    secondDate: storageDelegatedAccess.UpdatedDate,
+                    secondDateName: nameof(DelegatedAccess.UpdatedDate)),
+
+                Parameter: nameof(DelegatedAccess.UpdatedDate)));
         }
 
         private static async ValueTask<dynamic> IsInvalidAsync(Guid id) => new
@@ -124,22 +211,31 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
         private static async ValueTask<bool> IsExceedingLengthAsync(string text, int maxLength) =>
             (text ?? string.Empty).Length > maxLength;
 
-        private static async ValueTask<dynamic> IsNotSameAsync(
-            DateTimeOffset createdDate,
-            DateTimeOffset updatedDate,
-            string createdDateName) => new
+        private static async ValueTask<dynamic> IsSameAsync(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
             {
-                Condition = createdDate != updatedDate,
-                Message = $"Date is not the same as {createdDateName}"
+                Condition = firstDate == secondDate,
+                Message = $"Date is the same as {secondDateName}"
             };
 
         private static async ValueTask<dynamic> IsNotSameAsync(
-            string createBy,
-            string updatedBy,
-            string createdByName) => new
+            DateTimeOffset first,
+            DateTimeOffset second,
+            string secondName) => new
             {
-                Condition = createBy != updatedBy,
-                Message = $"Text is not the same as {createdByName}"
+                Condition = first != second,
+                Message = $"Date is not the same as {secondName}"
+            };
+
+        private static async ValueTask<dynamic> IsNotSameAsync(
+            string first,
+            string second,
+            string secondName) => new
+            {
+                Condition = first != second,
+                Message = $"Text is not the same as {secondName}"
             };
 
         private async ValueTask<dynamic> IsNotRecentAsync(DateTimeOffset date)

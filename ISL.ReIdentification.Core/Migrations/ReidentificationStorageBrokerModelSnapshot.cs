@@ -22,6 +22,46 @@ namespace ISL.ReIdentification.Core.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("ISL.ReIdentification.Core.Models.Foundations.AccessAudits.AccessAudit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("HasAccess")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PseudoIdentifier")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset>("UpdatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("UserEmail")
+                        .IsRequired()
+                        .HasMaxLength(320)
+                        .HasColumnType("nvarchar(320)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AccessAudit");
+                });
+
             modelBuilder.Entity("ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses.DelegatedAccess", b =>
                 {
                     b.Property<Guid>("Id")
@@ -41,7 +81,8 @@ namespace ISL.ReIdentification.Core.Migrations
 
                     b.Property<string>("IdentifierColumn")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<bool>("IsApproved")
                         .HasColumnType("bit");
@@ -51,11 +92,13 @@ namespace ISL.ReIdentification.Core.Migrations
 
                     b.Property<string>("RecipientEmail")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(320)
+                        .HasColumnType("nvarchar(320)");
 
                     b.Property<string>("RequesterEmail")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(320)
+                        .HasColumnType("nvarchar(320)");
 
                     b.Property<string>("UpdatedBy")
                         .IsRequired()

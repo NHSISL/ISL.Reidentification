@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
@@ -16,6 +17,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
     public partial class DelegatedAccessService
     {
         private delegate ValueTask<DelegatedAccess> ReturningDelegatedAccessFunction();
+        private delegate ValueTask<IQueryable<DelegatedAccess>> ReturningDelegatedAccessesFunction();
 
         private async ValueTask<DelegatedAccess> TryCatch(
             ReturningDelegatedAccessFunction returningDelegatedAccessFunction)
@@ -31,6 +33,10 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
             catch (InvalidDelegatedAccessException invalidDelegatedAccessException)
             {
                 throw await CreateAndLogValidationExceptionAsync(invalidDelegatedAccessException);
+            }
+            catch (NotFoundDelegatedAccessException notFoundDelegatedAccessException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(notFoundDelegatedAccessException);
             }
             catch (SqlException sqlException)
             {
@@ -50,6 +56,15 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
 
                 throw await CreateAndLogDependencyValidationExceptionAsync(alreadyExistsDelegatedAccessException);
             }
+            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
+            {
+                var concurrencyGemException =
+                    new LockedDelegatedAccessException(
+                        message: "Locked delegated access record error occurred, please try again.",
+                        innerException: dbUpdateConcurrencyException);
+
+                throw await CreateAndLogDependencyValidationExceptionAsync(concurrencyGemException);
+            }
             catch (DbUpdateException dbUpdateException)
             {
                 var failedOperationDelegatedAccessException =
@@ -64,6 +79,32 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
                 var failedServiceDelegatedAccessException =
                     new FailedServiceDelegatedAccessException(
                         message: "Failed service delegated access error occurred, contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedServiceDelegatedAccessException);
+            }
+        }
+
+        private async ValueTask<IQueryable<DelegatedAccess>> TryCatch(
+           ReturningDelegatedAccessesFunction returningDelegatedAccessesFunction)
+        {
+            try
+            {
+                return await returningDelegatedAccessesFunction();
+            }
+            catch (SqlException sqlException)
+            {
+                var failedStorageDelegatedAccessException = new FailedStorageDelegatedAccessException(
+                   message: "Failed delegated access storage error occurred, contact support.",
+                   innerException: sqlException);
+
+                throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageDelegatedAccessException);
+            }
+            catch (Exception exception)
+            {
+                var failedServiceDelegatedAccessException =
+                    new FailedServiceDelegatedAccessException(
+                       message: "Failed service delegated access error occurred, contact support.",
                         innerException: exception);
 
                 throw await CreateAndLogServiceExceptionAsync(failedServiceDelegatedAccessException);
@@ -94,7 +135,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
             return delegatedAccessDependencyException;
         }
 
-        private async ValueTask<DelegatedAccessDependencyValidationException> 
+        private async ValueTask<DelegatedAccessDependencyValidationException>
             CreateAndLogDependencyValidationExceptionAsync(Xeption exception)
         {
             var delegatedAccessDependencyValidationException = new DelegatedAccessDependencyValidationException(
