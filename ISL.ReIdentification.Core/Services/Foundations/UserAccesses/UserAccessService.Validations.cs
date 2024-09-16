@@ -30,7 +30,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
                 (Rule: await IsInvalidLengthAsync(userAccess.UpdatedBy, 255), Parameter: nameof(UserAccess.UpdatedBy)),
                 (Rule: await IsInvalidLengthAsync(userAccess.UserEmail, 320), Parameter: nameof(UserAccess.UserEmail)),
 
-                (Rule: await IsInvalidLengthAsync(userAccess.RecipientEmail,320),
+                (Rule: await IsInvalidLengthAsync(userAccess.RecipientEmail, 320),
                 Parameter: nameof(UserAccess.RecipientEmail)),
 
                 (Rule: await IsInvalidLengthAsync(userAccess.OrgCode, 15), Parameter: nameof(UserAccess.OrgCode)),
@@ -50,6 +50,12 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
                 Parameter: nameof(UserAccess.UpdatedDate)),
 
                 (Rule: await IsNotRecentAsync(userAccess.CreatedDate), Parameter: nameof(UserAccess.CreatedDate)));
+        }
+
+        private async ValueTask ValidateUserAccessOnRetrieveById(Guid userAccessId)
+        {
+            Validate(
+                (Rule: await IsInvalidAsync(userAccessId), Parameter: nameof(UserAccess.Id)));
         }
 
         private async ValueTask ValidateUserAccessOnModifyAsync(UserAccess userAccess)
