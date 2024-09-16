@@ -2,6 +2,8 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System.Linq;
+using System;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
 using ISL.ReIdentification.Core.Brokers.Loggings;
@@ -33,5 +35,17 @@ namespace ISL.ReIdentification.Core.Services.Foundations.AccessAudits
 
                 return await this.reIdentificationStorageBroker.InsertAccessAuditAsync(accessAudit);
             });
+
+        public ValueTask<IQueryable<AccessAudit>> RetrieveAllAccessAuditsAsync() =>
+            throw new NotImplementedException();
+
+        public ValueTask<AccessAudit> RetrieveAccessAuditByIdAsync(Guid accessAuditId) =>
+            throw new NotImplementedException();
+
+        public ValueTask<AccessAudit> ModifyAccessAuditAsync(AccessAudit accessAudit) =>
+            throw new NotImplementedException();
+
+        public ValueTask<AccessAudit> RemoveAccessAuditByIdAsync(Guid accessAuditId) =>
+            throw new NotImplementedException();
     }
 }
