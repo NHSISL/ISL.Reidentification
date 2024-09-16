@@ -120,6 +120,9 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
                 Parameter: nameof(DelegatedAccess.UpdatedDate)));
         }
 
+        private static async ValueTask ValidateDelegatedAccessIdAsync(Guid delegatedAccessId) =>
+            Validate((Rule: await IsInvalidAsync(delegatedAccessId), Parameter: nameof(DelegatedAccess.Id)));
+
         private static void ValidateDelegatedAccessIsNotNull(DelegatedAccess delegatedAccess)
         {
             if (delegatedAccess is null)
