@@ -46,5 +46,20 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis.Looku
                 await this.apiBroker.DeleteLookupByIdAsync(actualLookup.Id);
             }
         }
+
+        [Fact]
+        public async Task ShouldGetLookupAsync()
+        {
+            // given
+            Lookup randomLookup = await PostRandomLookupAsync();
+            Lookup expectedLookup = randomLookup;
+
+            // when
+            Lookup actualLookup = await this.apiBroker.GetLookupByIdAsync(randomLookup.Id);
+
+            // then
+            actualLookup.Should().BeEquivalentTo(expectedLookup);
+            await this.apiBroker.DeleteLookupByIdAsync(actualLookup.Id);
+        }
     }
 }
