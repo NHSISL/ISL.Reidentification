@@ -17,7 +17,7 @@ namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications
         public async ValueTask<AccessAudit> InsertAccessAuditAsync(AccessAudit accessAudit) =>
             await InsertAsync(accessAudit);
 
-        public async ValueTask<IQueryable<AccessAudit>> SelectAllAccessAuditesAsync() =>
+        public async ValueTask<IQueryable<AccessAudit>> SelectAllAccessAuditsAsync() =>
             await SelectAllAsync<AccessAudit>();
 
         public async ValueTask<AccessAudit> SelectAccessAuditByIdAsync(Guid accessAuditId) =>
