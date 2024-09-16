@@ -36,15 +36,14 @@ namespace ISL.ReIdentification.Core.Controllers
             {
                 return BadRequest(lookupValidationException.InnerException);
             }
-            catch (LookupDependencyValidationException lookupValidationException)
-                when (lookupValidationException.InnerException is InvalidLookupReferenceException)
-            {
-                return FailedDependency(lookupValidationException.InnerException);
-            }
             catch (LookupDependencyValidationException lookupDependencyValidationException)
                when (lookupDependencyValidationException.InnerException is AlreadyExistsLookupException)
             {
                 return Conflict(lookupDependencyValidationException.InnerException);
+            }
+            catch (LookupDependencyValidationException lookupDependencyValidationException)
+            {
+                return BadRequest(lookupDependencyValidationException.InnerException);
             }
             catch (LookupDependencyException lookupDependencyException)
             {

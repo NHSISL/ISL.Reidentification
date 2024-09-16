@@ -35,12 +35,12 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
             }
             catch (SqlException sqlException)
             {
-                var failedLookupStorageException =
-                    new FailedLookupStorageException(
+                var failedStorageLookupException =
+                    new FailedStorageLookupException(
                         message: "Failed lookup storage error occurred, contact support.",
                         innerException: sqlException);
 
-                throw CreateAndLogCriticalDependencyException(failedLookupStorageException);
+                throw CreateAndLogCriticalDependencyException(failedStorageLookupException);
             }
             catch (NotFoundLookupException notFoundLookupException)
             {
@@ -51,7 +51,8 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
                 var alreadyExistsLookupException =
                     new AlreadyExistsLookupException(
                         message: "Lookup with the same Id already exists.",
-                        innerException: duplicateKeyException);
+                        innerException: duplicateKeyException,
+                        data: duplicateKeyException.Data);
 
                 throw CreateAndLogDependencyValidationException(alreadyExistsLookupException);
             }
@@ -75,12 +76,12 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
             }
             catch (DbUpdateException databaseUpdateException)
             {
-                var failedLookupStorageException =
-                    new FailedLookupStorageException(
-                        message: "Failed lookup storage error occurred, contact support.",
+                var failedOperationLookupException =
+                    new FailedOperationLookupException(
+                        message: "Failed lookup operation error occurred, contact support.",
                         innerException: databaseUpdateException);
 
-                throw CreateAndLogDependencyException(failedLookupStorageException);
+                throw CreateAndLogDependencyException(failedOperationLookupException);
             }
             catch (Exception exception)
             {
@@ -101,12 +102,12 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
             }
             catch (SqlException sqlException)
             {
-                var failedLookupStorageException =
-                    new FailedLookupStorageException(
+                var failedStorageLookupException =
+                    new FailedStorageLookupException(
                         message: "Failed lookup storage error occurred, contact support.",
                         innerException: sqlException);
 
-                throw CreateAndLogCriticalDependencyException(failedLookupStorageException);
+                throw CreateAndLogCriticalDependencyException(failedStorageLookupException);
             }
             catch (Exception exception)
             {
