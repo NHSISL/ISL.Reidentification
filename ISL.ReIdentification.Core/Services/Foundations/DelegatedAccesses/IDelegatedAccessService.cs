@@ -12,6 +12,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
     public interface IDelegatedAccessService
     {
         ValueTask<DelegatedAccess> AddDelegatedAccessAsync(DelegatedAccess delegatedAccess);
+        ValueTask<DelegatedAccess> RetrieveDelegatedAccessByIdAsync(Guid delegatedAccessId);
         ValueTask<IQueryable<DelegatedAccess>> RetrieveAllDelegatedAccessesAsync();
         ValueTask<DelegatedAccess> ModifyDelegatedAccessAsync(DelegatedAccess delegatedAccess);
         ValueTask<DelegatedAccess> RemoveDelegatedAccessByIdAsync(Guid delegatedAccessId);
