@@ -1,24 +1,35 @@
-import { Card, CardBody, CardText, CardTitle, Container } from "react-bootstrap";
+import { Card, Col, Container, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import BreadCrumbBase from "../../components/bases/layouts/BreadCrumb/BreadCrumbBase";
 
 export const ConfigurationHome = () => {
-
     return (
-        <Container fluid>
-            <h1 className="display-5 fw-bold">Configuration</h1>
+        <Container fluid className="mt-4"> 
+            <Row>
+                <BreadCrumbBase
+                    link="/"
+                    backLink="Home"
+                    currentLink="Configuration">
+                </BreadCrumbBase>
 
-            <Card>
-                <CardBody>
-                    <CardTitle>
-                        <Link to={'/configuration/lookups'}>
-                            Lookups
-                        </Link>
-                    </CardTitle>
-                    <CardText>
-                        View, add, edit and remove lookups.
-                    </CardText>
-                </CardBody>
-            </Card>
+                <Col className="mt-3">
+                    <Card>
+                        <Card.Header as="h5">
+                            <Link to={'/configuration/lookups'}>Lookups</Link>
+                        </Card.Header>
+                        <Card.Body>
+                            <Card.Title>View, add, edit and remove lookups.</Card.Title>
+                            <Card.Text>
+                                This is the configuration page where you can manage lookup
+                                values to drive the values for various dropdowns in the system.
+                            </Card.Text>
+                        </Card.Body>
+                    </Card>
+                </Col>
+
+                <Col></Col>
+                <Col></Col>
+            </Row>
         </Container>
     )
 }

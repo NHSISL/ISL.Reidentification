@@ -15,7 +15,8 @@ import { Page4 } from './pages/page4';
 import { Page5 } from './pages/page5';
 import { Home } from './pages/home';
 import { ConfigurationHome } from './pages/configuration/configurationHome';
-import LookupTable from './components/configurations/lookupTable';
+import LookupTable from './components/configurations/lookups/lookupTable';
+import { Lookups } from './pages/configuration/lookups';
 
 // TODO:
 //      - API Secured Routes
@@ -38,7 +39,7 @@ function App({ instance }: any) {
                 },
                 {
                     path: "configuration/lookups",
-                    element: <LookupTable allowedToAdd={true} allowedToEdit={true} allowedToDelete={true} />
+                    element: <Lookups />
                 },
                 {
                     path: "page1/:id",

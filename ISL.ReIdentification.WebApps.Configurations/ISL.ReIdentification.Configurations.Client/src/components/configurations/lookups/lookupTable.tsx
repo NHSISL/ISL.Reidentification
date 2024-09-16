@@ -1,11 +1,12 @@
 import React, { FunctionComponent, useMemo, useState } from "react";
 import { debounce } from "lodash";
-import { lookupViewService } from "../../services/views/lookups/lookupViewService";
-import { LookupView } from "../../models/views/components/lookups/lookupView";
+
 import SearchBase from "../bases/search/SearchBase";
 import { SpinnerBase } from "../bases/spinner/SpinnerBase";
 import { Card, CardBody, CardText, CardTitle, Container, Table } from "react-bootstrap";
 import LookupRow from "./lookupRow";
+import { LookupView } from "../../../models/views/components/lookups/lookupView";
+import { lookupViewService } from "../../../services/views/lookups/lookupViewService";
 
 type LookupTableProps = {
     allowedToAdd: boolean;
@@ -68,14 +69,14 @@ const LookupTable: FunctionComponent<LookupTableProps> = (props) => {
 
     return (
         <>
-        <Container fluid>
-            <Card>
-                    <CardTitle>
-                        Lookups
-                    </CardTitle>
-                    <CardText>
+            <Container fluid>
+                <Card>
+                    <Card.Header as="h5">
+                        Lookup Configuration
+                    </Card.Header>
+                    <Card.Body>
                         <Table striped bordered hover variant="dark">
-                                <thead>
+                            <thead>
                                 <tr>
                                     <th>Name</th>
                                     <th>Value</th>
@@ -85,18 +86,17 @@ const LookupTable: FunctionComponent<LookupTableProps> = (props) => {
                             <tbody>
                                 {
                                     lookupsRetrieved?.map((lookup: LookupView) =>
-                                    <LookupRow
-                                        key={lookup.id?.toString()}
-                                        lookup={lookup}
-                                        allowedToEdit={allowedToEdit}
-                                        allowedToDelete={allowedToDelete}
-                                        onUpdate={handleUpdate}
-                                        onDelete={handleDelete}
-                                    />
-                                )}
+                                        <LookupRow
+                                            key={lookup.id?.toString()}
+                                            lookup={lookup}
+                                            allowedToEdit={allowedToEdit}
+                                            allowedToDelete={allowedToDelete}
+                                            onUpdate={handleUpdate}
+                                            onDelete={handleDelete} />
+                                    )}
                             </tbody>
                         </Table>
-                    </CardText>
+                    </Card.Body>
                 </Card>
             </Container>
         </>
