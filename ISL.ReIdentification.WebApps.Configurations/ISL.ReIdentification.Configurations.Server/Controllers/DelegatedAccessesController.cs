@@ -2,7 +2,6 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
 using ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses;
@@ -23,7 +22,9 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         [HttpPost]
         public async ValueTask<ActionResult<DelegatedAccess>> PostDelegatedAccessAsync(DelegatedAccess delegatedAccess)
         {
-            throw new NotImplementedException();
+            DelegatedAccess addedDelegatedAccess = await this.delegatedAccessService.AddDelegatedAccessAsync(delegatedAccess);
+
+            return Created(addedDelegatedAccess);
         }
     }
 }
