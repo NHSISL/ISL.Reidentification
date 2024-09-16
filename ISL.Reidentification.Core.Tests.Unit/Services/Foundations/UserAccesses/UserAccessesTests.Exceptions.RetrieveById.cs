@@ -2,6 +2,8 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
+using System.Threading.Tasks;
 using FluentAssertions;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses.Exceptions;
@@ -29,7 +31,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                     message: "UserAccess dependency error occurred, contact support.",
                         innerException: failedUserAccessStorageException);
 
-            this.ReIdentificationStorageBroker.Setup(broker =>
+            this.reIdentificationStorageBroker.Setup(broker =>
                 broker.SelectUserAccessByIdAsync(randomUserAccessId))
                     .ThrowsAsync(sqlException);
 
@@ -45,7 +47,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
             actualUserAccessDependencyException.Should().BeEquivalentTo(
                 expectedUserAccessDependencyException);
 
-            this.ReIdentificationStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.SelectUserAccessByIdAsync(randomUserAccessId),
                     Times.Once);
 
@@ -59,7 +61,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
 
@@ -78,7 +80,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                 message: "Service error occurred, contact support.",
                 innerException: failedServiceUserAccessException);
 
-            this.ReIdentificationStorageBroker.Setup(broker =>
+            this.reIdentificationStorageBroker.Setup(broker =>
                 broker.SelectUserAccessByIdAsync(randomUserAccessId))
                     .ThrowsAsync(serviceError);
 
@@ -93,7 +95,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
             // then
             actualUserAccessServiceExcpetion.Should().BeEquivalentTo(expectedUserAccessServiceException);
 
-            this.ReIdentificationStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.SelectUserAccessByIdAsync(randomUserAccessId),
                     Times.Once);
 
@@ -106,7 +108,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Never);
 
-            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }

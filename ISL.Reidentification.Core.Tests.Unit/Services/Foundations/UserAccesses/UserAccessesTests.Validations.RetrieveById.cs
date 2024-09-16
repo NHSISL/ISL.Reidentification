@@ -2,6 +2,8 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
+using System.Threading.Tasks;
 using FluentAssertions;
 using ISL.Reidentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
@@ -44,11 +46,11 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedUserAccessValidationException))), Times.Once());
 
-            this.ReIdentificationStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.SelectUserAccessByIdAsync(invalidUserAccessId),
                     Times.Never);
 
-            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
@@ -67,7 +69,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                 message: "UserAccess validation error occurred, please fix errors and try again.",
                 innerException: notFoundUserAccessException);
 
-            this.ReIdentificationStorageBroker.Setup(broker =>
+            this.reIdentificationStorageBroker.Setup(broker =>
                 broker.SelectUserAccessByIdAsync(someUserAccessId))
                     .ReturnsAsync(nullUserAccess);
 
@@ -81,7 +83,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
             // then
             actualUserAccessValidationException.Should().BeEquivalentTo(expectedUserAccessValidationException);
 
-            this.ReIdentificationStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.SelectUserAccessByIdAsync(someUserAccessId),
                     Times.Once());
 
@@ -89,7 +91,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedUserAccessValidationException))), Times.Once());
 
-            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }

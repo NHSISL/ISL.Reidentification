@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
@@ -19,7 +20,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
             UserAccess inputUserAccess = randomUserAccess;
             UserAccess storageUserAccess = inputUserAccess.DeepClone();
 
-            this.ReIdentificationStorageBroker.Setup(broker =>
+            this.reIdentificationStorageBroker.Setup(broker =>
                 broker.SelectUserAccessByIdAsync(inputUserAccess.Id))
                     .ReturnsAsync(storageUserAccess);
 
@@ -29,12 +30,12 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
             // then
             actualUserAccess.Should().BeEquivalentTo(storageUserAccess);
 
-            this.ReIdentificationStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBroker.Verify(broker =>
                 broker.SelectUserAccessByIdAsync(inputUserAccess.Id),
                     Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.ReIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
