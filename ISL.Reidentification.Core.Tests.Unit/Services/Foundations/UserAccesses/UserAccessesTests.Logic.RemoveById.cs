@@ -20,11 +20,16 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
             UserAccess randomUserAccess = CreateRandomUserAccess();
             UserAccess inputUserAccess = randomUserAccess;
             Guid inputUserAccessId = inputUserAccess.Id;
+            UserAccess storageUserAccess = inputUserAccess;
             UserAccess deletedUserAccess = inputUserAccess;
             UserAccess expectedUserAccess = deletedUserAccess.DeepClone();
 
             this.reIdentificationStorageBroker.Setup(broker =>
-                broker.DeleteUserAccessAsync(inputUserAccess))
+                broker.SelectUserAccessByIdAsync(inputUserAccessId))
+                    .ReturnsAsync(storageUserAccess);
+
+            this.reIdentificationStorageBroker.Setup(broker =>
+                broker.DeleteUserAccessAsync(storageUserAccess))
                     .ReturnsAsync(deletedUserAccess);
 
             // when
@@ -33,6 +38,10 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
 
             // then
             actualUserAccess.Should().BeEquivalentTo(expectedUserAccess);
+
+            this.reIdentificationStorageBroker.Verify(broker =>
+                broker.SelectUserAccessByIdAsync(inputUserAccessId),
+                    Times.Once());
 
             this.reIdentificationStorageBroker.Verify(broker =>
                 broker.DeleteUserAccessAsync(inputUserAccess),
