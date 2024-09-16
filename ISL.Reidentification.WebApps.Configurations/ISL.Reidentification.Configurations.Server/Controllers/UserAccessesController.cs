@@ -4,6 +4,7 @@
 
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
+using ISL.ReIdentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using ISL.ReIdentification.Core.Services.Foundations.UserAccesses;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
@@ -22,9 +23,17 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         [HttpPost]
         public async ValueTask<ActionResult<UserAccess>> PostUserAccessAsync(UserAccess userAccess)
         {
-            UserAccess addedUserAccess = await this.userAccessService.AddUserAccessAsync(userAccess);
+            try
+            {
+                UserAccess addedUserAccess = await this.userAccessService.AddUserAccessAsync(userAccess);
 
-            return Created(addedUserAccess);
+                return Created(addedUserAccess);
+            }
+            catch (UserAccessValidationException userAccessValidationException)
+            {
+                return BadRequest(userAccessValidationException.InnerException);
+            }
+
         }
     }
 }
