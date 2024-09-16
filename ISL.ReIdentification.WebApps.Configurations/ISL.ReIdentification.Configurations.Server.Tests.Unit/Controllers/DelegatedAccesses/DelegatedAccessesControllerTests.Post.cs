@@ -30,7 +30,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
                 .ReturnsAsync(storageDelegatedAccess);
 
             // when
-            var result = await lookupsController.PostDelegatedAccessAsync(randomDelegatedAccess);
+            var result = await delegatedAccessesController.PostDelegatedAccessAsync(randomDelegatedAccess);
 
             // then
             var createdResult = Assert.IsType<CreatedObjectResult>(result.Result);
@@ -46,16 +46,16 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
             DelegatedAccess inputDelegatedAccess = randomDelegatedAccess;
             Xeption someXeption = new Xeption(message: GetRandomString());
 
-            var lookupValidationException = new DelegatedAccessValidationException(
+            var delegatedAccesValidationException = new DelegatedAccessValidationException(
                 message: GetRandomString(),
                 innerException: someXeption);
 
             mockDelegatedAccessService
                 .Setup(service => service.AddDelegatedAccessAsync(inputDelegatedAccess))
-                .ThrowsAsync(lookupValidationException);
+                .ThrowsAsync(delegatedAccesValidationException);
 
             // when
-            var result = await lookupsController.PostDelegatedAccessAsync(inputDelegatedAccess);
+            var result = await delegatedAccessesController.PostDelegatedAccessAsync(inputDelegatedAccess);
 
             // then
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -84,11 +84,35 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
                 .ThrowsAsync(dependencyValidationException);
 
             // when
-            var result = await lookupsController.PostDelegatedAccessAsync(inputDelegatedAccess);
+            var result = await delegatedAccessesController.PostDelegatedAccessAsync(inputDelegatedAccess);
 
             // then
             var conflictResult = Assert.IsType<ConflictObjectResult>(result.Result);
             conflictResult.StatusCode.Should().Be(409);
+        }
+
+        [Fact]
+        public async Task PostDelegatedAccessAsyncShouldReturnBadRequestWhenDelegatedAccessDependencyValidationExceptionOccurs()
+        {
+            // given
+            DelegatedAccess randomDelegatedAccess = CreateRandomDelegatedAccess();
+            DelegatedAccess inputDelegatedAccess = randomDelegatedAccess;
+            var someXeption = new Xeption(message: GetRandomString());
+
+            var dependencyValidationException = new DelegatedAccessDependencyValidationException(
+                message: GetRandomString(),
+                innerException: someXeption);
+
+            mockDelegatedAccessService
+                .Setup(service => service.AddDelegatedAccessAsync(inputDelegatedAccess))
+                .ThrowsAsync(dependencyValidationException);
+
+            // when
+            var result = await delegatedAccessesController.PostDelegatedAccessAsync(inputDelegatedAccess);
+
+            // then
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+            badRequestResult.StatusCode.Should().Be(400);
         }
     }
 }
