@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { lookupService } from "../../foundations/lookupService";
-import { LookupView } from "../../../models/views/components/lookups/lookupView";
 import { Guid } from "guid-typescript";
 import { UserAccessView } from "../../../models/views/components/userAccess/userAccessView";
 import { userAccessService } from "../../foundations/userAccessService";
