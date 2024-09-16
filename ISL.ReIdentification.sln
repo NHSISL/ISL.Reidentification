@@ -29,6 +29,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ISL.ReIdentification.Config
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ISL.ReIdentification.Infrastructure", "ISL.Reidentification.Infrastructure\ISL.ReIdentification.Infrastructure.csproj", "{51DCBB01-F93A-4C15-AD64-C8D39EBD2D8E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ISL.ReIdentification.Configurations.Server.Tests.Unit", "ISL.ReIdentification.WebApps.Configurations\ISL.ReIdentification.Configurations.Server.Tests.Unit\ISL.ReIdentification.Configurations.Server.Tests.Unit.csproj", "{D8887986-C7DA-425D-B2A1-8515085678BD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{51DCBB01-F93A-4C15-AD64-C8D39EBD2D8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51DCBB01-F93A-4C15-AD64-C8D39EBD2D8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51DCBB01-F93A-4C15-AD64-C8D39EBD2D8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8887986-C7DA-425D-B2A1-8515085678BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8887986-C7DA-425D-B2A1-8515085678BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8887986-C7DA-425D-B2A1-8515085678BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8887986-C7DA-425D-B2A1-8515085678BD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -82,6 +88,7 @@ Global
 		{0EEBCE83-F94E-4571-B114-FF1426279F60} = {6521DC95-959B-4EDA-98C1-8D6E1B14576F}
 		{60BB73D7-D01C-4E4B-ADFD-BE9F88DC695E} = {6521DC95-959B-4EDA-98C1-8D6E1B14576F}
 		{57D74F54-41AE-44D0-BC16-7E16DB8F3CD4} = {6521DC95-959B-4EDA-98C1-8D6E1B14576F}
+		{D8887986-C7DA-425D-B2A1-8515085678BD} = {6521DC95-959B-4EDA-98C1-8D6E1B14576F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0D717146-FA34-4806-92FA-B345A87F5D78}
