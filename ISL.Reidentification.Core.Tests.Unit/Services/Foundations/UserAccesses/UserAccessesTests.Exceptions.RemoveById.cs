@@ -58,6 +58,14 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                     expectedUserAccessDependencyException))),
                         Times.Once);
 
+            this.reIdentificationStorageBroker.Verify(broker =>
+                broker.DeleteUserAccessAsync(It.IsAny<UserAccess>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Never);
+
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.reIdentificationStorageBroker.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -112,6 +120,10 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                 broker.DeleteUserAccessAsync(It.IsAny<UserAccess>()),
                     Times.Never);
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Never);
+
             this.reIdentificationStorageBroker.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
@@ -155,6 +167,10 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedUserAccessServiceException))),
                         Times.Once);
+
+            this.reIdentificationStorageBroker.Verify(broker =>
+                broker.DeleteUserAccessAsync(It.IsAny<UserAccess>()),
+                    Times.Never);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
