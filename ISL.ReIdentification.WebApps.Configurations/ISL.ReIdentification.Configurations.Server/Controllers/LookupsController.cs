@@ -1,4 +1,4 @@
-// ---------------------------------------------------------
+﻿// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
@@ -11,7 +11,7 @@ using ISL.ReIdentification.Core.Services.Foundations.Lookups;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
 
-namespace ISL.ReIdentification.Core.Controllers
+namespace ISL.ReIdentification.Configurations.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -122,15 +122,14 @@ namespace ISL.ReIdentification.Core.Controllers
             {
                 return BadRequest(lookupValidationException.InnerException);
             }
-            catch (LookupDependencyValidationException lookupValidationException)
-                when (lookupValidationException.InnerException is InvalidLookupReferenceException)
-            {
-                return FailedDependency(lookupValidationException.InnerException);
-            }
             catch (LookupDependencyValidationException lookupDependencyValidationException)
                when (lookupDependencyValidationException.InnerException is AlreadyExistsLookupException)
             {
                 return Conflict(lookupDependencyValidationException.InnerException);
+            }
+            catch (LookupDependencyValidationException lookupDependencyValidationException)
+            {
+                return BadRequest(lookupDependencyValidationException.InnerException);
             }
             catch (LookupDependencyException lookupDependencyException)
             {
