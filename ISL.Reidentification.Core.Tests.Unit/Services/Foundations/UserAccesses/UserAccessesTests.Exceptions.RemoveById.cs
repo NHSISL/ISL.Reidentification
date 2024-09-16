@@ -5,9 +5,11 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using ISL.Reidentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 
 namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
@@ -59,6 +61,60 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.reIdentificationStorageBroker.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task
+            ShouldThrowDependencyValidationOnRemoveUserAccessByIdIfDatabaseUpdateConcurrencyErrorOccursAndLogItAsync()
+        {
+            // given
+            Guid randomUserAccessId = Guid.NewGuid();
+
+            var databaseUpdateConcurrencyException =
+                new DbUpdateConcurrencyException();
+
+            var lockedUserAccessException =
+                new LockedUserAccessException(
+                    message: "Locked user access record error occurred, please try again.",
+                    innerException: databaseUpdateConcurrencyException);
+
+            var expectedUserAccessDependencyValidationException =
+                new UserAccessDependencyValidationException(
+                    message: "UserAccess dependency validation error occurred, fix errors and try again.",
+                    innerException: lockedUserAccessException);
+
+            this.reIdentificationStorageBroker.Setup(broker =>
+                broker.SelectUserAccessByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(databaseUpdateConcurrencyException);
+
+            // when
+            ValueTask<UserAccess> removeUserAccessByIdTask =
+                this.userAccessService.RemoveUserAccessByIdAsync(randomUserAccessId);
+
+            UserAccessDependencyValidationException actualUserAccessDependencyValidationException =
+                await Assert.ThrowsAsync<UserAccessDependencyValidationException>(
+                    removeUserAccessByIdTask.AsTask);
+
+            // then
+            actualUserAccessDependencyValidationException.Should()
+                .BeEquivalentTo(expectedUserAccessDependencyValidationException);
+
+            this.reIdentificationStorageBroker.Verify(broker =>
+                broker.SelectUserAccessByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedUserAccessDependencyValidationException))),
+                        Times.Once);
+
+            this.reIdentificationStorageBroker.Verify(broker =>
+                broker.DeleteUserAccessAsync(It.IsAny<UserAccess>()),
+                    Times.Never);
+
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
