@@ -21,7 +21,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.AccessAudits
             Guid invalidAccessAuditId = Guid.Empty;
 
             var invalidAccessAuditException = new InvalidAccessAuditException(
-                message: "Invalid user access. Please correct the errors and try again.");
+                message: "Invalid access audit. Please correct the errors and try again.");
 
             invalidAccessAuditException.AddData(
                 key: nameof(AccessAudit.Id),
@@ -29,7 +29,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.AccessAudits
 
             var expectedAccessAuditValidationException =
                 new AccessAuditValidationException(
-                    message: "AccessAudit validation error occurred, please fix errors and try again.",
+                    message: "Access audit validation error occurred, please fix errors and try again.",
                     innerException: invalidAccessAuditException);
 
             // when
@@ -63,10 +63,10 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.AccessAudits
             AccessAudit nullAccessAudit = null;
 
             var notFoundAccessAuditException = new NotFoundAccessAuditException(
-                message: $"User access not found with id: {someAccessAuditId}");
+                message: $"Access audit not found with id: {someAccessAuditId}");
 
             var expectedAccessAuditValidationException = new AccessAuditValidationException(
-                message: "AccessAudit validation error occurred, please fix errors and try again.",
+                message: "Access audit validation error occurred, please fix errors and try again.",
                 innerException: notFoundAccessAuditException);
 
             this.reIdentificationStorageBroker.Setup(broker =>
