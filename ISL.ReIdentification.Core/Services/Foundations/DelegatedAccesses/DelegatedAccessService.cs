@@ -69,7 +69,6 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
         {
             await ValidateDelegatedAccessIdAsync(delegatedAccessId);
 
-
             DelegatedAccess maybeDelegatedAccess =
                 await this.reIdentificationStorageBroker.SelectDelegatedAccessByIdAsync(delegatedAccessId);
 

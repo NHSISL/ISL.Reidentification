@@ -91,7 +91,8 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
                     removeDelegatedAccessByIdTask.AsTask);
 
             // then
-            actualDelegatedAccessServiceException.Should().BeEquivalentTo(expectedDelegatedAccessServiceException);
+            actualDelegatedAccessServiceException.Should().BeEquivalentTo(
+                expectedDelegatedAccessServiceException);
 
             this.reIdentificationStorageBroker.Verify(broker =>
                 broker.SelectDelegatedAccessByIdAsync(someDelegatedAccessId),
