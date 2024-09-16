@@ -19,6 +19,24 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis.Looku
         private int GetRandomNumber() =>
             new IntRange(min: 2, max: 10).GetValue();
 
+        private static DateTimeOffset GetRandomDateTime() =>
+            new DateTimeRange(earliestDate: new DateTime()).GetValue();
+
+        private static Lookup UpdateLookupWithRandomValues(Lookup inputLookup)
+        {
+            DateTimeOffset now = DateTimeOffset.UtcNow;
+            var filler = new Filler<Lookup>();
+
+            filler.Setup()
+                .OnProperty(lookup => lookup.Id).Use(inputLookup.Id)
+                .OnType<DateTimeOffset>().Use(GetRandomDateTime())
+                .OnProperty(lookup => lookup.CreatedDate).Use(inputLookup.CreatedDate)
+                .OnProperty(lookup => lookup.CreatedBy).Use(inputLookup.CreatedBy)
+                .OnProperty(lookup => lookup.UpdatedDate).Use(now);
+
+            return filler.Create();
+        }
+
         private async ValueTask<Lookup> PostRandomLookupAsync()
         {
             Lookup randomLookup = CreateRandomLookup();
