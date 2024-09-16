@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Brokers;
 using ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Models.Lookups;
 using Tynamix.ObjectFiller;
@@ -13,6 +15,30 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis.Looku
 
         public LookupsApiTests(ApiBroker apiBroker) =>
             this.apiBroker = apiBroker;
+
+        private int GetRandomNumber() =>
+            new IntRange(min: 2, max: 10).GetValue();
+
+        private async ValueTask<Lookup> PostRandomLookupAsync()
+        {
+            Lookup randomLookup = CreateRandomLookup();
+            await this.apiBroker.PostLookupAsync(randomLookup);
+
+            return randomLookup;
+        }
+
+        private async ValueTask<List<Lookup>> PostRandomLookupsAsync()
+        {
+            int randomNumber = GetRandomNumber();
+            var randomLookups = new List<Lookup>();
+
+            for (int i = 0; i < randomNumber; i++)
+            {
+                randomLookups.Add(await PostRandomLookupAsync());
+            }
+
+            return randomLookups;
+        }
 
         private static Lookup CreateRandomLookup() =>
             CreateRandomLookupFiller().Create();
