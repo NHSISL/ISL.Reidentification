@@ -21,7 +21,7 @@ const LookupRowView: FunctionComponent<LookupRowViewProps> = (props) => {
     return (
         <tr>
             <td>
-                dsfds
+                {lookup.name}
 
             </td>
             <td>
