@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using RESTFulSense.Exceptions;
 using ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Models.Lookups;
 using Xunit;
 
@@ -76,6 +77,28 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis.Looku
             // then
             actualLookup.Should().BeEquivalentTo(modifiedLookup);
             await this.apiBroker.DeleteLookupByIdAsync(actualLookup.Id);
+        }
+
+        [Fact]
+        public async Task ShouldDeleteLookupAsync()
+        {
+            // given
+            Lookup randomLookup = await PostRandomLookupAsync();
+            Lookup inputLookup = randomLookup;
+            Lookup expectedLookup = inputLookup;
+
+            // when
+            Lookup deletedLookup =
+                await this.apiBroker.DeleteLookupByIdAsync(inputLookup.Id);
+
+            ValueTask<Lookup> getLookupbyIdTask =
+                this.apiBroker.GetLookupByIdAsync(inputLookup.Id);
+
+            // then
+            deletedLookup.Should().BeEquivalentTo(expectedLookup);
+
+            await Assert.ThrowsAsync<HttpResponseNotFoundException>(() =>
+                getLookupbyIdTask.AsTask());
         }
     }
 }
