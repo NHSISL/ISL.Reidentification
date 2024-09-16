@@ -3,15 +3,14 @@
 // ---------------------------------------------------------
 
 using System;
-using System.Collections;
 using Xeptions;
 
 namespace ISL.ReIdentification.Core.Models.Foundations.Lookups.Exceptions
 {
-    public class AlreadyExistsLookupException : Xeption
+    public class FailedStorageLookupException : Xeption
     {
-        public AlreadyExistsLookupException(string message, Exception innerException, IDictionary data)
-            : base(message, innerException, data)
+        public FailedStorageLookupException(string message, Exception innerException)
+            : base(message, innerException)
         { }
     }
 }
