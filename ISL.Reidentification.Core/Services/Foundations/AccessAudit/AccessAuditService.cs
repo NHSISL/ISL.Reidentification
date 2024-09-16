@@ -7,6 +7,7 @@ using ISL.ReIdentification.Core.Brokers.DateTimes;
 using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
 using ISL.ReIdentification.Core.Models.Foundations.AccessAudits;
+using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 
 namespace ISL.ReIdentification.Core.Services.Foundations.AccessAudits
 {
@@ -26,7 +27,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.AccessAudits
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<AccessAudit> AddAccessAuditAsync(AccessAudit accessAudit) =>
-            throw new System.NotImplementedException();
+        public async ValueTask<AccessAudit> AddAccessAuditAsync(AccessAudit accessAudit) =>
+            await this.reIdentificationStorageBroker.InsertAccessAuditAsync(accessAudit);
     }
 }

@@ -43,7 +43,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.AccessAudits
         private static AccessAudit CreateRandomAccessAudit() =>
             CreateRandomAccessAudit(dateTimeOffset: GetRandomDateTimeOffset());
 
-        private static UserAccess CreateRandomAccessAudit(DateTimeOffset dateTimeOffset) =>
+        private static AccessAudit CreateRandomAccessAudit(DateTimeOffset dateTimeOffset) =>
             CreateAccessAuditFiller(dateTimeOffset).Create();
 
         private static string GetRandomString() =>
@@ -55,10 +55,10 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.AccessAudits
         private SqlException CreateSqlException() =>
             (SqlException)RuntimeHelpers.GetUninitializedObject(type: typeof(SqlException));
 
-        private static Filler<UserAccess> CreateAccessAuditFiller(DateTimeOffset dateTimeOffset)
+        private static Filler<AccessAudit> CreateAccessAuditFiller(DateTimeOffset dateTimeOffset)
         {
             string user = Guid.NewGuid().ToString();
-            var filler = new Filler<UserAccess>();
+            var filler = new Filler<AccessAudit>();
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
