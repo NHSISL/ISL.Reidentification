@@ -1,3 +1,7 @@
+// ---------------------------------------------------------
+// Copyright (c) North East London ICB. All rights reserved.
+// ---------------------------------------------------------
+
 using System;
 
 namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Models.Lookups
@@ -5,9 +9,8 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Models.Loo
     public class Lookup
     {
         public Guid Id { get; set; }
-
-        // TODO:  Add your properties here
-
+        public string Name { get; set; }
+        public string Value { get; set; }
         public string CreatedBy { get; set; }
         public DateTimeOffset CreatedDate { get; set; }
         public string UpdatedBy { get; set; }

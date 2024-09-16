@@ -1,10 +1,13 @@
+// ---------------------------------------------------------
+// Copyright (c) North East London ICB. All rights reserved.
+// ---------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Brokers;
 using ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Models.Lookups;
 using Tynamix.ObjectFiller;
-using Xunit;
 
 namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis.Lookups
 {
@@ -21,6 +24,9 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis.Looku
 
         private static DateTimeOffset GetRandomDateTime() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
+
+        private static string GetRandomStringWithLengthOf(int length) =>
+            new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length).GetValue();
 
         private static Lookup UpdateLookupWithRandomValues(Lookup inputLookup)
         {
@@ -69,6 +75,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis.Looku
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(now)
+                .OnProperty(lookup => lookup.Name).Use(() => GetRandomStringWithLengthOf(450))
                 .OnProperty(lookup => lookup.CreatedDate).Use(now)
                 .OnProperty(lookup => lookup.CreatedBy).Use(user)
                 .OnProperty(lookup => lookup.UpdatedDate).Use(now)
