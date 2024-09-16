@@ -71,10 +71,12 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
             {
                 await ValidateUserAccessOnRemoveById(userAccessId);
 
-                var userAccess = await this.reIdentificationStorageBroker
+                var maybeUserAccess = await this.reIdentificationStorageBroker
                     .SelectUserAccessByIdAsync(userAccessId);
 
-                return await this.reIdentificationStorageBroker.DeleteUserAccessAsync(userAccess);
+                await ValidateStorageUserAccessAsync(maybeUserAccess, userAccessId);
+
+                return await this.reIdentificationStorageBroker.DeleteUserAccessAsync(maybeUserAccess);
             });
     }
 }
