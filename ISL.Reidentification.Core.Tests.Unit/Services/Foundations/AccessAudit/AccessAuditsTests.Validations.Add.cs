@@ -133,7 +133,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.AccessAudits
             AccessAudit invalidAccessAudit = CreateRandomAccessAudit(dateTimeOffset: randomDateTimeOffset);
             var inputCreatedByUpdatedByString = GetRandomStringWithLength(256);
             invalidAccessAudit.UserEmail = GetRandomStringWithLength(321);
-            invalidAccessAudit.PseudoIdentifier = GetRandomStringWithLength(10);
+            invalidAccessAudit.PseudoIdentifier = GetRandomStringWithLength(11);
             invalidAccessAudit.CreatedBy = inputCreatedByUpdatedByString;
             invalidAccessAudit.UpdatedBy = inputCreatedByUpdatedByString;
 

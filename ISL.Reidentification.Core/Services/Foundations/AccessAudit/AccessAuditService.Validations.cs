@@ -28,7 +28,6 @@ namespace ISL.ReIdentification.Core.Services.Foundations.AccessAudits
                 (Rule: await IsInvalidAsync(accessAudit.UpdatedDate), Parameter: nameof(AccessAudit.UpdatedDate)),
                 (Rule: await IsInvalidLengthAsync(accessAudit.CreatedBy, 255), Parameter: nameof(AccessAudit.CreatedBy)),
                 (Rule: await IsInvalidLengthAsync(accessAudit.UpdatedBy, 255), Parameter: nameof(AccessAudit.UpdatedBy)),
-                (Rule: await IsInvalidLengthAsync(accessAudit.UserEmail, 320), Parameter: nameof(AccessAudit.UserEmail)),
 
                 (Rule: await IsInvalidLengthAsync(accessAudit.UserEmail, 320),
                 Parameter: nameof(AccessAudit.UserEmail)),
