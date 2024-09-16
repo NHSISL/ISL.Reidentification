@@ -7,7 +7,6 @@ using ISL.ReIdentification.Core.Brokers.DateTimes;
 using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
 using ISL.ReIdentification.Core.Models.Foundations.AccessAudits;
-using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 
 namespace ISL.ReIdentification.Core.Services.Foundations.AccessAudits
 {
@@ -27,7 +26,11 @@ namespace ISL.ReIdentification.Core.Services.Foundations.AccessAudits
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<AccessAudit> AddAccessAuditAsync(AccessAudit accessAudit) =>
-            await this.reIdentificationStorageBroker.InsertAccessAuditAsync(accessAudit);
+        public async ValueTask<AccessAudit> AddAccessAuditAsync(AccessAudit accessAudit)
+        {
+            ValidateAccessAuditOnAddAsync(accessAudit);
+
+            return await this.reIdentificationStorageBroker.InsertAccessAuditAsync(accessAudit);
+        }
     }
 }
