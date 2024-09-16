@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using ISL.Reidentification.Core.Models.Foundations.AccessAudits.Exceptions;
@@ -17,6 +18,33 @@ namespace ISL.ReIdentification.Core.Services.Foundations.AccessAudits
     public partial class AccessAuditService
     {
         private delegate ValueTask<AccessAudit> ReturningAccessAuditFunction();
+        private delegate ValueTask<IQueryable<AccessAudit>> ReturningAccessAuditsFunction();
+
+        private async ValueTask<IQueryable<AccessAudit>> TryCatch(
+            ReturningAccessAuditsFunction returningAccessAuditsFunction)
+        {
+            try
+            {
+                return await returningAccessAuditsFunction();
+            }
+            catch (SqlException sqlException)
+            {
+                var failedStorageAccessAuditException = new FailedStorageAccessAuditException(
+                    message: "Failed access audit storage error occurred, contact support.",
+                    innerException: sqlException);
+
+                throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageAccessAuditException);
+            }
+            catch (Exception exception)
+            {
+                var failedServiceAccessAuditException =
+                    new FailedServiceAccessAuditException(
+                        message: "Failed service access audit error occurred, contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedServiceAccessAuditException);
+            }
+        }
         private async ValueTask<AccessAudit> TryCatch(ReturningAccessAuditFunction returningAccessAuditFunction)
         {
             try
