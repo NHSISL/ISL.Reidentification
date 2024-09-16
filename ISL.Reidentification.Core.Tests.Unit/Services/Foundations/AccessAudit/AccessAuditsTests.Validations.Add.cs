@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using ISL.ReIdentification.Core.Models.Foundations.AccessAudits;
@@ -101,6 +102,76 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.AccessAudits
 
             AccessAuditValidationException actualAccessAuditValidationException =
                 await Assert.ThrowsAsync<AccessAuditValidationException>(addAccessAuditTask.AsTask);
+
+            // then
+            actualAccessAuditValidationException.Should()
+                .BeEquivalentTo(expectedAccessAuditValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedAccessAuditValidationException))),
+                        Times.Once);
+
+            this.reIdentificationStorageBroker.Verify(broker =>
+                broker.InsertAccessAuditAsync(It.IsAny<AccessAudit>()),
+                    Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnAddIfAccessAuditHasInvalidLengthProperty()
+        {
+            // given
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            AccessAudit invalidAccessAudit = CreateRandomAccessAudit(dateTimeOffset: randomDateTimeOffset);
+            var inputCreatedByUpdatedByString = GetRandomStringWithLength(256);
+            invalidAccessAudit.UserEmail = GetRandomStringWithLength(321);
+            invalidAccessAudit.PseudoIdentifier = GetRandomStringWithLength(10);
+            invalidAccessAudit.CreatedBy = inputCreatedByUpdatedByString;
+            invalidAccessAudit.UpdatedBy = inputCreatedByUpdatedByString;
+
+            var invalidAccessAuditException = new InvalidAccessAuditException(
+                message: "Invalid access audit. Please correct the errors and try again.");
+
+            invalidAccessAuditException.AddData(
+                key: nameof(AccessAudit.PseudoIdentifier),
+                values: $"Text exceed max length of {invalidAccessAudit.PseudoIdentifier.Length - 1} characters");
+
+            invalidAccessAuditException.AddData(
+                key: nameof(AccessAudit.UserEmail),
+                values: $"Text exceed max length of {invalidAccessAudit.UserEmail.Length - 1} characters");
+
+            invalidAccessAuditException.AddData(
+                key: nameof(AccessAudit.CreatedBy),
+                values: $"Text exceed max length of {invalidAccessAudit.CreatedBy.Length - 1} characters");
+
+            invalidAccessAuditException.AddData(
+                key: nameof(AccessAudit.UpdatedBy),
+                values: $"Text exceed max length of {invalidAccessAudit.UpdatedBy.Length - 1} characters");
+
+            var expectedAccessAuditValidationException =
+                new AccessAuditValidationException(
+                    message: "Access audit validation error occurred, please fix errors and try again.",
+                    innerException: invalidAccessAuditException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            // when
+            ValueTask<AccessAudit> addAccessAuditTask =
+                this.accessAuditService.AddAccessAuditAsync(invalidAccessAudit);
+
+            AccessAuditValidationException actualAccessAuditValidationException =
+                await Assert.ThrowsAsync<AccessAuditValidationException>(
+                    addAccessAuditTask.AsTask);
 
             // then
             actualAccessAuditValidationException.Should()

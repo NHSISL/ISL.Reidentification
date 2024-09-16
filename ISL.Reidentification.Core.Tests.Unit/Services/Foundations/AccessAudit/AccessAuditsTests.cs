@@ -9,7 +9,6 @@ using ISL.ReIdentification.Core.Brokers.DateTimes;
 using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
 using ISL.ReIdentification.Core.Models.Foundations.AccessAudits;
-using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Services.Foundations.AccessAudits;
 using Microsoft.Data.SqlClient;
 using Moq;
@@ -45,6 +44,9 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.AccessAudits
 
         private static AccessAudit CreateRandomAccessAudit(DateTimeOffset dateTimeOffset) =>
             CreateAccessAuditFiller(dateTimeOffset).Create();
+
+        private static string GetRandomStringWithLength(int length) =>
+            new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length).GetValue();
 
         private static string GetRandomString() =>
             new MnemonicString().GetValue();
