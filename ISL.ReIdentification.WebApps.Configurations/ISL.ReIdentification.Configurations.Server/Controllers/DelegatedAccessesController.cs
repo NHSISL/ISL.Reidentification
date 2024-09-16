@@ -4,6 +4,7 @@
 
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
+using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses.Exceptions;
 using ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
@@ -22,9 +23,16 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         [HttpPost]
         public async ValueTask<ActionResult<DelegatedAccess>> PostDelegatedAccessAsync(DelegatedAccess delegatedAccess)
         {
-            DelegatedAccess addedDelegatedAccess = await this.delegatedAccessService.AddDelegatedAccessAsync(delegatedAccess);
+            try
+            {
+                DelegatedAccess addedDelegatedAccess = await this.delegatedAccessService.AddDelegatedAccessAsync(delegatedAccess);
 
-            return Created(addedDelegatedAccess);
+                return Created(addedDelegatedAccess);
+            }
+            catch (DelegatedAccessValidationException delegatedValidationException)
+            {
+                return BadRequest(delegatedValidationException.InnerException);
+            }
         }
     }
 }
