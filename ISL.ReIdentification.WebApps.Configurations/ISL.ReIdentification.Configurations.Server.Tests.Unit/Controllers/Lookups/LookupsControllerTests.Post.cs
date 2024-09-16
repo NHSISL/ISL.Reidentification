@@ -2,19 +2,17 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
 using System.Threading.Tasks;
-using EFxceptions.Models.Exceptions;
 using FluentAssertions;
+using Force.DeepCloner;
 using ISL.ReIdentification.Core.Models.Foundations.Lookups;
 using ISL.ReIdentification.Core.Models.Foundations.Lookups.Exceptions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Moq;
 using RESTFulSense.Models;
 using Xeptions;
 
-namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Lookups
+namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Lookups
 {
     public partial class LookupsControllerTests
     {
@@ -22,39 +20,42 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Lookups
         public async Task PostLookupAsyncShouldReturnCreatedWhenLookupIsAdded()
         {
             // given
-            Lookup lookup = CreateRandomLookup();
+            Lookup randomLookup = CreateRandomLookup();
+            Lookup inputLookup = randomLookup;
+            Lookup storageLookup = inputLookup.DeepClone();
+            Lookup expectedLookup = storageLookup.DeepClone();
 
             mockLookupService
-                .Setup(service => service.AddLookupAsync(lookup))
-                .ReturnsAsync(lookup);
+                .Setup(service => service.AddLookupAsync(inputLookup))
+                .ReturnsAsync(storageLookup);
 
             // when
-            var result = await lookupsController.PostLookupAsync(lookup);
+            var result = await lookupsController.PostLookupAsync(randomLookup);
 
             // then
             var createdResult = Assert.IsType<CreatedObjectResult>(result.Result);
             createdResult.StatusCode.Should().Be(201);
-            createdResult.Value.Should().Be(lookup);
+            createdResult.Value.Should().BeEquivalentTo(expectedLookup);
         }
 
         [Fact]
         public async Task PostLookupAsyncShouldReturnBadRequestWhenLookupValidationExceptionOccurs()
         {
             // given
-            Lookup lookup = CreateRandomLookup();
-
-            var invalidLookupException = new InvalidLookupException(message: GetRandomString());
+            Lookup randomLookup = CreateRandomLookup();
+            Lookup inputLookup = randomLookup;
+            Xeption someXeption = new Xeption(message: GetRandomString());
 
             var lookupValidationException = new LookupValidationException(
                 message: GetRandomString(),
-                innerException: invalidLookupException);
+                innerException: someXeption);
 
             mockLookupService
-                .Setup(service => service.AddLookupAsync(lookup))
+                .Setup(service => service.AddLookupAsync(inputLookup))
                 .ThrowsAsync(lookupValidationException);
 
             // when
-            var result = await lookupsController.PostLookupAsync(lookup);
+            var result = await lookupsController.PostLookupAsync(inputLookup);
 
             // then
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -65,24 +66,25 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Lookups
         public async Task PostLookupAsyncShouldReturnConflictWhenAlreadyExistsLookupExceptionOccurs()
         {
             // given
-            Lookup lookup = CreateRandomLookup();
-            var duplicateKeyException = new DuplicateKeyException(message: GetRandomString());
+            Lookup randomLookup = CreateRandomLookup();
+            Lookup inputLookup = randomLookup;
+            var someXeption = new Xeption(message: GetRandomString());
 
             var alreadyExistsException = new AlreadyExistsLookupException(
                 message: GetRandomString(),
-                innerException: duplicateKeyException,
-                data: duplicateKeyException.Data);
+                innerException: someXeption,
+                data: someXeption.Data);
 
             var dependencyValidationException = new LookupDependencyValidationException(
                 message: GetRandomString(),
                 innerException: alreadyExistsException);
 
             mockLookupService
-                .Setup(service => service.AddLookupAsync(lookup))
+                .Setup(service => service.AddLookupAsync(inputLookup))
                 .ThrowsAsync(dependencyValidationException);
 
             // when
-            var result = await lookupsController.PostLookupAsync(lookup);
+            var result = await lookupsController.PostLookupAsync(inputLookup);
 
             // then
             var conflictResult = Assert.IsType<ConflictObjectResult>(result.Result);
@@ -93,84 +95,72 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Lookups
         public async Task PostLookupAsyncShouldReturnBadRequestWhenLookupDependencyValidationExceptionOccurs()
         {
             // given
-            Lookup lookup = CreateRandomLookup();
-
-            var lockedLookupException = new LockedLookupException(
-                message: GetRandomString(),
-                innerException: new Xeption());
+            Lookup randomLookup = CreateRandomLookup();
+            Lookup inputLookup = randomLookup;
+            var someXeption = new Xeption(message: GetRandomString());
 
             var dependencyValidationException = new LookupDependencyValidationException(
                 message: GetRandomString(),
-                innerException: lockedLookupException);
+                innerException: someXeption);
 
             mockLookupService
-                .Setup(service => service.AddLookupAsync(lookup))
+                .Setup(service => service.AddLookupAsync(inputLookup))
                 .ThrowsAsync(dependencyValidationException);
 
             // when
-            var result = await lookupsController.PostLookupAsync(lookup);
+            var result = await lookupsController.PostLookupAsync(inputLookup);
 
             // then
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-            Assert.Equal(400, badRequestResult.StatusCode);
+            badRequestResult.StatusCode.Should().Be(400);
         }
 
         [Fact]
         public async Task PostLookupAsyncShouldReturnInternalServerErrorWhenLookupDependencyExceptionOccurs()
         {
             // given
-            var lookup = new Lookup();
-
-            var dbUpdateException = new DbUpdateException();
-
-            var failedOperationLookupException =
-                new FailedOperationLookupException(
-                    message: "Failed operation lookup  error occurred, contact support.",
-                    innerException: dbUpdateException);
+            Lookup randomLookup = CreateRandomLookup();
+            Lookup inputLookup = randomLookup;
+            var someXeption = new Xeption(message: GetRandomString());
 
             var dependencyException = new LookupDependencyException(
                 message: GetRandomString(),
-                innerException: failedOperationLookupException);
+                innerException: someXeption);
 
             mockLookupService
-                .Setup(service => service.AddLookupAsync(lookup))
+                .Setup(service => service.AddLookupAsync(inputLookup))
                 .ThrowsAsync(dependencyException);
 
             // when
-            var result = await lookupsController.PostLookupAsync(lookup);
+            var result = await lookupsController.PostLookupAsync(inputLookup);
 
             // then
             var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
-            Assert.Equal(500, internalServerErrorResult.StatusCode);
+            internalServerErrorResult.StatusCode.Should().Be(500);
         }
 
         [Fact]
         public async Task PostLookupAsyncShouldReturnInternalServerErrorWhenLookupServiceExceptionOccurs()
         {
             // given
-            var lookup = new Lookup();
-
-            var exception = new Exception("Service error");
-
-            var failedLookupServiceException =
-                new FailedLookupServiceException(
-                    message: "Failed lookup service error occurred, contact support.",
-                    innerException: exception);
+            Lookup randomLookup = CreateRandomLookup();
+            Lookup inputLookup = randomLookup;
+            var someXeption = new Xeption(message: GetRandomString());
 
             var lookupServiceException = new LookupServiceException(
                 message: "Service error occurred, contact support.",
-                innerException: failedLookupServiceException);
+                innerException: someXeption);
 
             mockLookupService
-                .Setup(service => service.AddLookupAsync(lookup))
+                .Setup(service => service.AddLookupAsync(inputLookup))
                 .ThrowsAsync(lookupServiceException);
 
             // when
-            var result = await lookupsController.PostLookupAsync(lookup);
+            var result = await lookupsController.PostLookupAsync(inputLookup);
 
             // then
             var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
-            Assert.Equal(500, internalServerErrorResult.StatusCode);
+            internalServerErrorResult.StatusCode.Should().Be(500);
         }
     }
 }
