@@ -36,16 +36,16 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
                 (Rule: await IsInvalidLengthAsync(userAccess.OrgCode, 15), Parameter: nameof(UserAccess.OrgCode)),
 
                 (Rule: await IsNotSameAsync(
-                    createdBy: userAccess.UpdatedBy,
-                    updatedBy: userAccess.CreatedBy,
-                    createdByName: nameof(UserAccess.CreatedBy)),
+                    first: userAccess.UpdatedBy,
+                    second: userAccess.CreatedBy,
+                    secondName: nameof(UserAccess.CreatedBy)),
 
                 Parameter: nameof(UserAccess.UpdatedBy)),
 
                 (Rule: await IsNotSameAsync(
-                    createdDate: userAccess.CreatedDate,
-                    updatedDate: userAccess.UpdatedDate,
-                    nameof(UserAccess.CreatedDate)),
+                    first: userAccess.UpdatedDate,
+                    second: userAccess.CreatedDate,
+                    secondName: nameof(UserAccess.CreatedDate)),
 
                 Parameter: nameof(UserAccess.UpdatedDate)),
 
@@ -84,7 +84,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
 
                 (Rule: await IsInvalidLengthAsync(userAccess.OrgCode, 15), Parameter: nameof(UserAccess.OrgCode)),
 
-                (Rule: await IsSameAsync(
+                (Rule: await IsSameAsAsync(
                     createdDate: userAccess.CreatedDate,
                     updatedDate: userAccess.UpdatedDate,
                     createdDateName: nameof(UserAccess.CreatedDate)),
@@ -114,7 +114,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
 
                 Parameter: nameof(UserAccess.CreatedDate)),
 
-                (Rule: await IsSameAsync(
+                (Rule: await IsSameAsAsync(
                     userAccess.UpdatedDate,
                     maybeUserAccess.UpdatedDate,
                     nameof(maybeUserAccess.UpdatedDate)),
@@ -158,24 +158,24 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
             (text ?? string.Empty).Length > maxLength;
 
         private static async ValueTask<dynamic> IsNotSameAsync(
-            DateTimeOffset createdDate,
-            DateTimeOffset updatedDate,
-            string createdDateName) => new
+            DateTimeOffset first,
+            DateTimeOffset second,
+            string secondName) => new
             {
-                Condition = createdDate != updatedDate,
-                Message = $"Date is not the same as {createdDateName}"
+                Condition = first != second,
+                Message = $"Date is not the same as {secondName}"
             };
 
         private static async ValueTask<dynamic> IsNotSameAsync(
-            string createdBy,
-            string updatedBy,
-            string createdByName) => new
+            string first,
+            string second,
+            string secondName) => new
             {
-                Condition = createdBy != updatedBy,
-                Message = $"Text is not the same as {createdByName}"
+                Condition = first != second,
+                Message = $"Text is not the same as {secondName}"
             };
 
-        private static async ValueTask<dynamic> IsSameAsync(
+        private static async ValueTask<dynamic> IsSameAsAsync(
             DateTimeOffset createdDate,
             DateTimeOffset updatedDate,
             string createdDateName) => new

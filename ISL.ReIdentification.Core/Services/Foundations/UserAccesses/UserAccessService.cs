@@ -14,16 +14,16 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
 {
     public partial class UserAccessService : IUserAccessService
     {
-        private readonly IReIdentificationStorageBroker ReIdentificationStorageBroker;
+        private readonly IReIdentificationStorageBroker reIdentificationStorageBroker;
         private readonly IDateTimeBroker dateTimeBroker;
         private readonly ILoggingBroker loggingBroker;
 
         public UserAccessService(
-            IReIdentificationStorageBroker ReIdentificationStorageBroker,
+            IReIdentificationStorageBroker reIdentificationStorageBroker,
             IDateTimeBroker dateTimeBroker,
             ILoggingBroker loggingBroker)
         {
-            this.ReIdentificationStorageBroker = ReIdentificationStorageBroker;
+            this.reIdentificationStorageBroker = reIdentificationStorageBroker;
             this.dateTimeBroker = dateTimeBroker;
             this.loggingBroker = loggingBroker;
         }
@@ -33,14 +33,11 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
             {
                 await ValidateUserAccessOnAddAsync(userAccess);
 
-                return await this.ReIdentificationStorageBroker.InsertUserAccessAsync(userAccess);
+                return await this.reIdentificationStorageBroker.InsertUserAccessAsync(userAccess);
             });
 
         public ValueTask<IQueryable<UserAccess>> RetrieveAllUserAccessesAsync() =>
-            TryCatch(async () =>
-            {
-                return await this.ReIdentificationStorageBroker.SelectAllUserAccessesAsync();
-            });
+            TryCatch(this.reIdentificationStorageBroker.SelectAllUserAccessesAsync);
 
         public ValueTask<UserAccess> RetrieveUserAccessByIdAsync(Guid userAccessId) =>
             TryCatch(async () =>
@@ -60,13 +57,13 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
             {
                 await ValidateUserAccessOnModifyAsync(userAccess);
 
-                var maybeUserAccess = await this.ReIdentificationStorageBroker
+                var maybeUserAccess = await this.reIdentificationStorageBroker
                     .SelectUserAccessByIdAsync(userAccess.Id);
 
                 await ValidateStorageUserAccessAsync(maybeUserAccess, userAccess.Id);
                 await ValidateAgainstStorageUserAccessOnModifyAsync(userAccess, maybeUserAccess);
 
-                return await this.ReIdentificationStorageBroker.UpdateUserAccessAsync(userAccess);
+                return await this.reIdentificationStorageBroker.UpdateUserAccessAsync(userAccess);
             });
     }
 }

@@ -84,7 +84,8 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
             }
         }
 
-        private async ValueTask<IQueryable<UserAccess>> TryCatch(ReturningUserAccessesFunction returningUserAccessesFunction)
+        private async ValueTask<IQueryable<UserAccess>> TryCatch(
+            ReturningUserAccessesFunction returningUserAccessesFunction)
         {
             try
             {
