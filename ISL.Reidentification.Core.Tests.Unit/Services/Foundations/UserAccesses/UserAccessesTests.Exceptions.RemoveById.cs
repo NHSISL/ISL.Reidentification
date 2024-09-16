@@ -39,7 +39,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
 
             // when
             ValueTask<UserAccess> removeByIdUserAccessTask =
-                this.userAccessService.RetrieveUserAccessByIdAsync(randomUserAccessId);
+                this.userAccessService.RemoveUserAccessByIdAsync(randomUserAccessId);
 
             UserAccessDependencyException actualUserAccessDependencyException =
                 await Assert.ThrowsAsync<UserAccessDependencyException>(
@@ -110,6 +110,54 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
 
             this.reIdentificationStorageBroker.Verify(broker =>
                 broker.DeleteUserAccessAsync(It.IsAny<UserAccess>()),
+                    Times.Never);
+
+            this.reIdentificationStorageBroker.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnRemoveUserAccessByIdWhenServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            Guid randomUserAccessId = Guid.NewGuid();
+            Exception serviceError = new Exception();
+
+            var failedServiceUserAccessException = new FailedServiceUserAccessException(
+                message: "Failed service user access error occurred, contact support.",
+                innerException: serviceError);
+
+            var expectedUserAccessServiceException = new UserAccessServiceException(
+                message: "Service error occurred, contact support.",
+                innerException: failedServiceUserAccessException);
+
+            this.reIdentificationStorageBroker.Setup(broker =>
+                broker.SelectUserAccessByIdAsync(randomUserAccessId))
+                    .ThrowsAsync(serviceError);
+
+            // when
+            ValueTask<UserAccess> removeByIdUserAccessTask =
+                this.userAccessService.RemoveUserAccessByIdAsync(randomUserAccessId);
+
+            UserAccessServiceException actualUserAccessServiceExcpetion =
+                await Assert.ThrowsAsync<UserAccessServiceException>(
+                    removeByIdUserAccessTask.AsTask);
+
+            // then
+            actualUserAccessServiceExcpetion.Should().BeEquivalentTo(expectedUserAccessServiceException);
+
+            this.reIdentificationStorageBroker.Verify(broker =>
+                broker.SelectUserAccessByIdAsync(randomUserAccessId),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedUserAccessServiceException))),
+                        Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Never);
 
             this.reIdentificationStorageBroker.VerifyNoOtherCalls();
