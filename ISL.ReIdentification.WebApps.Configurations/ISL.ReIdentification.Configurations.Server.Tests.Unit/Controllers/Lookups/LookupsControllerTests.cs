@@ -3,13 +3,14 @@
 // ---------------------------------------------------------
 
 using System;
-using ISL.ReIdentification.Core.Controllers;
+using System.Linq;
+using ISL.ReIdentification.Configurations.Server.Controllers;
 using ISL.ReIdentification.Core.Models.Foundations.Lookups;
 using ISL.ReIdentification.Core.Services.Foundations.Lookups;
 using Moq;
 using Tynamix.ObjectFiller;
 
-namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Lookups
+namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Lookups
 {
     public partial class LookupsControllerTests
     {
@@ -34,6 +35,13 @@ namespace GitFyle.Core.Api.Tests.Unit.Services.Foundations.Lookups
 
         private static Lookup CreateRandomLookup() =>
             CreateLookupFiller().Create();
+
+        private static IQueryable<Lookup> CreateRandomLookups()
+        {
+            return CreateLookupFiller()
+                .Create(count: GetRandomNumber())
+                    .AsQueryable();
+        }
 
         private static Filler<Lookup> CreateLookupFiller()
         {
