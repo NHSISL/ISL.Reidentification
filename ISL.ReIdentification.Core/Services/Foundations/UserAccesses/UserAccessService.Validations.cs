@@ -94,6 +94,9 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
                 (Rule: await IsNotRecentAsync(userAccess.UpdatedDate), Parameter: nameof(UserAccess.UpdatedDate)));
         }
 
+        private async ValueTask ValidateUserAccessOnRemoveById(Guid userAccessId) =>
+            Validate((Rule: await IsInvalidAsync(userAccessId), Parameter: nameof(UserAccess.Id)));
+
         private static async ValueTask ValidateStorageUserAccessAsync(UserAccess maybeUserAccess, Guid maybeId)
         {
             if (maybeUserAccess is null)
