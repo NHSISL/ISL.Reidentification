@@ -57,7 +57,7 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         }
 
         [HttpGet]
-        public async ValueTask<ActionResult<IQueryable<DelegatedAccess>>> Get()
+        public async ValueTask<ActionResult<IQueryable<DelegatedAccess>>> GetAsync()
         {
             throw new NotImplementedException();
         }
