@@ -50,12 +50,12 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.User
                 message: GetRandomString(),
                 innerException: randomXeption);
 
-            mockUserAccessService.Setup(service =>
+            this.mockUserAccessService.Setup(service =>
                 service.AddUserAccessAsync(inputUserAccess))
                     .ThrowsAsync(userAccessValidationException);
 
             // when
-            var result = await userAccessesController.PostUserAccessAsync(inputUserAccess);
+            var result = await this.userAccessesController.PostUserAccessAsync(inputUserAccess);
 
             // then
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -127,12 +127,12 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.User
                 message: GetRandomString(),
                 innerException: someXeption);
 
-            mockUserAccessService
+            this.mockUserAccessService
             .Setup(service => service.AddUserAccessAsync(inputUserAccess))
                 .ThrowsAsync(dependencyException);
 
             // when
-            var result = await userAccessesController.PostUserAccessAsync(inputUserAccess);
+            var result = await this.userAccessesController.PostUserAccessAsync(inputUserAccess);
 
             // then
             var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
