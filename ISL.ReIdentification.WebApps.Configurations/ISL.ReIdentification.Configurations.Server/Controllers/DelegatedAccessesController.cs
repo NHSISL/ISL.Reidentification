@@ -86,6 +86,12 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
                 return Ok(modifiedDelegatedAccess);
             }
             catch (DelegatedAccessValidationException delegatedAccessValidationException)
+                when (delegatedAccessValidationException.InnerException
+                    is NotFoundDelegatedAccessException)
+            {
+                return NotFound(delegatedAccessValidationException.InnerException);
+            }
+            catch (DelegatedAccessValidationException delegatedAccessValidationException)
             {
                 return BadRequest(delegatedAccessValidationException.InnerException);
             }
