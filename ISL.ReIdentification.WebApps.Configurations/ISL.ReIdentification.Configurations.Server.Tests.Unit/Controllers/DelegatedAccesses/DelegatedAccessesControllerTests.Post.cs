@@ -92,7 +92,8 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
         }
 
         [Fact]
-        public async Task PostDelegatedAccessAsyncShouldReturnBadRequestWhenDelegatedAccessDependencyValidationExceptionOccurs()
+        public async Task
+            PostDelegatedAccessAsyncShouldReturnBadRequestWhenDelegatedAccessDependencyValidationExceptionOccurs()
         {
             // given
             DelegatedAccess randomDelegatedAccess = CreateRandomDelegatedAccess();
@@ -116,7 +117,8 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
         }
 
         [Fact]
-        public async Task PostDelegatedAccessAsyncShouldReturnInternalServerErrorWhenDelegatedAccessDependencyExceptionOccurs()
+        public async Task
+            PostDelegatedAccessAsyncShouldReturnInternalServerErrorWhenDelegatedAccessDependencyExceptionOccurs()
         {
             // given
             DelegatedAccess randomDelegatedAccess = CreateRandomDelegatedAccess();
@@ -140,20 +142,21 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
         }
 
         [Fact]
-        public async Task PostDelegatedAccessAsyncShouldReturnInternalServerErrorWhenDelegatedAccessServiceExceptionOccurs()
+        public async Task
+            PostDelegatedAccessAsyncShouldReturnInternalServerErrorWhenDelegatedAccessServiceExceptionOccurs()
         {
             // given
             DelegatedAccess randomDelegatedAccess = CreateRandomDelegatedAccess();
             DelegatedAccess inputDelegatedAccess = randomDelegatedAccess;
             var someXeption = new Xeption(message: GetRandomString());
 
-            var lookupServiceException = new DelegatedAccessServiceException(
+            var delegatedAccessServiceException = new DelegatedAccessServiceException(
                 message: "Service error occurred, contact support.",
                 innerException: someXeption);
 
             mockDelegatedAccessService
             .Setup(service => service.AddDelegatedAccessAsync(inputDelegatedAccess))
-                .ThrowsAsync(lookupServiceException);
+                .ThrowsAsync(delegatedAccessServiceException);
 
             // when
             var result = await delegatedAccessesController.PostDelegatedAccessAsync(inputDelegatedAccess);

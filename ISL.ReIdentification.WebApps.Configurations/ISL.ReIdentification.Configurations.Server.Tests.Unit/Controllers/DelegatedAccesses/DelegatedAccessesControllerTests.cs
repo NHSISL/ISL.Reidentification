@@ -27,6 +27,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
 
         private static int GetRandomNumber() =>
             new IntRange(min: 2, max: 10).GetValue();
+
         private static DelegatedAccess CreateRandomDelegatedAccess() =>
             CreateDelegatedAccessFiller().Create();
 
@@ -38,8 +39,8 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
-                .OnProperty(lookup => lookup.CreatedBy).Use(user)
-                .OnProperty(lookup => lookup.UpdatedBy).Use(user);
+                .OnProperty(delegatedAccess => delegatedAccess.CreatedBy).Use(user)
+                .OnProperty(delegatedAccess => delegatedAccess.UpdatedBy).Use(user);
 
             return filler;
         }

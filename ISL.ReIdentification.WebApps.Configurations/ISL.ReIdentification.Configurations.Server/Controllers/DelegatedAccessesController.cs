@@ -25,7 +25,8 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         {
             try
             {
-                DelegatedAccess addedDelegatedAccess = await this.delegatedAccessService.AddDelegatedAccessAsync(delegatedAccess);
+                DelegatedAccess addedDelegatedAccess =
+                    await this.delegatedAccessService.AddDelegatedAccessAsync(delegatedAccess);
 
                 return Created(addedDelegatedAccess);
             }
@@ -34,7 +35,8 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
                 return BadRequest(delegatedValidationException.InnerException);
             }
             catch (DelegatedAccessDependencyValidationException delegatedAccessDependencyValidationException)
-               when (delegatedAccessDependencyValidationException.InnerException is AlreadyExistsDelegatedAccessException)
+               when (delegatedAccessDependencyValidationException.InnerException
+                    is AlreadyExistsDelegatedAccessException)
             {
                 return Conflict(delegatedAccessDependencyValidationException.InnerException);
             }
