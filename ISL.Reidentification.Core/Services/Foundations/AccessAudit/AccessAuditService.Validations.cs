@@ -53,11 +53,8 @@ namespace ISL.ReIdentification.Core.Services.Foundations.AccessAudits
                 (Rule: await IsNotRecentAsync(accessAudit.CreatedDate), Parameter: nameof(AccessAudit.CreatedDate)));
         }
 
-        private async ValueTask ValidateAccessAuditOnRetrieveById(Guid accessAuditId)
-        {
-            Validate(
-                (Rule: await IsInvalidAsync(accessAuditId), Parameter: nameof(AccessAudit.Id)));
-        }
+        private async ValueTask ValidateAccessAuditOnRetrieveById(Guid accessAuditId) =>
+            Validate((Rule: await IsInvalidAsync(accessAuditId), Parameter: nameof(AccessAudit.Id)));
 
         private static void ValidateAccessAuditIsNotNull(AccessAudit accessAudit)
         {
