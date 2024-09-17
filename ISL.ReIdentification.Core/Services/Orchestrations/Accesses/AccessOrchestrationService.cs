@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ISL.ReIdentification.Core.Models.Orchestrations.Identifications;
+using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications;
 
 namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
 {
