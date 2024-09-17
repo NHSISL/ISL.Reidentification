@@ -83,7 +83,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.User
             var result = await this.userAccessesController.GetUserAccessByIdAsync(inputUserAccessId);
 
             // then
-            var badRequestResult = Assert.IsType<BadRequestResult>(result.Result);
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
             badRequestResult.StatusCode.Should().Be(400);
         }
     }
