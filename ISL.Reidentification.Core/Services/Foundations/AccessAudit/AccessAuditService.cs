@@ -9,6 +9,7 @@ using ISL.ReIdentification.Core.Brokers.DateTimes;
 using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
 using ISL.ReIdentification.Core.Models.Foundations.AccessAudits;
+using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 
 namespace ISL.ReIdentification.Core.Services.Foundations.AccessAudits
 {
@@ -40,7 +41,17 @@ namespace ISL.ReIdentification.Core.Services.Foundations.AccessAudits
             TryCatch(this.reIdentificationStorageBroker.SelectAllAccessAuditsAsync);
 
         public ValueTask<AccessAudit> RetrieveAccessAuditByIdAsync(Guid accessAuditId) =>
-            throw new NotImplementedException();
+            TryCatch(async () =>
+            {
+                await ValidateAccessAuditOnRetrieveById(accessAuditId);
+
+                var maybeAccessAudit = await this.reIdentificationStorageBroker
+                    .SelectAccessAuditByIdAsync(accessAuditId);
+
+                await ValidateStorageAccessAuditAsync(maybeAccessAudit, accessAuditId);
+
+                return maybeAccessAudit;
+            });
 
         public ValueTask<AccessAudit> ModifyAccessAuditAsync(AccessAudit accessAudit) =>
             throw new NotImplementedException();
