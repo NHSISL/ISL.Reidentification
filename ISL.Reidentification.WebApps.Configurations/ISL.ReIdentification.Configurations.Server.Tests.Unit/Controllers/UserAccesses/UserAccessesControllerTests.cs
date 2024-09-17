@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Linq;
 using ISL.ReIdentification.Configurations.Server.Controllers;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Services.Foundations.UserAccesses;
@@ -26,17 +27,24 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.User
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
         private static UserAccess CreateRandomUserAccess() =>
-            CreateRandomUserAccess(dateTimeOffset: GetRandomDateTimeOffset());
+            CreateUserAccessesFiller().Create();
 
-        private static UserAccess CreateRandomUserAccess(DateTimeOffset dateTimeOffset) =>
-            CreateUserAccessesFiller(dateTimeOffset).Create();
+        private static IQueryable<UserAccess> CreateRandomUserAccesses()
+        {
+            return CreateUserAccessesFiller()
+                .Create(GetRandomNumber())
+                .AsQueryable();
+        }
 
         private static string GetRandomString() =>
             new MnemonicString().GetValue();
 
-        private static Filler<UserAccess> CreateUserAccessesFiller(DateTimeOffset dateTimeOffset)
+        private static int GetRandomNumber() =>
+            new IntRange(2, 10).GetValue();
+        private static Filler<UserAccess> CreateUserAccessesFiller()
         {
             string user = Guid.NewGuid().ToString();
+            DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;
             var filler = new Filler<UserAccess>();
 
             filler.Setup()

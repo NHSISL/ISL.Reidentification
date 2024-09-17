@@ -56,6 +56,40 @@ namespace ISL.ReIdentification.Core.Services.Foundations.AccessAudits
         private async ValueTask ValidateAccessAuditOnRetrieveById(Guid accessAuditId) =>
             Validate((Rule: await IsInvalidAsync(accessAuditId), Parameter: nameof(AccessAudit.Id)));
 
+        private async ValueTask ValidateAccessAuditOnModifyAsync(AccessAudit accessAudit)
+        {
+            ValidateAccessAuditIsNotNull(accessAudit);
+
+            Validate(
+                (Rule: await IsInvalidAsync(accessAudit.Id), Parameter: nameof(AccessAudit.Id)),
+                (Rule: await IsInvalidAsync(accessAudit.UserEmail), Parameter: nameof(AccessAudit.UserEmail)),
+
+                (Rule: await IsInvalidAsync(accessAudit.PseudoIdentifier), 
+                Parameter: nameof(AccessAudit.PseudoIdentifier)),
+
+                (Rule: await IsInvalidAsync(accessAudit.CreatedBy), Parameter: nameof(AccessAudit.CreatedBy)),
+                (Rule: await IsInvalidAsync(accessAudit.UpdatedBy), Parameter: nameof(AccessAudit.UpdatedBy)),
+                (Rule: await IsInvalidAsync(accessAudit.CreatedDate), Parameter: nameof(AccessAudit.CreatedDate)),
+                (Rule: await IsInvalidAsync(accessAudit.UpdatedDate), Parameter: nameof(AccessAudit.UpdatedDate)),
+                (Rule: await IsInvalidLengthAsync(accessAudit.CreatedBy, 255), Parameter: nameof(AccessAudit.CreatedBy)),
+                (Rule: await IsInvalidLengthAsync(accessAudit.UpdatedBy, 255), Parameter: nameof(AccessAudit.UpdatedBy)),
+
+                (Rule: await IsInvalidLengthAsync(accessAudit.UserEmail, 320),
+                Parameter: nameof(AccessAudit.UserEmail)),
+
+                (Rule: await IsInvalidLengthAsync(accessAudit.PseudoIdentifier, 10),
+                Parameter: nameof(AccessAudit.PseudoIdentifier)),
+
+                (Rule: await IsSameAsAsync(
+                    createdDate: accessAudit.CreatedDate,
+                    updatedDate: accessAudit.UpdatedDate,
+                    createdDateName: nameof(AccessAudit.CreatedDate)),
+
+                Parameter: nameof(AccessAudit.UpdatedDate)),
+
+                (Rule: await IsNotRecentAsync(accessAudit.UpdatedDate), Parameter: nameof(AccessAudit.UpdatedDate)));
+        }
+
         private static void ValidateAccessAuditIsNotNull(AccessAudit accessAudit)
         {
             if (accessAudit is null)
@@ -70,6 +104,26 @@ namespace ISL.ReIdentification.Core.Services.Foundations.AccessAudits
             {
                 throw new NotFoundAccessAuditException($"Access audit not found with id: {maybeId}");
             }
+        }
+
+        private async ValueTask ValidateAgainstStorageAccessAuditOnModifyAsync(
+            AccessAudit accessAudit,
+            AccessAudit maybeAccessAudit)
+        {
+            Validate(
+                (Rule: await IsNotSameAsync(
+                    accessAudit.CreatedDate,
+                    maybeAccessAudit.CreatedDate,
+                    nameof(maybeAccessAudit.CreatedDate)),
+
+                Parameter: nameof(AccessAudit.CreatedDate)),
+
+                (Rule: await IsSameAsAsync(
+                    accessAudit.UpdatedDate,
+                    maybeAccessAudit.UpdatedDate,
+                    nameof(maybeAccessAudit.UpdatedDate)),
+
+                Parameter: nameof(AccessAudit.UpdatedDate)));
         }
 
         private static async ValueTask<dynamic> IsInvalidAsync(Guid id) => new
