@@ -105,9 +105,16 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         [HttpPut]
         public async ValueTask<ActionResult<UserAccess>> PutUserAccessAsync(UserAccess userAccess)
         {
-            UserAccess modifiedUserAccess = await this.userAccessService.ModifyUserAccessAsync(userAccess);
+            try
+            {
+                UserAccess modifiedUserAccess = await this.userAccessService.ModifyUserAccessAsync(userAccess);
 
-            return Ok(modifiedUserAccess);
+                return Ok(modifiedUserAccess);
+            }
+            catch (UserAccessValidationException userAccessValidationException)
+            {
+                return BadRequest(userAccessValidationException.InnerException);
+            }
         }
     }
 }
