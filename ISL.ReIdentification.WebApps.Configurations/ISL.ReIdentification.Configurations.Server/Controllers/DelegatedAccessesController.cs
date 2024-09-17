@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System.Linq;
 using System;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
@@ -44,6 +45,26 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             catch (DelegatedAccessDependencyValidationException delegatedAccessDependencyValidationException)
             {
                 return BadRequest(delegatedAccessDependencyValidationException.InnerException);
+            }
+            catch (DelegatedAccessDependencyException delegatedAccessDependencyException)
+            {
+                return InternalServerError(delegatedAccessDependencyException);
+            }
+            catch (DelegatedAccessServiceException delegatedAccessServiceException)
+            {
+                return InternalServerError(delegatedAccessServiceException);
+            }
+        }
+
+        [HttpGet]
+        public async ValueTask<ActionResult<IQueryable<DelegatedAccess>>> GetAsync()
+        {
+            try
+            {
+                IQueryable<DelegatedAccess> delegatedAccesses =
+                    await this.delegatedAccessService.RetrieveAllDelegatedAccessesAsync();
+
+                return Ok(delegatedAccesses);
             }
             catch (DelegatedAccessDependencyException delegatedAccessDependencyException)
             {
