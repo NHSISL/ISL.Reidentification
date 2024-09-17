@@ -128,6 +128,10 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             {
                 return InternalServerError(userAccessDependencyException.InnerException);
             }
+            catch (UserAccessServiceException userAccessServiceException)
+            {
+                return InternalServerError(userAccessServiceException.InnerException);
+            }
         }
     }
 }
