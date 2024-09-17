@@ -56,8 +56,6 @@ namespace ISL.ReIdentification.Core.Services.Foundations.AccessAudits
         private async ValueTask ValidateAccessAuditOnRetrieveById(Guid accessAuditId) =>
             Validate((Rule: await IsInvalidAsync(accessAuditId), Parameter: nameof(AccessAudit.Id)));
 
-
-
         private async ValueTask ValidateAccessAuditOnModifyAsync(AccessAudit accessAudit)
         {
             ValidateAccessAuditIsNotNull(accessAudit);
