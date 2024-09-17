@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
@@ -35,6 +36,31 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
             var createdResult = Assert.IsType<OkObjectResult>(result.Result);
             createdResult.StatusCode.Should().Be(200);
             createdResult.Value.Should().BeEquivalentTo(expectedDelegatedAccess);
+        }
+
+        [Fact]
+        public async Task PutDelegatedAccessAsyncShouldReturnNotFoundWhenDelegatedAccessValidationExceptionOccurs()
+        {
+            // given
+            DelegatedAccess randomDelegatedAccess = CreateRandomDelegatedAccess();
+            DelegatedAccess inputDelegatedAccess = randomDelegatedAccess;
+            Guid inputId = randomDelegatedAccess.Id;
+            var notFoundDelegatedAccessException = new NotFoundDelegatedAccessException(message: inputId.ToString());
+
+            var delegatedAccessValidationException = new DelegatedAccessValidationException(
+                message: GetRandomString(),
+                innerException: notFoundDelegatedAccessException);
+
+            mockDelegatedAccessService
+            .Setup(service => service.ModifyDelegatedAccessAsync(randomDelegatedAccess))
+                .ThrowsAsync(delegatedAccessValidationException);
+
+            // when
+            var result = await delegatedAccessesController.PutDelegatedAccessAsync(randomDelegatedAccess);
+
+            // then
+            var notFoundObjectResult = Assert.IsType<NotFoundObjectResult>(result.Result);
+            notFoundObjectResult.StatusCode.Should().Be(404);
         }
 
         [Fact]
