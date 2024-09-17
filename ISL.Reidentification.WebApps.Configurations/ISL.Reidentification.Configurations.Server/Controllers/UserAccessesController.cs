@@ -2,7 +2,6 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
@@ -57,7 +56,9 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         [HttpGet]
         public async ValueTask<ActionResult<IQueryable<UserAccess>>> Get()
         {
-            throw new NotImplementedException();
+            IQueryable<UserAccess> userAccesses = await this.userAccessService.RetrieveAllUserAccessesAsync();
+
+            return Ok(userAccesses);
         }
     }
 }
