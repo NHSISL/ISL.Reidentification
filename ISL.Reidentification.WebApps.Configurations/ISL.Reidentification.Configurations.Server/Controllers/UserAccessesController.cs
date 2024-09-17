@@ -56,9 +56,16 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         [HttpGet]
         public async ValueTask<ActionResult<IQueryable<UserAccess>>> Get()
         {
-            IQueryable<UserAccess> userAccesses = await this.userAccessService.RetrieveAllUserAccessesAsync();
+            try
+            {
+                IQueryable<UserAccess> userAccesses = await this.userAccessService.RetrieveAllUserAccessesAsync();
 
-            return Ok(userAccesses);
+                return Ok(userAccesses);
+            }
+            catch (UserAccessDependencyException userAccessDependencyException)
+            {
+                return InternalServerError(userAccessDependencyException.InnerException);
+            }
         }
     }
 }
