@@ -109,6 +109,10 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             {
                 return InternalServerError(delegatedAccessDependencyException);
             }
+            catch (DelegatedAccessServiceException delegatedAccessServiceException)
+            {
+                return InternalServerError(delegatedAccessServiceException);
+            }
         }
     }
 }
