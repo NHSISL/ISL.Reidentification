@@ -28,7 +28,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
                 values: "Id is invalid");
 
             var expectedDelegatedAccessValidationException =
-            new DelegatedAccessValidationException(
+                new DelegatedAccessValidationException(
                     message: "DelegatedAccess validation error occurred, please fix errors and try again.",
                     innerException: invalidDelegatedAccessException);
 
