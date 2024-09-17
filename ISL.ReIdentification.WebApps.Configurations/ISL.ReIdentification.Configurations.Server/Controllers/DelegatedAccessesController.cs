@@ -78,10 +78,17 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         [HttpPut]
         public async ValueTask<ActionResult<DelegatedAccess>> PutDelegatedAccessAsync(DelegatedAccess delegatedAccess)
         {
-            DelegatedAccess modifiedDelegatedAccess =
-                await this.delegatedAccessService.ModifyDelegatedAccessAsync(delegatedAccess);
+            try
+            {
+                DelegatedAccess modifiedDelegatedAccess =
+                    await this.delegatedAccessService.ModifyDelegatedAccessAsync(delegatedAccess);
 
-            return Ok(modifiedDelegatedAccess);
+                return Ok(modifiedDelegatedAccess);
+            }
+            catch (DelegatedAccessValidationException delegatedAccessValidationException)
+            {
+                return BadRequest(delegatedAccessValidationException.InnerException);
+            }
         }
     }
 }
