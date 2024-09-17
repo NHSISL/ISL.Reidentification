@@ -15,7 +15,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
     public partial class DelegatedAccessesControllerTests
     {
         [Fact]
-        public async Task GetLookupByIdsAsyncShouldReturnLookup()
+        public async Task GetDelegatedAccessByIdsAsyncShouldReturnDelegatedAccess()
         {
             // given
             DelegatedAccess randomDelegatedAccess = CreateRandomDelegatedAccess();

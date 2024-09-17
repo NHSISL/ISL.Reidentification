@@ -58,7 +58,10 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         [HttpGet("{delegatedAccessId}")]
         public async ValueTask<ActionResult<DelegatedAccess>> GetDelegatedAccessByIdAsync(Guid delegatedAccessId)
         {
-            throw new NotImplementedException();
+            DelegatedAccess delegatedAccess =
+                await this.delegatedAccessService.RetrieveDelegatedAccessByIdAsync(delegatedAccessId);
+
+            return Ok(delegatedAccess);
         }
     }
 }
