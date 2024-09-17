@@ -7,8 +7,11 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
+using ISL.ReIdentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using RESTFulSense.Models;
+using Xeptions;
 
 namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.UserAccesses
 {
@@ -33,6 +36,28 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.User
             var createdResult = Assert.IsType<OkObjectResult>(result.Result);
             createdResult.StatusCode.Should().Be(200);
             createdResult.Value.Should().BeEquivalentTo(expectedUserAccesses);
+        }
+
+        [Fact]
+        public async Task GetAllUserAccesssAsyncShouldReturnInternalServerErrorWhenUserAccessDependencyExceptionOccurs()
+        {
+            // given
+            var randomXeption = new Xeption(message: GetRandomString());
+
+            var userAccessDependencyException = new UserAccessDependencyException(
+                message: GetRandomString(),
+                innerException: randomXeption);
+
+            this.mockUserAccessService.Setup(service =>
+                service.RetrieveAllUserAccessesAsync())
+                    .ThrowsAsync(userAccessDependencyException);
+
+            // when
+            var result = await this.userAccessesController.Get();
+
+            // then
+            var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
+            internalServerErrorResult.StatusCode.Should().Be(500);
         }
     }
 }
