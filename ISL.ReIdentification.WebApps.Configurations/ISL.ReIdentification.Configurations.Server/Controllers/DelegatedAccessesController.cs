@@ -104,5 +104,45 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
                 return InternalServerError(delegatedAccessServiceException);
             }
         }
+
+        [HttpPut]
+        public async ValueTask<ActionResult<DelegatedAccess>> PutDelegatedAccessAsync(DelegatedAccess delegatedAccess)
+        {
+            try
+            {
+                DelegatedAccess modifiedDelegatedAccess =
+                    await this.delegatedAccessService.ModifyDelegatedAccessAsync(delegatedAccess);
+
+                return Ok(modifiedDelegatedAccess);
+            }
+            catch (DelegatedAccessValidationException delegatedAccessValidationException)
+                when (delegatedAccessValidationException.InnerException
+                    is NotFoundDelegatedAccessException)
+            {
+                return NotFound(delegatedAccessValidationException.InnerException);
+            }
+            catch (DelegatedAccessValidationException delegatedAccessValidationException)
+            {
+                return BadRequest(delegatedAccessValidationException.InnerException);
+            }
+            catch (DelegatedAccessDependencyValidationException delegatedAccessDependencyValidationException)
+                when (delegatedAccessDependencyValidationException.InnerException
+                    is AlreadyExistsDelegatedAccessException)
+            {
+                return Conflict(delegatedAccessDependencyValidationException.InnerException);
+            }
+            catch (DelegatedAccessDependencyValidationException delegatedAccessDependencyValidationException)
+            {
+                return BadRequest(delegatedAccessDependencyValidationException.InnerException);
+            }
+            catch (DelegatedAccessDependencyException delegatedAccessDependencyException)
+            {
+                return InternalServerError(delegatedAccessDependencyException);
+            }
+            catch (DelegatedAccessServiceException delegatedAccessServiceException)
+            {
+                return InternalServerError(delegatedAccessServiceException);
+            }
+        }
     }
 }
