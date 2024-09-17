@@ -129,6 +129,10 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             {
                 return BadRequest(userAccessDependencyValidationException.InnerException);
             }
+            catch (UserAccessDependencyException userAccessDependencyException)
+            {
+                return InternalServerError(userAccessDependencyException.InnerException);
+            }
         }
     }
 }
