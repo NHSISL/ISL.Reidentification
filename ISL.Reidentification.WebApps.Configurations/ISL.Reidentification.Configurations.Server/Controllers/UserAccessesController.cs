@@ -101,5 +101,37 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
                 return InternalServerError(userAccessServiceException.InnerException);
             }
         }
+
+        [HttpPut]
+        public async ValueTask<ActionResult<UserAccess>> PutUserAccessAsync(UserAccess userAccess)
+        {
+            try
+            {
+                UserAccess modifiedUserAccess = await this.userAccessService.ModifyUserAccessAsync(userAccess);
+
+                return Ok(modifiedUserAccess);
+            }
+            catch (UserAccessValidationException userAccessValidationException)
+            {
+                return BadRequest(userAccessValidationException.InnerException);
+            }
+            catch (UserAccessDependencyValidationException userAccessDependencyValidationException)
+                when (userAccessDependencyValidationException.InnerException is AlreadyExistsUserAccessException)
+            {
+                return Conflict(userAccessDependencyValidationException.InnerException);
+            }
+            catch (UserAccessDependencyValidationException userAccessDependencyValidationException)
+            {
+                return BadRequest(userAccessDependencyValidationException.InnerException);
+            }
+            catch (UserAccessDependencyException userAccessDependencyException)
+            {
+                return InternalServerError(userAccessDependencyException.InnerException);
+            }
+            catch (UserAccessServiceException userAccessServiceException)
+            {
+                return InternalServerError(userAccessServiceException.InnerException);
+            }
+        }
     }
 }
