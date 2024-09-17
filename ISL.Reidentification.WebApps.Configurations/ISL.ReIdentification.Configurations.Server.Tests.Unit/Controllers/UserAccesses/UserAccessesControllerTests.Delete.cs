@@ -139,5 +139,30 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.User
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
             badRequestResult.StatusCode.Should().Be(400);
         }
+
+        [Fact]
+        public async Task
+            DeleteUserAccessByIdAsyncShouldReturnInternalServerErrorWhenUserAccessDependencyExceptionOccurs()
+        {
+            // given
+            Guid randomId = Guid.NewGuid();
+            Guid inputUserAccessId = randomId;
+            Xeption randomXeption = new Xeption(message: GetRandomString());
+
+            var userAccessDependencyException = new UserAccessDependencyException(
+                message: GetRandomString(),
+                innerException: randomXeption);
+
+            this.mockUserAccessService.Setup(service =>
+                service.RemoveUserAccessByIdAsync(inputUserAccessId))
+                    .ThrowsAsync(userAccessDependencyException);
+
+            // when
+            var result = await this.userAccessesController.DeleteUserAccessByIdAsync(inputUserAccessId);
+
+            // then
+            var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
+            internalServerErrorResult.StatusCode.Should().Be(500);
+        }
     }
 }
