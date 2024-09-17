@@ -5,6 +5,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using ISL.Reidentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using ISL.ReIdentification.Core.Services.Foundations.UserAccesses;
@@ -76,9 +77,17 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         [HttpGet("{userAccessId}")]
         public async ValueTask<ActionResult<UserAccess>> GetUserAccessByIdAsync(Guid userAccessId)
         {
-            UserAccess userAccess = await this.userAccessService.RetrieveUserAccessByIdAsync(userAccessId);
+            try
+            {
+                UserAccess userAccess = await this.userAccessService.RetrieveUserAccessByIdAsync(userAccessId);
 
-            return Ok(userAccess);
+                return Ok(userAccess);
+            }
+            catch (UserAccessValidationException userAccessValidationException)
+                when (userAccessValidationException.InnerException is NotFoundUserAccessException)
+            {
+                return NotFound(userAccessValidationException.InnerException);
+            }
         }
     }
 }
