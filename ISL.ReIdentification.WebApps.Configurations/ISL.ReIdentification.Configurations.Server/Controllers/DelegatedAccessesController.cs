@@ -58,10 +58,17 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         [HttpGet]
         public async ValueTask<ActionResult<IQueryable<DelegatedAccess>>> GetAsync()
         {
-            IQueryable<DelegatedAccess> delegatedAccesses =
-                await this.delegatedAccessService.RetrieveAllDelegatedAccessesAsync();
+            try
+            {
+                IQueryable<DelegatedAccess> delegatedAccesses =
+                    await this.delegatedAccessService.RetrieveAllDelegatedAccessesAsync();
 
-            return Ok(delegatedAccesses);
+                return Ok(delegatedAccesses);
+            }
+            catch (DelegatedAccessDependencyException delegatedAccessDependencyException)
+            {
+                return InternalServerError(delegatedAccessDependencyException);
+            }
         }
     }
 }
