@@ -56,38 +56,38 @@ namespace ISL.ReIdentification.Core.Services.Foundations.AccessAudits
         private async ValueTask ValidateAccessAuditOnRetrieveById(Guid accessAuditId) =>
             Validate((Rule: await IsInvalidAsync(accessAuditId), Parameter: nameof(AccessAudit.Id)));
 
-        private async ValueTask ValidateAccessAuditOnModifyAsync(AccessAudit userAccess)
+        private async ValueTask ValidateAccessAuditOnModifyAsync(AccessAudit accessAudit)
         {
-            ValidateAccessAuditIsNotNull(userAccess);
+            ValidateAccessAuditIsNotNull(accessAudit);
 
             Validate(
-                (Rule: await IsInvalidAsync(userAccess.Id), Parameter: nameof(AccessAudit.Id)),
-                (Rule: await IsInvalidAsync(userAccess.UserEmail), Parameter: nameof(AccessAudit.UserEmail)),
+                (Rule: await IsInvalidAsync(accessAudit.Id), Parameter: nameof(AccessAudit.Id)),
+                (Rule: await IsInvalidAsync(accessAudit.UserEmail), Parameter: nameof(AccessAudit.UserEmail)),
 
-                (Rule: await IsInvalidAsync(userAccess.PseudoIdentifier), 
+                (Rule: await IsInvalidAsync(accessAudit.PseudoIdentifier), 
                 Parameter: nameof(AccessAudit.PseudoIdentifier)),
 
-                (Rule: await IsInvalidAsync(userAccess.CreatedBy), Parameter: nameof(AccessAudit.CreatedBy)),
-                (Rule: await IsInvalidAsync(userAccess.UpdatedBy), Parameter: nameof(AccessAudit.UpdatedBy)),
-                (Rule: await IsInvalidAsync(userAccess.CreatedDate), Parameter: nameof(AccessAudit.CreatedDate)),
-                (Rule: await IsInvalidAsync(userAccess.UpdatedDate), Parameter: nameof(AccessAudit.UpdatedDate)),
-                (Rule: await IsInvalidLengthAsync(userAccess.CreatedBy, 255), Parameter: nameof(AccessAudit.CreatedBy)),
-                (Rule: await IsInvalidLengthAsync(userAccess.UpdatedBy, 255), Parameter: nameof(AccessAudit.UpdatedBy)),
+                (Rule: await IsInvalidAsync(accessAudit.CreatedBy), Parameter: nameof(AccessAudit.CreatedBy)),
+                (Rule: await IsInvalidAsync(accessAudit.UpdatedBy), Parameter: nameof(AccessAudit.UpdatedBy)),
+                (Rule: await IsInvalidAsync(accessAudit.CreatedDate), Parameter: nameof(AccessAudit.CreatedDate)),
+                (Rule: await IsInvalidAsync(accessAudit.UpdatedDate), Parameter: nameof(AccessAudit.UpdatedDate)),
+                (Rule: await IsInvalidLengthAsync(accessAudit.CreatedBy, 255), Parameter: nameof(AccessAudit.CreatedBy)),
+                (Rule: await IsInvalidLengthAsync(accessAudit.UpdatedBy, 255), Parameter: nameof(AccessAudit.UpdatedBy)),
 
-                (Rule: await IsInvalidLengthAsync(userAccess.UserEmail, 320),
+                (Rule: await IsInvalidLengthAsync(accessAudit.UserEmail, 320),
                 Parameter: nameof(AccessAudit.UserEmail)),
 
-                (Rule: await IsInvalidLengthAsync(userAccess.PseudoIdentifier, 10),
+                (Rule: await IsInvalidLengthAsync(accessAudit.PseudoIdentifier, 10),
                 Parameter: nameof(AccessAudit.PseudoIdentifier)),
 
                 (Rule: await IsSameAsAsync(
-                    createdDate: userAccess.CreatedDate,
-                    updatedDate: userAccess.UpdatedDate,
+                    createdDate: accessAudit.CreatedDate,
+                    updatedDate: accessAudit.UpdatedDate,
                     createdDateName: nameof(AccessAudit.CreatedDate)),
 
                 Parameter: nameof(AccessAudit.UpdatedDate)),
 
-                (Rule: await IsNotRecentAsync(userAccess.UpdatedDate), Parameter: nameof(AccessAudit.UpdatedDate)));
+                (Rule: await IsNotRecentAsync(accessAudit.UpdatedDate), Parameter: nameof(AccessAudit.UpdatedDate)));
         }
 
         private static void ValidateAccessAuditIsNotNull(AccessAudit accessAudit)
@@ -107,19 +107,19 @@ namespace ISL.ReIdentification.Core.Services.Foundations.AccessAudits
         }
 
         private async ValueTask ValidateAgainstStorageAccessAuditOnModifyAsync(
-            AccessAudit userAccess,
+            AccessAudit accessAudit,
             AccessAudit maybeAccessAudit)
         {
             Validate(
                 (Rule: await IsNotSameAsync(
-                    userAccess.CreatedDate,
+                    accessAudit.CreatedDate,
                     maybeAccessAudit.CreatedDate,
                     nameof(maybeAccessAudit.CreatedDate)),
 
                 Parameter: nameof(AccessAudit.CreatedDate)),
 
                 (Rule: await IsSameAsAsync(
-                    userAccess.UpdatedDate,
+                    accessAudit.UpdatedDate,
                     maybeAccessAudit.UpdatedDate,
                     nameof(maybeAccessAudit.UpdatedDate)),
 
