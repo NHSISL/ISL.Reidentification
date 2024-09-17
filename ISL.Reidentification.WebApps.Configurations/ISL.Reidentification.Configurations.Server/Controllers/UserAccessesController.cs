@@ -76,7 +76,9 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         [HttpGet("{userAccessId}")]
         public async ValueTask<ActionResult<UserAccess>> GetUserAccessByIdAsync(Guid userAccessId)
         {
-            throw new NotImplementedException();
+            UserAccess userAccess = await this.userAccessService.RetrieveUserAccessByIdAsync(userAccessId);
+
+            return Ok(userAccess);
         }
     }
 }
