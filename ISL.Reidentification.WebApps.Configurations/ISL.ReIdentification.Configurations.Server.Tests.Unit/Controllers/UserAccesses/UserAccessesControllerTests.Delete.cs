@@ -11,6 +11,7 @@ using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using RESTFulSense.Models;
 using Xeptions;
 
 namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.UserAccesses
@@ -85,6 +86,34 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.User
             // then
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
             badRequestResult.StatusCode.Should().Be(400);
+        }
+
+        [Fact]
+        public async Task
+            DeleteUserAccessByIdAsyncShouldReturnLockedErrorWhenUserAccessDependencyValidationExceptionOccurs()
+        {
+            // given
+            Guid randomId = Guid.NewGuid();
+            Guid inputUserAccessId = randomId;
+            Xeption randomXeption = new Xeption(message: GetRandomString());
+
+            var lockedUserAccessException =
+                new LockedUserAccessException(message: GetRandomString(), innerException: randomXeption);
+
+            var userAccessDependencyValidationException = new UserAccessDependencyValidationException(
+                message: GetRandomString(),
+                innerException: lockedUserAccessException);
+
+            this.mockUserAccessService.Setup(service =>
+                service.RemoveUserAccessByIdAsync(inputUserAccessId))
+                    .ThrowsAsync(userAccessDependencyValidationException);
+
+            // when
+            var result = await this.userAccessesController.DeleteUserAccessByIdAsync(inputUserAccessId);
+
+            // then
+            var lockedObjectResult = Assert.IsType<LockedObjectResult>(result.Result);
+            lockedObjectResult.StatusCode.Should().Be(423);
         }
     }
 }
