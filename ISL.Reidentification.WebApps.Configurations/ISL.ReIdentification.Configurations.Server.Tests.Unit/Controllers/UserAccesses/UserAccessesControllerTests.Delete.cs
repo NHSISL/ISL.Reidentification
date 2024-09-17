@@ -115,5 +115,29 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.User
             var lockedObjectResult = Assert.IsType<LockedObjectResult>(result.Result);
             lockedObjectResult.StatusCode.Should().Be(423);
         }
+
+        [Fact]
+        public async Task DeleteUserAccessAsyncShouldReturnBadRequestWhenUserAccessDependencyValidationExceptionOccurs()
+        {
+            // given
+            Guid randomId = Guid.NewGuid();
+            Guid inputUserAccessId = randomId;
+            Xeption randomXeption = new Xeption(message: GetRandomString());
+
+            var userAccessDependencyValidationException = new UserAccessDependencyValidationException(
+                message: GetRandomString(),
+                innerException: randomXeption);
+
+            this.mockUserAccessService.Setup(service =>
+                service.RemoveUserAccessByIdAsync(inputUserAccessId))
+                    .ThrowsAsync(userAccessDependencyValidationException);
+
+            // when
+            var result = await this.userAccessesController.DeleteUserAccessByIdAsync(inputUserAccessId);
+
+            // then
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+            badRequestResult.StatusCode.Should().Be(400);
+        }
     }
 }
