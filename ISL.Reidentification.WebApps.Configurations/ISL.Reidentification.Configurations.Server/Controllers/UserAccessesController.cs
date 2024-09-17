@@ -116,6 +116,10 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             {
                 return NotFound(userAccessValidationException.InnerException);
             }
+            catch (UserAccessValidationException userAccessValidationException)
+            {
+                return BadRequest(userAccessValidationException.InnerException);
+            }
         }
 
     }
