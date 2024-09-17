@@ -39,7 +39,8 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
         }
 
         [Fact]
-        public async Task GetAllDelegatedAccessesAsyncShouldReturnInternalServerErrorWhenDelegatedAccessDependencyExceptionOccurs()
+        public async Task
+            GetAllDelegatedAccessesAsyncShouldReturnInternalServerErrorWhenDelegatedAccessDependencyExceptionOccurs()
         {
             // given
             var someXeption = new Xeption(message: GetRandomString());
@@ -51,6 +52,29 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
             mockDelegatedAccessService
                 .Setup(service => service.RetrieveAllDelegatedAccessesAsync())
                 .ThrowsAsync(dependencyException);
+
+            // when
+            var result = await delegatedAccessesController.GetAsync();
+
+            // then
+            var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
+            internalServerErrorResult.StatusCode.Should().Be(500);
+        }
+
+        [Fact]
+        public async Task
+            GetAllDelegatedAccessesAsyncShouldReturnInternalServerErrorWhenDelegatedAccessServiceExceptionOccurs()
+        {
+            // given
+            var someXeption = new Xeption(message: GetRandomString());
+
+            var serviceException = new DelegatedAccessServiceException(
+                message: GetRandomString(),
+                innerException: someXeption);
+
+            mockDelegatedAccessService
+                .Setup(service => service.RetrieveAllDelegatedAccessesAsync())
+                .ThrowsAsync(serviceException);
 
             // when
             var result = await delegatedAccessesController.GetAsync();
