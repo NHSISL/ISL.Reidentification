@@ -18,8 +18,8 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.User
 
         public UserAccessesControllerTests()
         {
-            mockUserAccessService = new Mock<IUserAccessService>();
-            userAccessesController = new UserAccessesController(mockUserAccessService.Object);
+            this.mockUserAccessService = new Mock<IUserAccessService>();
+            this.userAccessesController = new UserAccessesController(mockUserAccessService.Object);
         }
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>

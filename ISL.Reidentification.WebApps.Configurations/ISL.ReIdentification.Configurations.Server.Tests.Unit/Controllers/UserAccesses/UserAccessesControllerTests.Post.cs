@@ -25,12 +25,12 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.User
             UserAccess storageUserAccess = inputUserAccess.DeepClone();
             UserAccess expectedUserAccess = storageUserAccess.DeepClone();
 
-            mockUserAccessService.Setup(service =>
+            this.mockUserAccessService.Setup(service =>
                 service.AddUserAccessAsync(inputUserAccess))
                     .ReturnsAsync(storageUserAccess);
 
             // when
-            var result = await userAccessesController.PostUserAccessAsync(randomUserAccess);
+            var result = await this.userAccessesController.PostUserAccessAsync(randomUserAccess);
 
             // then
             var createdResult = Assert.IsType<CreatedObjectResult>(result.Result);
@@ -79,16 +79,40 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.User
                 message: GetRandomString(),
                 innerException: alreadyExistsUserAccessException);
 
-            mockUserAccessService.Setup(service =>
+            this.mockUserAccessService.Setup(service =>
                 service.AddUserAccessAsync(inputUserAccess))
                     .ThrowsAsync(userAccessDependencyValidationException);
 
             // when
-            var result = await userAccessesController.PostUserAccessAsync(inputUserAccess);
+            var result = await this.userAccessesController.PostUserAccessAsync(inputUserAccess);
 
             // then
             var conflictResult = Assert.IsType<ConflictObjectResult>(result.Result);
             conflictResult.StatusCode.Should().Be(409);
+        }
+
+        [Fact]
+        public async Task PostUserAccessAsyncShouldReturnBadRequestWhenUserAccessDependencyValidationExceptionOccurs()
+        {
+            // given
+            UserAccess randomUserAccess = CreateRandomUserAccess();
+            UserAccess inputUserAccess = randomUserAccess;
+            Xeption randomXeption = new Xeption(message: GetRandomString());
+
+            var userAccessDependencyValidationException = new UserAccessDependencyValidationException(
+                message: GetRandomString(),
+                innerException: randomXeption);
+
+            this.mockUserAccessService.Setup(service =>
+                service.AddUserAccessAsync(inputUserAccess))
+                    .ThrowsAsync(userAccessDependencyValidationException);
+
+            // when
+            var result = this.userAccessesController.PostUserAccessAsync(inputUserAccess);
+
+            // then
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+            badRequestResult.StatusCode.Should().Be(400);
         }
     }
 }
