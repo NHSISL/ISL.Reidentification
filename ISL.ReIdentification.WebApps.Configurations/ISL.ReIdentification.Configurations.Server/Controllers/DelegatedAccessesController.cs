@@ -101,6 +101,10 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             {
                 return Conflict(delegatedAccessDependencyValidationException.InnerException);
             }
+            catch (DelegatedAccessDependencyValidationException delegatedAccessDependencyValidationException)
+            {
+                return BadRequest(delegatedAccessDependencyValidationException.InnerException);
+            }
         }
     }
 }
