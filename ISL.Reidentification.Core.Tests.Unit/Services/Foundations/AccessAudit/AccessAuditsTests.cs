@@ -3,12 +3,14 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
 using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
 using ISL.ReIdentification.Core.Models.Foundations.AccessAudits;
+using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Services.Foundations.AccessAudits;
 using Microsoft.Data.SqlClient;
 using Moq;
@@ -38,6 +40,13 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.AccessAudits
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
+
+        private static IQueryable<AccessAudit> CreateRandomAccessAudits()
+        {
+            return CreateAccessAuditFiller(GetRandomDateTimeOffset())
+                .Create(GetRandomNumber())
+                .AsQueryable();
+        }
 
         private static AccessAudit CreateRandomAccessAudit() =>
             CreateRandomAccessAudit(dateTimeOffset: GetRandomDateTimeOffset());

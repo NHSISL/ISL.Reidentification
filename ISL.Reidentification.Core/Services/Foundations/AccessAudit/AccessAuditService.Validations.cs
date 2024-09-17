@@ -4,6 +4,7 @@
 
 using System;
 using System.Threading.Tasks;
+using ISL.Reidentification.Core.Models.Foundations.AccessAudits.Exceptions;
 using ISL.ReIdentification.Core.Models.Foundations.AccessAudits;
 using ISL.ReIdentification.Core.Models.Foundations.AccessAudits.Exceptions;
 
@@ -18,7 +19,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.AccessAudits
             Validate(
                 (Rule: await IsInvalidAsync(accessAudit.Id), Parameter: nameof(AccessAudit.Id)),
 
-                (Rule: await IsInvalidAsync(accessAudit.PseudoIdentifier), 
+                (Rule: await IsInvalidAsync(accessAudit.PseudoIdentifier),
                 Parameter: nameof(AccessAudit.PseudoIdentifier)),
 
                 (Rule: await IsInvalidAsync(accessAudit.UserEmail), Parameter: nameof(AccessAudit.UserEmail)),
@@ -32,7 +33,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.AccessAudits
                 (Rule: await IsInvalidLengthAsync(accessAudit.UserEmail, 320),
                 Parameter: nameof(AccessAudit.UserEmail)),
 
-                (Rule: await IsInvalidLengthAsync(accessAudit.PseudoIdentifier, 10), 
+                (Rule: await IsInvalidLengthAsync(accessAudit.PseudoIdentifier, 10),
                 Parameter: nameof(AccessAudit.PseudoIdentifier)),
 
                 (Rule: await IsNotSameAsync(
@@ -52,12 +53,22 @@ namespace ISL.ReIdentification.Core.Services.Foundations.AccessAudits
                 (Rule: await IsNotRecentAsync(accessAudit.CreatedDate), Parameter: nameof(AccessAudit.CreatedDate)));
         }
 
+        private async ValueTask ValidateAccessAuditOnRetrieveById(Guid accessAuditId) =>
+            Validate((Rule: await IsInvalidAsync(accessAuditId), Parameter: nameof(AccessAudit.Id)));
 
         private static void ValidateAccessAuditIsNotNull(AccessAudit accessAudit)
         {
             if (accessAudit is null)
             {
                 throw new NullAccessAuditException("Access audit is null.");
+            }
+        }
+
+        private static async ValueTask ValidateStorageAccessAuditAsync(AccessAudit maybeAccessAudit, Guid maybeId)
+        {
+            if (maybeAccessAudit is null)
+            {
+                throw new NotFoundAccessAuditException($"Access audit not found with id: {maybeId}");
             }
         }
 
