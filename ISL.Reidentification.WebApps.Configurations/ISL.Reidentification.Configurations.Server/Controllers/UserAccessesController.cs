@@ -105,7 +105,9 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         [HttpDelete("{userAccessId}")]
         public async ValueTask<ActionResult<UserAccess>> DeleteUserAccessByIdAsync(Guid userAccessId)
         {
-            throw new NotImplementedException();
+            UserAccess deletedUserAccess = await this.userAccessService.RemoveUserAccessByIdAsync(userAccessId);
+
+            return Ok(deletedUserAccess);
         }
     }
 }
