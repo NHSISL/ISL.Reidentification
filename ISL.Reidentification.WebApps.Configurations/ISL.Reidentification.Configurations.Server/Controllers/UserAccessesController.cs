@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses.Exceptions;
@@ -41,6 +42,25 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             catch (UserAccessDependencyValidationException userAccessDependencyValidationException)
             {
                 return BadRequest(userAccessDependencyValidationException.InnerException);
+            }
+            catch (UserAccessDependencyException userAccessDependencyException)
+            {
+                return InternalServerError(userAccessDependencyException.InnerException);
+            }
+            catch (UserAccessServiceException userAccessServiceException)
+            {
+                return InternalServerError(userAccessServiceException.InnerException);
+            }
+        }
+
+        [HttpGet]
+        public async ValueTask<ActionResult<IQueryable<UserAccess>>> Get()
+        {
+            try
+            {
+                IQueryable<UserAccess> userAccesses = await this.userAccessService.RetrieveAllUserAccessesAsync();
+
+                return Ok(userAccesses);
             }
             catch (UserAccessDependencyException userAccessDependencyException)
             {
