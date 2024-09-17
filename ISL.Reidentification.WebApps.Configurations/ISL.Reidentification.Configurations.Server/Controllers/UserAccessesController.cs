@@ -2,8 +2,10 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
+using ISL.Reidentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using ISL.ReIdentification.Core.Services.Foundations.UserAccesses;
@@ -61,6 +63,34 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
                 IQueryable<UserAccess> userAccesses = await this.userAccessService.RetrieveAllUserAccessesAsync();
 
                 return Ok(userAccesses);
+            }
+            catch (UserAccessDependencyException userAccessDependencyException)
+            {
+                return InternalServerError(userAccessDependencyException.InnerException);
+            }
+            catch (UserAccessServiceException userAccessServiceException)
+            {
+                return InternalServerError(userAccessServiceException.InnerException);
+            }
+        }
+
+        [HttpGet("{userAccessId}")]
+        public async ValueTask<ActionResult<UserAccess>> GetUserAccessByIdAsync(Guid userAccessId)
+        {
+            try
+            {
+                UserAccess userAccess = await this.userAccessService.RetrieveUserAccessByIdAsync(userAccessId);
+
+                return Ok(userAccess);
+            }
+            catch (UserAccessValidationException userAccessValidationException)
+                when (userAccessValidationException.InnerException is NotFoundUserAccessException)
+            {
+                return NotFound(userAccessValidationException.InnerException);
+            }
+            catch (UserAccessValidationException userAccessValidationException)
+            {
+                return BadRequest(userAccessValidationException.InnerException);
             }
             catch (UserAccessDependencyException userAccessDependencyException)
             {
