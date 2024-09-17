@@ -120,7 +120,11 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             {
                 return BadRequest(userAccessValidationException.InnerException);
             }
+            catch (UserAccessDependencyValidationException userAccessDependencyValidationException)
+                when (userAccessDependencyValidationException.InnerException is LockedUserAccessException)
+            {
+                return Locked(userAccessDependencyValidationException.InnerException);
+            }
         }
-
     }
 }
