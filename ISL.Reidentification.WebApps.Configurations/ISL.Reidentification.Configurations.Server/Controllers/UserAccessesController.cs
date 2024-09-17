@@ -101,5 +101,11 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
                 return InternalServerError(userAccessServiceException.InnerException);
             }
         }
+
+        [HttpDelete("{userAccessId}")]
+        public async ValueTask<ActionResult<UserAccess>> DeleteUserAccessByIdAsync(Guid userAccessId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
