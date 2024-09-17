@@ -11,6 +11,7 @@ using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Xeptions;
 
 namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.UserAccesses
 {
@@ -50,16 +51,40 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.User
                 message: GetRandomString(),
                 innerException: notFoundUserAccessException);
 
-            mockUserAccessService
+            this.mockUserAccessService
                 .Setup(service => service.RetrieveUserAccessByIdAsync(inputId))
                 .ThrowsAsync(userAccessValidationException);
 
             // when
-            var result = await userAccessesController.GetUserAccessByIdAsync(inputId);
+            var result = await this.userAccessesController.GetUserAccessByIdAsync(inputId);
 
             // then
             var notFoundObjectResult = Assert.IsType<NotFoundObjectResult>(result.Result);
             notFoundObjectResult.StatusCode.Should().Be(404);
+        }
+
+        [Fact]
+        public async Task GetUserAccessByIdAsyncShouldReturnBadRequestWhenUserAccessValidationExceptionOccurs()
+        {
+            // given
+            Guid randomId = Guid.NewGuid();
+            Guid inputUserAccessId = randomId;
+            Xeption randomXeption = new Xeption(message: GetRandomString());
+
+            var userAccessValidationException = new UserAccessValidationException(
+                message: GetRandomString(),
+                innerException: randomXeption);
+
+            this.mockUserAccessService.Setup(service =>
+                service.RetrieveUserAccessByIdAsync(inputUserAccessId))
+                    .ThrowsAsync(userAccessValidationException);
+
+            // when
+            var result = await this.userAccessesController.GetUserAccessByIdAsync(inputUserAccessId);
+
+            // then
+            var badRequestResult = Assert.IsType<BadRequestResult>(result.Result);
+            badRequestResult.StatusCode.Should().Be(400);
         }
     }
 }
