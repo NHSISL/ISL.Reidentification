@@ -166,5 +166,30 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
             var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
             internalServerErrorResult.StatusCode.Should().Be(500);
         }
+
+        [Fact]
+        public async Task
+            PutDelegatedAccessAsyncShouldReturnInternalServerErrorWhenDelegatedAccessServiceExceptionOccurs()
+        {
+            // given
+            DelegatedAccess randomDelegatedAccess = CreateRandomDelegatedAccess();
+            DelegatedAccess inputDelegatedAccess = randomDelegatedAccess;
+            var someXeption = new Xeption(message: GetRandomString());
+
+            var delegatedAccessServiceException = new DelegatedAccessServiceException(
+                message: "Service error occurred, contact support.",
+                innerException: someXeption);
+
+            mockDelegatedAccessService
+                .Setup(service => service.ModifyDelegatedAccessAsync(inputDelegatedAccess))
+                .ThrowsAsync(delegatedAccessServiceException);
+
+            // when
+            var result = await delegatedAccessesController.PutDelegatedAccessAsync(inputDelegatedAccess);
+
+            // then
+            var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
+            internalServerErrorResult.StatusCode.Should().Be(500);
+        }
     }
 }
