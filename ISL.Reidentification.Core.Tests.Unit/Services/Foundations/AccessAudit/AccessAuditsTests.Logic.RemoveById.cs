@@ -25,15 +25,23 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.AccessAudits
             AccessAudit expectedAccessAudit = deletedAccessAudit.DeepClone();
 
             this.reIdentificationStorageBroker.Setup(broker =>
+                broker.SelectAccessAuditByIdAsync(inputAccessAuditId))
+                    .ReturnsAsync(storageAccessAudit);
+
+            this.reIdentificationStorageBroker.Setup(broker =>
                 broker.DeleteAccessAuditAsync(storageAccessAudit))
                     .ReturnsAsync(deletedAccessAudit);
 
             // when
-            AccessAudit actualAccessAudit =
+            AccessAudit actualAccessAudit = 
                 await this.accessAuditService.RemoveAccessAuditByIdAsync(inputAccessAuditId);
 
             // then
             actualAccessAudit.Should().BeEquivalentTo(expectedAccessAudit);
+
+            this.reIdentificationStorageBroker.Verify(broker =>
+                broker.SelectAccessAuditByIdAsync(inputAccessAuditId),
+                    Times.Once());
 
             this.reIdentificationStorageBroker.Verify(broker =>
                 broker.DeleteAccessAuditAsync(inputAccessAudit),
