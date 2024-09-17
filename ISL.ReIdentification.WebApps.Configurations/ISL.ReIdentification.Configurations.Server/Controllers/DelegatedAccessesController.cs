@@ -108,10 +108,19 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         [HttpDelete("{delegatedAccessId}")]
         public async ValueTask<ActionResult<DelegatedAccess>> DeleteDelegatedAccessByIdAsync(Guid delegatedAccessId)
         {
-            DelegatedAccess deletedDelegatedAccess =
-                await this.delegatedAccessService.RemoveDelegatedAccessByIdAsync(delegatedAccessId);
+            try
+            {
+                DelegatedAccess deletedDelegatedAccess =
+                    await this.delegatedAccessService.RemoveDelegatedAccessByIdAsync(delegatedAccessId);
 
-            return Ok(deletedDelegatedAccess);
+                return Ok(deletedDelegatedAccess);
+            }
+            catch (DelegatedAccessValidationException delegatedAccessValidationException)
+                when (delegatedAccessValidationException.InnerException
+                    is NotFoundDelegatedAccessException)
+            {
+                return NotFound(delegatedAccessValidationException.InnerException);
+            }
         }
     }
 }
