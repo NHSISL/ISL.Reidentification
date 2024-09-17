@@ -56,6 +56,8 @@ namespace ISL.ReIdentification.Core.Services.Foundations.AccessAudits
         private async ValueTask ValidateAccessAuditOnRetrieveById(Guid accessAuditId) =>
             Validate((Rule: await IsInvalidAsync(accessAuditId), Parameter: nameof(AccessAudit.Id)));
 
+
+
         private async ValueTask ValidateAccessAuditOnModifyAsync(AccessAudit accessAudit)
         {
             ValidateAccessAuditIsNotNull(accessAudit);
@@ -64,15 +66,19 @@ namespace ISL.ReIdentification.Core.Services.Foundations.AccessAudits
                 (Rule: await IsInvalidAsync(accessAudit.Id), Parameter: nameof(AccessAudit.Id)),
                 (Rule: await IsInvalidAsync(accessAudit.UserEmail), Parameter: nameof(AccessAudit.UserEmail)),
 
-                (Rule: await IsInvalidAsync(accessAudit.PseudoIdentifier), 
+                (Rule: await IsInvalidAsync(accessAudit.PseudoIdentifier),
                 Parameter: nameof(AccessAudit.PseudoIdentifier)),
 
                 (Rule: await IsInvalidAsync(accessAudit.CreatedBy), Parameter: nameof(AccessAudit.CreatedBy)),
                 (Rule: await IsInvalidAsync(accessAudit.UpdatedBy), Parameter: nameof(AccessAudit.UpdatedBy)),
                 (Rule: await IsInvalidAsync(accessAudit.CreatedDate), Parameter: nameof(AccessAudit.CreatedDate)),
                 (Rule: await IsInvalidAsync(accessAudit.UpdatedDate), Parameter: nameof(AccessAudit.UpdatedDate)),
-                (Rule: await IsInvalidLengthAsync(accessAudit.CreatedBy, 255), Parameter: nameof(AccessAudit.CreatedBy)),
-                (Rule: await IsInvalidLengthAsync(accessAudit.UpdatedBy, 255), Parameter: nameof(AccessAudit.UpdatedBy)),
+
+                (Rule: await IsInvalidLengthAsync(accessAudit.CreatedBy, 255),
+                Parameter: nameof(AccessAudit.CreatedBy)),
+
+                (Rule: await IsInvalidLengthAsync(accessAudit.UpdatedBy, 255),
+                Parameter: nameof(AccessAudit.UpdatedBy)),
 
                 (Rule: await IsInvalidLengthAsync(accessAudit.UserEmail, 320),
                 Parameter: nameof(AccessAudit.UserEmail)),
@@ -89,6 +95,9 @@ namespace ISL.ReIdentification.Core.Services.Foundations.AccessAudits
 
                 (Rule: await IsNotRecentAsync(accessAudit.UpdatedDate), Parameter: nameof(AccessAudit.UpdatedDate)));
         }
+
+        private async ValueTask ValidateAccessAuditOnRemoveById(Guid accessAuditId) =>
+            Validate((Rule: await IsInvalidAsync(accessAuditId), Parameter: nameof(AccessAudit.Id)));
 
         private static void ValidateAccessAuditIsNotNull(AccessAudit accessAudit)
         {
