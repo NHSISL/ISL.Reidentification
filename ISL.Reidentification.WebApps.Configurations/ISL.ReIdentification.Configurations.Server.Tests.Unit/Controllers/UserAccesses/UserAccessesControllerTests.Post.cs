@@ -116,6 +116,30 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.User
         }
 
         [Fact]
+        public async Task PostUserAccessAsyncShouldReturnInternalServerErrorWhenUserAccessDependencyExceptionOccurs()
+        {
+            // given
+            UserAccess randomUserAccess = CreateRandomUserAccess();
+            UserAccess inputUserAccess = randomUserAccess;
+            var someXeption = new Xeption(message: GetRandomString());
+
+            var dependencyException = new UserAccessDependencyException(
+                message: GetRandomString(),
+                innerException: someXeption);
+
+            mockUserAccessService
+            .Setup(service => service.AddUserAccessAsync(inputUserAccess))
+                .ThrowsAsync(dependencyException);
+
+            // when
+            var result = await userAccessesController.PostUserAccessAsync(inputUserAccess);
+
+            // then
+            var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
+            internalServerErrorResult.StatusCode.Should().Be(500);
+        }
+
+        [Fact]
         public async Task PostUserAccessAsyncShouldReturnInternalServerErrorWhenUserAccessServiceExceptionOccurs()
         {
             // given
@@ -137,7 +161,6 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.User
             // then
             var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
             internalServerErrorResult.StatusCode.Should().Be(500);
-
         }
     }
 }
