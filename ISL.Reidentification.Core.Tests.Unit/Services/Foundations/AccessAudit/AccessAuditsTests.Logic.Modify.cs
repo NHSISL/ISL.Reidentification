@@ -28,6 +28,14 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.AccessAudits
             AccessAudit updatedAccessAudit = inputAccessAudit.DeepClone();
             AccessAudit expectedAccessAudit = updatedAccessAudit.DeepClone();
 
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateOffset);
+
+            this.reIdentificationStorageBroker.Setup(broker =>
+                broker.SelectAccessAuditByIdAsync(inputAccessAudit.Id))
+                    .ReturnsAsync(storageAccessAudit);
+
             this.reIdentificationStorageBroker.Setup(broker =>
                 broker.UpdateAccessAuditAsync(inputAccessAudit))
                     .ReturnsAsync(updatedAccessAudit);
@@ -38,6 +46,14 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.AccessAudits
 
             // then
             actualAccessAudit.Should().BeEquivalentTo(expectedAccessAudit);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.reIdentificationStorageBroker.Verify(broker =>
+                broker.SelectAccessAuditByIdAsync(inputAccessAudit.Id),
+                    Times.Once);
 
             this.reIdentificationStorageBroker.Verify(broker =>
                 broker.UpdateAccessAuditAsync(inputAccessAudit),

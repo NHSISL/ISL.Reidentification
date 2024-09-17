@@ -148,12 +148,12 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.AccessAudits
                 message: "Invalid access audit. Please correct the errors and try again.");
 
             invalidAccessAuditException.AddData(
-                key: nameof(AccessAudit.UserEmail),
-                values: $"Text exceed max length of {invalidAccessAudit.UserEmail.Length - 1} characters");
-
-            invalidAccessAuditException.AddData(
                 key: nameof(AccessAudit.PseudoIdentifier),
                 values: $"Text exceed max length of {invalidAccessAudit.PseudoIdentifier.Length - 1} characters");
+
+            invalidAccessAuditException.AddData(
+                key: nameof(AccessAudit.UserEmail),
+                values: $"Text exceed max length of {invalidAccessAudit.UserEmail.Length - 1} characters");
 
             invalidAccessAuditException.AddData(
                 key: nameof(AccessAudit.CreatedBy),

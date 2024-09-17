@@ -52,8 +52,19 @@ namespace ISL.ReIdentification.Core.Services.Foundations.AccessAudits
                 return maybeAccessAudit;
             });
 
-        public async ValueTask<AccessAudit> ModifyAccessAuditAsync(AccessAudit accessAudit) =>
-            await this.reIdentificationStorageBroker.UpdateAccessAuditAsync(accessAudit);
+        public ValueTask<AccessAudit> ModifyAccessAuditAsync(AccessAudit accessAudit) =>
+            TryCatch(async () =>
+            {
+                await ValidateAccessAuditOnModifyAsync(accessAudit);
+
+                var maybeAccessAudit = await this.reIdentificationStorageBroker
+                    .SelectAccessAuditByIdAsync(accessAudit.Id);
+
+                await ValidateStorageAccessAuditAsync(maybeAccessAudit, accessAudit.Id);
+                await ValidateAgainstStorageAccessAuditOnModifyAsync(accessAudit, maybeAccessAudit);
+
+                return await this.reIdentificationStorageBroker.UpdateAccessAuditAsync(accessAudit);
+            });
 
         public ValueTask<AccessAudit> RemoveAccessAuditByIdAsync(Guid accessAuditId) =>
             throw new NotImplementedException();
