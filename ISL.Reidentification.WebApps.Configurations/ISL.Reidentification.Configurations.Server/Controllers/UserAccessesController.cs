@@ -38,6 +38,10 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             {
                 return Conflict(userAccessDependencyValidationException.InnerException);
             }
+            catch (UserAccessDependencyValidationException userAccessDependencyValidationException)
+            {
+                return BadRequest(userAccessDependencyValidationException.InnerException);
+            }
         }
     }
 }

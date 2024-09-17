@@ -108,7 +108,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.User
                     .ThrowsAsync(userAccessDependencyValidationException);
 
             // when
-            var result = this.userAccessesController.PostUserAccessAsync(inputUserAccess);
+            var result = await this.userAccessesController.PostUserAccessAsync(inputUserAccess);
 
             // then
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
