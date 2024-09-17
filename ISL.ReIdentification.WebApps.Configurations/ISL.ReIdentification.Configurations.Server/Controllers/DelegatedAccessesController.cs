@@ -2,7 +2,6 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
@@ -59,7 +58,10 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         [HttpGet]
         public async ValueTask<ActionResult<IQueryable<DelegatedAccess>>> GetAsync()
         {
-            throw new NotImplementedException();
+            IQueryable<DelegatedAccess> delegatedAccesses =
+                await this.delegatedAccessService.RetrieveAllDelegatedAccessesAsync();
+
+            return Ok(delegatedAccesses);
         }
     }
 }
