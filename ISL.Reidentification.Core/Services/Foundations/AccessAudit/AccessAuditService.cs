@@ -2,14 +2,13 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System.Linq;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
 using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
 using ISL.ReIdentification.Core.Models.Foundations.AccessAudits;
-using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 
 namespace ISL.ReIdentification.Core.Services.Foundations.AccessAudits
 {
@@ -54,7 +53,18 @@ namespace ISL.ReIdentification.Core.Services.Foundations.AccessAudits
             });
 
         public ValueTask<AccessAudit> ModifyAccessAuditAsync(AccessAudit accessAudit) =>
-            throw new NotImplementedException();
+            TryCatch(async () =>
+            {
+                await ValidateAccessAuditOnModifyAsync(accessAudit);
+
+                var maybeAccessAudit = await this.reIdentificationStorageBroker
+                    .SelectAccessAuditByIdAsync(accessAudit.Id);
+
+                await ValidateStorageAccessAuditAsync(maybeAccessAudit, accessAudit.Id);
+                await ValidateAgainstStorageAccessAuditOnModifyAsync(accessAudit, maybeAccessAudit);
+
+                return await this.reIdentificationStorageBroker.UpdateAccessAuditAsync(accessAudit);
+            });
 
         public ValueTask<AccessAudit> RemoveAccessAuditByIdAsync(Guid accessAuditId) =>
             throw new NotImplementedException();

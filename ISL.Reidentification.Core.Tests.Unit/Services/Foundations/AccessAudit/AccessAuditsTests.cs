@@ -10,7 +10,6 @@ using ISL.ReIdentification.Core.Brokers.DateTimes;
 using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
 using ISL.ReIdentification.Core.Models.Foundations.AccessAudits;
-using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Services.Foundations.AccessAudits;
 using Microsoft.Data.SqlClient;
 using Moq;
@@ -41,6 +40,9 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.AccessAudits
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
+        private static int GetRandomNegativeNumber() =>
+            -1 * new IntRange(min: 2, max: 10).GetValue();
+
         private static IQueryable<AccessAudit> CreateRandomAccessAudits()
         {
             return CreateAccessAuditFiller(GetRandomDateTimeOffset())
@@ -53,6 +55,15 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.AccessAudits
 
         private static AccessAudit CreateRandomAccessAudit(DateTimeOffset dateTimeOffset) =>
             CreateAccessAuditFiller(dateTimeOffset).Create();
+
+        private static AccessAudit CreateRandomModifyAccessAudit(DateTimeOffset dateTimeOffset)
+        {
+            int randomDaysInThePast = GetRandomNegativeNumber();
+            AccessAudit randomAccessAudit = CreateRandomAccessAudit(dateTimeOffset);
+            randomAccessAudit.CreatedDate = dateTimeOffset.AddDays(randomDaysInThePast);
+
+            return randomAccessAudit;
+        }
 
         private static string GetRandomStringWithLength(int length) =>
             new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length).GetValue();
