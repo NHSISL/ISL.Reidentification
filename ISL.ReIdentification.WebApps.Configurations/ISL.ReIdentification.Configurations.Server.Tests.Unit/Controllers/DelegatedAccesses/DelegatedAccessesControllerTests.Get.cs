@@ -10,6 +10,7 @@ using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
 using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Xeptions;
 
 namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.DelegatedAccesses
 {
@@ -45,13 +46,13 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
             Guid inputId = randomId;
             var notFoundDelegatedAccessException = new NotFoundDelegatedAccessException(message: inputId.ToString());
 
-            var lookupValidationException = new DelegatedAccessValidationException(
+            var delegatedAccessValidationException = new DelegatedAccessValidationException(
                 message: GetRandomString(),
                 innerException: notFoundDelegatedAccessException);
 
             mockDelegatedAccessService
                 .Setup(service => service.RetrieveDelegatedAccessByIdAsync(inputId))
-                .ThrowsAsync(lookupValidationException);
+                .ThrowsAsync(delegatedAccessValidationException);
 
             // when
             var result = await delegatedAccessesController.GetDelegatedAccessByIdAsync(inputId);
@@ -59,6 +60,31 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
             // then
             var notFoundObjectResult = Assert.IsType<NotFoundObjectResult>(result.Result);
             notFoundObjectResult.StatusCode.Should().Be(404);
+        }
+
+        [Fact]
+        public async Task
+            GetDelegatedAccessByIdsAsyncShouldReturnBadRequestWhenDelegatedAccessValidationExceptionOccurs()
+        {
+            // given
+            Guid randomId = Guid.NewGuid();
+            Guid inputId = randomId;
+            Xeption someXeption = new Xeption(message: GetRandomString());
+
+            var delegatedAccessValidationException = new DelegatedAccessValidationException(
+                message: GetRandomString(),
+                innerException: someXeption);
+
+            mockDelegatedAccessService
+            .Setup(service => service.RetrieveDelegatedAccessByIdAsync(inputId))
+                .ThrowsAsync(delegatedAccessValidationException);
+
+            // when
+            var result = await delegatedAccessesController.GetDelegatedAccessByIdAsync(inputId);
+
+            // then
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+            badRequestResult.StatusCode.Should().Be(400);
         }
     }
 }
