@@ -114,5 +114,29 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
             badRequestResult.StatusCode.Should().Be(400);
         }
+
+        [Fact]
+        public async Task PostDelegatedAccessAsyncShouldReturnInternalServerErrorWhenDelegatedAccessDependencyExceptionOccurs()
+        {
+            // given
+            DelegatedAccess randomDelegatedAccess = CreateRandomDelegatedAccess();
+            DelegatedAccess inputDelegatedAccess = randomDelegatedAccess;
+            var someXeption = new Xeption(message: GetRandomString());
+
+            var dependencyException = new DelegatedAccessDependencyException(
+                message: GetRandomString(),
+                innerException: someXeption);
+
+            mockDelegatedAccessService
+            .Setup(service => service.AddDelegatedAccessAsync(inputDelegatedAccess))
+                .ThrowsAsync(dependencyException);
+
+            // when
+            var result = await delegatedAccessesController.PostDelegatedAccessAsync(inputDelegatedAccess);
+
+            // then
+            var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
+            internalServerErrorResult.StatusCode.Should().Be(500);
+        }
     }
 }
