@@ -42,6 +42,10 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             {
                 return BadRequest(delegatedAccessDependencyValidationException.InnerException);
             }
+            catch (DelegatedAccessDependencyException delegatedAccessDependencyException)
+            {
+                return InternalServerError(delegatedAccessDependencyException.InnerException);
+            }
         }
     }
 }
