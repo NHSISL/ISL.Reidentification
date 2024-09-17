@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Linq;
 using ISL.ReIdentification.Configurations.Server.Controllers;
 using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
 using ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses;
@@ -30,6 +31,13 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
 
         private static DelegatedAccess CreateRandomDelegatedAccess() =>
             CreateDelegatedAccessFiller().Create();
+
+        private static IQueryable<DelegatedAccess> CreateRandomDelegatedAccesses()
+        {
+            return CreateDelegatedAccessFiller()
+                .Create(count: GetRandomNumber())
+                    .AsQueryable();
+        }
 
         private static Filler<DelegatedAccess> CreateDelegatedAccessFiller()
         {
