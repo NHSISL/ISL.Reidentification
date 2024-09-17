@@ -13,6 +13,7 @@ namespace ISL.ReIdentification.Core.Models.Foundations.AccessAudits
         public string PseudoIdentifier { get; set; }
         public string UserEmail { get; set; }
         public bool HasAccess { get; set; }
+        public string Message { get; set; }
         public string CreatedBy { get; set; }
         public DateTimeOffset CreatedDate { get; set; }
         public string UpdatedBy { get; set; }
