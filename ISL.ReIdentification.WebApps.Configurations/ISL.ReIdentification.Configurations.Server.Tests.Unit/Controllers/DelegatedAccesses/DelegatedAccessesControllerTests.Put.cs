@@ -86,5 +86,34 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
             badRequestResult.StatusCode.Should().Be(400);
         }
+
+        [Fact]
+        public async Task PutDelegatedAccessAsyncShouldReturnConflictWhenAlreadyExistsDelegatedAccessExceptionOccurs()
+        {
+            // given
+            DelegatedAccess randomDelegatedAccess = CreateRandomDelegatedAccess();
+            DelegatedAccess inputDelegatedAccess = randomDelegatedAccess;
+            var someXeption = new Xeption(message: GetRandomString());
+
+            var alreadyExistsException = new AlreadyExistsDelegatedAccessException(
+                message: GetRandomString(),
+                innerException: someXeption,
+                data: someXeption.Data);
+
+            var dependencyValidationException = new DelegatedAccessDependencyValidationException(
+                message: GetRandomString(),
+                innerException: alreadyExistsException);
+
+            mockDelegatedAccessService
+                .Setup(service => service.ModifyDelegatedAccessAsync(inputDelegatedAccess))
+                .ThrowsAsync(dependencyValidationException);
+
+            // when
+            var result = await delegatedAccessesController.PutDelegatedAccessAsync(inputDelegatedAccess);
+
+            // then
+            var conflictResult = Assert.IsType<ConflictObjectResult>(result.Result);
+            conflictResult.StatusCode.Should().Be(409);
+        }
     }
 }
