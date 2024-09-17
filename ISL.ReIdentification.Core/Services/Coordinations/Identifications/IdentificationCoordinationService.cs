@@ -5,7 +5,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Brokers.Loggings;
-using ISL.ReIdentification.Core.Models.Orchestrations.Identifications;
+using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications;
 using ISL.ReIdentification.Core.Services.Orchestrations.Accesses;
 
 namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications

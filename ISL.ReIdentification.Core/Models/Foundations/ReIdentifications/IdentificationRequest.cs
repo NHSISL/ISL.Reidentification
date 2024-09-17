@@ -2,7 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-namespace ISL.ReIdentification.Core.Models.Orchestrations.Identifications
+namespace ISL.ReIdentification.Core.Models.Foundations.ReIdentifications
 {
     public class IdentificationRequest
     {
