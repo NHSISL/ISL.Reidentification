@@ -35,6 +35,11 @@ namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications
 
             builder.Property(accessAudit => accessAudit.UpdatedDate)
                 .IsRequired();
+
+            builder.HasIndex(accessAudit => accessAudit.PseudoIdentifier);
+            builder.HasIndex(accessAudit => accessAudit.UserEmail);
+            builder.HasIndex(accessAudit => accessAudit.HasAccess);
+            builder.HasIndex(accessAudit => accessAudit.CreatedDate);
         }
     }
 }
