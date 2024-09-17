@@ -11,6 +11,7 @@ using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Xeptions;
 
 namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.UserAccesses
 {
@@ -60,6 +61,30 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.User
             // then
             var notFoundObjectResult = Assert.IsType<NotFoundObjectResult>(result.Result);
             notFoundObjectResult.StatusCode.Should().Be(404);
+        }
+
+        [Fact]
+        public async Task DeleteUserAccessByIdAsyncShouldReturnBadRequestWhenUserAccessValidationExceptionOccurs()
+        {
+            // given
+            Guid randomId = Guid.NewGuid();
+            Guid inputUserAccessId = randomId;
+            Xeption randomXeption = new Xeption(message: GetRandomString());
+
+            var userAccessValidationException = new UserAccessValidationException(
+                message: GetRandomString(),
+                innerException: randomXeption);
+
+            this.mockUserAccessService.Setup(service =>
+                service.RemoveUserAccessByIdAsync(inputUserAccessId))
+                    .ThrowsAsync(userAccessValidationException);
+
+            // when
+            var result = await this.userAccessesController.DeleteUserAccessByIdAsync(inputUserAccessId);
+
+            // then
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+            badRequestResult.StatusCode.Should().Be(400);
         }
     }
 }
