@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
@@ -73,6 +74,12 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             {
                 return InternalServerError(delegatedAccessServiceException);
             }
+        }
+
+        [HttpPut]
+        public async ValueTask<ActionResult<DelegatedAccess>> PutDelegatedAccessAsync(DelegatedAccess delegatedAccess)
+        {
+            throw new NotImplementedException();
         }
     }
 }
