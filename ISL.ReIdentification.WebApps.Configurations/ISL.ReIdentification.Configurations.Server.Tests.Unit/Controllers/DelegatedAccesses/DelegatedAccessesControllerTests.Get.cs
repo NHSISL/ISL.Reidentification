@@ -10,6 +10,7 @@ using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
 using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using RESTFulSense.Models;
 using Xeptions;
 
 namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.DelegatedAccesses
@@ -85,6 +86,31 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
             // then
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
             badRequestResult.StatusCode.Should().Be(400);
+        }
+
+        [Fact]
+        public async Task
+            GetDelegatedAccessByIdsAsyncShouldReturnInternalServerErrorWhenDelegatedAccessDependencyExceptionOccurs()
+        {
+            // given
+            Guid randomId = Guid.NewGuid();
+            Guid inputId = randomId;
+            var someXeption = new Xeption(message: GetRandomString());
+
+            var dependencyException = new DelegatedAccessDependencyException(
+                message: GetRandomString(),
+                innerException: someXeption);
+
+            mockDelegatedAccessService
+                .Setup(service => service.RetrieveDelegatedAccessByIdAsync(inputId))
+                .ThrowsAsync(dependencyException);
+
+            // when
+            var result = await delegatedAccessesController.GetDelegatedAccessByIdAsync(inputId);
+
+            // then
+            var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
+            internalServerErrorResult.StatusCode.Should().Be(500);
         }
     }
 }
