@@ -84,7 +84,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.User
                     .ThrowsAsync(userAccessDependencyValidationException);
 
             // when
-            var result = userAccessesController.PostUserAccessAsync(inputUserAccess);
+            var result = await userAccessesController.PostUserAccessAsync(inputUserAccess);
 
             // then
             var conflictResult = Assert.IsType<ConflictObjectResult>(result.Result);

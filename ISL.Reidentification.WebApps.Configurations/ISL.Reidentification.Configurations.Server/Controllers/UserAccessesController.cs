@@ -33,7 +33,11 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             {
                 return BadRequest(userAccessValidationException.InnerException);
             }
-
+            catch (UserAccessDependencyValidationException userAccessDependencyValidationException)
+                when (userAccessDependencyValidationException.InnerException is AlreadyExistsUserAccessException)
+            {
+                return Conflict(userAccessDependencyValidationException.InnerException);
+            }
         }
     }
 }
