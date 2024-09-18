@@ -43,7 +43,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
             new IntRange(max: 15, min: 2).GetValue();
 
         private static string GetRandomStringWithLength(int length) =>
-          new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length).GetValue();
+            new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length).GetValue();
 
         private static IdentificationRequest CreateRandomIdentificationRequest() =>
             CreateIdentificationRequestFiller().Create();
