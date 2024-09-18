@@ -3,6 +3,8 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications;
@@ -23,7 +25,13 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ReIdentifications
             this.loggingBroker = loggingBroker;
         }
         public async ValueTask<IdentificationRequest> ProcessReidentificationRequests(
-            IdentificationRequest identificationRequests) =>
-            throw new NotImplementedException();
+            IdentificationRequest identificationRequests)
+        {
+            List<string> retrievedIdentities = await this.necsBroker.ReIdAsync(identificationRequests.Identifier);
+            IdentificationRequest returnedIdentificationRequest = identificationRequests;
+            returnedIdentificationRequest.Identifier = retrievedIdentities.FirstOrDefault();
+
+            return returnedIdentificationRequest;
+        }
     }
 }
