@@ -24,7 +24,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.PdsDatas
 
         public async ValueTask<PdsData> RetrievePdsDataByIdAsync(Guid pdsDataId)
         {
-            throw new NotImplementedException();
+            return await this.odsStorageBroker.SelectPdsDataByIdAsync(pdsDataId);
         }
     }
 }
