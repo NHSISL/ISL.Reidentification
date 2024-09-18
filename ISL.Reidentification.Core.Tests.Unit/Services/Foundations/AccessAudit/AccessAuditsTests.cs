@@ -32,7 +32,6 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.AccessAudits
             this.reIdentificationStorageBroker = new Mock<IReIdentificationStorageBroker>();
             this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
-            this.NECSBrokerMock = new Mock<INECSBroker>();
 
             this.accessAuditService = new AccessAuditService(
                 reIdentificationStorageBroker.Object,
