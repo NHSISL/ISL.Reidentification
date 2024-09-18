@@ -22,9 +22,12 @@ namespace ISL.ReIdentification.Core.Services.Foundations.PdsDatas
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<PdsData> RetrievePdsDataByIdAsync(Guid pdsDataId)
-        {
-            return await this.odsStorageBroker.SelectPdsDataByIdAsync(pdsDataId);
-        }
+        public ValueTask<PdsData> RetrievePdsDataByIdAsync(Guid pdsDataId) =>
+            TryCatch(async () =>
+            {
+                await ValidatePdsDataId(pdsDataId);
+
+                return await this.odsStorageBroker.SelectPdsDataByIdAsync(pdsDataId);
+            });
     }
 }
