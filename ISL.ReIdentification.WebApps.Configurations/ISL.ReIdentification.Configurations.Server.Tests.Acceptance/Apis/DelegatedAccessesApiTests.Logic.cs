@@ -28,5 +28,20 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
             actualDelegatedAccess.Should().BeEquivalentTo(expectedDelegatedAccess);
             await this.apiBroker.DeleteDelegatedAccessByIdAsync(actualDelegatedAccess.Id);
         }
+
+        [Fact]
+        public async Task ShouldGetDelegatedAccessByIdAsync()
+        {
+            // given
+            DelegatedAccess randomDelegatedAccess = await PostRandomDelegatedAccessAsync();
+            DelegatedAccess expectedDelegatedAccess = randomDelegatedAccess;
+
+            // when
+            var actualDelegatedAccess = await this.apiBroker.GetDelegatedAccessByIdAsync(randomDelegatedAccess.Id);
+
+            // then
+            actualDelegatedAccess.Should().BeEquivalentTo(expectedDelegatedAccess);
+            await this.apiBroker.DeleteDelegatedAccessByIdAsync(actualDelegatedAccess.Id);
+        }
     }
 }
