@@ -112,7 +112,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
             // given
             IdentificationRequest invalidIdentificationRequest =
                 CreateRandomIdentificationRequest();
-            var inputCreatedByUpdatedByString = GetRandomStringWithLength(256);
+
             invalidIdentificationRequest.Identifier = GetRandomStringWithLength(11);
             invalidIdentificationRequest.UserEmail = GetRandomStringWithLength(321);
 

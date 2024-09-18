@@ -25,6 +25,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ReIdentifications
             this.necsBroker = necsBroker;
             this.loggingBroker = loggingBroker;
         }
+
         public ValueTask<IdentificationRequest> ProcessReidentificationRequest(
             IdentificationRequest identificationRequests) =>
             TryCatch(async () =>
