@@ -53,6 +53,12 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
             var filler = new Filler<IdentificationRequest>();
 
             filler.Setup()
+                .OnProperty(identificationRequest => 
+                    identificationRequest.Identifier).Use(GetRandomStringWithLength(10))
+
+                .OnProperty(identificationRequest => 
+                    identificationRequest.UserEmail).Use(GetRandomStringWithLength(100))
+
                 .OnProperty(identificationRequest => identificationRequest.IsReidentified).Use(false);
 
             return filler;

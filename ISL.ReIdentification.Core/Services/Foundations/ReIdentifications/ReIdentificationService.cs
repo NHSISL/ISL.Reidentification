@@ -25,21 +25,23 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ReIdentifications
             this.necsBroker = necsBroker;
             this.loggingBroker = loggingBroker;
         }
-        public async ValueTask<IdentificationRequest> ProcessReidentificationRequests(
-            IdentificationRequest identificationRequests)
-        {
-            List<string> nhsNumbers = await this.necsBroker.ReIdAsync(identificationRequests.Identifier);
-
-            IdentificationRequest returnedIdentificationRequest = new IdentificationRequest
+        public ValueTask<IdentificationRequest> ProcessReidentificationRequests(
+            IdentificationRequest identificationRequests) =>
+            TryCatch(async () =>
             {
-                RowNumber = identificationRequests.RowNumber,
-                UserEmail = identificationRequests.UserEmail,
-                Identifier = nhsNumbers.FirstOrDefault(),
-                HasAccess = true,
-                IsReidentified = true,
-            };
+                await ValidateIdentificationRequestOnProcessAsync(identificationRequests);
+                List<string> nhsNumbers = await this.necsBroker.ReIdAsync(identificationRequests.Identifier);
 
-            return returnedIdentificationRequest;
-        }
+                IdentificationRequest returnedIdentificationRequest = new IdentificationRequest
+                {
+                    RowNumber = identificationRequests.RowNumber,
+                    UserEmail = identificationRequests.UserEmail,
+                    Identifier = nhsNumbers.FirstOrDefault(),
+                    HasAccess = identificationRequests.HasAccess,
+                    IsReidentified = true,
+                };
+
+                return returnedIdentificationRequest;
+            });
     }
 }

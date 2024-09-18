@@ -23,7 +23,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
 
             var expectedIdentificationRequestValidationException =
                 new IdentificationRequestValidationException(
-                    message: "Identification request validation error occurred, please fix errors and try again.",
+                    message: "Re identification validation error occurred, please fix errors and try again.",
                     innerException: nullIdentificationRequestException);
 
             // when
@@ -66,8 +66,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
 
             var invalidIdentificationRequestException =
                 new InvalidIdentificationRequestException(
-                    message: "Invalid access audit. Please correct the errors and try again.");
-
+                    message: "Invalid identification request. Please correct the errors and try again.");
 
             invalidIdentificationRequestException.AddData(
                 key: nameof(IdentificationRequest.UserEmail),
