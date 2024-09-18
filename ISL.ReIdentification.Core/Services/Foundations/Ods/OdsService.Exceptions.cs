@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Foundations.OdsDatas;
@@ -29,6 +30,14 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Ods
 
                 throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageOdsDataException);
             }
+            catch (Exception exception)
+            {
+                var failedServiceodsDataException = new FailedServiceOdsDataException(
+                    message: "Failed service ODS data error occurred, contact support.",
+                    innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedServiceodsDataException);
+            }
         }
 
         private async ValueTask<OdsDataDependencyException> CreateAndLogCriticalDependencyExceptionAsync(
@@ -41,6 +50,18 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Ods
             await this.loggingBroker.LogCriticalAsync(odsDataDependencyException);
 
             return odsDataDependencyException;
+        }
+
+        private async ValueTask<OdsDataServiceException> CreateAndLogServiceExceptionAsync(
+            FailedServiceOdsDataException failedServiceOdsDataException)
+        {
+            var odsDataServiceException = new OdsDataServiceException(
+                message: "Service error occurred, contact support.",
+                innerException: failedServiceOdsDataException);
+
+            await this.loggingBroker.LogErrorAsync(odsDataServiceException);
+
+            return odsDataServiceException;
         }
     }
 }

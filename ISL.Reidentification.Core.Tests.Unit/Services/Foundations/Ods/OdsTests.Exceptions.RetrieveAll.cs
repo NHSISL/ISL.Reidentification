@@ -80,8 +80,8 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Ods
             ValueTask<IQueryable<OdsData>> retrieveAllOdsDatasTask =
                 this.odsService.RetrieveAllOdsDatasAsync();
 
-            OdsDataDependencyException actualOdsDataDependencyException =
-                await Assert.ThrowsAsync<OdsDataDependencyException>(
+            OdsDataServiceException actualOdsDataDependencyException =
+                await Assert.ThrowsAsync<OdsDataServiceException>(
                     retrieveAllOdsDatasTask.AsTask);
 
             // then
@@ -99,7 +99,6 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Ods
             this.odsStorageBroker.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
-
         }
     }
 }
