@@ -134,6 +134,10 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             {
                 return BadRequest(delegatedAccessDependencyValidationException);
             }
+            catch (DelegatedAccessDependencyException delegatedAccessDependencyException)
+            {
+                return InternalServerError(delegatedAccessDependencyException);
+            }
         }
     }
 }
