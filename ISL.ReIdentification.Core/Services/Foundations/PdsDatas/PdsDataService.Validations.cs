@@ -14,6 +14,14 @@ namespace ISL.ReIdentification.Core.Services.Foundations.PdsDatas
         public async ValueTask ValidatePdsDataId(Guid pdsDataId) =>
             Validate((Rule: await IsInvalidAsync(pdsDataId), Parameter: nameof(PdsData.Id)));
 
+        private async static ValueTask ValidateStoragePdsData(PdsData maybePdsData, Guid pdsDataId)
+        {
+            if (maybePdsData is null)
+            {
+                throw new NotFoundPdsDataException(pdsDataId);
+            }
+        }
+
         private static async ValueTask<dynamic> IsInvalidAsync(Guid id) => new
         {
             Condition = id == Guid.Empty,

@@ -23,6 +23,10 @@ namespace ISL.ReIdentification.Core.Services.Foundations.PdsDatas
             {
                 throw CreateAndLogValidationException(invalidPdsDataException);
             }
+            catch (NotFoundPdsDataException notFoundPdsDataException)
+            {
+                throw CreateAndLogValidationException(notFoundPdsDataException);
+            }
         }
 
         private PdsDataValidationException CreateAndLogValidationException(Xeption exception)

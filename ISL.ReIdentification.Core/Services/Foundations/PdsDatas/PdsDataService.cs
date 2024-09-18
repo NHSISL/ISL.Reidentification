@@ -26,8 +26,10 @@ namespace ISL.ReIdentification.Core.Services.Foundations.PdsDatas
             TryCatch(async () =>
             {
                 await ValidatePdsDataId(pdsDataId);
+                PdsData maybePdsData = await this.odsStorageBroker.SelectPdsDataByIdAsync(pdsDataId);
+                await ValidateStoragePdsData(maybePdsData, pdsDataId);
 
-                return await this.odsStorageBroker.SelectPdsDataByIdAsync(pdsDataId);
+                return maybePdsData;
             });
     }
 }
