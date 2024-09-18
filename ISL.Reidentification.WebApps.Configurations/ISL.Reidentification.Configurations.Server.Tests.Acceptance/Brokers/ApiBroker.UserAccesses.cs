@@ -13,12 +13,12 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Brokers
         private const string userAccessesRelativeUrl = "api/useraccesses";
 
         public async ValueTask<UserAccess> PostUserAccessAsync(UserAccess userAccess) =>
-            throw new NotImplementedException();
+            await this.apiFactoryClient.PostContentAsync(userAccessesRelativeUrl, userAccess);
 
         public async ValueTask<UserAccess> GetUserAccessByIdAsync(Guid userAccessId) =>
-            throw new NotImplementedException();
+            await this.apiFactoryClient.GetContentAsync<UserAccess>($"{userAccessesRelativeUrl}/{userAccessId}");
 
         public async ValueTask<UserAccess> DeleteUserAccessByIdAsync(Guid userAccessId) =>
-            throw new NotImplementedException();
+            await this.apiFactoryClient.DeleteContentAsync<UserAccess>($"{userAccessesRelativeUrl}/{userAccessId}");
     }
 }
