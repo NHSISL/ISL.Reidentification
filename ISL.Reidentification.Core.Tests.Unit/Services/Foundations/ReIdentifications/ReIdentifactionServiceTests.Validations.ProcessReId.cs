@@ -76,7 +76,6 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
                 key: nameof(IdentificationRequest.Identifier),
                 values: "Text is invalid");
 
-
             var expectedIdentificationRequestValidationException =
                 new IdentificationRequestValidationException(
                     message: "Re identification validation error occurred, please fix errors and try again.",
@@ -126,7 +125,6 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
             invalidIdentificationRequestException.AddData(
                 key: nameof(IdentificationRequest.UserEmail),
                 values: $"Text exceed max length of {invalidIdentificationRequest.UserEmail.Length - 1} characters");
-
 
             var expectedIdentificationRequestValidationException =
                 new IdentificationRequestValidationException(
