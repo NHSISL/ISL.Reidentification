@@ -3,7 +3,6 @@
 // ---------------------------------------------------------
 
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using ISL.ReIdentification.Core.Models.Foundations.PdsDatas;
@@ -16,9 +15,10 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
     public partial class PdsDataServiceTests
     {
         [Fact]
-        public async Task ShouldThrowCriticalDependencyExceptionOnRetrieveAllWhenSQLExceptionOccursAndLogItAsync()
+        public async Task ShouldThrowCriticalDependencyExceptionOnRetrieveByIdIfSqlErrorOccursAndLogItAsync()
         {
             // given
+            Guid someId = Guid.NewGuid();
             SqlException sqlException = CreateSqlException();
 
             var failedStoragePdsDataException =
@@ -32,23 +32,23 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
                     innerException: failedStoragePdsDataException);
 
             this.odsStorageBroker.Setup(broker =>
-                broker.SelectAllPdsDatasAsync())
+                broker.SelectPdsDataByIdAsync(It.IsAny<Guid>()))
                     .ThrowsAsync(sqlException);
 
             // when
-            ValueTask<IQueryable<PdsData>> retrieveAllPdsDataTask =
-                this.pdsDataService.RetrieveAllPdsDataAsync();
+            ValueTask<PdsData> retrievePdsDataByIdTask =
+                this.pdsDataService.RetrievePdsDataByIdAsync(someId);
 
             PdsDataDependencyException actualPdsDataDependencyException =
                 await Assert.ThrowsAsync<PdsDataDependencyException>(
-                    testCode: retrieveAllPdsDataTask.AsTask);
+                    retrievePdsDataByIdTask.AsTask);
 
             // then
-            actualPdsDataDependencyException.Should().BeEquivalentTo(
-                expectedPdsDataDependencyException);
+            actualPdsDataDependencyException.Should()
+                .BeEquivalentTo(expectedPdsDataDependencyException);
 
             this.odsStorageBroker.Verify(broker =>
-                broker.SelectAllPdsDatasAsync(),
+                broker.SelectPdsDataByIdAsync(It.IsAny<Guid>()),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -61,44 +61,45 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
         }
 
         [Fact]
-        public async Task ShouldThrowServiceErrorOnRetrieveAllWhenServiceErrorOccursAndLogItAsync()
+        public async Task ShouldThrowServiceExceptionOnRetrieveByIdIfServiceErrorOccursAndLogItAsync()
         {
             // given
-            var serviceError = new Exception();
+            Guid someId = Guid.NewGuid();
+            var serviceException = new Exception();
 
-            var failedServicePdsDataException =
+            var failedPdsDataServiceException =
                 new FailedServicePdsDataException(
-                    message: "Failed pds data service error occurred, please contact support.",
-                    innerException: serviceError);
+                    message: "Failed pds data service occurred, please contact support",
+                    innerException: serviceException);
 
             var expectedPdsDataServiceException =
                 new PdsDataServiceException(
                     message: "PdsData service error occurred, contact support.",
-                    innerException: failedServicePdsDataException);
+                    innerException: failedPdsDataServiceException);
 
             this.odsStorageBroker.Setup(broker =>
-                broker.SelectAllPdsDatasAsync())
-                    .ThrowsAsync(serviceError);
+                broker.SelectPdsDataByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(serviceException);
 
             // when
-            ValueTask<IQueryable<PdsData>> retrieveAllPdsDatasTask =
-                this.pdsDataService.RetrieveAllPdsDataAsync();
+            ValueTask<PdsData> retrievePdsDataByIdTask =
+                this.pdsDataService.RetrievePdsDataByIdAsync(someId);
 
             PdsDataServiceException actualPdsDataServiceException =
                 await Assert.ThrowsAsync<PdsDataServiceException>(
-                    testCode: retrieveAllPdsDatasTask.AsTask);
+                    retrievePdsDataByIdTask.AsTask);
 
             // then
-            actualPdsDataServiceException.Should().BeEquivalentTo(
-                expectedPdsDataServiceException);
+            actualPdsDataServiceException.Should()
+                .BeEquivalentTo(expectedPdsDataServiceException);
 
             this.odsStorageBroker.Verify(broker =>
-                broker.SelectAllPdsDatasAsync(),
+                broker.SelectPdsDataByIdAsync(It.IsAny<Guid>()),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogErrorAsync(It.Is(SameExceptionAs(
-                    expectedPdsDataServiceException))),
+               broker.LogErrorAsync(It.Is(SameExceptionAs(
+                   expectedPdsDataServiceException))),
                         Times.Once);
 
             this.odsStorageBroker.VerifyNoOtherCalls();
