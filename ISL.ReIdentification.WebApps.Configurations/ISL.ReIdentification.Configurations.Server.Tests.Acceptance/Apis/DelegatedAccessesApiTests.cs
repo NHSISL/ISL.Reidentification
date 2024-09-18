@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Threading.Tasks;
 using ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Brokers;
 using ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Models.DelegatedAccesses;
 using Tynamix.ObjectFiller;
@@ -22,6 +23,14 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
 
         private static string GetRandomStringWithLengthOf(int length) =>
             new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length).GetValue();
+
+        private async ValueTask<DelegatedAccess> PostRandomDelegatedAccessAsync()
+        {
+            DelegatedAccess randomDelegatedAccess = CreateRandomDelegatedAccess();
+            await this.apiBroker.PostDelegatedAccessAsync(randomDelegatedAccess);
+
+            return randomDelegatedAccess;
+        }
 
         private static Filler<DelegatedAccess> CreateRandomDelegatedAccessFiller()
         {
