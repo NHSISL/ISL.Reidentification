@@ -68,7 +68,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
 
             var failedServicePdsDataException =
                 new FailedServicePdsDataException(
-                    message: "Failed service pds data error occurred, contact support.",
+                    message: "Failed pds data service error occurred, please contact support.",
                     innerException: serviceError);
 
             var expectedPdsDataServiceException =

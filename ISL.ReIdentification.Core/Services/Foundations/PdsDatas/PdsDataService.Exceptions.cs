@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Foundations.PdsDatas;
@@ -30,18 +31,39 @@ namespace ISL.ReIdentification.Core.Services.Foundations.PdsDatas
 
                 throw CreateAndLogCriticalDependencyException(failedStoragePdsDataException);
             }
+            catch (Exception exception)
+            {
+                var failedPdsDataServiceException =
+                    new FailedServicePdsDataException(
+                        message: "Failed pds data service error occurred, please contact support.",
+                        innerException: exception);
+
+                throw CreateAndLogServiceException(failedPdsDataServiceException);
+            }
         }
 
         private PdsDataDependencyException CreateAndLogCriticalDependencyException(Xeption exception)
         {
-            var lookupDependencyException =
+            var pdsDataDependencyException =
                 new PdsDataDependencyException(
                     message: "PdsData dependency error occurred, contact support.",
                     innerException: exception);
 
-            this.loggingBroker.LogCriticalAsync(lookupDependencyException);
+            this.loggingBroker.LogCriticalAsync(pdsDataDependencyException);
 
-            return lookupDependencyException;
+            return pdsDataDependencyException;
+        }
+
+        private PdsDataServiceException CreateAndLogServiceException(Xeption exception)
+        {
+            var pdsDataServiceException =
+                new PdsDataServiceException(
+                    message: "Service error occurred, contact support.",
+                    innerException: exception);
+
+            this.loggingBroker.LogErrorAsync(pdsDataServiceException);
+
+            return pdsDataServiceException;
         }
     }
 }
