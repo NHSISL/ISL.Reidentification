@@ -15,12 +15,21 @@ namespace ISL.ReIdentification.Core.Services.Foundations.PdsDatas
     public partial class PdsDataService
     {
         private delegate ValueTask<IQueryable<PdsData>> ReturningPdsDatasFunction();
+        private delegate ValueTask<PdsData> ReturningPdsDataFunction();
 
         private async ValueTask<IQueryable<PdsData>> TryCatch(ReturningPdsDatasFunction returningPdsDatasFunction)
         {
             try
             {
                 return await returningPdsDatasFunction();
+            }
+            catch (InvalidPdsDataException invalidPdsDataException)
+            {
+                throw CreateAndLogValidationException(invalidPdsDataException);
+            }
+            catch (NotFoundPdsDataException notFoundPdsDataException)
+            {
+                throw CreateAndLogValidationException(notFoundPdsDataException);
             }
             catch (SqlException sqlException)
             {
@@ -42,6 +51,51 @@ namespace ISL.ReIdentification.Core.Services.Foundations.PdsDatas
             }
         }
 
+        private async ValueTask<PdsData> TryCatch(ReturningPdsDataFunction returningPdsDataFunction)
+        {
+            try
+            {
+                return await returningPdsDataFunction();
+            }
+            catch (InvalidPdsDataException invalidPdsDataException)
+            {
+                throw CreateAndLogValidationException(invalidPdsDataException);
+            }
+            catch (NotFoundPdsDataException notFoundPdsDataException)
+            {
+                throw CreateAndLogValidationException(notFoundPdsDataException);
+            }
+            catch (SqlException sqlException)
+            {
+                var failedStoragePdsDataException = new FailedStoragePdsDataException(
+                    message: "Failed pds data storage error occurred, contact support.",
+                    innerException: sqlException);
+
+                throw CreateAndLogCriticalDependencyException(failedStoragePdsDataException);
+            }
+            catch (Exception exception)
+            {
+                var failedPdsDataServiceException =
+                    new FailedServicePdsDataException(
+                        message: "Failed pds data service occurred, please contact support",
+                        innerException: exception);
+
+                throw CreateAndLogServiceException(failedPdsDataServiceException);
+            }
+        }
+
+        private PdsDataValidationException CreateAndLogValidationException(Xeption exception)
+        {
+            var pdsDataValidationException =
+                new PdsDataValidationException(
+                    message: "PdsData validation error occurred, please fix errors and try again.",
+                    innerException: exception);
+
+            this.loggingBroker.LogErrorAsync(pdsDataValidationException);
+
+            return pdsDataValidationException;
+        }
+
         private PdsDataDependencyException CreateAndLogCriticalDependencyException(Xeption exception)
         {
             var pdsDataDependencyException =
@@ -58,7 +112,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.PdsDatas
         {
             var pdsDataServiceException =
                 new PdsDataServiceException(
-                    message: "Service error occurred, contact support.",
+                    message: "PdsData service error occurred, contact support.",
                     innerException: exception);
 
             this.loggingBroker.LogErrorAsync(pdsDataServiceException);
