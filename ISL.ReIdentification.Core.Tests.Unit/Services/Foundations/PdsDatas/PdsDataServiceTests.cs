@@ -4,12 +4,16 @@
 
 using System;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.Pds;
 using ISL.ReIdentification.Core.Models.Foundations.PdsDatas;
 using ISL.ReIdentification.Core.Services.Foundations.PdsDatas;
+using Microsoft.Data.SqlClient;
 using Moq;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
 {
@@ -53,6 +57,15 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
             filler.Setup();
 
             return filler;
+        }
+
+        private SqlException CreateSqlException() =>
+            (SqlException)RuntimeHelpers.GetUninitializedObject(type: typeof(SqlException));
+
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException)
+        {
+            return actualException =>
+                actualException.SameExceptionAs(expectedException);
         }
     }
 }
