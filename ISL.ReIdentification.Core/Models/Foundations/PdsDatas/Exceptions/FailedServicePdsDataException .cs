@@ -9,9 +9,9 @@ using Xeptions;
 
 namespace ISL.ReIdentification.Core.Models.Foundations.PdsDatas.Exceptions
 {
-    public class FailedPdsDataServiceException : Xeption
+    public class FailedServicePdsDataException : Xeption
     {
-        public FailedPdsDataServiceException(string message, Exception innerException)
+        public FailedServicePdsDataException(string message, Exception innerException)
             : base(message, innerException)
         { }
     }

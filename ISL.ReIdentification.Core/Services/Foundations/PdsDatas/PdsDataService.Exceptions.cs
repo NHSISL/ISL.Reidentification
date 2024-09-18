@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Foundations.PdsDatas;
 using ISL.ReIdentification.Core.Models.Foundations.PdsDatas.Exceptions;
@@ -36,6 +37,15 @@ namespace ISL.ReIdentification.Core.Services.Foundations.PdsDatas
 
                 throw CreateAndLogCriticalDependencyException(failedStoragePdsDataException);
             }
+            catch (Exception exception)
+            {
+                var failedPdsDataServiceException =
+                    new FailedServicePdsDataException(
+                        message: "Failed pds data service occurred, please contact support",
+                        innerException: exception);
+
+                throw CreateAndLogServiceException(failedPdsDataServiceException);
+            }
         }
 
         private PdsDataValidationException CreateAndLogValidationException(Xeption exception)
@@ -60,6 +70,18 @@ namespace ISL.ReIdentification.Core.Services.Foundations.PdsDatas
             this.loggingBroker.LogCriticalAsync(pdsDataDependencyException);
 
             return pdsDataDependencyException;
+        }
+
+        private PdsDataServiceException CreateAndLogServiceException(Xeption exception)
+        {
+            var pdsDataServiceException =
+                new PdsDataServiceException(
+                    message: "PdsData service error occurred, contact support.",
+                    innerException: exception);
+
+            this.loggingBroker.LogErrorAsync(pdsDataServiceException);
+
+            return pdsDataServiceException;
         }
     }
 }
