@@ -53,13 +53,13 @@ const LookupTable: FunctionComponent<LookupTableProps> = (props) => {
         //});
     };
 
-    const handleUpdate = (lookup: LookupView) => {
-        //return updateLookup.mutateAsync(lookup);
-    }
+    //const handleUpdate = (lookup: LookupView) => {
+    //    return updateLookup.mutateAsync(lookup);
+    //}
 
-    const handleDelete = (lookup: LookupView) => {
-        //return deleteLookup.mutateAsync(lookup.id);
-    }
+    //const handleDelete = (lookup: LookupView) => {
+    //    return deleteLookup.mutateAsync(lookup.id);
+    //}
 
     const handleDebounce = useMemo(
         () => debounce((value: string) => {
