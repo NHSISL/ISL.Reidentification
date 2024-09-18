@@ -26,7 +26,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Ods
                     .ReturnsAsync(storageOdsDatas);
 
             // when
-            var actualOdsDatas = this.odsService.RetrieveAllOdsDatasAsync();
+            IQueryable<OdsData> actualOdsDatas = await this.odsService.RetrieveAllOdsDatasAsync();
 
             // then
             actualOdsDatas.Should().BeEquivalentTo(expectedOdsDatas);

@@ -2,7 +2,6 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
@@ -30,7 +29,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Ods
 
         public ValueTask<IQueryable<OdsData>> RetrieveAllOdsDatasAsync()
         {
-            throw new NotImplementedException();
+            return this.odsStorageBroker.SelectAllOdsDatasAsync();
         }
     }
 }
