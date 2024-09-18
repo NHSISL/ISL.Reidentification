@@ -11,7 +11,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.PdsDatas
 {
     public interface IPdsDataService
     {
-        public ValueTask<PdsData> RetrievePdsDataByIdAsync(Guid pdsDataId);
         public ValueTask<IQueryable<PdsData>> RetrieveAllPdsDataAsync();
+        public ValueTask<PdsData> RetrievePdsDataByIdAsync(Guid pdsDataId);
     }
 }
