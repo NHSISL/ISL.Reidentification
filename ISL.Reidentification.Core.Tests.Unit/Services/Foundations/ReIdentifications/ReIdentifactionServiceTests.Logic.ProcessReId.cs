@@ -31,7 +31,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
 
             // When
             IdentificationRequest actualIdentificationRequest = await this.reIdentificationService
-                .ProcessReidentificationRequests(inputIdentificationRequest);
+                .ProcessReidentificationRequest(inputIdentificationRequest);
 
             // Then
             actualIdentificationRequest.Should().BeEquivalentTo(expectedIdentificationRequest);

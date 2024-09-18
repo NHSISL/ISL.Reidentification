@@ -28,7 +28,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
 
             // when
             ValueTask<IdentificationRequest> processdentificationRequestTask =
-                this.reIdentificationService.ProcessReidentificationRequests(nullIdentificationRequest);
+                this.reIdentificationService.ProcessReidentificationRequest(nullIdentificationRequest);
 
             IdentificationRequestValidationException actualIdentificationRequestValidationException =
                 await Assert.ThrowsAsync<IdentificationRequestValidationException>(
@@ -84,7 +84,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
 
             // when
             ValueTask<IdentificationRequest> addIdentificationRequestTask =
-                this.reIdentificationService.ProcessReidentificationRequests(invalidIdentificationRequest);
+                this.reIdentificationService.ProcessReidentificationRequest(invalidIdentificationRequest);
 
             IdentificationRequestValidationException actualIdentificationRequestValidationException =
                 await Assert.ThrowsAsync<IdentificationRequestValidationException>(addIdentificationRequestTask.AsTask);
@@ -117,7 +117,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
             invalidIdentificationRequest.UserEmail = GetRandomStringWithLength(321);
 
             var invalidIdentificationRequestException = new InvalidIdentificationRequestException(
-                message: "Invalid identificaiton request. Please correct the errors and try again.");
+                message: "Invalid identification request. Please correct the errors and try again.");
 
             invalidIdentificationRequestException.AddData(
                 key: nameof(IdentificationRequest.Identifier),
@@ -135,7 +135,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
 
             // when
             ValueTask<IdentificationRequest> addIdentificationRequestTask =
-                this.reIdentificationService.ProcessReidentificationRequests(invalidIdentificationRequest);
+                this.reIdentificationService.ProcessReidentificationRequest(invalidIdentificationRequest);
 
             IdentificationRequestValidationException actualIdentificationRequestValidationException =
                 await Assert.ThrowsAsync<IdentificationRequestValidationException>(

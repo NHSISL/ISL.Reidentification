@@ -36,7 +36,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
 
             // when
             ValueTask<IdentificationRequest> addIdentificationRequestTask =
-                this.reIdentificationService.ProcessReidentificationRequests(someIdentificationRequest);
+                this.reIdentificationService.ProcessReidentificationRequest(someIdentificationRequest);
 
             ReIdentificationServiceException actualReIdentificationServiceException =
                 await Assert.ThrowsAsync<ReIdentificationServiceException>(
