@@ -9,6 +9,6 @@ namespace LHDS.Core.Brokers.NECS
 {
     public interface INECSBroker
     {
-        ValueTask<List<string>> ReIdAsync(string nhsNumber);
+        ValueTask<List<string>> ReIdAsync(string pseudoNumber);
     }
 }

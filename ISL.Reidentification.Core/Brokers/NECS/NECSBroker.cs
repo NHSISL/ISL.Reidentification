@@ -24,10 +24,10 @@ namespace LHDS.Core.Brokers.NECS
             this.apiClient = SetupApiClient();
         }
 
-        public async ValueTask<List<string>> ReIdAsync(string nhsNumber)
+        public async ValueTask<List<string>> ReIdAsync(string pseudoNumber)
         {
             var returnedAddress =
-                await this.apiClient.GetContentAsync<List<string>>($"api/reid?skid={nhsNumber}");
+                await this.apiClient.GetContentAsync<List<string>>($"api/reid?skid={pseudoNumber}");
 
             return returnedAddress;
         }
