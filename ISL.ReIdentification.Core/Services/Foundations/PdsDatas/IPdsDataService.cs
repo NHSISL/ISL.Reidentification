@@ -3,13 +3,15 @@
 // ---------------------------------------------------------
 
 using System.Linq;
+using System;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Foundations.PdsDatas;
 
-namespace ISL.ReIdentification.Core.Services.Foundations.Pds
+namespace ISL.ReIdentification.Core.Services.Foundations.PdsDatas
 {
     public interface IPdsDataService
     {
-        ValueTask<IQueryable<PdsData>> RetrieveAllPdsDataAsync();
+        public ValueTask<IQueryable<PdsData>> RetrieveAllPdsDataAsync();
+        public ValueTask<PdsData> RetrievePdsDataByIdAsync(Guid pdsDataId);
     }
 }
