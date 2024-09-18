@@ -28,10 +28,16 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ReIdentifications
         public async ValueTask<IdentificationRequest> ProcessReidentificationRequests(
             IdentificationRequest identificationRequests)
         {
-            List<string> retrievedIdentities = await this.necsBroker.ReIdAsync(identificationRequests.Identifier);
-            IdentificationRequest returnedIdentificationRequest = identificationRequests.DeepClone();
-            returnedIdentificationRequest.Identifier = retrievedIdentities.FirstOrDefault();
-            returnedIdentificationRequest.IsReidentified = true;
+            List<string> nhsNumbers = await this.necsBroker.ReIdAsync(identificationRequests.Identifier);
+
+            IdentificationRequest returnedIdentificationRequest = new IdentificationRequest
+            {
+                RowNumber = identificationRequests.RowNumber,
+                UserEmail = identificationRequests.UserEmail,
+                Identifier = nhsNumbers.FirstOrDefault(),
+                HasAccess = true,
+                IsReidentified = true,
+            };
 
             return returnedIdentificationRequest;
         }

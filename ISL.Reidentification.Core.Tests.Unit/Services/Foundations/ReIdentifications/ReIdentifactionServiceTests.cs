@@ -12,7 +12,7 @@ using Moq;
 using Tynamix.ObjectFiller;
 using Xeptions;
 
-namespace LHDS.Core.Tests.Unit.Services.Foundations.ReIdentifications
+namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifications
 {
     public partial class ReIdentificationServiceTests
     {
@@ -41,6 +41,9 @@ namespace LHDS.Core.Tests.Unit.Services.Foundations.ReIdentifications
 
         private static int GetRandomNumber() =>
             new IntRange(max: 15, min: 2).GetValue();
+
+        private static string GetRandomStringWithLength(int length) =>
+          new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length).GetValue();
 
         private static IdentificationRequest CreateRandomIdentificationRequest() =>
             CreateIdentificationRequestFiller().Create();

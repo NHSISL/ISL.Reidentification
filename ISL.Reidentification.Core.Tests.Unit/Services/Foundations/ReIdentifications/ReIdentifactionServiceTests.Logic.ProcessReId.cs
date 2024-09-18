@@ -9,7 +9,7 @@ using Force.DeepCloner;
 using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications;
 using Moq;
 
-namespace LHDS.Core.Tests.Unit.Services.Foundations.ReIdentifications
+namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifications
 {
     public partial class ReIdentificationServiceTests
     {
