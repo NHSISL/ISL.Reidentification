@@ -17,7 +17,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Brokers
             await this.apiFactoryClient.PostContentAsync(userAccessesRelativeUrl, userAccess);
 
         public async ValueTask<List<UserAccess>> GetAllUserAccessesAsync() =>
-            throw new NotImplementedException();
+            await this.apiFactoryClient.GetContentAsync<List<UserAccess>>($"{userAccessesRelativeUrl}/");
 
         public async ValueTask<UserAccess> GetUserAccessByIdAsync(Guid userAccessId) =>
             await this.apiFactoryClient.GetContentAsync<UserAccess>($"{userAccessesRelativeUrl}/{userAccessId}");
