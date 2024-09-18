@@ -55,7 +55,6 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Ods
 
             this.odsStorageBroker.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -98,7 +97,6 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Ods
 
             this.odsStorageBroker.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
