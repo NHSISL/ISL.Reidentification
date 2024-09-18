@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Models.Lookups;
 
@@ -14,6 +15,9 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Brokers
 
         public async ValueTask<UserAccess> PostUserAccessAsync(UserAccess userAccess) =>
             await this.apiFactoryClient.PostContentAsync(userAccessesRelativeUrl, userAccess);
+
+        public async ValueTask<List<UserAccess>> GetAllUserAccessesAsync() =>
+            throw new NotImplementedException();
 
         public async ValueTask<UserAccess> GetUserAccessByIdAsync(Guid userAccessId) =>
             await this.apiFactoryClient.GetContentAsync<UserAccess>($"{userAccessesRelativeUrl}/{userAccessId}");
