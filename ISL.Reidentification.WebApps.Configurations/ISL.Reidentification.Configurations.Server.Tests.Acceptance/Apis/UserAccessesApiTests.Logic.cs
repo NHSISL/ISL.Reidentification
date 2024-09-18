@@ -28,7 +28,5 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
             actualUserAccess.Should().BeEquivalentTo(expectedUserAccess);
             await this.apiBroker.DeleteUserAccessByIdAsync(inputUserAccess.Id);
         }
-
-
     }
 }
