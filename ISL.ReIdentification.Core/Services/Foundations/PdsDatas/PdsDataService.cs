@@ -2,7 +2,6 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Brokers.Loggings;
@@ -25,9 +24,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.PdsDatas
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<IQueryable<PdsData>> RetrieveAllPdsDataAsync()
-        {
-            throw new NotImplementedException();
-        }
+        public async ValueTask<IQueryable<PdsData>> RetrieveAllPdsDataAsync() =>
+            await this.odsStorageBroker.SelectAllPdsDatasAsync();
     }
 }
