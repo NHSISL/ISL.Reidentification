@@ -10,6 +10,7 @@ using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
 using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using RESTFulSense.Models;
 using Xeptions;
 
 namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.DelegatedAccesses
@@ -86,6 +87,34 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
             // then
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
             badRequestResult.StatusCode.Should().Be(400);
+        }
+
+        [Fact]
+        public async Task
+            DeleteDelegatedAccessByIdsAsyncShouldReturnLockedErrorWhenDelegatedAccessDependencyValidationExceptionOccurs()
+        {
+            // given
+            Guid randomId = Guid.NewGuid();
+            Guid inputId = randomId;
+            var someXeption = new Xeption(message: GetRandomString());
+
+            var lockedDelegatedAccessException =
+                new LockedDelegatedAccessException(message: GetRandomString(), innerException: someXeption);
+
+            var delegatedAccessDependencyValidationException = new DelegatedAccessDependencyValidationException(
+                message: GetRandomString(),
+                innerException: lockedDelegatedAccessException);
+
+            mockDelegatedAccessService
+            .Setup(service => service.RemoveDelegatedAccessByIdAsync(inputId))
+                .ThrowsAsync(delegatedAccessDependencyValidationException);
+
+            // when
+            var result = await delegatedAccessesController.DeleteDelegatedAccessByIdAsync(inputId);
+
+            // then
+            var lockedObjectResult = Assert.IsType<LockedObjectResult>(result.Result);
+            lockedObjectResult.StatusCode.Should().Be(423);
         }
     }
 }
