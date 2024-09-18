@@ -125,6 +125,11 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             {
                 return BadRequest(delegatedAccessValidationException.InnerException);
             }
+            catch (DelegatedAccessDependencyValidationException delegatedAccessDependencyValidationException)
+                when (delegatedAccessDependencyValidationException.InnerException is LockedDelegatedAccessException)
+            {
+                return Locked(delegatedAccessDependencyValidationException.InnerException);
+            }
         }
     }
 }
