@@ -27,9 +27,10 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Ods
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<IQueryable<OdsData>> RetrieveAllOdsDatasAsync()
+        public ValueTask<IQueryable<OdsData>> RetrieveAllOdsDatasAsync() =>
+        TryCatch(async () =>
         {
-            return this.odsStorageBroker.SelectAllOdsDatasAsync();
-        }
+            return await this.odsStorageBroker.SelectAllOdsDatasAsync();
+        });
     }
 }
