@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System.Linq;
+using System;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
 using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses.Exceptions;
@@ -64,6 +65,75 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
                     await this.delegatedAccessService.RetrieveAllDelegatedAccessesAsync();
 
                 return Ok(delegatedAccesses);
+            }
+            catch (DelegatedAccessDependencyException delegatedAccessDependencyException)
+            {
+                return InternalServerError(delegatedAccessDependencyException);
+            }
+            catch (DelegatedAccessServiceException delegatedAccessServiceException)
+            {
+                return InternalServerError(delegatedAccessServiceException);
+            }
+        }
+
+        [HttpGet("{delegatedAccessId}")]
+        public async ValueTask<ActionResult<DelegatedAccess>> GetDelegatedAccessByIdAsync(Guid delegatedAccessId)
+        {
+            try
+            {
+                DelegatedAccess delegatedAccess =
+                    await this.delegatedAccessService.RetrieveDelegatedAccessByIdAsync(delegatedAccessId);
+
+                return Ok(delegatedAccess);
+            }
+            catch (DelegatedAccessValidationException delegatedAccessValidationException)
+                when (delegatedAccessValidationException.InnerException is NotFoundDelegatedAccessException)
+            {
+                return NotFound(delegatedAccessValidationException.InnerException);
+            }
+            catch (DelegatedAccessValidationException delegatedAccessValidationException)
+            {
+                return BadRequest(delegatedAccessValidationException.InnerException);
+            }
+            catch (DelegatedAccessDependencyException delegatedAccessDependencyException)
+            {
+                return InternalServerError(delegatedAccessDependencyException);
+            }
+            catch (DelegatedAccessServiceException delegatedAccessServiceException)
+            {
+                return InternalServerError(delegatedAccessServiceException);
+            }
+        }
+
+        [HttpPut]
+        public async ValueTask<ActionResult<DelegatedAccess>> PutDelegatedAccessAsync(DelegatedAccess delegatedAccess)
+        {
+            try
+            {
+                DelegatedAccess modifiedDelegatedAccess =
+                    await this.delegatedAccessService.ModifyDelegatedAccessAsync(delegatedAccess);
+
+                return Ok(modifiedDelegatedAccess);
+            }
+            catch (DelegatedAccessValidationException delegatedAccessValidationException)
+                when (delegatedAccessValidationException.InnerException
+                    is NotFoundDelegatedAccessException)
+            {
+                return NotFound(delegatedAccessValidationException.InnerException);
+            }
+            catch (DelegatedAccessValidationException delegatedAccessValidationException)
+            {
+                return BadRequest(delegatedAccessValidationException.InnerException);
+            }
+            catch (DelegatedAccessDependencyValidationException delegatedAccessDependencyValidationException)
+                when (delegatedAccessDependencyValidationException.InnerException
+                    is AlreadyExistsDelegatedAccessException)
+            {
+                return Conflict(delegatedAccessDependencyValidationException.InnerException);
+            }
+            catch (DelegatedAccessDependencyValidationException delegatedAccessDependencyValidationException)
+            {
+                return BadRequest(delegatedAccessDependencyValidationException.InnerException);
             }
             catch (DelegatedAccessDependencyException delegatedAccessDependencyException)
             {
