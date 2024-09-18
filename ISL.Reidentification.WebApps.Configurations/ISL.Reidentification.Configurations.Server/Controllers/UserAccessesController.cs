@@ -133,5 +133,42 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
                 return InternalServerError(userAccessServiceException.InnerException);
             }
         }
+
+        [HttpDelete("{userAccessId}")]
+        public async ValueTask<ActionResult<UserAccess>> DeleteUserAccessByIdAsync(Guid userAccessId)
+        {
+            try
+            {
+                UserAccess deletedUserAccess = await this.userAccessService.RemoveUserAccessByIdAsync(userAccessId);
+
+                return Ok(deletedUserAccess);
+            }
+            catch (UserAccessValidationException userAccessValidationException)
+                when (userAccessValidationException.InnerException is NotFoundUserAccessException)
+            {
+                return NotFound(userAccessValidationException.InnerException);
+            }
+            catch (UserAccessValidationException userAccessValidationException)
+            {
+                return BadRequest(userAccessValidationException.InnerException);
+            }
+            catch (UserAccessDependencyValidationException userAccessDependencyValidationException)
+                when (userAccessDependencyValidationException.InnerException is LockedUserAccessException)
+            {
+                return Locked(userAccessDependencyValidationException.InnerException);
+            }
+            catch (UserAccessDependencyValidationException userAccessDependencyValidationException)
+            {
+                return BadRequest(userAccessDependencyValidationException.InnerException);
+            }
+            catch (UserAccessDependencyException userAccessDependencyException)
+            {
+                return InternalServerError(userAccessDependencyException.InnerException);
+            }
+            catch (UserAccessServiceException userAccessServiceException)
+            {
+                return InternalServerError(userAccessServiceException.InnerException);
+            }
+        }
     }
 }

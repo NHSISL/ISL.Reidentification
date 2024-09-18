@@ -29,8 +29,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ISL.ReIdentification.Config
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ISL.ReIdentification.Infrastructure", "ISL.Reidentification.Infrastructure\ISL.ReIdentification.Infrastructure.csproj", "{51DCBB01-F93A-4C15-AD64-C8D39EBD2D8E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ISL.ReIdentification.Configurations.Server.Tests.Unit", "ISL.ReIdentification.WebApps.Configurations\ISL.ReIdentification.Configurations.Server.Tests.Unit\ISL.ReIdentification.Configurations.Server.Tests.Unit.csproj", "{D8887986-C7DA-425D-B2A1-8515085678BD}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
