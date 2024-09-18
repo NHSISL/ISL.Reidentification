@@ -5,6 +5,7 @@
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Foundations.PdsDatas;
 using ISL.ReIdentification.Core.Models.Foundations.PdsDatas.Exceptions;
+using Microsoft.Data.SqlClient;
 using Xeptions;
 
 namespace ISL.ReIdentification.Core.Services.Foundations.PdsDatas
@@ -27,6 +28,14 @@ namespace ISL.ReIdentification.Core.Services.Foundations.PdsDatas
             {
                 throw CreateAndLogValidationException(notFoundPdsDataException);
             }
+            catch (SqlException sqlException)
+            {
+                var failedStoragePdsDataException = new FailedStoragePdsDataException(
+                    message: "Failed pds data storage error occurred, contact support.",
+                    innerException: sqlException);
+
+                throw CreateAndLogCriticalDependencyException(failedStoragePdsDataException);
+            }
         }
 
         private PdsDataValidationException CreateAndLogValidationException(Xeption exception)
@@ -39,6 +48,18 @@ namespace ISL.ReIdentification.Core.Services.Foundations.PdsDatas
             this.loggingBroker.LogErrorAsync(pdsDataValidationException);
 
             return pdsDataValidationException;
+        }
+
+        private PdsDataDependencyException CreateAndLogCriticalDependencyException(Xeption exception)
+        {
+            var pdsDataDependencyException =
+                new PdsDataDependencyException(
+                    message: "PdsData dependency error occurred, contact support.",
+                    innerException: exception);
+
+            this.loggingBroker.LogCriticalAsync(pdsDataDependencyException);
+
+            return pdsDataDependencyException;
         }
     }
 }
