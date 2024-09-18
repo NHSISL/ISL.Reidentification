@@ -24,7 +24,8 @@ namespace ISL.ReIdentification.Core.Services.Foundations.PdsDatas
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<IQueryable<PdsData>> RetrieveAllPdsDataAsync() =>
-            await this.odsStorageBroker.SelectAllPdsDatasAsync();
+        public ValueTask<IQueryable<PdsData>> RetrieveAllPdsDataAsync() =>
+            TryCatch(this.odsStorageBroker.SelectAllPdsDatasAsync);
+
     }
 }
