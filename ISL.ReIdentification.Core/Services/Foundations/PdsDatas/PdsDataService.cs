@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Brokers.Loggings;
-using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
+using ISL.ReIdentification.Core.Brokers.Storages.Sql.Pds;
 using ISL.ReIdentification.Core.Models.Foundations.PdsDatas;
 using ISL.ReIdentification.Core.Services.Foundations.Pds;
 
@@ -14,14 +14,14 @@ namespace ISL.ReIdentification.Core.Services.Foundations.PdsDatas
 {
     public partial class PdsDataService : IPdsDataService
     {
-        private readonly IReIdentificationStorageBroker reIdentificationStorageBroker;
+        private readonly IOdsStorageBroker odsStorageBroker;
         private readonly ILoggingBroker loggingBroker;
 
         public PdsDataService(
-            IReIdentificationStorageBroker reIdentificationStorageBroker,
+            IOdsStorageBroker odsStorageBroker,
             ILoggingBroker loggingBroker)
         {
-            this.reIdentificationStorageBroker = reIdentificationStorageBroker;
+            this.odsStorageBroker = odsStorageBroker;
             this.loggingBroker = loggingBroker;
         }
 
