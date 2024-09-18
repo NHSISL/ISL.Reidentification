@@ -59,5 +59,51 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
             this.odsStorageBroker.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnRetrieveByIdIfServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            Guid someId = Guid.NewGuid();
+            var serviceException = new Exception();
+
+            var failedPdsDataServiceException =
+                new FailedPdsDataServiceException(
+                    message: "Failed pds data service occurred, please contact support",
+                    innerException: serviceException);
+
+            var expectedPdsDataServiceException =
+                new PdsDataServiceException(
+                    message: "PdsData service error occurred, contact support.",
+                    innerException: failedPdsDataServiceException);
+
+            this.odsStorageBroker.Setup(broker =>
+                broker.SelectPdsDataByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(serviceException);
+
+            // when
+            ValueTask<PdsData> retrievePdsDataByIdTask =
+                this.pdsDataService.RetrievePdsDataByIdAsync(someId);
+
+            PdsDataServiceException actualPdsDataServiceException =
+                await Assert.ThrowsAsync<PdsDataServiceException>(
+                    retrievePdsDataByIdTask.AsTask);
+
+            // then
+            actualPdsDataServiceException.Should()
+                .BeEquivalentTo(expectedPdsDataServiceException);
+
+            this.odsStorageBroker.Verify(broker =>
+                broker.SelectPdsDataByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+               broker.LogErrorAsync(It.Is(SameExceptionAs(
+                   expectedPdsDataServiceException))),
+                        Times.Once);
+
+            this.odsStorageBroker.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
