@@ -2,8 +2,8 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System.Linq;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
 using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses.Exceptions;
@@ -134,6 +134,45 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             catch (DelegatedAccessDependencyValidationException delegatedAccessDependencyValidationException)
             {
                 return BadRequest(delegatedAccessDependencyValidationException.InnerException);
+            }
+            catch (DelegatedAccessDependencyException delegatedAccessDependencyException)
+            {
+                return InternalServerError(delegatedAccessDependencyException);
+            }
+            catch (DelegatedAccessServiceException delegatedAccessServiceException)
+            {
+                return InternalServerError(delegatedAccessServiceException);
+            }
+        }
+
+        [HttpDelete("{delegatedAccessId}")]
+        public async ValueTask<ActionResult<DelegatedAccess>> DeleteDelegatedAccessByIdAsync(Guid delegatedAccessId)
+        {
+            try
+            {
+                DelegatedAccess deletedDelegatedAccess =
+                    await this.delegatedAccessService.RemoveDelegatedAccessByIdAsync(delegatedAccessId);
+
+                return Ok(deletedDelegatedAccess);
+            }
+            catch (DelegatedAccessValidationException delegatedAccessValidationException)
+                when (delegatedAccessValidationException.InnerException
+                    is NotFoundDelegatedAccessException)
+            {
+                return NotFound(delegatedAccessValidationException.InnerException);
+            }
+            catch (DelegatedAccessValidationException delegatedAccessValidationException)
+            {
+                return BadRequest(delegatedAccessValidationException.InnerException);
+            }
+            catch (DelegatedAccessDependencyValidationException delegatedAccessDependencyValidationException)
+                when (delegatedAccessDependencyValidationException.InnerException is LockedDelegatedAccessException)
+            {
+                return Locked(delegatedAccessDependencyValidationException.InnerException);
+            }
+            catch (DelegatedAccessDependencyValidationException delegatedAccessDependencyValidationException)
+            {
+                return BadRequest(delegatedAccessDependencyValidationException);
             }
             catch (DelegatedAccessDependencyException delegatedAccessDependencyException)
             {
