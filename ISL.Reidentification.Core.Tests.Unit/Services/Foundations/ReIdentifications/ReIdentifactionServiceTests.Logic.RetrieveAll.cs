@@ -5,6 +5,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Force.DeepCloner;
 using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications;
 using Moq;
 
@@ -17,11 +18,12 @@ namespace LHDS.Core.Tests.Unit.Services.Foundations.ReIdentifications
         {
             // Given
             IdentificationRequest randomIdentificationRequest = CreateRandomIdentificationRequest();
-            IdentificationRequest inputIdentificationRequest = randomIdentificationRequest;
-            IdentificationRequest storageIdentificationRequest = randomIdentificationRequest;
+            IdentificationRequest inputIdentificationRequest = randomIdentificationRequest.DeepClone();
+            IdentificationRequest storageIdentificationRequest = inputIdentificationRequest.DeepClone();
             storageIdentificationRequest.Identifier = GetRandomString();
             List<string> storageIdentities = new List<string> { storageIdentificationRequest.Identifier };
-            IdentificationRequest expectedIdentificationRequest = storageIdentificationRequest;
+            IdentificationRequest expectedIdentificationRequest = storageIdentificationRequest.DeepClone();
+            expectedIdentificationRequest.IsReidentified = true;
 
             this.necsBrokerMock.Setup(broker =>
                 broker.ReIdAsync(inputIdentificationRequest.Identifier))

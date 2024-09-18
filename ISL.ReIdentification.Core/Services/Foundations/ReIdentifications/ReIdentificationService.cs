@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Force.DeepCloner;
 using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications;
 using LHDS.Core.Brokers.NECS;
@@ -28,8 +29,9 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ReIdentifications
             IdentificationRequest identificationRequests)
         {
             List<string> retrievedIdentities = await this.necsBroker.ReIdAsync(identificationRequests.Identifier);
-            IdentificationRequest returnedIdentificationRequest = identificationRequests;
+            IdentificationRequest returnedIdentificationRequest = identificationRequests.DeepClone();
             returnedIdentificationRequest.Identifier = retrievedIdentities.FirstOrDefault();
+            returnedIdentificationRequest.IsReidentified = true;
 
             return returnedIdentificationRequest;
         }

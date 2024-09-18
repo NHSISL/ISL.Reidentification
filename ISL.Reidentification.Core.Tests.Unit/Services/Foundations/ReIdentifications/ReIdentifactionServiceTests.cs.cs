@@ -49,6 +49,9 @@ namespace LHDS.Core.Tests.Unit.Services.Foundations.ReIdentifications
         {
             var filler = new Filler<IdentificationRequest>();
 
+            filler.Setup()
+                .OnProperty(identificationRequest => identificationRequest.IsReidentified).Use(false);
+
             return filler;
         }
     }
