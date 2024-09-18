@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Models.DelegatedAccesses;
+using RESTFulSense.Exceptions;
 
 namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
 {
@@ -65,6 +66,28 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
             // then
             actualDelegatedAccess.Should().BeEquivalentTo(expectedDelegatedAccess);
             await this.apiBroker.DeleteDelegatedAccessByIdAsync(actualDelegatedAccess.Id);
+        }
+
+        [Fact]
+        public async Task ShouldDeleteDelegatedAccessAsync()
+        {
+            // given
+            DelegatedAccess randomDelegatedAccess = await PostRandomDelegatedAccessAsync();
+            DelegatedAccess inputDelegatedAccess = randomDelegatedAccess;
+            DelegatedAccess expectedDelegatedAccess = inputDelegatedAccess;
+
+            // when
+            DelegatedAccess deletedDelegatedAccess =
+                await this.apiBroker.DeleteDelegatedAccessByIdAsync(inputDelegatedAccess.Id);
+
+            ValueTask<DelegatedAccess> getDelegatedAccessbyIdTask =
+                this.apiBroker.GetDelegatedAccessByIdAsync(inputDelegatedAccess.Id);
+
+            // then
+            deletedDelegatedAccess.Should().BeEquivalentTo(expectedDelegatedAccess);
+
+            await Assert.ThrowsAsync<HttpResponseNotFoundException>(() =>
+                getDelegatedAccessbyIdTask.AsTask());
         }
     }
 }
