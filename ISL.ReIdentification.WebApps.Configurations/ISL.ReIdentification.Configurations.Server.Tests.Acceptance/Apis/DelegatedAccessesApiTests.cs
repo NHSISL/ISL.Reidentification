@@ -31,9 +31,15 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(now)
-                .OnProperty(delegatedAccess => delegatedAccess.RequesterEmail).Use(() => GetRandomStringWithLengthOf(320))
-                .OnProperty(delegatedAccess => delegatedAccess.RecipientEmail).Use(() => GetRandomStringWithLengthOf(320))
-                .OnProperty(delegatedAccess => delegatedAccess.IdentifierColumn).Use(() => GetRandomStringWithLengthOf(10))
+                .OnProperty(delegatedAccess => delegatedAccess.RequesterEmail)
+                    .Use(() => GetRandomStringWithLengthOf(320))
+
+                .OnProperty(delegatedAccess => delegatedAccess.RecipientEmail)
+                    .Use(() => GetRandomStringWithLengthOf(320))
+
+                .OnProperty(delegatedAccess => delegatedAccess.IdentifierColumn)
+                    .Use(() => GetRandomStringWithLengthOf(10))
+
                 .OnProperty(delegatedAccess => delegatedAccess.CreatedDate).Use(now)
                 .OnProperty(delegatedAccess => delegatedAccess.CreatedBy).Use(user)
                 .OnProperty(delegatedAccess => delegatedAccess.UpdatedDate).Use(now)
