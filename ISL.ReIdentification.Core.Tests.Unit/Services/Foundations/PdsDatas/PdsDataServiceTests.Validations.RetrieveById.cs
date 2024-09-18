@@ -57,5 +57,47 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
             this.odsStorageBroker.VerifyNoOtherCalls();
         }
 
+        [Fact]
+        public async Task ShouldThrowNotFoundExceptionOnRetrieveByIdIfPdsDataIsNotFoundAndLogItAsync()
+        {
+            //given
+            Guid somePdsDataId = Guid.NewGuid();
+            PdsData noPdsData = null;
+
+            var notFoundPdsDataException =
+                new NotFoundPdsDataException(somePdsDataId);
+
+            var expectedPdsDataValidationException =
+                new PdsDataValidationException(
+                    message: "PdsData validation error occurred, please fix errors and try again.",
+                    innerException: notFoundPdsDataException);
+
+            this.odsStorageBroker.Setup(broker =>
+                broker.SelectPdsDataByIdAsync(It.IsAny<Guid>()))
+                    .ReturnsAsync(noPdsData);
+
+            //when
+            ValueTask<PdsData> retrievePdsDataByIdTask =
+                this.pdsDataService.RetrievePdsDataByIdAsync(somePdsDataId);
+
+            PdsDataValidationException actualPdsDataValidationException =
+                await Assert.ThrowsAsync<PdsDataValidationException>(
+                    retrievePdsDataByIdTask.AsTask);
+
+            //then
+            actualPdsDataValidationException.Should().BeEquivalentTo(expectedPdsDataValidationException);
+
+            this.odsStorageBroker.Verify(broker =>
+                broker.SelectPdsDataByIdAsync(It.IsAny<Guid>()),
+                    Times.Once());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedPdsDataValidationException))),
+                        Times.Once);
+
+            this.odsStorageBroker.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
