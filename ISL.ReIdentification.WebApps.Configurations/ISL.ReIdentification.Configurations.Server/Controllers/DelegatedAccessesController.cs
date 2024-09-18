@@ -121,6 +121,10 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             {
                 return NotFound(delegatedAccessValidationException.InnerException);
             }
+            catch (DelegatedAccessValidationException delegatedAccessValidationException)
+            {
+                return BadRequest(delegatedAccessValidationException.InnerException);
+            }
         }
     }
 }
