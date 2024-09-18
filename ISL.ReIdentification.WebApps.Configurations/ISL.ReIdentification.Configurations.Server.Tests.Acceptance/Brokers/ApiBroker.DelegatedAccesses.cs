@@ -24,6 +24,10 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Brokers
                 .GetContentAsync<DelegatedAccess>($"{DelegatedAccessesRelativeUrl}/{delegatedAccessId}");
 
         public async ValueTask<DelegatedAccess> DeleteDelegatedAccessByIdAsync(Guid delegatedAccessId) =>
-            await this.apiFactoryClient.DeleteContentAsync<DelegatedAccess>($"{DelegatedAccessesRelativeUrl}/{delegatedAccessId}");
+            await this.apiFactoryClient
+                .DeleteContentAsync<DelegatedAccess>($"{DelegatedAccessesRelativeUrl}/{delegatedAccessId}");
+
+        public async ValueTask<DelegatedAccess> PutDelegatedAccessAsync(DelegatedAccess delegatedAccess) =>
+            await this.apiFactoryClient.PutContentAsync(DelegatedAccessesRelativeUrl, delegatedAccess);
     }
 }
