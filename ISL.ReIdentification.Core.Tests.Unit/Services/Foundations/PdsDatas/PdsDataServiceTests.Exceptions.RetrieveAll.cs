@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -53,6 +54,51 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCriticalAsync(It.Is(SameExceptionAs(
                     expectedPdsDataDependencyException))),
+                        Times.Once);
+
+            this.odsStorageBroker.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowServiceErrorOnRetrieveAllWhenServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            var serviceError = new Exception();
+
+            var failedServicePdsDataException =
+                new FailedServicePdsDataException(
+                    message: "Failed service pds data error occurred, contact support.",
+                    innerException: serviceError);
+
+            var expectedPdsDataServiceException =
+                new PdsDataServiceException(
+                    message: "Service error occurred, contact support.",
+                    innerException: failedServicePdsDataException);
+
+            this.odsStorageBroker.Setup(broker =>
+                broker.SelectAllPdsDatasAsync())
+                    .ThrowsAsync(serviceError);
+
+            // when
+            ValueTask<IQueryable<PdsData>> retrieveAllPdsDatasTask =
+                this.pdsDataService.RetrieveAllPdsDataAsync();
+
+            PdsDataServiceException actualPdsDataServiceException =
+                await Assert.ThrowsAsync<PdsDataServiceException>(
+                    testCode: retrieveAllPdsDatasTask.AsTask);
+
+            // then
+            actualPdsDataServiceException.Should().BeEquivalentTo(
+                expectedPdsDataServiceException);
+
+            this.odsStorageBroker.Verify(broker =>
+                broker.SelectAllPdsDatasAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedPdsDataServiceException))),
                         Times.Once);
 
             this.odsStorageBroker.VerifyNoOtherCalls();
