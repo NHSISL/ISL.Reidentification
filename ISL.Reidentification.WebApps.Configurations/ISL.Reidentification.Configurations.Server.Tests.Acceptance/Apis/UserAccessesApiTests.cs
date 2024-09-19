@@ -25,7 +25,6 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
-
         private static UserAccess CreateRandomUserAccess() =>
             CreateRandomUserAccessFiller().Create();
 
@@ -48,19 +47,14 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
 
         private static UserAccess UpdateUserAccess(UserAccess inputUserAccess)
         {
-
             DateTimeOffset now = DateTimeOffset.UtcNow;
-            var filler = new Filler<UserAccess>();
+            var updatedUserAccess = CreateRandomUserAccess();
+            updatedUserAccess.Id = inputUserAccess.Id;
+            updatedUserAccess.CreatedDate = inputUserAccess.CreatedDate;
+            updatedUserAccess.CreatedBy = inputUserAccess.CreatedBy;
+            updatedUserAccess.UpdatedDate = now;
 
-            filler.Setup()
-                .OnProperty(userAccess => userAccess.Id).Use(inputUserAccess.Id)
-                .OnType<DateTimeOffset>().Use(GetRandomDateTimeOffset())
-                .OnType<DateTimeOffset?>().Use(GetRandomDateTimeOffset())
-                .OnProperty(userAccess => userAccess.CreatedDate).Use(inputUserAccess.CreatedDate)
-                .OnProperty(userAccess => userAccess.CreatedBy).Use(inputUserAccess.CreatedBy)
-                .OnProperty(userAccess => userAccess.UpdatedDate).Use(now);
-
-            return filler.Create();
+            return updatedUserAccess;
         }
 
         private async ValueTask<List<UserAccess>> PostRandomUserAccesses()
