@@ -66,5 +66,21 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
             actualUserAccess.Should().BeEquivalentTo(expectedUserAccess);
             await this.apiBroker.DeleteUserAccessByIdAsync(actualUserAccess.Id);
         }
+
+        [Fact]
+        public async Task ShouldPutUserAccessAsync()
+        {
+            // given
+            UserAccess randomUserAccess = await PostRandomUserAccess();
+            UserAccess updatedUserAccess = UpdateUserAccess(randomUserAccess);
+
+            // when
+            await this.apiBroker.PutUserAccessAsync(updatedUserAccess);
+            UserAccess actualUserAccess = await this.apiBroker.GetUserAccessByIdAsync(randomUserAccess.Id);
+
+            // then
+            actualUserAccess.Should().BeEquivalentTo(updatedUserAccess);
+            await this.apiBroker.DeleteUserAccessByIdAsync(actualUserAccess.Id);
+        }
     }
 }
