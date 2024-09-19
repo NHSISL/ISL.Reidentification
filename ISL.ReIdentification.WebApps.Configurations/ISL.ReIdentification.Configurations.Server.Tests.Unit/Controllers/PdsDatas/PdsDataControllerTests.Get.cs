@@ -10,6 +10,7 @@ using ISL.ReIdentification.Core.Models.Foundations.PdsDatas;
 using ISL.ReIdentification.Core.Models.Foundations.PdsDatas.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using RESTFulSense.Models;
 using Xeptions;
 
 namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsDatas
@@ -84,6 +85,30 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsD
             // then
             var notFoundObjectResult = Assert.IsType<BadRequestObjectResult>(result.Result);
             notFoundObjectResult.StatusCode.Should().Be(400);
+        }
+
+        [Fact]
+        public async Task GetPdsDataByIdsAsyncShouldReturnInternalServerErrorWhenPdsDataDependencyExceptionOccurs()
+        {
+            // given
+            Guid randomId = Guid.NewGuid();
+            Guid inputId = randomId;
+            var someXeption = new Xeption(message: GetRandomString());
+
+            var dependencyException = new PdsDataDependencyException(
+                message: GetRandomString(),
+                innerException: someXeption);
+
+            mockPdsDataService
+                .Setup(service => service.RetrievePdsDataByIdAsync(inputId))
+                .ThrowsAsync(dependencyException);
+
+            // when
+            var result = await pdsDataController.GetPdsDataByIdAsync(inputId);
+
+            // then
+            var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
+            internalServerErrorResult.StatusCode.Should().Be(500);
         }
     }
 }
