@@ -57,6 +57,10 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             {
                 return NotFound(pdsDataValidationException.InnerException);
             }
+            catch (PdsDataValidationException pdsDataValidationException)
+            {
+                return BadRequest(pdsDataValidationException.InnerException);
+            }
         }
     }
 }
