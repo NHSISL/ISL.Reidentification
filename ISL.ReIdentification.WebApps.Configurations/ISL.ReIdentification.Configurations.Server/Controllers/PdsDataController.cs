@@ -45,7 +45,10 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         [HttpGet("{pdsDataId}")]
         public async ValueTask<ActionResult<PdsData>> GetPdsDataByIdAsync(Guid pdsDataId)
         {
-            throw new NotImplementedException();
+            PdsData retrievedPdsData =
+                await this.pdsDataService.RetrievePdsDataByIdAsync(pdsDataId);
+
+            return Ok(retrievedPdsData);
         }
     }
 }
