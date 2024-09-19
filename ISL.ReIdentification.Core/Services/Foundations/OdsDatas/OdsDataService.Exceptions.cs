@@ -55,6 +55,14 @@ namespace ISL.ReIdentification.Core.Services.Foundations.OdsDatas
             {
                 throw CreateAndLogValidationException(notFoundOdsDataException);
             }
+            catch (SqlException sqlException)
+            {
+                var failedStorageOdsDataException = new FailedStorageOdsDataException(
+                    message: "Failed ODS data storage error occurred, contact support.",
+                    innerException: sqlException);
+
+                throw CreateAndLogCriticalDependencyExceptionAsync(failedStorageOdsDataException);
+            }
         }
 
         private OdsDataDependencyException CreateAndLogCriticalDependencyExceptionAsync(
