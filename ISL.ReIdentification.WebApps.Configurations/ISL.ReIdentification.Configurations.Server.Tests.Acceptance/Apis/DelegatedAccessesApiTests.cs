@@ -34,16 +34,13 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
         private static DelegatedAccess UpdateDelegatedAccessWithRandomValues(DelegatedAccess inputDelegatedAccess)
         {
             DateTimeOffset now = DateTimeOffset.UtcNow;
-            var filler = new Filler<DelegatedAccess>();
+            var updatedDelegatedAccess = CreateRandomDelegatedAccess();
+            updatedDelegatedAccess.Id = inputDelegatedAccess.Id;
+            updatedDelegatedAccess.CreatedDate = inputDelegatedAccess.CreatedDate;
+            updatedDelegatedAccess.CreatedBy = inputDelegatedAccess.CreatedBy;
+            updatedDelegatedAccess.UpdatedDate = now;
 
-            filler.Setup()
-                .OnProperty(delegatedAccess => delegatedAccess.Id).Use(inputDelegatedAccess.Id)
-                .OnType<DateTimeOffset>().Use(GetRandomDateTime())
-                .OnProperty(delegatedAccess => delegatedAccess.CreatedDate).Use(inputDelegatedAccess.CreatedDate)
-                .OnProperty(delegatedAccess => delegatedAccess.CreatedBy).Use(inputDelegatedAccess.CreatedBy)
-                .OnProperty(delegatedAccess => delegatedAccess.UpdatedDate).Use(now);
-
-            return filler.Create();
+            return updatedDelegatedAccess;
         }
 
         private async ValueTask<DelegatedAccess> PostRandomDelegatedAccessAsync()
@@ -75,6 +72,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(now)
+
                 .OnProperty(delegatedAccess => delegatedAccess.RequesterEmail)
                     .Use(() => GetRandomStringWithLengthOf(320))
 
