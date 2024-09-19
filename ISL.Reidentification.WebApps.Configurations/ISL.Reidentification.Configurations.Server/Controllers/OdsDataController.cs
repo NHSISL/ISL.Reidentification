@@ -2,16 +2,18 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Foundations.OdsDatas;
 using ISL.ReIdentification.Core.Services.Foundations.Ods;
 using Microsoft.AspNetCore.Mvc;
+using RESTFulSense.Controllers;
 
 namespace ISL.ReIdentification.Configurations.Server.Controllers
 {
-    public class OdsDataController
+    [ApiController]
+    [Route("api/[controller]")]
+    public class OdsDataController : RESTFulController
     {
         private readonly IOdsService odsService;
 
@@ -19,7 +21,12 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             this.odsService = odsService;
 
         [HttpGet]
-        public async ValueTask<ActionResult<IQueryable<OdsData>>> GetAsync() =>
-            throw new NotImplementedException();
+        public async ValueTask<ActionResult<IQueryable<OdsData>>> GetAsync()
+        {
+            IQueryable<OdsData> odsData = await this.odsService.RetrieveAllOdsDatasAsync();
+
+            return Ok(odsData);
+        }
+
     }
 }
