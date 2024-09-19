@@ -31,16 +31,13 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis.Looku
         private static Lookup UpdateLookupWithRandomValues(Lookup inputLookup)
         {
             DateTimeOffset now = DateTimeOffset.UtcNow;
-            var filler = new Filler<Lookup>();
+            var updatedLookup = CreateRandomLookup();
+            updatedLookup.Id = inputLookup.Id;
+            updatedLookup.CreatedDate = inputLookup.CreatedDate;
+            updatedLookup.CreatedBy = inputLookup.CreatedBy;
+            updatedLookup.UpdatedDate = now;
 
-            filler.Setup()
-                .OnProperty(lookup => lookup.Id).Use(inputLookup.Id)
-                .OnType<DateTimeOffset>().Use(GetRandomDateTime())
-                .OnProperty(lookup => lookup.CreatedDate).Use(inputLookup.CreatedDate)
-                .OnProperty(lookup => lookup.CreatedBy).Use(inputLookup.CreatedBy)
-                .OnProperty(lookup => lookup.UpdatedDate).Use(now);
-
-            return filler.Create();
+            return updatedLookup;
         }
 
         private async ValueTask<Lookup> PostRandomLookupAsync()
