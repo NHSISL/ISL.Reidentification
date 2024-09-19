@@ -10,6 +10,7 @@ using ISL.ReIdentification.Core.Models.Foundations.PdsDatas;
 using ISL.ReIdentification.Core.Models.Foundations.PdsDatas.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Xeptions;
 
 namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsDatas
 {
@@ -59,6 +60,30 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsD
             // then
             var notFoundObjectResult = Assert.IsType<NotFoundObjectResult>(result.Result);
             notFoundObjectResult.StatusCode.Should().Be(404);
+        }
+
+        [Fact]
+        public async Task GetPdsDataByIdsAsyncShouldReturnBadRequestWhenPdsDataValidationExceptionOccurs()
+        {
+            // given
+            Guid randomId = Guid.NewGuid();
+            Guid inputId = randomId;
+            var someXeption = new Xeption(message: GetRandomString());
+
+            var pdsDataValidationException = new PdsDataValidationException(
+                message: GetRandomString(),
+                innerException: someXeption);
+
+            mockPdsDataService
+                .Setup(service => service.RetrievePdsDataByIdAsync(inputId))
+                .ThrowsAsync(pdsDataValidationException);
+
+            // when
+            var result = await pdsDataController.GetPdsDataByIdAsync(inputId);
+
+            // then
+            var notFoundObjectResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+            notFoundObjectResult.StatusCode.Should().Be(400);
         }
     }
 }
