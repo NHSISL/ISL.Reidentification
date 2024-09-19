@@ -47,7 +47,6 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
 
         private static UserAccess UpdateUserAccess(UserAccess inputUserAccess)
         {
-
             DateTimeOffset now = DateTimeOffset.UtcNow;
             var updatedUserAccess = CreateRandomUserAccess();
             updatedUserAccess.Id = inputUserAccess.Id;
