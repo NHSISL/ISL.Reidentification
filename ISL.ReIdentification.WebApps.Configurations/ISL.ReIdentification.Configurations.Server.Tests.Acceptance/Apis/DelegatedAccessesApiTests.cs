@@ -34,26 +34,16 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
         private static DelegatedAccess UpdateDelegatedAccessWithRandomValues(DelegatedAccess inputDelegatedAccess)
         {
             DateTimeOffset now = DateTimeOffset.UtcNow;
-            var filler = new Filler<DelegatedAccess>();
+            var updatedDelegatedAccess = CreateRandomDelegatedAccess();
+            updatedDelegatedAccess.Id = inputDelegatedAccess.Id;
+            updatedDelegatedAccess.RequesterEmail = GetRandomStringWithLengthOf(320);
+            updatedDelegatedAccess.RecipientEmail = GetRandomStringWithLengthOf(320);
+            updatedDelegatedAccess.IdentifierColumn = GetRandomStringWithLengthOf(10);
+            updatedDelegatedAccess.CreatedDate = inputDelegatedAccess.CreatedDate;
+            updatedDelegatedAccess.CreatedBy = inputDelegatedAccess.CreatedBy;
+            updatedDelegatedAccess.UpdatedDate = now;
 
-            filler.Setup()
-                .OnProperty(delegatedAccess => delegatedAccess.Id).Use(inputDelegatedAccess.Id)
-                .OnType<DateTimeOffset>().Use(GetRandomDateTime())
-
-                .OnProperty(delegatedAccess => delegatedAccess.RequesterEmail)
-                    .Use(() => GetRandomStringWithLengthOf(320))
-
-                .OnProperty(delegatedAccess => delegatedAccess.RecipientEmail)
-                    .Use(() => GetRandomStringWithLengthOf(320))
-
-                .OnProperty(delegatedAccess => delegatedAccess.IdentifierColumn)
-                    .Use(() => GetRandomStringWithLengthOf(10))
-
-                .OnProperty(delegatedAccess => delegatedAccess.CreatedDate).Use(inputDelegatedAccess.CreatedDate)
-                .OnProperty(delegatedAccess => delegatedAccess.CreatedBy).Use(inputDelegatedAccess.CreatedBy)
-                .OnProperty(delegatedAccess => delegatedAccess.UpdatedDate).Use(now);
-
-            return filler.Create();
+            return updatedDelegatedAccess;
         }
 
         private async ValueTask<DelegatedAccess> PostRandomDelegatedAccessAsync()
