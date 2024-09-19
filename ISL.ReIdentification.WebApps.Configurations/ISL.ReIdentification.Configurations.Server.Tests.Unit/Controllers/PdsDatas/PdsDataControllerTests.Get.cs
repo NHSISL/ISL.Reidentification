@@ -26,12 +26,12 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsD
             PdsData storagePdsData = randomPdsData;
             PdsData expectedPdsData = storagePdsData.DeepClone();
 
-            this.mockPdsDataService
+            mockPdsDataService
                 .Setup(service => service.RetrievePdsDataByIdAsync(inputId))
                 .ReturnsAsync(storagePdsData);
 
             // when
-            var result = await this.pdsDataController.GetPdsDataByIdAsync(inputId);
+            var result = await pdsDataController.GetPdsDataByIdAsync(inputId);
 
             // then
             var okResult = Assert.IsType<OkObjectResult>(result.Result);

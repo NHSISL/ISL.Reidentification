@@ -41,7 +41,6 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsD
         private static Filler<PdsData> CreatePdsDataFiller()
         {
             var filler = new Filler<PdsData>();
-
             filler.Setup();
 
             return filler;
