@@ -2,7 +2,6 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Foundations.PdsDatas;
@@ -24,7 +23,10 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         [HttpGet]
         public async ValueTask<ActionResult<IQueryable<PdsData>>> Get()
         {
-            throw new NotImplementedException();
+            IQueryable<PdsData> retrievedPdsDatas =
+                await this.pdsDataService.RetrieveAllPdsDataAsync();
+
+            return Ok(retrievedPdsDatas);
         }
     }
 }
