@@ -25,7 +25,6 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
-
         private static UserAccess CreateRandomUserAccess() =>
             CreateRandomUserAccessFiller().Create();
 
