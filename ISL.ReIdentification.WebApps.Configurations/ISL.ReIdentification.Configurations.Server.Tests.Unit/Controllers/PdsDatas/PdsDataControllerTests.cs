@@ -28,6 +28,9 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsD
         private static int GetRandomNumber() =>
             new IntRange(min: 2, max: 10).GetValue();
 
+        private static PdsData CreateRandomPdsData() =>
+            CreatePdsDataFiller().Create();
+
         private static IQueryable<PdsData> CreateRandomPdsDatas()
         {
             return CreatePdsDataFiller()
