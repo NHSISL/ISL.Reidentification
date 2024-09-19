@@ -54,5 +54,48 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.OdsDatas
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.odsStorageBroker.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowNotFoundExceptionOnRetrieveByIdIfOdsDataIsNotFoundAndLogItAsync()
+        {
+            //given
+            Guid randomOdsDataId = Guid.NewGuid();
+            OdsData noOdsData = null;
+
+            var notFoundOdsDataException =
+                new NotFoundOdsDataException(randomOdsDataId);
+
+            var expectedOdsDataValidationException =
+                new OdsDataValidationException(
+                    message: "OdsData validation error occurred, please fix errors and try again.",
+                    innerException: notFoundOdsDataException);
+
+            this.odsStorageBroker.Setup(broker =>
+                broker.SelectOdsDataByIdAsync(It.IsAny<Guid>()))
+                    .ReturnsAsync(noOdsData);
+
+            //when
+            ValueTask<OdsData> retrieveOdsDataByIdTask =
+                this.odsDataService.RetrieveOdsDataByIdAsync(randomOdsDataId);
+
+            OdsDataValidationException actualOdsDataValidationException =
+                await Assert.ThrowsAsync<OdsDataValidationException>(
+                    retrieveOdsDataByIdTask.AsTask);
+
+            //then
+            actualOdsDataValidationException.Should().BeEquivalentTo(expectedOdsDataValidationException);
+
+            this.odsStorageBroker.Verify(broker =>
+                broker.SelectOdsDataByIdAsync(It.IsAny<Guid>()),
+                    Times.Once());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedOdsDataValidationException))),
+                        Times.Once);
+
+            this.odsStorageBroker.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
