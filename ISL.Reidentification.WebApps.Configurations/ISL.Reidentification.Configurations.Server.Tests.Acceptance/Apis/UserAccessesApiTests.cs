@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Threading.Tasks;
 using ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Brokers;
 using ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Models.Lookups;
 using Tynamix.ObjectFiller;
@@ -35,6 +36,14 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
                 .OnProperty(lookup => lookup.UpdatedBy).Use(user);
 
             return filler;
+        }
+
+        private async ValueTask<UserAccess> PostRandomUserAccess()
+        {
+            UserAccess randomUserAccess = CreateRandomUserAccess();
+            await this.apiBroker.PostUserAccessAsync(randomUserAccess);
+
+            return randomUserAccess;
         }
     }
 }
