@@ -59,5 +59,27 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsD
             var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
             internalServerErrorResult.StatusCode.Should().Be(500);
         }
+
+        [Fact]
+        public async Task GetAllPdsDataAsyncShouldReturnInternalServerErrorWhenPdsDataServiceExceptionOccurs()
+        {
+            // given
+            var someXeption = new Xeption(message: GetRandomString());
+
+            var serviceException = new PdsDataServiceException(
+                message: GetRandomString(),
+                innerException: someXeption);
+
+            mockPdsDataService
+                .Setup(service => service.RetrieveAllPdsDataAsync())
+                .ThrowsAsync(serviceException);
+
+            // when
+            var result = await pdsDataController.Get();
+
+            // then
+            var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
+            internalServerErrorResult.StatusCode.Should().Be(500);
+        }
     }
 }
