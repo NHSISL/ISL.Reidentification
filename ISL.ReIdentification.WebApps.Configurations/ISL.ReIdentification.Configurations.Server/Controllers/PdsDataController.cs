@@ -35,6 +35,10 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             {
                 return InternalServerError(pdsDataDependencyException);
             }
+            catch (PdsDataServiceException pdsDataServiceException)
+            {
+                return InternalServerError(pdsDataServiceException);
+            }
         }
     }
 }
