@@ -61,6 +61,10 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             {
                 return BadRequest(pdsDataValidationException.InnerException);
             }
+            catch (PdsDataDependencyException pdsDataDependencyException)
+            {
+                return InternalServerError(pdsDataDependencyException);
+            }
         }
     }
 }
