@@ -15,7 +15,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.OdsDatas
     public partial class OdsDataServiceTests
     {
         [Fact]
-        public async Task ShouldThrowCriticalDependencyExceptionOnRetrieveByIdIfSqlErrorOccursAndLogItAsync()
+        public async Task ShouldThrowCriticalDependencyExceptionOnRetrieveOdsDataByIdByIdIfSqlErrorOccursAndLogItAsync()
         {
             // given
             Guid randomOdsDataId = Guid.NewGuid();
@@ -58,7 +58,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.OdsDatas
         }
 
         [Fact]
-        public async Task ShouldThrowServiceExceptionOnRetrieveByIdWhenServiceErrorOccursAndLogItAsync()
+        public async Task ShouldThrowServiceExceptionOnRetrieveOdsDataByIdWhenServiceErrorOccursAndLogItAsync()
         {
             // given
             Guid randomOdsDataId = Guid.NewGuid();
