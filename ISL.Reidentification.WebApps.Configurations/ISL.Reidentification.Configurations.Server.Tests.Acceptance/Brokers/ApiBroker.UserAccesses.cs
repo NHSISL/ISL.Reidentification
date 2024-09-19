@@ -23,7 +23,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Brokers
             await this.apiFactoryClient.GetContentAsync<UserAccess>($"{userAccessesRelativeUrl}/{userAccessId}");
 
         public async ValueTask<UserAccess> PutUserAccessAsync(UserAccess userAccess) =>
-            throw new NotImplementedException();
+            await this.apiFactoryClient.PutContentAsync(userAccessesRelativeUrl, userAccess);
 
         public async ValueTask<UserAccess> DeleteUserAccessByIdAsync(Guid userAccessId) =>
             await this.apiFactoryClient.DeleteContentAsync<UserAccess>($"{userAccessesRelativeUrl}/{userAccessId}");
