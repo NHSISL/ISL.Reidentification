@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Models.Lookups;
+using RESTFulSense.Exceptions;
 
 namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
 {
@@ -81,6 +82,26 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
             // then
             actualUserAccess.Should().BeEquivalentTo(updatedUserAccess);
             await this.apiBroker.DeleteUserAccessByIdAsync(actualUserAccess.Id);
+        }
+
+        [Fact]
+        public async Task ShouldDeleteUserAccessAsync()
+        {
+            // given
+            UserAccess randomUserAccess = await PostRandomUserAccess();
+            UserAccess expectedDeletedUserAccess = randomUserAccess;
+
+            // when
+            UserAccess actualUserAccess = await this.apiBroker.DeleteUserAccessByIdAsync(expectedDeletedUserAccess.Id);
+
+            ValueTask<UserAccess> getUserAccessTask =
+                this.apiBroker.GetUserAccessByIdAsync(expectedDeletedUserAccess.Id);
+
+            //then
+            actualUserAccess.Should().BeEquivalentTo(expectedDeletedUserAccess);
+
+            await Assert.ThrowsAsync<HttpResponseNotFoundException>(() =>
+                getUserAccessTask.AsTask());
         }
     }
 }
