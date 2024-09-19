@@ -15,6 +15,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.OdsDatas
     public partial class OdsDataService : IOdsDataService
     {
         private delegate ValueTask<IQueryable<OdsData>> ReturningOdsDatasFunction();
+        private delegate ValueTask<OdsData> ReturningOdsDataFunction();
 
         private async ValueTask<IQueryable<OdsData>> TryCatch(ReturningOdsDatasFunction returningOdsDatasFunction)
         {
@@ -28,7 +29,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.OdsDatas
                     message: "Failed ODS data storage error occurred, contact support.",
                     innerException: sqlException);
 
-                throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageOdsDataException);
+                throw CreateAndLogCriticalDependencyExceptionAsync(failedStorageOdsDataException);
             }
             catch (Exception exception)
             {
@@ -36,32 +37,55 @@ namespace ISL.ReIdentification.Core.Services.Foundations.OdsDatas
                     message: "Failed service ODS data error occurred, contact support.",
                     innerException: exception);
 
-                throw await CreateAndLogServiceExceptionAsync(failedServiceodsDataException);
+                throw CreateAndLogServiceExceptionAsync(failedServiceodsDataException);
             }
         }
 
-        private async ValueTask<OdsDataDependencyException> CreateAndLogCriticalDependencyExceptionAsync(
+        private async ValueTask<OdsData> TryCatch(ReturningOdsDataFunction returningOdsDataFunction)
+        {
+            try
+            {
+                return await returningOdsDataFunction();
+            }
+            catch (InvalidOdsDataException invalidOdsDataException)
+            {
+                throw CreateAndLogValidationException(invalidOdsDataException);
+            }
+        }
+
+        private OdsDataDependencyException CreateAndLogCriticalDependencyExceptionAsync(
             Xeption exception)
         {
             var odsDataDependencyException = new OdsDataDependencyException(
                 message: "OdsData dependency error occurred, contact support.",
                 innerException: exception);
 
-            await this.loggingBroker.LogCriticalAsync(odsDataDependencyException);
+            this.loggingBroker.LogCriticalAsync(odsDataDependencyException);
 
             return odsDataDependencyException;
         }
 
-        private async ValueTask<OdsDataServiceException> CreateAndLogServiceExceptionAsync(
+        private OdsDataServiceException CreateAndLogServiceExceptionAsync(
             FailedServiceOdsDataException failedServiceOdsDataException)
         {
             var odsDataServiceException = new OdsDataServiceException(
                 message: "Service error occurred, contact support.",
                 innerException: failedServiceOdsDataException);
 
-            await this.loggingBroker.LogErrorAsync(odsDataServiceException);
+            this.loggingBroker.LogErrorAsync(odsDataServiceException);
 
             return odsDataServiceException;
+        }
+
+        private OdsDataValidationException CreateAndLogValidationException(Xeption exception)
+        {
+            var odsDataValidationException = new OdsDataValidationException(
+                message: "OdsData validation error occurred, please fix errors and try again.",
+                innerException: exception);
+
+            this.loggingBroker.LogErrorAsync(odsDataValidationException);
+
+            return odsDataValidationException;
         }
     }
 }

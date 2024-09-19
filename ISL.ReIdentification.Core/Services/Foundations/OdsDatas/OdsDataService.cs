@@ -30,7 +30,12 @@ namespace ISL.ReIdentification.Core.Services.Foundations.OdsDatas
             return await this.odsStorageBroker.SelectAllOdsDatasAsync();
         });
 
-        public async ValueTask<OdsData> RetrieveOdsDataByIdAsync(Guid odsId) =>
-            await this.odsStorageBroker.SelectOdsDataByIdAsync(odsId);
+        public ValueTask<OdsData> RetrieveOdsDataByIdAsync(Guid odsId) =>
+        TryCatch(async () =>
+        {
+            await ValidateOdsDataId(odsId);
+
+            return await this.odsStorageBroker.SelectOdsDataByIdAsync(odsId);
+        });
     }
 }

@@ -24,7 +24,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.OdsDatas
 
             invalidOdsDataException.AddData(
                 key: nameof(OdsData.Id),
-                values: "Id is invalid.");
+                values: "Id is invalid");
 
             var expectedOdsDataValidationException = new OdsDataValidationException(
                 message: "OdsData validation error occurred, please fix errors and try again.",
