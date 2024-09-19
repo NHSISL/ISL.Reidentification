@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Brokers;
 using ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Models.DelegatedAccesses;
@@ -21,8 +22,29 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
         private static DelegatedAccess CreateRandomDelegatedAccess() =>
            CreateRandomDelegatedAccessFiller().Create();
 
+        private int GetRandomNumber() =>
+            new IntRange(min: 2, max: 10).GetValue();
+
+        private static DateTimeOffset GetRandomDateTime() =>
+            new DateTimeRange(earliestDate: new DateTime()).GetValue();
+
         private static string GetRandomStringWithLengthOf(int length) =>
             new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length).GetValue();
+
+        private static DelegatedAccess UpdateDelegatedAccessWithRandomValues(DelegatedAccess inputDelegatedAccess)
+        {
+            DateTimeOffset now = DateTimeOffset.UtcNow;
+            var filler = new Filler<DelegatedAccess>();
+
+            filler.Setup()
+                .OnProperty(delegatedAccess => delegatedAccess.Id).Use(inputDelegatedAccess.Id)
+                .OnType<DateTimeOffset>().Use(GetRandomDateTime())
+                .OnProperty(delegatedAccess => delegatedAccess.CreatedDate).Use(inputDelegatedAccess.CreatedDate)
+                .OnProperty(delegatedAccess => delegatedAccess.CreatedBy).Use(inputDelegatedAccess.CreatedBy)
+                .OnProperty(delegatedAccess => delegatedAccess.UpdatedDate).Use(now);
+
+            return filler.Create();
+        }
 
         private async ValueTask<DelegatedAccess> PostRandomDelegatedAccessAsync()
         {
@@ -30,6 +52,19 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
             await this.apiBroker.PostDelegatedAccessAsync(randomDelegatedAccess);
 
             return randomDelegatedAccess;
+        }
+
+        private async ValueTask<List<DelegatedAccess>> PostRandomDelegatedAccessesAsync()
+        {
+            int randomNumber = GetRandomNumber();
+            var randomDelegatedAccesss = new List<DelegatedAccess>();
+
+            for (int i = 0; i < randomNumber; i++)
+            {
+                randomDelegatedAccesss.Add(await PostRandomDelegatedAccessAsync());
+            }
+
+            return randomDelegatedAccesss;
         }
 
         private static Filler<DelegatedAccess> CreateRandomDelegatedAccessFiller()

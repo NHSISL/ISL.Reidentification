@@ -9,7 +9,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ReIdentifications
 {
     public interface IReIdentificationService
     {
-        ValueTask<IdentificationRequest> ProcessReidentificationRequests(
+        ValueTask<IdentificationRequest> ProcessReidentificationRequest(
             IdentificationRequest identificationRequests);
     }
 }

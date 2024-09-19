@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Models.DelegatedAccesses;
 
@@ -15,11 +16,18 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Brokers
         public async ValueTask<DelegatedAccess> PostDelegatedAccessAsync(DelegatedAccess delegatedAccess) =>
             await this.apiFactoryClient.PostContentAsync(DelegatedAccessesRelativeUrl, delegatedAccess);
 
+        public async ValueTask<List<DelegatedAccess>> GetAllDelegatedAccessesAsync() =>
+            await this.apiFactoryClient.GetContentAsync<List<DelegatedAccess>>($"{DelegatedAccessesRelativeUrl}/");
+
         public async ValueTask<DelegatedAccess> GetDelegatedAccessByIdAsync(Guid delegatedAccessId) =>
             await this.apiFactoryClient
                 .GetContentAsync<DelegatedAccess>($"{DelegatedAccessesRelativeUrl}/{delegatedAccessId}");
 
         public async ValueTask<DelegatedAccess> DeleteDelegatedAccessByIdAsync(Guid delegatedAccessId) =>
-            await this.apiFactoryClient.DeleteContentAsync<DelegatedAccess>($"{DelegatedAccessesRelativeUrl}/{delegatedAccessId}");
+            await this.apiFactoryClient
+                .DeleteContentAsync<DelegatedAccess>($"{DelegatedAccessesRelativeUrl}/{delegatedAccessId}");
+
+        public async ValueTask<DelegatedAccess> PutDelegatedAccessAsync(DelegatedAccess delegatedAccess) =>
+            await this.apiFactoryClient.PutContentAsync(DelegatedAccessesRelativeUrl, delegatedAccess);
     }
 }
