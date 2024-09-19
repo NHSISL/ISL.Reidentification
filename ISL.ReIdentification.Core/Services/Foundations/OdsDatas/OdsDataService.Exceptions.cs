@@ -10,9 +10,9 @@ using ISL.ReIdentification.Core.Models.Foundations.OdsDatas.Exceptions;
 using Microsoft.Data.SqlClient;
 using Xeptions;
 
-namespace ISL.ReIdentification.Core.Services.Foundations.Ods
+namespace ISL.ReIdentification.Core.Services.Foundations.OdsDatas
 {
-    public partial class OdsService : IOdsService
+    public partial class OdsDataService : IOdsDataService
     {
         private delegate ValueTask<IQueryable<OdsData>> ReturningOdsDatasFunction();
 

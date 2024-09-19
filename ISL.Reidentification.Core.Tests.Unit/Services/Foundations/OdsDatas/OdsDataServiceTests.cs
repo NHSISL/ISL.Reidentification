@@ -9,26 +9,26 @@ using System.Runtime.CompilerServices;
 using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.Ods;
 using ISL.ReIdentification.Core.Models.Foundations.OdsDatas;
-using ISL.ReIdentification.Core.Services.Foundations.Ods;
+using ISL.ReIdentification.Core.Services.Foundations.OdsDatas;
 using Microsoft.Data.SqlClient;
 using Moq;
 using Tynamix.ObjectFiller;
 using Xeptions;
 
-namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Ods
+namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.OdsDatas
 {
-    public partial class OdsTests
+    public partial class OdsDataServiceTests
     {
         private readonly Mock<IOdsStorageBroker> odsStorageBroker;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
-        private readonly IOdsService odsService;
+        private readonly IOdsDataService odsDataService;
 
-        public OdsTests()
+        public OdsDataServiceTests()
         {
             this.odsStorageBroker = new Mock<IOdsStorageBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
-            this.odsService = new OdsService(
+            this.odsDataService = new OdsDataService(
                 odsStorageBroker.Object,
                 loggingBrokerMock.Object);
         }

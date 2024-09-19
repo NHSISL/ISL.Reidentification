@@ -11,9 +11,9 @@ using ISL.ReIdentification.Core.Models.Foundations.OdsDatas.Exceptions;
 using Microsoft.Data.SqlClient;
 using Moq;
 
-namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Ods
+namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.OdsDatas
 {
-    public partial class OdsTests
+    public partial class OdsDataServiceTests
     {
         [Fact]
         public async Task ShouldThrowCriticalDependencyExceptionOnRetrieveAllIfSqlErrorOccursAndLogItAsync()
@@ -35,7 +35,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Ods
 
             // when
             ValueTask<IQueryable<OdsData>> retrieveAllOdsDatasTask =
-                this.odsService.RetrieveAllOdsDatasAsync();
+                this.odsDataService.RetrieveAllOdsDatasAsync();
 
             OdsDataDependencyException actualOdsDataDependencyException =
                 await Assert.ThrowsAsync<OdsDataDependencyException>(
@@ -77,7 +77,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Ods
 
             // when
             ValueTask<IQueryable<OdsData>> retrieveAllOdsDatasTask =
-                this.odsService.RetrieveAllOdsDatasAsync();
+                this.odsDataService.RetrieveAllOdsDatasAsync();
 
             OdsDataServiceException actualOdsDataDependencyException =
                 await Assert.ThrowsAsync<OdsDataServiceException>(
