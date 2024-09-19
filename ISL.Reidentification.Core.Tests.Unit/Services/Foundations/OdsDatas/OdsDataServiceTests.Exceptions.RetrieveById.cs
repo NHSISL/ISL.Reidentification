@@ -56,5 +56,48 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.OdsDatas
             this.odsStorageBroker.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnRetrieveByIdWhenServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            Guid randomOdsDataId = Guid.NewGuid();
+            Exception serviceException = new Exception();
+
+            var failedServiceOdsDataException = new FailedServiceOdsDataException(
+                message: "Failed service ODS data error occurred, contact support.",
+                innerException: serviceException);
+
+            var expectedOdsDataServiceException = new OdsDataServiceException(
+                message: "Service error occurred, contact support.",
+                innerException: failedServiceOdsDataException);
+
+            this.odsStorageBroker.Setup(broker =>
+                broker.SelectOdsDataByIdAsync(randomOdsDataId))
+                    .ThrowsAsync(serviceException);
+
+            // when
+            ValueTask<OdsData> retrieveByIdOdsDataTask =
+                this.odsDataService.RetrieveOdsDataByIdAsync(randomOdsDataId);
+
+            OdsDataServiceException actualOdsDataDependencyException =
+                await Assert.ThrowsAsync<OdsDataServiceException>(
+                    retrieveByIdOdsDataTask.AsTask);
+
+            // then
+            actualOdsDataDependencyException.Should().BeEquivalentTo(expectedOdsDataServiceException);
+
+            this.odsStorageBroker.Verify(broker =>
+                broker.SelectOdsDataByIdAsync(randomOdsDataId),
+                    Times.Once());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedOdsDataServiceException))),
+                        Times.Once());
+
+            this.odsStorageBroker.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
