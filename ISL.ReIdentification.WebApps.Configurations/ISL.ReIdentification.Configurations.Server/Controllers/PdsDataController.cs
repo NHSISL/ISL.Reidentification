@@ -45,10 +45,18 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         [HttpGet("{pdsDataId}")]
         public async ValueTask<ActionResult<PdsData>> GetPdsDataByIdAsync(Guid pdsDataId)
         {
-            PdsData retrievedPdsData =
+            try
+            {
+                PdsData retrievedPdsData =
                 await this.pdsDataService.RetrievePdsDataByIdAsync(pdsDataId);
 
-            return Ok(retrievedPdsData);
+                return Ok(retrievedPdsData);
+            }
+            catch (PdsDataValidationException pdsDataValidationException)
+                when (pdsDataValidationException.InnerException is NotFoundPdsDataException)
+            {
+                return NotFound(pdsDataValidationException.InnerException);
+            }
         }
     }
 }
