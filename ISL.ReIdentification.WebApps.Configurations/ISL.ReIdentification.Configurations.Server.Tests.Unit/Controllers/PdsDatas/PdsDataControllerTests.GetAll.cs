@@ -7,8 +7,11 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
 using ISL.ReIdentification.Core.Models.Foundations.PdsDatas;
+using ISL.ReIdentification.Core.Models.Foundations.PdsDatas.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using RESTFulSense.Models;
+using Xeptions;
 
 namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsDatas
 {
@@ -33,6 +36,28 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsD
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
             okResult.StatusCode.Should().Be(200);
             okResult.Value.Should().BeEquivalentTo(expectedPdsData);
+        }
+
+        [Fact]
+        public async Task GetAllPdsDataAsyncShouldReturnInternalServerErrorWhenPdsDataDependencyExceptionOccurs()
+        {
+            // given
+            var someXeption = new Xeption(message: GetRandomString());
+
+            var dependencyException = new PdsDataDependencyException(
+                message: GetRandomString(),
+                innerException: someXeption);
+
+            mockPdsDataService
+                .Setup(service => service.RetrieveAllPdsDataAsync())
+                .ThrowsAsync(dependencyException);
+
+            // when
+            var result = await pdsDataController.Get();
+
+            // then
+            var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
+            internalServerErrorResult.StatusCode.Should().Be(500);
         }
     }
 }
