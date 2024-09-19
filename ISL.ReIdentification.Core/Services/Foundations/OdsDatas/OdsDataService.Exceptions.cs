@@ -51,6 +51,10 @@ namespace ISL.ReIdentification.Core.Services.Foundations.OdsDatas
             {
                 throw CreateAndLogValidationException(invalidOdsDataException);
             }
+            catch (NotFoundOdsDataException notFoundOdsDataException)
+            {
+                throw CreateAndLogValidationException(notFoundOdsDataException);
+            }
         }
 
         private OdsDataDependencyException CreateAndLogCriticalDependencyExceptionAsync(

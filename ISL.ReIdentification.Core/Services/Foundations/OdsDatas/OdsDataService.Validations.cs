@@ -19,6 +19,15 @@ namespace ISL.ReIdentification.Core.Services.Foundations.OdsDatas
             Condition = id == Guid.Empty,
             Message = "Id is invalid"
         };
+
+        private async static ValueTask ValidateStorageOdsData(OdsData maybeOdsData, Guid odsDataId)
+        {
+            if (maybeOdsData is null)
+            {
+                throw new NotFoundOdsDataException(odsDataId);
+            }
+        }
+
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
             var invalidOdsDataException =
