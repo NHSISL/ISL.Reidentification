@@ -9,6 +9,7 @@ using ISL.ReIdentification.Core.Brokers.Storages.Sql.Ods;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
 using ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses;
 using ISL.ReIdentification.Core.Services.Foundations.Lookups;
+using ISL.ReIdentification.Core.Services.Foundations.Ods;
 using ISL.ReIdentification.Core.Services.Foundations.UserAccesses;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -91,6 +92,7 @@ namespace ISL.ReIdentification.Configurations.Server
             services.AddTransient<IDelegatedAccessService, DelegatedAccessService>();
             services.AddTransient<ILookupService, LookupService>();
             services.AddTransient<IUserAccessService, UserAccessService>();
+            services.AddTransient<IOdsService, OdsService>();
         }
 
         private static void AddProcessingServices(IServiceCollection services)
