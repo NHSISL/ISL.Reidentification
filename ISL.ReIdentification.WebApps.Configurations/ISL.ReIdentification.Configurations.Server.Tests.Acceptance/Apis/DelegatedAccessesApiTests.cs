@@ -36,9 +36,6 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
             DateTimeOffset now = DateTimeOffset.UtcNow;
             var updatedDelegatedAccess = CreateRandomDelegatedAccess();
             updatedDelegatedAccess.Id = inputDelegatedAccess.Id;
-            updatedDelegatedAccess.RequesterEmail = GetRandomStringWithLengthOf(320);
-            updatedDelegatedAccess.RecipientEmail = GetRandomStringWithLengthOf(320);
-            updatedDelegatedAccess.IdentifierColumn = GetRandomStringWithLengthOf(10);
             updatedDelegatedAccess.CreatedDate = inputDelegatedAccess.CreatedDate;
             updatedDelegatedAccess.CreatedBy = inputDelegatedAccess.CreatedBy;
             updatedDelegatedAccess.UpdatedDate = now;
