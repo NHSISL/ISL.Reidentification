@@ -2,10 +2,12 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Force.DeepCloner;
 using ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Models.DelegatedAccesses;
 using RESTFulSense.Exceptions;
 
@@ -73,7 +75,11 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
         {
             // given
             DelegatedAccess randomDelegatedAccess = await PostRandomDelegatedAccessAsync();
-            DelegatedAccess modifiedDelegatedAccess = UpdateDelegatedAccessWithRandomValues(randomDelegatedAccess);
+            DelegatedAccess modifiedDelegatedAccess = randomDelegatedAccess.DeepClone();
+            modifiedDelegatedAccess.RequesterEmail = GetRandomStringWithLengthOf(320);
+            modifiedDelegatedAccess.RecipientEmail = GetRandomStringWithLengthOf(320);
+            modifiedDelegatedAccess.IdentifierColumn = GetRandomStringWithLengthOf(10);
+            modifiedDelegatedAccess.UpdatedDate = DateTimeOffset.UtcNow;
 
             // when
             await this.apiBroker.PutDelegatedAccessAsync(modifiedDelegatedAccess);
