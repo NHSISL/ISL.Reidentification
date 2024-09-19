@@ -35,6 +35,9 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.OdsD
         private static int GetRandomNumber() =>
             new IntRange(max: 15, min: 2).GetValue();
 
+        private static string GetRandomString() =>
+            new MnemonicString(wordCount: GetRandomNumber()).GetValue();
+
         private static Filler<OdsData> CreateOdsDataFiller() =>
             new Filler<OdsData>();
     }
