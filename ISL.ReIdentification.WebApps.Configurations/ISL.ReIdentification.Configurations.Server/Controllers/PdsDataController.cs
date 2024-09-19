@@ -22,7 +22,7 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             this.pdsDataService = pdsDataService;
 
         [HttpGet]
-        public async ValueTask<ActionResult<IQueryable<PdsData>>> Get()
+        public async ValueTask<ActionResult<IQueryable<PdsData>>> GetAsync()
         {
             try
             {

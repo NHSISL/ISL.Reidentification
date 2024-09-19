@@ -30,7 +30,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsD
                 .ReturnsAsync(storagePdsData);
 
             // when
-            var result = await this.pdsDataController.Get();
+            var result = await this.pdsDataController.GetAsync();
 
             // then
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -53,7 +53,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsD
                 .ThrowsAsync(dependencyException);
 
             // when
-            var result = await pdsDataController.Get();
+            var result = await pdsDataController.GetAsync();
 
             // then
             var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
@@ -75,7 +75,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsD
                 .ThrowsAsync(serviceException);
 
             // when
-            var result = await pdsDataController.Get();
+            var result = await pdsDataController.GetAsync();
 
             // then
             var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
