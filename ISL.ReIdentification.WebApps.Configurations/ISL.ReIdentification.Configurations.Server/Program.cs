@@ -91,8 +91,8 @@ namespace ISL.ReIdentification.Configurations.Server
         {
             services.AddTransient<IDelegatedAccessService, DelegatedAccessService>();
             services.AddTransient<ILookupService, LookupService>();
-            services.AddTransient<IUserAccessService, UserAccessService>();
             services.AddTransient<IOdsDataService, OdsDataService>();
+            services.AddTransient<IUserAccessService, UserAccessService>();
         }
 
         private static void AddProcessingServices(IServiceCollection services)
