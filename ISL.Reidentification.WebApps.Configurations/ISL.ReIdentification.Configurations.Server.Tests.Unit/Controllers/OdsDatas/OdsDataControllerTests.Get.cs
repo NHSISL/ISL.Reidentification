@@ -10,6 +10,7 @@ using ISL.ReIdentification.Core.Models.Foundations.OdsDatas;
 using ISL.ReIdentification.Core.Models.Foundations.OdsDatas.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Xeptions;
 
 namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.OdsDatas
 {
@@ -59,6 +60,30 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.OdsD
             // then
             var notFoundObjectResult = Assert.IsType<NotFoundObjectResult>(result.Result);
             notFoundObjectResult.StatusCode.Should().Be(404);
+        }
+
+        [Fact]
+        public async Task GetOdsDataByIdAsyncShouldReturnBadRequestWhenOdsDataValidationExceptionOccurs()
+        {
+            // given
+            Guid randomId = Guid.NewGuid();
+            Guid inputOdsDataId = randomId;
+            Xeption randomXeption = new Xeption(message: GetRandomString());
+
+            var odsDataValidationException = new OdsDataValidationException(
+                message: GetRandomString(),
+                innerException: randomXeption);
+
+            this.odsDataServiceMock.Setup(service =>
+                service.RetrieveOdsDataByIdAsync(inputOdsDataId))
+                    .ThrowsAsync(odsDataValidationException);
+
+            // when
+            var result = await this.odsDataController.GetOdsDataByIdAsync(inputOdsDataId);
+
+            // then
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+            badRequestResult.StatusCode.Should().Be(400);
         }
     }
 }
