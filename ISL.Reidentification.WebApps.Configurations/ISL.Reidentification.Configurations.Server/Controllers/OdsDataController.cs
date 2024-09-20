@@ -44,9 +44,18 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         [HttpGet("{odsDataId}")]
         public async ValueTask<ActionResult<OdsData>> GetOdsDataByIdAsync(Guid odsDataId)
         {
-            OdsData odsData = await this.odsDataService.RetrieveOdsDataByIdAsync(odsDataId);
+            try
+            {
+                OdsData odsData = await this.odsDataService.RetrieveOdsDataByIdAsync(odsDataId);
 
-            return Ok(odsData);
+                return Ok(odsData);
+            }
+            catch (OdsDataValidationException odsDataValidationException)
+                when (odsDataValidationException.InnerException is NotFoundOdsDataException)
+            {
+                return NotFound(odsDataValidationException.InnerException);
+            }
+
         }
     }
 }
