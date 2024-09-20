@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Foundations.OdsDatas;
@@ -38,6 +39,12 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             {
                 return InternalServerError(odsDataServiceException);
             }
+        }
+
+        [HttpGet("{odsDataId}")]
+        public async ValueTask<ActionResult<OdsData>> GetOdsDataByIdAsync(Guid odsDataId)
+        {
+            throw new NotImplementedException();
         }
     }
 }
