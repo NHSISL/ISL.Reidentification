@@ -44,7 +44,9 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         [HttpGet("{odsDataId}")]
         public async ValueTask<ActionResult<OdsData>> GetOdsDataByIdAsync(Guid odsDataId)
         {
-            throw new NotImplementedException();
+            OdsData odsData = await this.odsDataService.RetrieveOdsDataByIdAsync(odsDataId);
+
+            return Ok(odsData);
         }
     }
 }
