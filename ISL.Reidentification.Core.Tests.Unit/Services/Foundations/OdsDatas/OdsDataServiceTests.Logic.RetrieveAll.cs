@@ -9,9 +9,9 @@ using Force.DeepCloner;
 using ISL.ReIdentification.Core.Models.Foundations.OdsDatas;
 using Moq;
 
-namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Ods
+namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.OdsDatas
 {
-    public partial class OdsTests
+    public partial class OdsDataServiceTests
     {
         [Fact]
         public async Task ShouldRetrieveAllOdsDatasAsync()
@@ -26,7 +26,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Ods
                     .ReturnsAsync(storageOdsDatas);
 
             // when
-            IQueryable<OdsData> actualOdsDatas = await this.odsService.RetrieveAllOdsDatasAsync();
+            IQueryable<OdsData> actualOdsDatas = await this.odsDataService.RetrieveAllOdsDatasAsync();
 
             // then
             actualOdsDatas.Should().BeEquivalentTo(expectedOdsDatas);
