@@ -26,10 +26,4 @@
 		<ProjectReference Include="..\ISL.ReIdentification.Configurations.Client\ISL.ReIdentification.Configurations.Client.esproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<InternalsVisibleTo Include="ISL.ReIdentification.Configurations.Server.Tests.Unit" />
-		<InternalsVisibleTo Include="ISL.ReIdentification.Configurations.Server.Tests.Acceptance" />
-		<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
-	</ItemGroup>
-
 </Project>
