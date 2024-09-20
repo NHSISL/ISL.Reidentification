@@ -5,7 +5,7 @@
 using System.Linq;
 using ISL.ReIdentification.Configurations.Server.Controllers;
 using ISL.ReIdentification.Core.Models.Foundations.OdsDatas;
-using ISL.ReIdentification.Core.Services.Foundations.Ods;
+using ISL.ReIdentification.Core.Services.Foundations.OdsDatas;
 using Moq;
 using Tynamix.ObjectFiller;
 
@@ -13,13 +13,13 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.OdsD
 {
     public partial class OdsDataControllerTests
     {
-        private readonly Mock<IOdsService> odsServiceMock;
+        private readonly Mock<IOdsDataService> odsDataServiceMock;
         private readonly OdsDataController odsDataController;
 
         public OdsDataControllerTests()
         {
-            this.odsServiceMock = new Mock<IOdsService>();
-            this.odsDataController = new OdsDataController(this.odsServiceMock.Object);
+            this.odsDataServiceMock = new Mock<IOdsDataService>();
+            this.odsDataController = new OdsDataController(this.odsDataServiceMock.Object);
         }
 
         private static OdsData CreateRandomOdsData() =>

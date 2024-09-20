@@ -25,7 +25,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.OdsD
             IQueryable<OdsData> storageOdsDatas = randomOdsDatas.DeepClone();
             IQueryable<OdsData> expectedOdsDatas = storageOdsDatas.DeepClone();
 
-            this.odsServiceMock.Setup(service =>
+            this.odsDataServiceMock.Setup(service =>
                 service.RetrieveAllOdsDatasAsync())
                     .ReturnsAsync(storageOdsDatas);
 
@@ -48,7 +48,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.OdsD
                 message: GetRandomString(),
                 innerException: randomException);
 
-            this.odsServiceMock.Setup(service =>
+            this.odsDataServiceMock.Setup(service =>
                 service.RetrieveAllOdsDatasAsync())
                     .ThrowsAsync(dependencyException);
 
@@ -70,7 +70,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.OdsD
                 message: GetRandomString(),
                 innerException: randomException);
 
-            this.odsServiceMock.Setup(service =>
+            this.odsDataServiceMock.Setup(service =>
                 service.RetrieveAllOdsDatasAsync())
                     .ThrowsAsync(serviceException);
 
