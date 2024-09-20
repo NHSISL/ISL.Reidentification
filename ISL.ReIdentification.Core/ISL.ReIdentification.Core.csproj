@@ -35,8 +35,6 @@
 		<InternalsVisibleTo Include="ISL.ReIdentification.Api.Tests.Acceptance" />
 		<InternalsVisibleTo Include="ISL.ReIdentification.Clients" />
 		<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
-		<InternalsVisibleTo Include="ISL.ReIdentification.Configurations.Server.Tests.Unit" />
-		<InternalsVisibleTo Include="ISL.ReIdentification.Configurations.Server.Tests.Acceptance" />
 	</ItemGroup>
 
 </Project>
