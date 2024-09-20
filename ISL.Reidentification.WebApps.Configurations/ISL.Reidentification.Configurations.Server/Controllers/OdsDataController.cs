@@ -63,6 +63,10 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             {
                 return InternalServerError(odsDataDependencyException.InnerException);
             }
+            catch (OdsDataServiceException odsDataServiceException)
+            {
+                return InternalServerError(odsDataServiceException);
+            }
         }
     }
 }
