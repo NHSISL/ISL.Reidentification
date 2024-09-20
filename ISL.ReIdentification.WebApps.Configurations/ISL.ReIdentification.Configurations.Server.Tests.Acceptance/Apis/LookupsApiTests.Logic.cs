@@ -1,12 +1,15 @@
+// ---------------------------------------------------------
+// Copyright (c) North East London ICB. All rights reserved.
+// ---------------------------------------------------------
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using RESTFulSense.Exceptions;
 using ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Models.Lookups;
-using Xunit;
+using RESTFulSense.Exceptions;
 
-namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis.Lookups
+namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
 {
     public partial class LookupsApiTests
     {

@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Foundations.OdsDatas;
@@ -33,6 +34,34 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             catch (OdsDataDependencyException odsDataDependencyException)
             {
                 return InternalServerError(odsDataDependencyException);
+            }
+            catch (OdsDataServiceException odsDataServiceException)
+            {
+                return InternalServerError(odsDataServiceException);
+            }
+        }
+
+        [HttpGet("{odsDataId}")]
+        public async ValueTask<ActionResult<OdsData>> GetOdsDataByIdAsync(Guid odsDataId)
+        {
+            try
+            {
+                OdsData odsData = await this.odsDataService.RetrieveOdsDataByIdAsync(odsDataId);
+
+                return Ok(odsData);
+            }
+            catch (OdsDataValidationException odsDataValidationException)
+                when (odsDataValidationException.InnerException is NotFoundOdsDataException)
+            {
+                return NotFound(odsDataValidationException.InnerException);
+            }
+            catch (OdsDataValidationException odsDataValidationException)
+            {
+                return BadRequest(odsDataValidationException.InnerException);
+            }
+            catch (OdsDataDependencyException odsDataDependencyException)
+            {
+                return InternalServerError(odsDataDependencyException.InnerException);
             }
             catch (OdsDataServiceException odsDataServiceException)
             {
