@@ -5,7 +5,7 @@
 using System.Threading.Tasks;
 using FluentAssertions;
 
-namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis.Home
+namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
 {
     public partial class FeaturesApiTests
     {
