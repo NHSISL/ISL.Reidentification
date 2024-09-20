@@ -55,7 +55,10 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             {
                 return NotFound(odsDataValidationException.InnerException);
             }
-
+            catch (OdsDataValidationException odsDataValidationException)
+            {
+                return BadRequest(odsDataValidationException.InnerException);
+            }
         }
     }
 }
