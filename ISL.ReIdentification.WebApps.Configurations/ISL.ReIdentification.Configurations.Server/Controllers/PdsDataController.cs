@@ -27,8 +27,7 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         {
             try
             {
-                IQueryable<PdsData> retrievedPdsDatas =
-                await this.pdsDataService.RetrieveAllPdsDataAsync();
+                IQueryable<PdsData> retrievedPdsDatas = await this.pdsDataService.RetrieveAllPdsDataAsync();
 
                 return Ok(retrievedPdsDatas);
             }
@@ -47,8 +46,7 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         {
             try
             {
-                PdsData retrievedPdsData =
-                await this.pdsDataService.RetrievePdsDataByIdAsync(pdsDataId);
+                PdsData retrievedPdsData = await this.pdsDataService.RetrievePdsDataByIdAsync(pdsDataId);
 
                 return Ok(retrievedPdsData);
             }
