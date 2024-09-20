@@ -17,6 +17,6 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Brokers
             await this.apiFactoryClient.GetContentAsync<List<OdsData>>($"{odsDataRelativeUrl}");
 
         public async ValueTask<OdsData> GetOdsDataByIdAsync(Guid odsDataId) =>
-            throw new NotImplementedException();
+            await this.apiFactoryClient.GetContentAsync<OdsData>($"{odsDataRelativeUrl}/{odsDataId}");
     }
 }
