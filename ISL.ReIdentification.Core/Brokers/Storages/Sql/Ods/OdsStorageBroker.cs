@@ -33,7 +33,7 @@ namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.Ods
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         { }
 
-        internal virtual async ValueTask<T> InsertAsync<T>(T @object)
+        private async ValueTask<T> InsertAsync<T>(T @object)
         {
             Entry(@object).State = EntityState.Added;
             await SaveChangesAsync();
@@ -42,12 +42,12 @@ namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.Ods
             return @object;
         }
 
-        internal virtual async ValueTask<IQueryable<T>> SelectAllAsync<T>() where T : class => Set<T>();
+        private async ValueTask<IQueryable<T>> SelectAllAsync<T>() where T : class => Set<T>();
 
-        internal virtual async ValueTask<T> SelectAsync<T>(params object[] @objectIds) where T : class =>
+        private async ValueTask<T> SelectAsync<T>(params object[] @objectIds) where T : class =>
             await FindAsync<T>(@objectIds);
 
-        internal virtual async ValueTask<T> UpdateAsync<T>(T @object)
+        private async ValueTask<T> UpdateAsync<T>(T @object)
         {
             Entry(@object).State = EntityState.Modified;
             await SaveChangesAsync();
@@ -56,7 +56,7 @@ namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.Ods
             return @object;
         }
 
-        internal virtual async ValueTask<T> DeleteAsync<T>(T @object)
+        private async ValueTask<T> DeleteAsync<T>(T @object)
         {
             Entry(@object).State = EntityState.Deleted;
             await SaveChangesAsync();
