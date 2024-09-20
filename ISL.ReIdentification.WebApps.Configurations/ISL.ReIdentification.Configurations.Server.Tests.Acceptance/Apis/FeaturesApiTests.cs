@@ -4,7 +4,7 @@
 
 using ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Brokers;
 
-namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis.Home
+namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
 {
     [Collection(nameof(ApiTestCollection))]
     public partial class FeaturesApiTests
