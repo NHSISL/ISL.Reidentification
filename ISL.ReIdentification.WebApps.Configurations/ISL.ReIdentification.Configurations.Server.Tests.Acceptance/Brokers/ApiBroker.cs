@@ -3,7 +3,9 @@
 // ---------------------------------------------------------
 
 using System.Net.Http;
+using ISL.ReIdentification.Core.Brokers.Storages.Sql.Ods;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
 using RESTFulSense.Clients;
 
 namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Brokers
@@ -13,12 +15,14 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Brokers
         private readonly WebApplicationFactory<Program> webApplicationFactory;
         private readonly HttpClient httpClient;
         private readonly IRESTFulApiFactoryClient apiFactoryClient;
+        private readonly IOdsStorageBroker odsStorageBrokerMock;
 
         public ApiBroker()
         {
-            this.webApplicationFactory = new WebApplicationFactory<Program>();
+            this.webApplicationFactory = new AcceptanceTestApplicationFactory<Program>();
             this.httpClient = this.webApplicationFactory.CreateClient();
             this.apiFactoryClient = new RESTFulApiFactoryClient(this.httpClient);
+            this.odsStorageBrokerMock = this.webApplicationFactory.Services.GetService<IOdsStorageBroker>();
         }
     }
 }
