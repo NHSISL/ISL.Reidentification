@@ -10,6 +10,7 @@ using ISL.ReIdentification.Core.Models.Foundations.OdsDatas;
 using ISL.ReIdentification.Core.Models.Foundations.OdsDatas.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using RESTFulSense.Models;
 using Xeptions;
 
 namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.OdsDatas
@@ -84,6 +85,30 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.OdsD
             // then
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
             badRequestResult.StatusCode.Should().Be(400);
+        }
+
+        [Fact]
+        public async Task GetOdsDataByIdAsyncShouldReturnInternalServerErrorWhenOdsDataDependencyExceptionOccurs()
+        {
+            // given
+            Guid randomId = Guid.NewGuid();
+            Guid inputOdsDataId = randomId;
+            Xeption randomXeption = new Xeption(message: GetRandomString());
+
+            var odsDataDependencyException = new OdsDataDependencyException(
+                message: GetRandomString(),
+                innerException: randomXeption);
+
+            this.odsDataServiceMock.Setup(service =>
+                service.RetrieveOdsDataByIdAsync(inputOdsDataId))
+                    .ThrowsAsync(odsDataDependencyException);
+
+            // when
+            var result = await this.odsDataController.GetOdsDataByIdAsync(inputOdsDataId);
+
+            // then
+            var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
+            internalServerErrorResult.StatusCode.Should().Be(500);
         }
     }
 }
