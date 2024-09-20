@@ -110,5 +110,29 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.OdsD
             var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
             internalServerErrorResult.StatusCode.Should().Be(500);
         }
+
+        [Fact]
+        public async Task GetOdsDataByIdAsyncShouldReturnInternalServerErrorWhenOdsDataServiceExceptionOccurs()
+        {
+            // given
+            Guid randomId = Guid.NewGuid();
+            Guid inputOdsDataId = randomId;
+            Xeption randomXeption = new Xeption(message: GetRandomString());
+
+            var odsDataServiceException = new OdsDataServiceException(
+                message: GetRandomString(),
+                innerException: randomXeption);
+
+            this.odsDataServiceMock.Setup(service =>
+                service.RetrieveOdsDataByIdAsync(inputOdsDataId))
+                    .ThrowsAsync(odsDataServiceException);
+
+            // when
+            var result = await this.odsDataController.GetOdsDataByIdAsync(inputOdsDataId);
+
+            // then
+            var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
+            internalServerErrorResult.StatusCode.Should().Be(500);
+        }
     }
 }
