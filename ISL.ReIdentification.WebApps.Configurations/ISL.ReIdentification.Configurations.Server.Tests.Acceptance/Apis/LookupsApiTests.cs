@@ -9,7 +9,7 @@ using ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Brokers;
 using ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Models.Lookups;
 using Tynamix.ObjectFiller;
 
-namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis.Lookups
+namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
 {
     [Collection(nameof(ApiTestCollection))]
     public partial class LookupsApiTests
