@@ -23,20 +23,26 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
             // given
             DelegatedAccess randomDelegatedAccess = CreateRandomDelegatedAccess();
             Guid inputId = randomDelegatedAccess.Id;
-            DelegatedAccess storageDelegatedAcccess = randomDelegatedAccess;
-            DelegatedAccess expectedDelegatedAccess = storageDelegatedAcccess.DeepClone();
+            DelegatedAccess storageDelegatedAccess = randomDelegatedAccess;
+            DelegatedAccess expectedDelegatedAccess = storageDelegatedAccess.DeepClone();
 
-            mockDelegatedAccessService.Setup(service =>
-                service.RemoveDelegatedAccessByIdAsync(inputId))
-                .ReturnsAsync(storageDelegatedAcccess);
+            delegatedAccessServiceMock
+            .Setup(service => service.RemoveDelegatedAccessByIdAsync(inputId))
+                    .ReturnsAsync(storageDelegatedAccess);
 
             // when
-            var result = await this.delegatedAccessesController.DeleteDelegatedAccessByIdAsync(inputId);
+            var result = await delegatedAccessesController.DeleteDelegatedAccessByIdAsync(inputId);
 
             // then
             var actualResult = Assert.IsType<OkObjectResult>(result.Result);
             actualResult.StatusCode.Should().Be(200);
             actualResult.Value.Should().BeEquivalentTo(expectedDelegatedAccess);
+
+            delegatedAccessServiceMock
+                .Verify(service => service.RemoveDelegatedAccessByIdAsync(inputId),
+                    Times.Once);
+
+            delegatedAccessServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -44,24 +50,30 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
             DeleteDelegatedAccessByIdsAsyncShouldReturnNotFoundWhenDelegatedAccessValidationExceptionOccurs()
         {
             // given
-            Guid randomId = Guid.NewGuid();
-            Guid inputId = randomId;
-            var notFoundDelegatedAccessException = new NotFoundDelegatedAccessException(message: inputId.ToString());
+            Guid someId = Guid.NewGuid();
+            var notFoundDelegatedAccessException = new NotFoundDelegatedAccessException(
+                message: $"Couldn't find PDS data with Id: {someId}.");
 
-            var delegatedAccessValidationException = new DelegatedAccessValidationException(
+            var lookupValidationException = new DelegatedAccessValidationException(
                 message: GetRandomString(),
                 innerException: notFoundDelegatedAccessException);
 
-            mockDelegatedAccessService
-                .Setup(service => service.RemoveDelegatedAccessByIdAsync(inputId))
-                .ThrowsAsync(delegatedAccessValidationException);
+            delegatedAccessServiceMock
+                .Setup(service => service.RemoveDelegatedAccessByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(lookupValidationException);
 
             // when
-            var result = await delegatedAccessesController.DeleteDelegatedAccessByIdAsync(inputId);
+            var result = await delegatedAccessesController.DeleteDelegatedAccessByIdAsync(someId);
 
             // then
             var notFoundObjectResult = Assert.IsType<NotFoundObjectResult>(result.Result);
             notFoundObjectResult.StatusCode.Should().Be(404);
+
+            delegatedAccessServiceMock
+                .Verify(service => service.RemoveDelegatedAccessByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            delegatedAccessServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -73,13 +85,13 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
             Guid inputId = randomId;
             Xeption someXeption = new Xeption(message: GetRandomString());
 
-            var delegatedAccessValidationException = new DelegatedAccessValidationException(
+            var lookupValidationException = new DelegatedAccessValidationException(
                 message: GetRandomString(),
                 innerException: someXeption);
 
-            mockDelegatedAccessService
-            .Setup(service => service.RemoveDelegatedAccessByIdAsync(inputId))
-                .ThrowsAsync(delegatedAccessValidationException);
+            delegatedAccessServiceMock
+                .Setup(service => service.RemoveDelegatedAccessByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(lookupValidationException);
 
             // when
             var result = await delegatedAccessesController.DeleteDelegatedAccessByIdAsync(inputId);
@@ -87,6 +99,12 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
             // then
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
             badRequestResult.StatusCode.Should().Be(400);
+
+            delegatedAccessServiceMock
+                .Verify(service => service.RemoveDelegatedAccessByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            delegatedAccessServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -101,13 +119,13 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
             var lockedDelegatedAccessException =
                 new LockedDelegatedAccessException(message: GetRandomString(), innerException: someXeption);
 
-            var delegatedAccessDependencyValidationException = new DelegatedAccessDependencyValidationException(
+            var lookupDependencyValidationException = new DelegatedAccessDependencyValidationException(
                 message: GetRandomString(),
                 innerException: lockedDelegatedAccessException);
 
-            mockDelegatedAccessService
-            .Setup(service => service.RemoveDelegatedAccessByIdAsync(inputId))
-                .ThrowsAsync(delegatedAccessDependencyValidationException);
+            delegatedAccessServiceMock
+                .Setup(service => service.RemoveDelegatedAccessByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(lookupDependencyValidationException);
 
             // when
             var result = await delegatedAccessesController.DeleteDelegatedAccessByIdAsync(inputId);
@@ -115,6 +133,12 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
             // then
             var lockedObjectResult = Assert.IsType<LockedObjectResult>(result.Result);
             lockedObjectResult.StatusCode.Should().Be(423);
+
+            delegatedAccessServiceMock
+                .Verify(service => service.RemoveDelegatedAccessByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            delegatedAccessServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -130,9 +154,9 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
                 message: GetRandomString(),
                 innerException: someXeption);
 
-            mockDelegatedAccessService
-                .Setup(service => service.RemoveDelegatedAccessByIdAsync(inputId))
-                .ThrowsAsync(dependencyValidationException);
+            delegatedAccessServiceMock
+                .Setup(service => service.RemoveDelegatedAccessByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(dependencyValidationException);
 
             // when
             var result = await delegatedAccessesController.DeleteDelegatedAccessByIdAsync(inputId);
@@ -140,6 +164,12 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
             // then
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
             badRequestResult.StatusCode.Should().Be(400);
+
+            delegatedAccessServiceMock
+                .Verify(service => service.RemoveDelegatedAccessByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            delegatedAccessServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -155,9 +185,9 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
                 message: GetRandomString(),
                 innerException: someXeption);
 
-            mockDelegatedAccessService
-            .Setup(service => service.RemoveDelegatedAccessByIdAsync(inputId))
-                .ThrowsAsync(dependencyException);
+            delegatedAccessServiceMock
+                .Setup(service => service.RemoveDelegatedAccessByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(dependencyException);
 
             // when
             var result = await delegatedAccessesController.DeleteDelegatedAccessByIdAsync(inputId);
@@ -165,6 +195,12 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
             // then
             var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
             internalServerErrorResult.StatusCode.Should().Be(500);
+
+            delegatedAccessServiceMock
+                .Verify(service => service.RemoveDelegatedAccessByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            delegatedAccessServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -176,13 +212,13 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
             Guid inputId = randomId;
             var someXeption = new Xeption(message: GetRandomString());
 
-            var delegatedAccessServiceException = new DelegatedAccessServiceException(
+            var lookupServiceException = new DelegatedAccessServiceException(
                 message: "Service error occurred, contact support.",
                 innerException: someXeption);
 
-            mockDelegatedAccessService
-                .Setup(service => service.RemoveDelegatedAccessByIdAsync(inputId))
-                .ThrowsAsync(delegatedAccessServiceException);
+            delegatedAccessServiceMock
+                .Setup(service => service.RemoveDelegatedAccessByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(lookupServiceException);
 
             // when
             var result = await delegatedAccessesController.DeleteDelegatedAccessByIdAsync(inputId);
@@ -190,6 +226,12 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
             // then
             var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
             internalServerErrorResult.StatusCode.Should().Be(500);
+
+            delegatedAccessServiceMock
+                .Verify(service => service.RemoveDelegatedAccessByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            delegatedAccessServiceMock.VerifyNoOtherCalls();
         }
     }
 }

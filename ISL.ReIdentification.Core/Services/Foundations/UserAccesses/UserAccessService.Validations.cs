@@ -101,7 +101,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
         {
             if (maybeUserAccess is null)
             {
-                throw new NotFoundUserAccessException($"User access not found with id: {maybeId}");
+                throw new NotFoundUserAccessException($"User access not found with Id: {maybeId}");
             }
         }
 

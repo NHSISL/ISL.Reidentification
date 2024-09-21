@@ -18,28 +18,33 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsD
     public partial class PdsDataControllerTests
     {
         [Fact]
-        public async Task GetAllPdsDataAsyncShouldReturnItems()
+        public async Task GetAllPdsDatasAsyncShouldReturnItems()
         {
             // given
-            IQueryable<PdsData> randomPdsData = CreateRandomPdsDatas();
-            IQueryable<PdsData> storagePdsData = randomPdsData.DeepClone();
-            IQueryable<PdsData> expectedPdsData = storagePdsData.DeepClone();
-
-            this.mockPdsDataService
-                .Setup(service => service.RetrieveAllPdsDataAsync())
-                .ReturnsAsync(storagePdsData);
+            IQueryable<PdsData> randomPdsDatas = CreateRandomPdsDatas();
+            IQueryable<PdsData> storagePdsDatas = randomPdsDatas.DeepClone();
+            IQueryable<PdsData> expectedPdsData = storagePdsDatas.DeepClone();
+            pdsDataServiceMock
+                .Setup(service => service.RetrieveAllPdsDatasAsync())
+                    .ReturnsAsync(storagePdsDatas);
 
             // when
-            var result = await this.pdsDataController.GetAsync();
+            var result = await pdsDataController.GetAsync();
 
             // then
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
             okResult.StatusCode.Should().Be(200);
             okResult.Value.Should().BeEquivalentTo(expectedPdsData);
+
+            pdsDataServiceMock
+               .Verify(service => service.RetrieveAllPdsDatasAsync(),
+                   Times.Once);
+
+            pdsDataServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task GetAllPdsDataAsyncShouldReturnInternalServerErrorWhenPdsDataDependencyExceptionOccurs()
+        public async Task GetAllPdsDatasAsyncShouldReturnInternalServerErrorWhenPdsDataDependencyExceptionOccurs()
         {
             // given
             var someXeption = new Xeption(message: GetRandomString());
@@ -47,10 +52,9 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsD
             var dependencyException = new PdsDataDependencyException(
                 message: GetRandomString(),
                 innerException: someXeption);
-
-            mockPdsDataService
-                .Setup(service => service.RetrieveAllPdsDataAsync())
-                .ThrowsAsync(dependencyException);
+            pdsDataServiceMock
+                .Setup(service => service.RetrieveAllPdsDatasAsync())
+                    .ThrowsAsync(dependencyException);
 
             // when
             var result = await pdsDataController.GetAsync();
@@ -58,21 +62,26 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsD
             // then
             var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
             internalServerErrorResult.StatusCode.Should().Be(500);
+
+            pdsDataServiceMock
+               .Verify(service => service.RetrieveAllPdsDatasAsync(),
+                   Times.Once);
+
+            pdsDataServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task GetAllPdsDataAsyncShouldReturnInternalServerErrorWhenPdsDataServiceExceptionOccurs()
+        public async Task GetAllPdsDatasAsyncShouldReturnInternalServerErrorWhenPdsDataServiceExceptionOccurs()
         {
             // given
             var someXeption = new Xeption(message: GetRandomString());
 
-            var serviceException = new PdsDataServiceException(
-                message: GetRandomString(),
+            var lookupServiceException = new PdsDataServiceException(
+                message: "Service error occurred, contact support.",
                 innerException: someXeption);
-
-            mockPdsDataService
-                .Setup(service => service.RetrieveAllPdsDataAsync())
-                .ThrowsAsync(serviceException);
+            pdsDataServiceMock
+                .Setup(service => service.RetrieveAllPdsDatasAsync())
+                    .ThrowsAsync(lookupServiceException);
 
             // when
             var result = await pdsDataController.GetAsync();
@@ -80,6 +89,12 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsD
             // then
             var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
             internalServerErrorResult.StatusCode.Should().Be(500);
+
+            pdsDataServiceMock
+               .Verify(service => service.RetrieveAllPdsDatasAsync(),
+                   Times.Once);
+
+            pdsDataServiceMock.VerifyNoOtherCalls();
         }
     }
 }

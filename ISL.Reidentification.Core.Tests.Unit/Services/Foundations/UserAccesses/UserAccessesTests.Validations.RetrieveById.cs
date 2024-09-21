@@ -63,7 +63,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.UserAccesses
             UserAccess nullUserAccess = null;
 
             var notFoundUserAccessException = new NotFoundUserAccessException(
-                message: $"User access not found with id: {someUserAccessId}");
+                message: $"User access not found with Id: {someUserAccessId}");
 
             var expectedUserAccessValidationException = new UserAccessValidationException(
                 message: "UserAccess validation error occurred, please fix errors and try again.",

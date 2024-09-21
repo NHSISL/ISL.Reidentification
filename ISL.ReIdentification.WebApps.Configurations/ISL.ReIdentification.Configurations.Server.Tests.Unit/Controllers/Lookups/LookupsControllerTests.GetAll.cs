@@ -25,17 +25,23 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Look
             IQueryable<Lookup> storageLookups = randomLookups.DeepClone();
             IQueryable<Lookup> expectedLookup = storageLookups.DeepClone();
 
-            mockLookupService
+            lookupServiceMock
                 .Setup(service => service.RetrieveAllLookupsAsync())
-                .ReturnsAsync(storageLookups);
+                    .ReturnsAsync(storageLookups);
 
             // when
-            var result = await lookupsController.Get();
+            var result = await lookupsController.GetAsync();
 
             // then
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
             okResult.StatusCode.Should().Be(200);
             okResult.Value.Should().BeEquivalentTo(expectedLookup);
+
+            lookupServiceMock
+               .Verify(service => service.RetrieveAllLookupsAsync(),
+                   Times.Once);
+
+            lookupServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -48,16 +54,22 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Look
                 message: GetRandomString(),
                 innerException: someXeption);
 
-            mockLookupService
+            lookupServiceMock
                 .Setup(service => service.RetrieveAllLookupsAsync())
-                .ThrowsAsync(dependencyException);
+                    .ThrowsAsync(dependencyException);
 
             // when
-            var result = await lookupsController.Get();
+            var result = await lookupsController.GetAsync();
 
             // then
             var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
             internalServerErrorResult.StatusCode.Should().Be(500);
+
+            lookupServiceMock
+               .Verify(service => service.RetrieveAllLookupsAsync(),
+                   Times.Once);
+
+            lookupServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -70,16 +82,22 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Look
                 message: "Service error occurred, contact support.",
                 innerException: someXeption);
 
-            mockLookupService
+            lookupServiceMock
                 .Setup(service => service.RetrieveAllLookupsAsync())
-                .ThrowsAsync(lookupServiceException);
+                    .ThrowsAsync(lookupServiceException);
 
             // when
-            var result = await lookupsController.Get();
+            var result = await lookupsController.GetAsync();
 
             // then
             var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
             internalServerErrorResult.StatusCode.Should().Be(500);
+
+            lookupServiceMock
+               .Verify(service => service.RetrieveAllLookupsAsync(),
+                   Times.Once);
+
+            lookupServiceMock.VerifyNoOtherCalls();
         }
     }
 }

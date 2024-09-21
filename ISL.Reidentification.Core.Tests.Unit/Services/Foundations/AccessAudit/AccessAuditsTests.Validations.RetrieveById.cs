@@ -63,7 +63,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.AccessAudits
             AccessAudit nullAccessAudit = null;
 
             var notFoundAccessAuditException = new NotFoundAccessAuditException(
-                message: $"Access audit not found with id: {someAccessAuditId}");
+                message: $"Access audit not found with Id: {someAccessAuditId}");
 
             var expectedAccessAuditValidationException = new AccessAuditValidationException(
                 message: "Access audit validation error occurred, please fix errors and try again.",

@@ -28,7 +28,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.AccessAudits
                     innerException: nullAccessAuditException);
 
             // when
-            ValueTask<AccessAudit> modifyAccessAuditTask = 
+            ValueTask<AccessAudit> modifyAccessAuditTask =
                 this.accessAuditService.ModifyAccessAuditAsync(nullAccessAudit);
 
             AccessAuditValidationException actualAccessAuditValidationException =
@@ -309,7 +309,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.AccessAudits
             AccessAudit nullAccessAudit = null;
 
             var notFoundAccessAuditException = new NotFoundAccessAuditException(
-                message: $"Access audit not found with id: {nonExistingAccessAudit.Id}");
+                message: $"Access audit not found with Id: {nonExistingAccessAudit.Id}");
 
             var expectedAccessAuditValidationException = new AccessAuditValidationException(
                 message: "Access audit validation error occurred, please fix errors and try again.",
