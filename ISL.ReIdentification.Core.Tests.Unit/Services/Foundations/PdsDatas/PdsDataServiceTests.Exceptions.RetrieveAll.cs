@@ -37,7 +37,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
 
             // when
             ValueTask<IQueryable<PdsData>> retrieveAllPdsDataTask =
-                this.pdsDataService.RetrieveAllPdsDataAsync();
+                this.pdsDataService.RetrieveAllPdsDatasAsync();
 
             PdsDataDependencyException actualPdsDataDependencyException =
                 await Assert.ThrowsAsync<PdsDataDependencyException>(
@@ -82,7 +82,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
 
             // when
             ValueTask<IQueryable<PdsData>> retrieveAllPdsDatasTask =
-                this.pdsDataService.RetrieveAllPdsDataAsync();
+                this.pdsDataService.RetrieveAllPdsDatasAsync();
 
             PdsDataServiceException actualPdsDataServiceException =
                 await Assert.ThrowsAsync<PdsDataServiceException>(

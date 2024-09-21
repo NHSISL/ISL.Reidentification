@@ -14,13 +14,13 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
 {
     public partial class DelegatedAccessesControllerTests
     {
-        private readonly Mock<IDelegatedAccessService> mockDelegatedAccessService;
+        private readonly Mock<IDelegatedAccessService> delegatedAccessServiceMock;
         private readonly DelegatedAccessesController delegatedAccessesController;
 
         public DelegatedAccessesControllerTests()
         {
-            mockDelegatedAccessService = new Mock<IDelegatedAccessService>();
-            delegatedAccessesController = new DelegatedAccessesController(mockDelegatedAccessService.Object);
+            delegatedAccessServiceMock = new Mock<IDelegatedAccessService>();
+            delegatedAccessesController = new DelegatedAccessesController(delegatedAccessServiceMock.Object);
         }
 
         private static string GetRandomString() =>

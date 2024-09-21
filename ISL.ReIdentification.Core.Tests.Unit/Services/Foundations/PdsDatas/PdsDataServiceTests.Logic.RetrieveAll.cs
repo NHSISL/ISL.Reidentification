@@ -26,7 +26,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
 
             //when
             IQueryable<PdsData> actualPdsData =
-                await this.pdsDataService.RetrieveAllPdsDataAsync();
+                await this.pdsDataService.RetrieveAllPdsDatasAsync();
 
             // then
             actualPdsData.Should().BeEquivalentTo(expectedPdsData);

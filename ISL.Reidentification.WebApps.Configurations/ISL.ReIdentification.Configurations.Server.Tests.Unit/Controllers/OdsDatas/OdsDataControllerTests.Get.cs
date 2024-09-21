@@ -18,121 +18,148 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.OdsD
     public partial class OdsDataControllerTests
     {
         [Fact]
-        public async Task GetOdsDataByIdAsyncShouldReturnOdsData()
+        public async Task GetOdsDataByIdsAsyncShouldReturnOdsData()
         {
             // given
             OdsData randomOdsData = CreateRandomOdsData();
-            Guid inputOdsDataId = randomOdsData.Id;
-            OdsData storageOdsData = randomOdsData.DeepClone();
+            Guid inputId = randomOdsData.Id;
+            OdsData storageOdsData = randomOdsData;
             OdsData expectedOdsData = storageOdsData.DeepClone();
 
-            this.odsDataServiceMock.Setup(service =>
-                service.RetrieveOdsDataByIdAsync(inputOdsDataId))
+            odsDataServiceMock
+                .Setup(service => service.RetrieveOdsDataByIdAsync(It.IsAny<Guid>()))
                     .ReturnsAsync(storageOdsData);
 
             // when
-            var result = await this.odsDataController.GetOdsDataByIdAsync(inputOdsDataId);
+            var result = await odsDataController.GetOdsDataByIdAsync(inputId);
 
             // then
-            var createdResult = Assert.IsType<OkObjectResult>(result.Result);
-            createdResult.StatusCode.Should().Be(200);
-            createdResult.Value.Should().BeEquivalentTo(expectedOdsData);
+            var actualResult = Assert.IsType<OkObjectResult>(result.Result);
+            actualResult.StatusCode.Should().Be(200);
+            actualResult.Value.Should().BeEquivalentTo(expectedOdsData);
+
+            odsDataServiceMock
+                .Verify(service => service.RetrieveOdsDataByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            odsDataServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task GetOdsDataByIdAsyncShouldReturnNotFoundWhenOdsDataValidationExceptionOccurs()
+        public async Task GetOdsDataByIdsAsyncShouldReturnNotFoundWhenOdsDataValidationExceptionOccurs()
         {
             // given
-            Guid randomId = Guid.NewGuid();
-            Guid inputId = randomId;
-            var notFoundOdsDataException = new NotFoundOdsDataException(odsDataId: inputId);
+            Guid someId = Guid.NewGuid();
+            var notFoundOdsDataException = new NotFoundOdsDataException(
+                message: $"ODS data not found with Id: {someId}");
 
-            var odsDataValidationException = new OdsDataValidationException(
+            var lookupValidationException = new OdsDataValidationException(
                 message: GetRandomString(),
                 innerException: notFoundOdsDataException);
 
-            this.odsDataServiceMock
-                .Setup(service => service.RetrieveOdsDataByIdAsync(inputId))
-                .ThrowsAsync(odsDataValidationException);
+            odsDataServiceMock
+                .Setup(service => service.RetrieveOdsDataByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(lookupValidationException);
 
             // when
-            var result = await this.odsDataController.GetOdsDataByIdAsync(inputId);
+            var result = await odsDataController.GetOdsDataByIdAsync(someId);
 
             // then
             var notFoundObjectResult = Assert.IsType<NotFoundObjectResult>(result.Result);
             notFoundObjectResult.StatusCode.Should().Be(404);
+
+            odsDataServiceMock
+                .Verify(service => service.RetrieveOdsDataByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            odsDataServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task GetOdsDataByIdAsyncShouldReturnBadRequestWhenOdsDataValidationExceptionOccurs()
+        public async Task GetOdsDataByIdsAsyncShouldReturnBadRequestWhenOdsDataValidationExceptionOccurs()
         {
             // given
-            Guid randomId = Guid.NewGuid();
-            Guid inputOdsDataId = randomId;
-            Xeption randomXeption = new Xeption(message: GetRandomString());
+            Guid someId = Guid.NewGuid();
+            Xeption someXeption = new Xeption(message: GetRandomString());
 
-            var odsDataValidationException = new OdsDataValidationException(
+            var lookupValidationException = new OdsDataValidationException(
                 message: GetRandomString(),
-                innerException: randomXeption);
+                innerException: someXeption);
 
-            this.odsDataServiceMock.Setup(service =>
-                service.RetrieveOdsDataByIdAsync(inputOdsDataId))
-                    .ThrowsAsync(odsDataValidationException);
+            odsDataServiceMock
+                .Setup(service => service.RetrieveOdsDataByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(lookupValidationException);
 
             // when
-            var result = await this.odsDataController.GetOdsDataByIdAsync(inputOdsDataId);
+            var result = await odsDataController.GetOdsDataByIdAsync(someId);
 
             // then
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
             badRequestResult.StatusCode.Should().Be(400);
+
+            odsDataServiceMock
+               .Verify(service => service.RetrieveOdsDataByIdAsync(It.IsAny<Guid>()),
+                   Times.Once);
+
+            odsDataServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task GetOdsDataByIdAsyncShouldReturnInternalServerErrorWhenOdsDataDependencyExceptionOccurs()
+        public async Task GetOdsDataByIdsAsyncShouldReturnInternalServerErrorWhenOdsDataDependencyExceptionOccurs()
         {
             // given
-            Guid randomId = Guid.NewGuid();
-            Guid inputOdsDataId = randomId;
-            Xeption randomXeption = new Xeption(message: GetRandomString());
+            Guid someId = Guid.NewGuid();
+            var someXeption = new Xeption(message: GetRandomString());
 
-            var odsDataDependencyException = new OdsDataDependencyException(
+            var dependencyException = new OdsDataDependencyException(
                 message: GetRandomString(),
-                innerException: randomXeption);
+                innerException: someXeption);
 
-            this.odsDataServiceMock.Setup(service =>
-                service.RetrieveOdsDataByIdAsync(inputOdsDataId))
-                    .ThrowsAsync(odsDataDependencyException);
+            odsDataServiceMock
+                .Setup(service => service.RetrieveOdsDataByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(dependencyException);
 
             // when
-            var result = await this.odsDataController.GetOdsDataByIdAsync(inputOdsDataId);
+            var result = await odsDataController.GetOdsDataByIdAsync(someId);
 
             // then
             var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
             internalServerErrorResult.StatusCode.Should().Be(500);
+
+            odsDataServiceMock
+               .Verify(service => service.RetrieveOdsDataByIdAsync(It.IsAny<Guid>()),
+                   Times.Once);
+
+            odsDataServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task GetOdsDataByIdAsyncShouldReturnInternalServerErrorWhenOdsDataServiceExceptionOccurs()
+        public async Task GetOdsDataByIdsAsyncShouldReturnInternalServerErrorWhenOdsDataServiceExceptionOccurs()
         {
             // given
-            Guid randomId = Guid.NewGuid();
-            Guid inputOdsDataId = randomId;
-            Xeption randomXeption = new Xeption(message: GetRandomString());
+            Guid someId = Guid.NewGuid();
+            var someXeption = new Xeption(message: GetRandomString());
 
-            var odsDataServiceException = new OdsDataServiceException(
-                message: GetRandomString(),
-                innerException: randomXeption);
+            var lookupServiceException = new OdsDataServiceException(
+                message: "Service error occurred, contact support.",
+                innerException: someXeption);
 
-            this.odsDataServiceMock.Setup(service =>
-                service.RetrieveOdsDataByIdAsync(inputOdsDataId))
-                    .ThrowsAsync(odsDataServiceException);
+            odsDataServiceMock
+                .Setup(service => service.RetrieveOdsDataByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(lookupServiceException);
 
             // when
-            var result = await this.odsDataController.GetOdsDataByIdAsync(inputOdsDataId);
+            var result = await odsDataController.GetOdsDataByIdAsync(someId);
 
             // then
             var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
             internalServerErrorResult.StatusCode.Should().Be(500);
+
+            odsDataServiceMock
+               .Verify(service => service.RetrieveOdsDataByIdAsync(It.IsAny<Guid>()),
+                   Times.Once);
+
+            odsDataServiceMock.VerifyNoOtherCalls();
         }
     }
 }

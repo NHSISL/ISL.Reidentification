@@ -56,7 +56,7 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         }
 
         [HttpGet]
-        public async ValueTask<ActionResult<IQueryable<Lookup>>> Get()
+        public async ValueTask<ActionResult<IQueryable<Lookup>>> GetAsync()
         {
             try
             {

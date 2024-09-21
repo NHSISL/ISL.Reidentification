@@ -19,121 +19,146 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.User
     public partial class UserAccessesControllerTests
     {
         [Fact]
-        public async Task GetUserAccessByIdAsyncShouldReturnUserAccess()
+        public async Task GetUserAccessByIdsAsyncShouldReturnUserAccess()
         {
             // given
             UserAccess randomUserAccess = CreateRandomUserAccess();
-            Guid inputUserAccessId = randomUserAccess.Id;
-            UserAccess storageUserAccess = randomUserAccess.DeepClone();
+            Guid inputId = randomUserAccess.Id;
+            UserAccess storageUserAccess = randomUserAccess;
             UserAccess expectedUserAccess = storageUserAccess.DeepClone();
-
-            this.mockUserAccessService.Setup(service =>
-                service.RetrieveUserAccessByIdAsync(inputUserAccessId))
+            userAccessServiceMock
+                .Setup(service => service.RetrieveUserAccessByIdAsync(It.IsAny<Guid>()))
                     .ReturnsAsync(storageUserAccess);
 
             // when
-            var result = await this.userAccessesController.GetUserAccessByIdAsync(inputUserAccessId);
+            var result = await userAccessesController.GetUserAccessByIdAsync(inputId);
 
             // then
-            var createdResult = Assert.IsType<OkObjectResult>(result.Result);
-            createdResult.StatusCode.Should().Be(200);
-            createdResult.Value.Should().BeEquivalentTo(expectedUserAccess);
+            var actualResult = Assert.IsType<OkObjectResult>(result.Result);
+            actualResult.StatusCode.Should().Be(200);
+            actualResult.Value.Should().BeEquivalentTo(expectedUserAccess);
+
+            userAccessServiceMock
+                .Verify(service => service.RetrieveUserAccessByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            userAccessServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task GetUserAccessByIdAsyncShouldReturnNotFoundWhenUserAccessValidationExceptionOccurs()
+        public async Task GetUserAccessByIdsAsyncShouldReturnNotFoundWhenUserAccessValidationExceptionOccurs()
         {
             // given
-            Guid randomId = Guid.NewGuid();
-            Guid inputId = randomId;
-            var notFoundUserAccessException = new NotFoundUserAccessException(message: GetRandomString());
+            Guid someId = Guid.NewGuid();
+            var notFoundUserAccessException = new NotFoundUserAccessException(
+                message: $"User access not found with Id: {someId}");
 
-            var userAccessValidationException = new UserAccessValidationException(
+            var lookupValidationException = new UserAccessValidationException(
                 message: GetRandomString(),
                 innerException: notFoundUserAccessException);
-
-            this.mockUserAccessService
-                .Setup(service => service.RetrieveUserAccessByIdAsync(inputId))
-                .ThrowsAsync(userAccessValidationException);
+            userAccessServiceMock
+                .Setup(service => service.RetrieveUserAccessByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(lookupValidationException);
 
             // when
-            var result = await this.userAccessesController.GetUserAccessByIdAsync(inputId);
+            var result = await userAccessesController.GetUserAccessByIdAsync(someId);
 
             // then
             var notFoundObjectResult = Assert.IsType<NotFoundObjectResult>(result.Result);
             notFoundObjectResult.StatusCode.Should().Be(404);
+
+            userAccessServiceMock
+                .Verify(service => service.RetrieveUserAccessByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            userAccessServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task GetUserAccessByIdAsyncShouldReturnBadRequestWhenUserAccessValidationExceptionOccurs()
+        public async Task
+            GetUserAccessByIdsAsyncShouldReturnBadRequestWhenUserAccessValidationExceptionOccurs()
         {
             // given
-            Guid randomId = Guid.NewGuid();
-            Guid inputUserAccessId = randomId;
-            Xeption randomXeption = new Xeption(message: GetRandomString());
+            Guid someId = Guid.NewGuid();
+            Xeption someXeption = new Xeption(message: GetRandomString());
 
-            var userAccessValidationException = new UserAccessValidationException(
+            var lookupValidationException = new UserAccessValidationException(
                 message: GetRandomString(),
-                innerException: randomXeption);
-
-            this.mockUserAccessService.Setup(service =>
-                service.RetrieveUserAccessByIdAsync(inputUserAccessId))
-                    .ThrowsAsync(userAccessValidationException);
+                innerException: someXeption);
+            userAccessServiceMock
+                .Setup(service => service.RetrieveUserAccessByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(lookupValidationException);
 
             // when
-            var result = await this.userAccessesController.GetUserAccessByIdAsync(inputUserAccessId);
+            var result = await userAccessesController.GetUserAccessByIdAsync(someId);
 
             // then
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
             badRequestResult.StatusCode.Should().Be(400);
+
+            userAccessServiceMock
+               .Verify(service => service.RetrieveUserAccessByIdAsync(It.IsAny<Guid>()),
+                   Times.Once);
+
+            userAccessServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task GetUserAccessByIdAsyncShouldReturnInternalServerErrorWhenUserAccessDependencyExceptionOccurs()
+        public async Task
+            GetUserAccessByIdsAsyncShouldReturnInternalServerErrorWhenUserAccessDependencyExceptionOccurs()
         {
             // given
-            Guid randomId = Guid.NewGuid();
-            Guid inputUserAccessId = randomId;
-            Xeption randomXeption = new Xeption(message: GetRandomString());
+            Guid someId = Guid.NewGuid();
+            var someXeption = new Xeption(message: GetRandomString());
 
-            var userAccessDependencyException = new UserAccessDependencyException(
+            var dependencyException = new UserAccessDependencyException(
                 message: GetRandomString(),
-                innerException: randomXeption);
-
-            this.mockUserAccessService.Setup(service =>
-                service.RetrieveUserAccessByIdAsync(inputUserAccessId))
-                    .ThrowsAsync(userAccessDependencyException);
+                innerException: someXeption);
+            userAccessServiceMock
+                .Setup(service => service.RetrieveUserAccessByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(dependencyException);
 
             // when
-            var result = await this.userAccessesController.GetUserAccessByIdAsync(inputUserAccessId);
+            var result = await userAccessesController.GetUserAccessByIdAsync(someId);
 
             // then
             var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
             internalServerErrorResult.StatusCode.Should().Be(500);
+
+            userAccessServiceMock
+               .Verify(service => service.RetrieveUserAccessByIdAsync(It.IsAny<Guid>()),
+                   Times.Once);
+
+            userAccessServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task GetUserAccessByIdAsyncShouldReturnInternalServerErrorWhenUserAccessServiceExceptionOccurs()
+        public async Task
+            GetUserAccessByIdsAsyncShouldReturnInternalServerErrorWhenUserAccessServiceExceptionOccurs()
         {
             // given
-            Guid randomId = Guid.NewGuid();
-            Guid inputUserAccessId = randomId;
-            Xeption randomXeption = new Xeption(message: GetRandomString());
+            Guid someId = Guid.NewGuid();
+            var someXeption = new Xeption(message: GetRandomString());
 
-            var userAccessServiceException = new UserAccessServiceException(
-                message: GetRandomString(),
-                innerException: randomXeption);
-
-            this.mockUserAccessService.Setup(service =>
-                service.RetrieveUserAccessByIdAsync(inputUserAccessId))
-                    .ThrowsAsync(userAccessServiceException);
+            var lookupServiceException = new UserAccessServiceException(
+                message: "Service error occurred, contact support.",
+                innerException: someXeption);
+            userAccessServiceMock
+                .Setup(service => service.RetrieveUserAccessByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(lookupServiceException);
 
             // when
-            var result = await this.userAccessesController.GetUserAccessByIdAsync(inputUserAccessId);
+            var result = await userAccessesController.GetUserAccessByIdAsync(someId);
 
             // then
             var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
             internalServerErrorResult.StatusCode.Should().Be(500);
+
+            userAccessServiceMock
+               .Verify(service => service.RetrieveUserAccessByIdAsync(It.IsAny<Guid>()),
+                   Times.Once);
+
+            userAccessServiceMock.VerifyNoOtherCalls();
         }
     }
 }

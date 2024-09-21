@@ -26,9 +26,9 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Look
             Lookup storageLookup = randomLookup;
             Lookup expectedLookup = storageLookup.DeepClone();
 
-            mockLookupService
-                .Setup(service => service.RetrieveLookupByIdAsync(inputId))
-                .ReturnsAsync(storageLookup);
+            lookupServiceMock
+                .Setup(service => service.RetrieveLookupByIdAsync(It.IsAny<Guid>()))
+                    .ReturnsAsync(storageLookup);
 
             // when
             var result = await lookupsController.GetLookupByIdAsync(inputId);
@@ -37,102 +37,128 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Look
             var actualResult = Assert.IsType<OkObjectResult>(result.Result);
             actualResult.StatusCode.Should().Be(200);
             actualResult.Value.Should().BeEquivalentTo(expectedLookup);
+
+            lookupServiceMock
+                .Verify(service => service.RetrieveLookupByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            lookupServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
         public async Task GetLookupByIdsAsyncShouldReturnNotFoundWhenLookupValidationExceptionOccurs()
         {
             // given
-            Guid randomId = Guid.NewGuid();
-            Guid inputId = randomId;
-            var notFoundLookupException = new NotFoundLookupException(lookupId: inputId);
+            Guid someId = Guid.NewGuid();
+            var notFoundLookupException = new NotFoundLookupException(message: $"Lookup not found with Id: {someId}");
 
             var lookupValidationException = new LookupValidationException(
                 message: GetRandomString(),
                 innerException: notFoundLookupException);
 
-            mockLookupService
-                .Setup(service => service.RetrieveLookupByIdAsync(inputId))
-                .ThrowsAsync(lookupValidationException);
+            lookupServiceMock
+                .Setup(service => service.RetrieveLookupByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(lookupValidationException);
 
             // when
-            var result = await lookupsController.GetLookupByIdAsync(inputId);
+            var result = await lookupsController.GetLookupByIdAsync(someId);
 
             // then
             var notFoundObjectResult = Assert.IsType<NotFoundObjectResult>(result.Result);
             notFoundObjectResult.StatusCode.Should().Be(404);
+
+            lookupServiceMock
+                .Verify(service => service.RetrieveLookupByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            lookupServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
         public async Task GetLookupByIdsAsyncShouldReturnBadRequestWhenLookupValidationExceptionOccurs()
         {
             // given
-            Guid randomId = Guid.NewGuid();
-            Guid inputId = randomId;
+            Guid someId = Guid.NewGuid();
             Xeption someXeption = new Xeption(message: GetRandomString());
 
             var lookupValidationException = new LookupValidationException(
                 message: GetRandomString(),
                 innerException: someXeption);
 
-            mockLookupService
-                .Setup(service => service.RetrieveLookupByIdAsync(inputId))
-                .ThrowsAsync(lookupValidationException);
+            lookupServiceMock
+                .Setup(service => service.RetrieveLookupByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(lookupValidationException);
 
             // when
-            var result = await lookupsController.GetLookupByIdAsync(inputId);
+            var result = await lookupsController.GetLookupByIdAsync(someId);
 
             // then
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
             badRequestResult.StatusCode.Should().Be(400);
+
+            lookupServiceMock
+               .Verify(service => service.RetrieveLookupByIdAsync(It.IsAny<Guid>()),
+                   Times.Once);
+
+            lookupServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
         public async Task GetLookupByIdsAsyncShouldReturnInternalServerErrorWhenLookupDependencyExceptionOccurs()
         {
             // given
-            Guid randomId = Guid.NewGuid();
-            Guid inputId = randomId;
+            Guid someId = Guid.NewGuid();
             var someXeption = new Xeption(message: GetRandomString());
 
             var dependencyException = new LookupDependencyException(
                 message: GetRandomString(),
                 innerException: someXeption);
 
-            mockLookupService
-                .Setup(service => service.RetrieveLookupByIdAsync(inputId))
-                .ThrowsAsync(dependencyException);
+            lookupServiceMock
+                .Setup(service => service.RetrieveLookupByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(dependencyException);
 
             // when
-            var result = await lookupsController.GetLookupByIdAsync(inputId);
+            var result = await lookupsController.GetLookupByIdAsync(someId);
 
             // then
             var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
             internalServerErrorResult.StatusCode.Should().Be(500);
+
+            lookupServiceMock
+               .Verify(service => service.RetrieveLookupByIdAsync(It.IsAny<Guid>()),
+                   Times.Once);
+
+            lookupServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
         public async Task GetLookupByIdsAsyncShouldReturnInternalServerErrorWhenLookupServiceExceptionOccurs()
         {
             // given
-            Guid randomId = Guid.NewGuid();
-            Guid inputId = randomId;
+            Guid someId = Guid.NewGuid();
             var someXeption = new Xeption(message: GetRandomString());
 
             var lookupServiceException = new LookupServiceException(
                 message: "Service error occurred, contact support.",
                 innerException: someXeption);
 
-            mockLookupService
-                .Setup(service => service.RetrieveLookupByIdAsync(inputId))
-                .ThrowsAsync(lookupServiceException);
+            lookupServiceMock
+                .Setup(service => service.RetrieveLookupByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(lookupServiceException);
 
             // when
-            var result = await lookupsController.GetLookupByIdAsync(inputId);
+            var result = await lookupsController.GetLookupByIdAsync(someId);
 
             // then
             var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
             internalServerErrorResult.StatusCode.Should().Be(500);
+
+            lookupServiceMock
+               .Verify(service => service.RetrieveLookupByIdAsync(It.IsAny<Guid>()),
+                   Times.Once);
+
+            lookupServiceMock.VerifyNoOtherCalls();
         }
     }
 }

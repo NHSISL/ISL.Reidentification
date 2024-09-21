@@ -25,142 +25,173 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.User
             UserAccess storageUserAccess = inputUserAccess.DeepClone();
             UserAccess expectedUserAccess = storageUserAccess.DeepClone();
 
-            this.mockUserAccessService.Setup(service =>
-                service.ModifyUserAccessAsync(inputUserAccess))
+            userAccessServiceMock
+            .Setup(service => service.ModifyUserAccessAsync(inputUserAccess))
                     .ReturnsAsync(storageUserAccess);
 
             // when
-            var result = await this.userAccessesController.PutUserAccessAsync(randomUserAccess);
+            var result = await userAccessesController.PutUserAccessAsync(randomUserAccess);
 
             // then
             var createdResult = Assert.IsType<OkObjectResult>(result.Result);
             createdResult.StatusCode.Should().Be(200);
             createdResult.Value.Should().BeEquivalentTo(expectedUserAccess);
+
+            userAccessServiceMock
+               .Verify(service => service.ModifyUserAccessAsync(inputUserAccess),
+                   Times.Once);
+
+            userAccessServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
         public async Task PutUserAccessAsyncShouldReturnBadRequestWhenUserAccessValidationExceptionOccurs()
         {
             // given
-            UserAccess randomUserAccess = CreateRandomUserAccess();
-            UserAccess inputUserAccess = randomUserAccess;
-            Xeption randomXeption = new Xeption(message: GetRandomString());
+            UserAccess someUserAccess = CreateRandomUserAccess();
+            Xeption someXeption = new Xeption(message: GetRandomString());
 
-            var userAccessValidationException = new UserAccessValidationException(
+            var lookupValidationException = new UserAccessValidationException(
                 message: GetRandomString(),
-                innerException: randomXeption);
-
-            this.mockUserAccessService.Setup(service =>
-                service.ModifyUserAccessAsync(inputUserAccess))
-                    .ThrowsAsync(userAccessValidationException);
+                innerException: someXeption);
+            userAccessServiceMock
+                .Setup(service => service.ModifyUserAccessAsync(It.IsAny<UserAccess>()))
+                    .ThrowsAsync(lookupValidationException);
 
             // when
-            var result = await this.userAccessesController.PutUserAccessAsync(inputUserAccess);
+            var result = await userAccessesController.PutUserAccessAsync(someUserAccess);
 
             // then
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
             badRequestResult.StatusCode.Should().Be(400);
+
+            userAccessServiceMock
+               .Verify(service => service.ModifyUserAccessAsync(It.IsAny<UserAccess>()),
+                   Times.Once);
+
+            userAccessServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
         public async Task PutUserAccessAsyncShouldReturnConflictWhenAlreadyExistsUserAccessExceptionOccurs()
         {
             // given
-            UserAccess randomUserAccess = CreateRandomUserAccess();
-            UserAccess inputUserAccess = randomUserAccess;
-            Xeption randomXeption = new Xeption(message: GetRandomString());
+            UserAccess someUserAccess = CreateRandomUserAccess();
+            var someXeption = new Xeption(message: GetRandomString());
 
-            var alreadyExistsUserAccessException = new AlreadyExistsUserAccessException(
+            var alreadyExistsException = new AlreadyExistsUserAccessException(
                 message: GetRandomString(),
-                innerException: randomXeption,
-                data: randomXeption.Data);
+                innerException: someXeption,
+                data: someXeption.Data);
 
-            var userAccessDependencyValidationException = new UserAccessDependencyValidationException(
+            var dependencyValidationException = new UserAccessDependencyValidationException(
                 message: GetRandomString(),
-                innerException: alreadyExistsUserAccessException);
+                innerException: alreadyExistsException);
 
-            this.mockUserAccessService.Setup(service =>
-                service.ModifyUserAccessAsync(inputUserAccess))
-                    .ThrowsAsync(userAccessDependencyValidationException);
+            userAccessServiceMock
+                .Setup(service => service.ModifyUserAccessAsync(It.IsAny<UserAccess>()))
+                    .ThrowsAsync(dependencyValidationException);
 
             // when
-            var result = await this.userAccessesController.PutUserAccessAsync(inputUserAccess);
+            var result = await userAccessesController.PutUserAccessAsync(someUserAccess);
 
             // then
             var conflictResult = Assert.IsType<ConflictObjectResult>(result.Result);
             conflictResult.StatusCode.Should().Be(409);
+
+            userAccessServiceMock
+               .Verify(service => service.ModifyUserAccessAsync(It.IsAny<UserAccess>()),
+                   Times.Once);
+
+            userAccessServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task PutUserAccessAsyncShouldReturnBadRequestWhenUserAccessDependencyValidationExceptionOccurs()
+        public async Task
+            PutUserAccessAsyncShouldReturnBadRequestWhenUserAccessDependencyValidationExceptionOccurs()
         {
             // given
-            UserAccess randomUserAccess = CreateRandomUserAccess();
-            UserAccess inputUserAccess = randomUserAccess;
-            Xeption randomXeption = new Xeption(message: GetRandomString());
+            UserAccess someUserAccess = CreateRandomUserAccess();
+            var someXeption = new Xeption(message: GetRandomString());
 
-            var userAccessDependencyValidationException = new UserAccessDependencyValidationException(
+            var dependencyValidationException = new UserAccessDependencyValidationException(
                 message: GetRandomString(),
-                innerException: randomXeption);
+                innerException: someXeption);
 
-            this.mockUserAccessService.Setup(service =>
-                service.ModifyUserAccessAsync(inputUserAccess))
-                    .ThrowsAsync(userAccessDependencyValidationException);
+            userAccessServiceMock
+                .Setup(service => service.ModifyUserAccessAsync(It.IsAny<UserAccess>()))
+                    .ThrowsAsync(dependencyValidationException);
 
             // when
-            var result = await this.userAccessesController.PutUserAccessAsync(inputUserAccess);
+            var result = await userAccessesController.PutUserAccessAsync(someUserAccess);
 
             // then
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
             badRequestResult.StatusCode.Should().Be(400);
+
+            userAccessServiceMock
+               .Verify(service => service.ModifyUserAccessAsync(It.IsAny<UserAccess>()),
+                   Times.Once);
+
+            userAccessServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task PutUserAccessAsyncShouldReturnInternalServerErrorWhenUserAccessDependencyExceptionOccurs()
+        public async Task
+            PutUserAccessAsyncShouldReturnInternalServerErrorWhenUserAccessDependencyExceptionOccurs()
         {
             // given
-            UserAccess randomUserAccess = CreateRandomUserAccess();
-            UserAccess inputUserAccess = randomUserAccess;
-            Xeption randomXeption = new Xeption(message: GetRandomString());
+            UserAccess someUserAccess = CreateRandomUserAccess();
+            var someXeption = new Xeption(message: GetRandomString());
 
-            var userAccessDependencyException = new UserAccessDependencyException(
+            var dependencyException = new UserAccessDependencyException(
                 message: GetRandomString(),
-                innerException: randomXeption);
-
-            this.mockUserAccessService.Setup(service =>
-                service.ModifyUserAccessAsync(inputUserAccess))
-                    .ThrowsAsync(userAccessDependencyException);
+                innerException: someXeption);
+            userAccessServiceMock
+                .Setup(service => service.ModifyUserAccessAsync(It.IsAny<UserAccess>()))
+                    .ThrowsAsync(dependencyException);
 
             // when
-            var result = await this.userAccessesController.PutUserAccessAsync(inputUserAccess);
+            var result = await userAccessesController.PutUserAccessAsync(someUserAccess);
 
             // then
             var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
             internalServerErrorResult.StatusCode.Should().Be(500);
+
+            userAccessServiceMock
+               .Verify(service => service.ModifyUserAccessAsync(It.IsAny<UserAccess>()),
+                   Times.Once);
+
+            userAccessServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task PutUserAccessAsyncShouldReturnInternalServerErrorWhenUserAccessServiceExceptionOccurs()
+        public async Task
+            PutUserAccessAsyncShouldReturnInternalServerErrorWhenUserAccessServiceExceptionOccurs()
         {
             // given
-            UserAccess randomUserAccess = CreateRandomUserAccess();
-            UserAccess inputUserAccess = randomUserAccess;
-            Xeption randomXeption = new Xeption(message: GetRandomString());
+            UserAccess someUserAccess = CreateRandomUserAccess();
+            var someXeption = new Xeption(message: GetRandomString());
 
-            var userAccessServiceException = new UserAccessServiceException(
-                message: GetRandomString(),
-                innerException: randomXeption);
-
-            this.mockUserAccessService.Setup(service =>
-                service.ModifyUserAccessAsync(inputUserAccess))
-                    .ThrowsAsync(userAccessServiceException);
+            var lookupServiceException = new UserAccessServiceException(
+                message: "Service error occurred, contact support.",
+                innerException: someXeption);
+            userAccessServiceMock
+                .Setup(service => service.ModifyUserAccessAsync(It.IsAny<UserAccess>()))
+                    .ThrowsAsync(lookupServiceException);
 
             // when
-            var result = await this.userAccessesController.PutUserAccessAsync(inputUserAccess);
+            var result = await userAccessesController.PutUserAccessAsync(someUserAccess);
 
             // then
             var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
             internalServerErrorResult.StatusCode.Should().Be(500);
+
+            userAccessServiceMock
+               .Verify(service => service.ModifyUserAccessAsync(It.IsAny<UserAccess>()),
+                   Times.Once);
+
+            userAccessServiceMock.VerifyNoOtherCalls();
         }
     }
 }

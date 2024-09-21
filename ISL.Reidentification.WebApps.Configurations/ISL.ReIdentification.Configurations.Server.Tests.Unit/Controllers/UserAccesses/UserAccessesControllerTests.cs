@@ -14,13 +14,13 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.User
 {
     public partial class UserAccessesControllerTests
     {
-        private readonly Mock<IUserAccessService> mockUserAccessService;
+        private readonly Mock<IUserAccessService> userAccessServiceMock;
         private readonly UserAccessesController userAccessesController;
 
         public UserAccessesControllerTests()
         {
-            this.mockUserAccessService = new Mock<IUserAccessService>();
-            this.userAccessesController = new UserAccessesController(mockUserAccessService.Object);
+            this.userAccessServiceMock = new Mock<IUserAccessService>();
+            this.userAccessesController = new UserAccessesController(userAccessServiceMock.Object);
         }
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>

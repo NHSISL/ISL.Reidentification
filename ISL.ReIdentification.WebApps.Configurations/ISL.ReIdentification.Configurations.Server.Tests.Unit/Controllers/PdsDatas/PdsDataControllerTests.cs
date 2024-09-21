@@ -13,13 +13,13 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsD
 {
     public partial class PdsDataControllerTests
     {
-        private readonly Mock<IPdsDataService> mockPdsDataService;
+        private readonly Mock<IPdsDataService> pdsDataServiceMock;
         private readonly PdsDataController pdsDataController;
 
         public PdsDataControllerTests()
         {
-            mockPdsDataService = new Mock<IPdsDataService>();
-            pdsDataController = new PdsDataController(mockPdsDataService.Object);
+            pdsDataServiceMock = new Mock<IPdsDataService>();
+            pdsDataController = new PdsDataController(pdsDataServiceMock.Object);
         }
 
         private static string GetRandomString() =>

@@ -109,7 +109,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.AccessAudits
         {
             if (maybeAccessAudit is null)
             {
-                throw new NotFoundAccessAuditException($"Access audit not found with id: {maybeId}");
+                throw new NotFoundAccessAuditException($"Access audit not found with Id: {maybeId}");
             }
         }
 
