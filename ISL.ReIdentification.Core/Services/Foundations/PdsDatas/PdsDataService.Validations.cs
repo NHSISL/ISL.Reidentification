@@ -18,7 +18,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.PdsDatas
         {
             if (maybePdsData is null)
             {
-                throw new NotFoundPdsDataException(pdsDataId);
+                throw new NotFoundPdsDataException(message: $"PDS data not found with Id: {pdsDataId}");
             }
         }
 

@@ -61,9 +61,8 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.OdsDatas
             //given
             Guid randomOdsDataId = Guid.NewGuid();
             OdsData noOdsData = null;
-
             var notFoundOdsDataException =
-                new NotFoundOdsDataException(randomOdsDataId);
+                new NotFoundOdsDataException(message: $"ODS data not found with Id: {randomOdsDataId}");
 
             var expectedOdsDataValidationException =
                 new OdsDataValidationException(

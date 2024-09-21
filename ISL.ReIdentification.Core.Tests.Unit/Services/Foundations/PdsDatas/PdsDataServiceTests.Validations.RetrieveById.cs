@@ -65,7 +65,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
             PdsData noPdsData = null;
 
             var notFoundPdsDataException =
-                new NotFoundPdsDataException(somePdsDataId);
+                new NotFoundPdsDataException(message: $"PDS data not found with Id: {somePdsDataId}");
 
             var expectedPdsDataValidationException =
                 new PdsDataValidationException(

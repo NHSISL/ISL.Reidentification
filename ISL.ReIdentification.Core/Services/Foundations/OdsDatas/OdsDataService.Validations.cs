@@ -24,7 +24,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.OdsDatas
         {
             if (maybeOdsData is null)
             {
-                throw new NotFoundOdsDataException(odsDataId);
+                throw new NotFoundOdsDataException(message: $"ODS data not found with Id: {odsDataId}");
             }
         }
 

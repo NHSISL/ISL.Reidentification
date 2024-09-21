@@ -15,13 +15,13 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Look
     public partial class LookupsControllerTests
     {
 
-        private readonly Mock<ILookupService> mockLookupService;
+        private readonly Mock<ILookupService> lookupServiceMock;
         private readonly LookupsController lookupsController;
 
         public LookupsControllerTests()
         {
-            mockLookupService = new Mock<ILookupService>();
-            lookupsController = new LookupsController(mockLookupService.Object);
+            lookupServiceMock = new Mock<ILookupService>();
+            lookupsController = new LookupsController(lookupServiceMock.Object);
         }
 
         private static string GetRandomString() =>

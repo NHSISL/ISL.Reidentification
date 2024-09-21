@@ -19,174 +19,215 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.User
     public partial class UserAccessesControllerTests
     {
         [Fact]
-        public async Task DeleteUserAccessByIdAsyncShouldReturnUserAccess()
+        public async Task DeleteUserAccessByIdsAsyncShouldReturnUserAccess()
         {
             // given
             UserAccess randomUserAccess = CreateRandomUserAccess();
-            Guid inputUserAccessId = randomUserAccess.Id;
-            UserAccess storageUserAccess = randomUserAccess.DeepClone();
+            Guid inputId = randomUserAccess.Id;
+            UserAccess storageUserAccess = randomUserAccess;
             UserAccess expectedUserAccess = storageUserAccess.DeepClone();
 
-            this.mockUserAccessService.Setup(service =>
-                service.RemoveUserAccessByIdAsync(inputUserAccessId))
+            userAccessServiceMock
+            .Setup(service => service.RemoveUserAccessByIdAsync(inputId))
                     .ReturnsAsync(storageUserAccess);
 
             // when
-            var result = await this.userAccessesController.DeleteUserAccessByIdAsync(inputUserAccessId);
+            var result = await userAccessesController.DeleteUserAccessByIdAsync(inputId);
 
             // then
-            var createdResult = Assert.IsType<OkObjectResult>(result.Result);
-            createdResult.StatusCode.Should().Be(200);
-            createdResult.Value.Should().BeEquivalentTo(expectedUserAccess);
+            var actualResult = Assert.IsType<OkObjectResult>(result.Result);
+            actualResult.StatusCode.Should().Be(200);
+            actualResult.Value.Should().BeEquivalentTo(expectedUserAccess);
+
+            userAccessServiceMock
+                .Verify(service => service.RemoveUserAccessByIdAsync(inputId),
+                    Times.Once);
+
+            userAccessServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task DeleteUserAccessByIdAsyncShouldReturnNotFoundWhenUserAccessValidationExceptionOccurs()
+        public async Task
+            DeleteUserAccessByIdsAsyncShouldReturnNotFoundWhenUserAccessValidationExceptionOccurs()
         {
             // given
-            Guid randomId = Guid.NewGuid();
-            Guid inputId = randomId;
-            var notFoundUserAccessException = new NotFoundUserAccessException(message: GetRandomString());
+            Guid someId = Guid.NewGuid();
+            var notFoundUserAccessException = new NotFoundUserAccessException(
+                message: $"Access audit not found with Id: {someId}");
 
-            var userAccessValidationException = new UserAccessValidationException(
+            var lookupValidationException = new UserAccessValidationException(
                 message: GetRandomString(),
                 innerException: notFoundUserAccessException);
-
-            this.mockUserAccessService
-                .Setup(service => service.RemoveUserAccessByIdAsync(inputId))
-                .ThrowsAsync(userAccessValidationException);
+            userAccessServiceMock
+                .Setup(service => service.RemoveUserAccessByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(lookupValidationException);
 
             // when
-            var result = await this.userAccessesController.DeleteUserAccessByIdAsync(inputId);
+            var result = await userAccessesController.DeleteUserAccessByIdAsync(someId);
 
             // then
             var notFoundObjectResult = Assert.IsType<NotFoundObjectResult>(result.Result);
             notFoundObjectResult.StatusCode.Should().Be(404);
-        }
 
-        [Fact]
-        public async Task DeleteUserAccessByIdAsyncShouldReturnBadRequestWhenUserAccessValidationExceptionOccurs()
-        {
-            // given
-            Guid randomId = Guid.NewGuid();
-            Guid inputUserAccessId = randomId;
-            Xeption randomXeption = new Xeption(message: GetRandomString());
+            userAccessServiceMock
+                .Verify(service => service.RemoveUserAccessByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
 
-            var userAccessValidationException = new UserAccessValidationException(
-                message: GetRandomString(),
-                innerException: randomXeption);
-
-            this.mockUserAccessService.Setup(service =>
-                service.RemoveUserAccessByIdAsync(inputUserAccessId))
-                    .ThrowsAsync(userAccessValidationException);
-
-            // when
-            var result = await this.userAccessesController.DeleteUserAccessByIdAsync(inputUserAccessId);
-
-            // then
-            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-            badRequestResult.StatusCode.Should().Be(400);
+            userAccessServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
         public async Task
-            DeleteUserAccessByIdAsyncShouldReturnLockedErrorWhenUserAccessDependencyValidationExceptionOccurs()
+            DeleteUserAccessByIdsAsyncShouldReturnBadRequestWhenUserAccessValidationExceptionOccurs()
         {
             // given
             Guid randomId = Guid.NewGuid();
-            Guid inputUserAccessId = randomId;
-            Xeption randomXeption = new Xeption(message: GetRandomString());
+            Guid inputId = randomId;
+            Xeption someXeption = new Xeption(message: GetRandomString());
+
+            var lookupValidationException = new UserAccessValidationException(
+                message: GetRandomString(),
+                innerException: someXeption);
+            userAccessServiceMock
+                .Setup(service => service.RemoveUserAccessByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(lookupValidationException);
+
+            // when
+            var result = await userAccessesController.DeleteUserAccessByIdAsync(inputId);
+
+            // then
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+            badRequestResult.StatusCode.Should().Be(400);
+
+            userAccessServiceMock
+                .Verify(service => service.RemoveUserAccessByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            userAccessServiceMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task
+            DeleteUserAccessByIdsAsyncShouldReturnLockedErrorWhenUserAccessDependencyValidationExceptionOccurs()
+        {
+            // given
+            Guid randomId = Guid.NewGuid();
+            Guid inputId = randomId;
+            var someXeption = new Xeption(message: GetRandomString());
 
             var lockedUserAccessException =
-                new LockedUserAccessException(message: GetRandomString(), innerException: randomXeption);
+                new LockedUserAccessException(message: GetRandomString(), innerException: someXeption);
 
-            var userAccessDependencyValidationException = new UserAccessDependencyValidationException(
+            var lookupDependencyValidationException = new UserAccessDependencyValidationException(
                 message: GetRandomString(),
                 innerException: lockedUserAccessException);
 
-            this.mockUserAccessService.Setup(service =>
-                service.RemoveUserAccessByIdAsync(inputUserAccessId))
-                    .ThrowsAsync(userAccessDependencyValidationException);
+            userAccessServiceMock
+                .Setup(service => service.RemoveUserAccessByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(lookupDependencyValidationException);
 
             // when
-            var result = await this.userAccessesController.DeleteUserAccessByIdAsync(inputUserAccessId);
+            var result = await userAccessesController.DeleteUserAccessByIdAsync(inputId);
 
             // then
             var lockedObjectResult = Assert.IsType<LockedObjectResult>(result.Result);
             lockedObjectResult.StatusCode.Should().Be(423);
-        }
 
-        [Fact]
-        public async Task DeleteUserAccessAsyncShouldReturnBadRequestWhenUserAccessDependencyValidationExceptionOccurs()
-        {
-            // given
-            Guid randomId = Guid.NewGuid();
-            Guid inputUserAccessId = randomId;
-            Xeption randomXeption = new Xeption(message: GetRandomString());
+            userAccessServiceMock
+                .Verify(service => service.RemoveUserAccessByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
 
-            var userAccessDependencyValidationException = new UserAccessDependencyValidationException(
-                message: GetRandomString(),
-                innerException: randomXeption);
-
-            this.mockUserAccessService.Setup(service =>
-                service.RemoveUserAccessByIdAsync(inputUserAccessId))
-                    .ThrowsAsync(userAccessDependencyValidationException);
-
-            // when
-            var result = await this.userAccessesController.DeleteUserAccessByIdAsync(inputUserAccessId);
-
-            // then
-            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-            badRequestResult.StatusCode.Should().Be(400);
+            userAccessServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
         public async Task
-            DeleteUserAccessByIdAsyncShouldReturnInternalServerErrorWhenUserAccessDependencyExceptionOccurs()
+            DeleteUserAccessAsyncShouldReturnBadRequestWhenUserAccessDependencyValidationExceptionOccurs()
         {
             // given
             Guid randomId = Guid.NewGuid();
-            Guid inputUserAccessId = randomId;
-            Xeption randomXeption = new Xeption(message: GetRandomString());
+            Guid inputId = randomId;
+            var someXeption = new Xeption(message: GetRandomString());
 
-            var userAccessDependencyException = new UserAccessDependencyException(
+            var dependencyValidationException = new UserAccessDependencyValidationException(
                 message: GetRandomString(),
-                innerException: randomXeption);
-
-            this.mockUserAccessService.Setup(service =>
-                service.RemoveUserAccessByIdAsync(inputUserAccessId))
-                    .ThrowsAsync(userAccessDependencyException);
+                innerException: someXeption);
+            userAccessServiceMock
+                .Setup(service => service.RemoveUserAccessByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(dependencyValidationException);
 
             // when
-            var result = await this.userAccessesController.DeleteUserAccessByIdAsync(inputUserAccessId);
+            var result = await userAccessesController.DeleteUserAccessByIdAsync(inputId);
 
             // then
-            var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
-            internalServerErrorResult.StatusCode.Should().Be(500);
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+            badRequestResult.StatusCode.Should().Be(400);
+
+            userAccessServiceMock
+                .Verify(service => service.RemoveUserAccessByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            userAccessServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task DeleteUserAccessByIdAsyncShouldReturnInternalServerErrorWhenUserAccessServiceExceptionOccurs()
+        public async Task
+            DeleteUserAccessByIdsAsyncShouldReturnInternalServerErrorWhenUserAccessDependencyExceptionOccurs()
         {
             // given
             Guid randomId = Guid.NewGuid();
-            Guid inputUserAccessId = randomId;
-            Xeption randomXeption = new Xeption(message: GetRandomString());
+            Guid inputId = randomId;
+            var someXeption = new Xeption(message: GetRandomString());
 
-            var userAccessServiceException = new UserAccessServiceException(
+            var dependencyException = new UserAccessDependencyException(
                 message: GetRandomString(),
-                innerException: randomXeption);
-
-            this.mockUserAccessService.Setup(service =>
-                service.RemoveUserAccessByIdAsync(inputUserAccessId))
-                    .ThrowsAsync(userAccessServiceException);
+                innerException: someXeption);
+            userAccessServiceMock
+                .Setup(service => service.RemoveUserAccessByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(dependencyException);
 
             // when
-            var result = await this.userAccessesController.DeleteUserAccessByIdAsync(inputUserAccessId);
+            var result = await userAccessesController.DeleteUserAccessByIdAsync(inputId);
 
             // then
             var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
             internalServerErrorResult.StatusCode.Should().Be(500);
+
+            userAccessServiceMock
+                .Verify(service => service.RemoveUserAccessByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            userAccessServiceMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task
+            DeleteUserAccessByIdsAsyncShouldReturnInternalServerErrorWhenUserAccessServiceExceptionOccurs()
+        {
+            // given
+            Guid randomId = Guid.NewGuid();
+            Guid inputId = randomId;
+            var someXeption = new Xeption(message: GetRandomString());
+
+            var lookupServiceException = new UserAccessServiceException(
+                message: "Service error occurred, contact support.",
+                innerException: someXeption);
+            userAccessServiceMock
+                .Setup(service => service.RemoveUserAccessByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(lookupServiceException);
+
+            // when
+            var result = await userAccessesController.DeleteUserAccessByIdAsync(inputId);
+
+            // then
+            var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
+            internalServerErrorResult.StatusCode.Should().Be(500);
+
+            userAccessServiceMock
+                .Verify(service => service.RemoveUserAccessByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            userAccessServiceMock.VerifyNoOtherCalls();
         }
     }
 }

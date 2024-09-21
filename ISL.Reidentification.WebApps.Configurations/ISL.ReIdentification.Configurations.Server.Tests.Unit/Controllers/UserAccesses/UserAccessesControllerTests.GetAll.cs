@@ -23,63 +23,80 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.User
             // given
             IQueryable<UserAccess> randomUserAccesses = CreateRandomUserAccesses();
             IQueryable<UserAccess> storageUserAccesses = randomUserAccesses.DeepClone();
-            IQueryable<UserAccess> expectedUserAccesses = storageUserAccesses.DeepClone();
-
-            this.mockUserAccessService.Setup(service =>
-                service.RetrieveAllUserAccessesAsync())
+            IQueryable<UserAccess> expectedUserAccess = storageUserAccesses.DeepClone();
+            userAccessServiceMock
+                .Setup(service => service.RetrieveAllUserAccessesAsync())
                     .ReturnsAsync(storageUserAccesses);
 
             // when
-            var result = await this.userAccessesController.Get();
+            var result = await userAccessesController.GetAsync();
 
             // then
-            var createdResult = Assert.IsType<OkObjectResult>(result.Result);
-            createdResult.StatusCode.Should().Be(200);
-            createdResult.Value.Should().BeEquivalentTo(expectedUserAccesses);
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            okResult.StatusCode.Should().Be(200);
+            okResult.Value.Should().BeEquivalentTo(expectedUserAccess);
+
+            userAccessServiceMock
+               .Verify(service => service.RetrieveAllUserAccessesAsync(),
+                   Times.Once);
+
+            userAccessServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task GetAllUserAccesssAsyncShouldReturnInternalServerErrorWhenUserAccessDependencyExceptionOccurs()
+        public async Task
+            GetAllUserAccessesAsyncShouldReturnInternalServerErrorWhenUserAccessDependencyExceptionOccurs()
         {
             // given
-            var randomXeption = new Xeption(message: GetRandomString());
+            var someXeption = new Xeption(message: GetRandomString());
 
-            var userAccessDependencyException = new UserAccessDependencyException(
+            var dependencyException = new UserAccessDependencyException(
                 message: GetRandomString(),
-                innerException: randomXeption);
-
-            this.mockUserAccessService.Setup(service =>
-                service.RetrieveAllUserAccessesAsync())
-                    .ThrowsAsync(userAccessDependencyException);
+                innerException: someXeption);
+            userAccessServiceMock
+                .Setup(service => service.RetrieveAllUserAccessesAsync())
+                    .ThrowsAsync(dependencyException);
 
             // when
-            var result = await this.userAccessesController.Get();
+            var result = await userAccessesController.GetAsync();
 
             // then
             var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
             internalServerErrorResult.StatusCode.Should().Be(500);
+
+            userAccessServiceMock
+               .Verify(service => service.RetrieveAllUserAccessesAsync(),
+                   Times.Once);
+
+            userAccessServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task GetAllUserAccesssAsyncShouldReturnInternalServerErrorWhenUserAccessServiceExceptionOccurs()
+        public async Task
+            GetAllUserAccessesAsyncShouldReturnInternalServerErrorWhenUserAccessServiceExceptionOccurs()
         {
             // given
-            var randomXeption = new Xeption(message: GetRandomString());
+            var someXeption = new Xeption(message: GetRandomString());
 
-            var userAccessServiceException = new UserAccessServiceException(
-                message: GetRandomString(),
-                innerException: randomXeption);
-
-            this.mockUserAccessService.Setup(service =>
-                service.RetrieveAllUserAccessesAsync())
-                    .ThrowsAsync(userAccessServiceException);
+            var lookupServiceException = new UserAccessServiceException(
+                message: "Service error occurred, contact support.",
+                innerException: someXeption);
+            userAccessServiceMock
+                .Setup(service => service.RetrieveAllUserAccessesAsync())
+                    .ThrowsAsync(lookupServiceException);
 
             // when
-            var result = await this.userAccessesController.Get();
+            var result = await userAccessesController.GetAsync();
 
             // then
             var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
             internalServerErrorResult.StatusCode.Should().Be(500);
+
+            userAccessServiceMock
+               .Verify(service => service.RetrieveAllUserAccessesAsync(),
+                   Times.Once);
+
+            userAccessServiceMock.VerifyNoOtherCalls();
         }
     }
 }

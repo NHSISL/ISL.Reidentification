@@ -18,68 +18,83 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.OdsD
     public partial class OdsDataControllerTests
     {
         [Fact]
-        public async Task GetAllOdsDataAsyncShouldReturnOdsData()
+        public async Task GetAllOdsDatasAsyncShouldReturnItems()
         {
             // given
             IQueryable<OdsData> randomOdsDatas = CreateRandomOdsDatas();
             IQueryable<OdsData> storageOdsDatas = randomOdsDatas.DeepClone();
-            IQueryable<OdsData> expectedOdsDatas = storageOdsDatas.DeepClone();
-
-            this.odsDataServiceMock.Setup(service =>
-                service.RetrieveAllOdsDatasAsync())
+            IQueryable<OdsData> expectedOdsData = storageOdsDatas.DeepClone();
+            odsDataServiceMock
+                .Setup(service => service.RetrieveAllOdsDatasAsync())
                     .ReturnsAsync(storageOdsDatas);
 
             // when
-            var result = await this.odsDataController.GetAsync();
+            var result = await odsDataController.GetAsync();
 
             // then
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
             okResult.StatusCode.Should().Be(200);
-            okResult.Value.Should().BeEquivalentTo(expectedOdsDatas);
+            okResult.Value.Should().BeEquivalentTo(expectedOdsData);
+
+            odsDataServiceMock
+               .Verify(service => service.RetrieveAllOdsDatasAsync(),
+                   Times.Once);
+
+            odsDataServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task GetAllOdsDataAsyncShouldReturnInternalServerErrorWhenOdsDataDependencyExceptionOccurs()
+        public async Task GetAllOdsDatasAsyncShouldReturnInternalServerErrorWhenOdsDataDependencyExceptionOccurs()
         {
             // given
-            Xeption randomException = new Xeption(GetRandomString());
+            var someXeption = new Xeption(message: GetRandomString());
 
             var dependencyException = new OdsDataDependencyException(
                 message: GetRandomString(),
-                innerException: randomException);
-
-            this.odsDataServiceMock.Setup(service =>
-                service.RetrieveAllOdsDatasAsync())
+                innerException: someXeption);
+            odsDataServiceMock
+                .Setup(service => service.RetrieveAllOdsDatasAsync())
                     .ThrowsAsync(dependencyException);
 
             // when
-            var result = await this.odsDataController.GetAsync();
+            var result = await odsDataController.GetAsync();
 
             // then
             var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
             internalServerErrorResult.StatusCode.Should().Be(500);
+
+            odsDataServiceMock
+               .Verify(service => service.RetrieveAllOdsDatasAsync(),
+                   Times.Once);
+
+            odsDataServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task GetAllOdsDataAsyncShouldReturnInternalServerErrorWhenOdsDataServiceExceptionOccurs()
+        public async Task GetAllOdsDatasAsyncShouldReturnInternalServerErrorWhenOdsDataServiceExceptionOccurs()
         {
             // given
-            Xeption randomException = new Xeption(GetRandomString());
+            var someXeption = new Xeption(message: GetRandomString());
 
-            var serviceException = new OdsDataServiceException(
-                message: GetRandomString(),
-                innerException: randomException);
-
-            this.odsDataServiceMock.Setup(service =>
-                service.RetrieveAllOdsDatasAsync())
-                    .ThrowsAsync(serviceException);
+            var lookupServiceException = new OdsDataServiceException(
+                message: "Service error occurred, contact support.",
+                innerException: someXeption);
+            odsDataServiceMock
+                .Setup(service => service.RetrieveAllOdsDatasAsync())
+                    .ThrowsAsync(lookupServiceException);
 
             // when
-            var result = await this.odsDataController.GetAsync();
+            var result = await odsDataController.GetAsync();
 
             // then
             var internalServerErrorResult = Assert.IsType<InternalServerErrorObjectResult>(result.Result);
             internalServerErrorResult.StatusCode.Should().Be(500);
+
+            odsDataServiceMock
+               .Verify(service => service.RetrieveAllOdsDatasAsync(),
+                   Times.Once);
+
+            odsDataServiceMock.VerifyNoOtherCalls();
         }
     }
 }
