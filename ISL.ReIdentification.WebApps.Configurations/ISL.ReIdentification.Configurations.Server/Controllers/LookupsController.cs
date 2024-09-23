@@ -171,7 +171,7 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             }
             catch (LookupDependencyValidationException lookupDependencyValidationException)
             {
-                return BadRequest(lookupDependencyValidationException);
+                return BadRequest(lookupDependencyValidationException.InnerException);
             }
             catch (LookupDependencyException lookupDependencyException)
             {
