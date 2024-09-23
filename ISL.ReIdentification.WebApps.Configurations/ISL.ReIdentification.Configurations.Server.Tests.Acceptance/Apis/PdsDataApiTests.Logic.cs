@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 
@@ -17,6 +18,19 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis.PdsDa
 
             // then
             actualPdsDatas.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task ShouldGetPdsDataByIdAsync()
+        {
+            // given
+            Guid randomPdsDataId = Guid.NewGuid();
+
+            // when
+            var actualPdsData = await this.apiBroker.GetOdsDataByIdAsync(randomPdsDataId);
+
+            // then
+            actualPdsData.Should().NotBeNull();
         }
     }
 }
