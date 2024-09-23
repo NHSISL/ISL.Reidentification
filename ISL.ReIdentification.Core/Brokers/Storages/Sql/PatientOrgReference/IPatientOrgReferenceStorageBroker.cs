@@ -2,8 +2,8 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.Ods
+namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.PatientOrgReference
 {
-    public partial interface IOdsStorageBroker
+    public partial interface IPatientOrgReferenceStorageBroker
     { }
 }

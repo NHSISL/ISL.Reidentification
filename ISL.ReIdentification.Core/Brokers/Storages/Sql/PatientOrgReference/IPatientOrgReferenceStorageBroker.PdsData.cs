@@ -9,7 +9,7 @@ using ISL.ReIdentification.Core.Models.Foundations.PdsDatas;
 
 namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.Pds
 {
-    public partial interface IOdsStorageBroker
+    public partial interface IPatientOrgReferenceStorageBroker
     {
         ValueTask<IQueryable<PdsData>> SelectAllPdsDatasAsync();
         ValueTask<PdsData> SelectPdsDataByIdAsync(Guid pdsDataId);

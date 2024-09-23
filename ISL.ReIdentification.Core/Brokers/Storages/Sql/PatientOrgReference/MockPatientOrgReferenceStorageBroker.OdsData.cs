@@ -8,9 +8,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Foundations.OdsDatas;
 
-namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.Ods
+namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.PatientOrgReference
 {
-    public partial class MockOdsStorageBroker
+    public partial class MockPatientOrgReferenceStorageBroker
     {
         public async ValueTask<IQueryable<OdsData>> SelectAllOdsDatasAsync() =>
             new List<OdsData> { CreateOdsData() }.AsQueryable();

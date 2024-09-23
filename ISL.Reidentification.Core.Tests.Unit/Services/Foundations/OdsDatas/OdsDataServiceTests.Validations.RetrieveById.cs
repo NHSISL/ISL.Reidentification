@@ -47,12 +47,12 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.OdsDatas
                     expectedOdsDataValidationException))),
                         Times.Once);
 
-            this.odsStorageBroker.Verify(broker =>
+            this.patientOrgReferenceStorageBroker.Verify(broker =>
                 broker.SelectOdsDataByIdAsync(It.IsAny<Guid>()),
                     Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.odsStorageBroker.VerifyNoOtherCalls();
+            this.patientOrgReferenceStorageBroker.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -69,7 +69,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.OdsDatas
                     message: "OdsData validation error occurred, please fix errors and try again.",
                     innerException: notFoundOdsDataException);
 
-            this.odsStorageBroker.Setup(broker =>
+            this.patientOrgReferenceStorageBroker.Setup(broker =>
                 broker.SelectOdsDataByIdAsync(It.IsAny<Guid>()))
                     .ReturnsAsync(noOdsData);
 
@@ -84,7 +84,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.OdsDatas
             //then
             actualOdsDataValidationException.Should().BeEquivalentTo(expectedOdsDataValidationException);
 
-            this.odsStorageBroker.Verify(broker =>
+            this.patientOrgReferenceStorageBroker.Verify(broker =>
                 broker.SelectOdsDataByIdAsync(It.IsAny<Guid>()),
                     Times.Once());
 
@@ -93,7 +93,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.OdsDatas
                     expectedOdsDataValidationException))),
                         Times.Once);
 
-            this.odsStorageBroker.VerifyNoOtherCalls();
+            this.patientOrgReferenceStorageBroker.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
