@@ -93,6 +93,10 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             {
                 return BadRequest(lookupValidationException.InnerException);
             }
+            catch (LookupDependencyValidationException lookupDependencyValidationException)
+            {
+                return BadRequest(lookupDependencyValidationException.InnerException);
+            }
             catch (LookupDependencyException lookupDependencyException)
             {
                 return InternalServerError(lookupDependencyException);
