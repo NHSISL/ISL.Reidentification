@@ -2,7 +2,6 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Foundations.PdsDatas;
@@ -42,7 +41,7 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         }
 
         [HttpGet("{pdsDataId}")]
-        public async ValueTask<ActionResult<PdsData>> GetPdsDataByIdAsync(Guid pdsDataId)
+        public async ValueTask<ActionResult<PdsData>> GetPdsDataByIdAsync(long pdsDataId)
         {
             try
             {

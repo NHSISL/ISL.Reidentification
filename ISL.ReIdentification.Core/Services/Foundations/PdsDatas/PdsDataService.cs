@@ -2,7 +2,6 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Brokers.Loggings;
@@ -27,12 +26,12 @@ namespace ISL.ReIdentification.Core.Services.Foundations.PdsDatas
         public ValueTask<IQueryable<PdsData>> RetrieveAllPdsDatasAsync() =>
             TryCatch(this.patientOrgReferenceStorageBroker.SelectAllPdsDatasAsync);
 
-        public ValueTask<PdsData> RetrievePdsDataByIdAsync(Guid pdsDataId) =>
+        public ValueTask<PdsData> RetrievePdsDataByIdAsync(long pdsDataRowId) =>
             TryCatch(async () =>
             {
-                await ValidatePdsDataId(pdsDataId);
-                PdsData maybePdsData = await this.patientOrgReferenceStorageBroker.SelectPdsDataByIdAsync(pdsDataId);
-                await ValidateStoragePdsData(maybePdsData, pdsDataId);
+                await ValidatePdsDataRowId(pdsDataRowId);
+                PdsData maybePdsData = await this.patientOrgReferenceStorageBroker.SelectPdsDataByIdAsync(pdsDataRowId);
+                await ValidateStoragePdsData(maybePdsData, pdsDataRowId);
 
                 return maybePdsData;
             });

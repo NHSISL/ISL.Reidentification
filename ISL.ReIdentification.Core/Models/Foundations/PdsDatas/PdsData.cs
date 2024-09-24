@@ -8,7 +8,7 @@ namespace ISL.ReIdentification.Core.Models.Foundations.PdsDatas
 {
     public class PdsData
     {
-        public Int64 RowId { get; set; }
+        public long RowId { get; set; }
         public string PseudoNhsNumber { get; set; }
         public string PrimaryCareProvider { get; set; }
         public DateTimeOffset PrimaryCareProviderBusinessEffectiveFromDate { get; set; }
