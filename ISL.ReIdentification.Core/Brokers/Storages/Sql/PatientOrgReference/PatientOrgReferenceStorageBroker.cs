@@ -8,13 +8,13 @@ using EFxceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.Ods
+namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.PatientOrgReference
 {
-    public partial class OdsStorageBroker : EFxceptionsContext, IOdsStorageBroker
+    public partial class PatientOrgReferenceStorageBroker : EFxceptionsContext, IPatientOrgReferenceStorageBroker
     {
         private readonly IConfiguration configuration;
 
-        public OdsStorageBroker(IConfiguration configuration)
+        public PatientOrgReferenceStorageBroker(IConfiguration configuration)
         {
             this.configuration = configuration;
             Database.Migrate();

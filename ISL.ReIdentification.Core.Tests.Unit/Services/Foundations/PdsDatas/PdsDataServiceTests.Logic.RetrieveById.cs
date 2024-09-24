@@ -21,7 +21,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
             PdsData storagePdsData = randomPdsData;
             PdsData expectedPdsData = storagePdsData.DeepClone();
 
-            this.odsStorageBroker.Setup(broker =>
+            this.patientOrgReferenceStorageBroker.Setup(broker =>
                 broker.SelectPdsDataByIdAsync(inputPdsData.Id))
                     .ReturnsAsync(storagePdsData);
 
@@ -32,11 +32,11 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
             // then
             actualPdsData.Should().BeEquivalentTo(expectedPdsData);
 
-            this.odsStorageBroker.Verify(broker =>
+            this.patientOrgReferenceStorageBroker.Verify(broker =>
                 broker.SelectPdsDataByIdAsync(inputPdsData.Id),
                     Times.Once);
 
-            this.odsStorageBroker.VerifyNoOtherCalls();
+            this.patientOrgReferenceStorageBroker.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }

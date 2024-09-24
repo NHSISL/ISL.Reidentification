@@ -4,8 +4,8 @@
 
 using EFxceptions;
 
-namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.Ods
+namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.PatientOrgReference
 {
-    public partial class MockOdsStorageBroker : EFxceptionsContext, IOdsStorageBroker
+    public partial class MockPatientOrgReferenceStorageBroker : EFxceptionsContext, IPatientOrgReferenceStorageBroker
     { }
 }

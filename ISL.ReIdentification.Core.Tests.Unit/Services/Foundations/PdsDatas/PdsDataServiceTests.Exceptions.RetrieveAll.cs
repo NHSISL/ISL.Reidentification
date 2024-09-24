@@ -31,7 +31,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
                     message: "PdsData dependency error occurred, contact support.",
                     innerException: failedStoragePdsDataException);
 
-            this.odsStorageBroker.Setup(broker =>
+            this.patientOrgReferenceStorageBroker.Setup(broker =>
                 broker.SelectAllPdsDatasAsync())
                     .ThrowsAsync(sqlException);
 
@@ -47,7 +47,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
             actualPdsDataDependencyException.Should().BeEquivalentTo(
                 expectedPdsDataDependencyException);
 
-            this.odsStorageBroker.Verify(broker =>
+            this.patientOrgReferenceStorageBroker.Verify(broker =>
                 broker.SelectAllPdsDatasAsync(),
                     Times.Once);
 
@@ -56,7 +56,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
                     expectedPdsDataDependencyException))),
                         Times.Once);
 
-            this.odsStorageBroker.VerifyNoOtherCalls();
+            this.patientOrgReferenceStorageBroker.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
 
@@ -76,7 +76,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
                     message: "PdsData service error occurred, contact support.",
                     innerException: failedServicePdsDataException);
 
-            this.odsStorageBroker.Setup(broker =>
+            this.patientOrgReferenceStorageBroker.Setup(broker =>
                 broker.SelectAllPdsDatasAsync())
                     .ThrowsAsync(serviceError);
 
@@ -92,7 +92,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
             actualPdsDataServiceException.Should().BeEquivalentTo(
                 expectedPdsDataServiceException);
 
-            this.odsStorageBroker.Verify(broker =>
+            this.patientOrgReferenceStorageBroker.Verify(broker =>
                 broker.SelectAllPdsDatasAsync(),
                     Times.Once);
 
@@ -101,7 +101,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
                     expectedPdsDataServiceException))),
                         Times.Once);
 
-            this.odsStorageBroker.VerifyNoOtherCalls();
+            this.patientOrgReferenceStorageBroker.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }

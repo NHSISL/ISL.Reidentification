@@ -49,12 +49,12 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
                     expectedPdsDataValidationException))),
                         Times.Once);
 
-            this.odsStorageBroker.Verify(broker =>
+            this.patientOrgReferenceStorageBroker.Verify(broker =>
                 broker.SelectPdsDataByIdAsync(It.IsAny<Guid>()),
                     Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.odsStorageBroker.VerifyNoOtherCalls();
+            this.patientOrgReferenceStorageBroker.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -72,7 +72,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
                     message: "PdsData validation error occurred, please fix errors and try again.",
                     innerException: notFoundPdsDataException);
 
-            this.odsStorageBroker.Setup(broker =>
+            this.patientOrgReferenceStorageBroker.Setup(broker =>
                 broker.SelectPdsDataByIdAsync(It.IsAny<Guid>()))
                     .ReturnsAsync(noPdsData);
 
@@ -87,7 +87,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
             //then
             actualPdsDataValidationException.Should().BeEquivalentTo(expectedPdsDataValidationException);
 
-            this.odsStorageBroker.Verify(broker =>
+            this.patientOrgReferenceStorageBroker.Verify(broker =>
                 broker.SelectPdsDataByIdAsync(It.IsAny<Guid>()),
                     Times.Once());
 
@@ -96,7 +96,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
                     expectedPdsDataValidationException))),
                         Times.Once);
 
-            this.odsStorageBroker.VerifyNoOtherCalls();
+            this.patientOrgReferenceStorageBroker.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
