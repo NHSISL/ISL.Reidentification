@@ -6,13 +6,16 @@ using System;
 using System.Linq;
 using ISL.ReIdentification.Configurations.Server.Controllers;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
+using ISL.ReIdentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using ISL.ReIdentification.Core.Services.Foundations.UserAccesses;
 using Moq;
+using RESTFulSense.Controllers;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.UserAccesses
 {
-    public partial class UserAccessesControllerTests
+    public partial class UserAccessesControllerTests : RESTFulController
     {
         private readonly Mock<IUserAccessService> userAccessServiceMock;
         private readonly UserAccessesController userAccessesController;
@@ -21,6 +24,40 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.User
         {
             this.userAccessServiceMock = new Mock<IUserAccessService>();
             this.userAccessesController = new UserAccessesController(userAccessServiceMock.Object);
+        }
+
+        public static TheoryData<Xeption> ValidationExceptions()
+        {
+            var someInnerException = new Xeption();
+            string someMessage = GetRandomString();
+
+            return new TheoryData<Xeption>
+            {
+                new UserAccessValidationException(
+                    message: someMessage,
+                    innerException: someInnerException),
+
+                new UserAccessDependencyValidationException(
+                    message: someMessage,
+                    innerException: someInnerException)
+            };
+        }
+
+        public static TheoryData<Xeption> ServerExceptions()
+        {
+            var someInnerException = new Xeption();
+            string someMessage = GetRandomString();
+
+            return new TheoryData<Xeption>
+            {
+                new UserAccessDependencyException(
+                    message: someMessage,
+                    innerException: someInnerException),
+
+                new UserAccessServiceException(
+                    message: someMessage,
+                    innerException: someInnerException)
+            };
         }
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
