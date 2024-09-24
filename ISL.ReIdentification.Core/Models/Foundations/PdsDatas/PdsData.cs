@@ -6,8 +6,16 @@ using System;
 
 namespace ISL.ReIdentification.Core.Models.Foundations.PdsDatas
 {
-    public class PdsData : IKey
+    public class PdsData
     {
-        public Guid Id { get; set; }
+        public Int64 RowId { get; set; }
+        public string PseudoNhsNumber { get; set; }
+        public string PrimaryCareProvider { get; set; }
+        public DateTimeOffset PrimaryCareProviderBusinessEffectiveFromDate { get; set; }
+        public DateTimeOffset PrimaryCareProviderBusinessEffectiveToDate { get; set; }
+        public string CcgOfRegistration { get; set; }
+        public string CurrentCcgOfRegistration { get; set; }
+        public string IcbOfRegistration { get; set; }
+        public string CurrentIcbOfRegistration { get; set; }
     }
 }
