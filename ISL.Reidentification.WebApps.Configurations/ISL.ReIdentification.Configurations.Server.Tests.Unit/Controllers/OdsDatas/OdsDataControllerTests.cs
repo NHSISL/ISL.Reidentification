@@ -5,13 +5,16 @@
 using System.Linq;
 using ISL.ReIdentification.Configurations.Server.Controllers;
 using ISL.ReIdentification.Core.Models.Foundations.OdsDatas;
+using ISL.ReIdentification.Core.Models.Foundations.OdsDatas.Exceptions;
 using ISL.ReIdentification.Core.Services.Foundations.OdsDatas;
 using Moq;
+using RESTFulSense.Controllers;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.OdsDatas
 {
-    public partial class OdsDataControllerTests
+    public partial class OdsDataControllerTests : RESTFulController
     {
         private readonly Mock<IOdsDataService> odsDataServiceMock;
         private readonly OdsDataController odsDataController;
@@ -20,6 +23,36 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.OdsD
         {
             this.odsDataServiceMock = new Mock<IOdsDataService>();
             this.odsDataController = new OdsDataController(this.odsDataServiceMock.Object);
+        }
+
+        public static TheoryData<Xeption> ValidationExceptions()
+        {
+            var someInnerException = new Xeption();
+            string someMessage = GetRandomString();
+
+            return new TheoryData<Xeption>
+            {
+                new OdsDataValidationException(
+                    message: someMessage,
+                    innerException: someInnerException),
+            };
+        }
+
+        public static TheoryData<Xeption> ServerExceptions()
+        {
+            var someInnerException = new Xeption();
+            string someMessage = GetRandomString();
+
+            return new TheoryData<Xeption>
+            {
+                new OdsDataDependencyException(
+                    message: someMessage,
+                    innerException: someInnerException),
+
+                new OdsDataServiceException(
+                    message: someMessage,
+                    innerException: someInnerException)
+            };
         }
 
         private static OdsData CreateRandomOdsData() =>

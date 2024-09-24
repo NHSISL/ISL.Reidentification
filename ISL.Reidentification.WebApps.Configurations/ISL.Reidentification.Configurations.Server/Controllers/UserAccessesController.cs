@@ -28,30 +28,31 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         {
             try
             {
-                UserAccess addedUserAccess = await this.userAccessService.AddUserAccessAsync(userAccess);
+                UserAccess addedUserAccess =
+                    await this.userAccessService.AddUserAccessAsync(userAccess);
 
                 return Created(addedUserAccess);
             }
-            catch (UserAccessValidationException userAccessValidationException)
+            catch (UserAccessValidationException lookupValidationException)
             {
-                return BadRequest(userAccessValidationException.InnerException);
+                return BadRequest(lookupValidationException.InnerException);
             }
-            catch (UserAccessDependencyValidationException userAccessDependencyValidationException)
-                when (userAccessDependencyValidationException.InnerException is AlreadyExistsUserAccessException)
+            catch (UserAccessDependencyValidationException lookupDependencyValidationException)
+               when (lookupDependencyValidationException.InnerException is AlreadyExistsUserAccessException)
             {
-                return Conflict(userAccessDependencyValidationException.InnerException);
+                return Conflict(lookupDependencyValidationException.InnerException);
             }
-            catch (UserAccessDependencyValidationException userAccessDependencyValidationException)
+            catch (UserAccessDependencyValidationException lookupDependencyValidationException)
             {
-                return BadRequest(userAccessDependencyValidationException.InnerException);
+                return BadRequest(lookupDependencyValidationException.InnerException);
             }
-            catch (UserAccessDependencyException userAccessDependencyException)
+            catch (UserAccessDependencyException lookupDependencyException)
             {
-                return InternalServerError(userAccessDependencyException.InnerException);
+                return InternalServerError(lookupDependencyException);
             }
-            catch (UserAccessServiceException userAccessServiceException)
+            catch (UserAccessServiceException lookupServiceException)
             {
-                return InternalServerError(userAccessServiceException.InnerException);
+                return InternalServerError(lookupServiceException);
             }
         }
 
@@ -60,17 +61,18 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         {
             try
             {
-                IQueryable<UserAccess> userAccesses = await this.userAccessService.RetrieveAllUserAccessesAsync();
+                IQueryable<UserAccess> userAccesses =
+                    await this.userAccessService.RetrieveAllUserAccessesAsync();
 
                 return Ok(userAccesses);
             }
             catch (UserAccessDependencyException userAccessDependencyException)
             {
-                return InternalServerError(userAccessDependencyException.InnerException);
+                return InternalServerError(userAccessDependencyException);
             }
             catch (UserAccessServiceException userAccessServiceException)
             {
-                return InternalServerError(userAccessServiceException.InnerException);
+                return InternalServerError(userAccessServiceException);
             }
         }
 
@@ -79,7 +81,8 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         {
             try
             {
-                UserAccess userAccess = await this.userAccessService.RetrieveUserAccessByIdAsync(userAccessId);
+                UserAccess userAccess =
+                    await this.userAccessService.RetrieveUserAccessByIdAsync(userAccessId);
 
                 return Ok(userAccess);
             }
@@ -92,13 +95,17 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             {
                 return BadRequest(userAccessValidationException.InnerException);
             }
+            catch (UserAccessDependencyValidationException userAccessDependencyValidationException)
+            {
+                return BadRequest(userAccessDependencyValidationException.InnerException);
+            }
             catch (UserAccessDependencyException userAccessDependencyException)
             {
-                return InternalServerError(userAccessDependencyException.InnerException);
+                return InternalServerError(userAccessDependencyException);
             }
             catch (UserAccessServiceException userAccessServiceException)
             {
-                return InternalServerError(userAccessServiceException.InnerException);
+                return InternalServerError(userAccessServiceException);
             }
         }
 
@@ -107,16 +114,24 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         {
             try
             {
-                UserAccess modifiedUserAccess = await this.userAccessService.ModifyUserAccessAsync(userAccess);
+                UserAccess modifiedUserAccess =
+                    await this.userAccessService.ModifyUserAccessAsync(userAccess);
 
                 return Ok(modifiedUserAccess);
+            }
+            catch (UserAccessValidationException userAccessValidationException)
+                when (userAccessValidationException.InnerException
+                    is NotFoundUserAccessException)
+            {
+                return NotFound(userAccessValidationException.InnerException);
             }
             catch (UserAccessValidationException userAccessValidationException)
             {
                 return BadRequest(userAccessValidationException.InnerException);
             }
             catch (UserAccessDependencyValidationException userAccessDependencyValidationException)
-                when (userAccessDependencyValidationException.InnerException is AlreadyExistsUserAccessException)
+                when (userAccessDependencyValidationException.InnerException
+                    is AlreadyExistsUserAccessException)
             {
                 return Conflict(userAccessDependencyValidationException.InnerException);
             }
@@ -126,11 +141,11 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             }
             catch (UserAccessDependencyException userAccessDependencyException)
             {
-                return InternalServerError(userAccessDependencyException.InnerException);
+                return InternalServerError(userAccessDependencyException);
             }
             catch (UserAccessServiceException userAccessServiceException)
             {
-                return InternalServerError(userAccessServiceException.InnerException);
+                return InternalServerError(userAccessServiceException);
             }
         }
 
@@ -139,12 +154,14 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         {
             try
             {
-                UserAccess deletedUserAccess = await this.userAccessService.RemoveUserAccessByIdAsync(userAccessId);
+                UserAccess deletedUserAccess =
+                    await this.userAccessService.RemoveUserAccessByIdAsync(userAccessId);
 
                 return Ok(deletedUserAccess);
             }
             catch (UserAccessValidationException userAccessValidationException)
-                when (userAccessValidationException.InnerException is NotFoundUserAccessException)
+                when (userAccessValidationException.InnerException
+                    is NotFoundUserAccessException)
             {
                 return NotFound(userAccessValidationException.InnerException);
             }
@@ -163,11 +180,11 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             }
             catch (UserAccessDependencyException userAccessDependencyException)
             {
-                return InternalServerError(userAccessDependencyException.InnerException);
+                return InternalServerError(userAccessDependencyException);
             }
             catch (UserAccessServiceException userAccessServiceException)
             {
-                return InternalServerError(userAccessServiceException.InnerException);
+                return InternalServerError(userAccessServiceException);
             }
         }
     }
