@@ -3,7 +3,7 @@
 // ---------------------------------------------------------
 
 using System.Linq;
-using ISL.ReIdentification.Core.Brokers.Storages.Sql.Ods;
+using ISL.ReIdentification.Core.Brokers.Storages.Sql.PatientOrgReference;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,12 +20,12 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Brokers
             {
                 // Remove or override services if needed
                 var descriptor = services.SingleOrDefault(
-                    d => d.ServiceType == typeof(IOdsStorageBroker));
+                    d => d.ServiceType == typeof(IPatientOrgReferenceStorageBroker));
 
                 if (descriptor != null)
                     services.Remove(descriptor);
 
-                services.AddTransient<IOdsStorageBroker, MockOdsStorageBroker>();
+                services.AddTransient<IPatientOrgReferenceStorageBroker, MockPatientOrgReferenceStorageBroker>();
             });
         }
     }

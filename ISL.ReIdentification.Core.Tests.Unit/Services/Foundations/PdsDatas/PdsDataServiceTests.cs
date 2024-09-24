@@ -19,17 +19,17 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
 {
     public partial class PdsDataServiceTests
     {
-        private readonly Mock<IOdsStorageBroker> odsStorageBroker;
+        private readonly Mock<IPatientOrgReferenceStorageBroker> patientOrgReferenceStorageBroker;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly PdsDataService pdsDataService;
 
         public PdsDataServiceTests()
         {
-            this.odsStorageBroker = new Mock<IOdsStorageBroker>();
+            this.patientOrgReferenceStorageBroker = new Mock<IPatientOrgReferenceStorageBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
             this.pdsDataService = new PdsDataService(
-                odsStorageBroker.Object,
+                patientOrgReferenceStorageBroker.Object,
                 loggingBrokerMock.Object);
         }
 

@@ -6,13 +6,16 @@ using System;
 using System.Linq;
 using ISL.ReIdentification.Configurations.Server.Controllers;
 using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
+using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses.Exceptions;
 using ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses;
 using Moq;
+using RESTFulSense.Controllers;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.DelegatedAccesses
 {
-    public partial class DelegatedAccessesControllerTests
+    public partial class DelegatedAccessesControllerTests : RESTFulController
     {
         private readonly Mock<IDelegatedAccessService> delegatedAccessServiceMock;
         private readonly DelegatedAccessesController delegatedAccessesController;
@@ -21,6 +24,40 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
         {
             delegatedAccessServiceMock = new Mock<IDelegatedAccessService>();
             delegatedAccessesController = new DelegatedAccessesController(delegatedAccessServiceMock.Object);
+        }
+
+        public static TheoryData<Xeption> ValidationExceptions()
+        {
+            var someInnerException = new Xeption();
+            string someMessage = GetRandomString();
+
+            return new TheoryData<Xeption>
+            {
+                new DelegatedAccessValidationException(
+                    message: someMessage,
+                    innerException: someInnerException),
+
+                new DelegatedAccessDependencyValidationException(
+                    message: someMessage,
+                    innerException: someInnerException)
+            };
+        }
+
+        public static TheoryData<Xeption> ServerExceptions()
+        {
+            var someInnerException = new Xeption();
+            string someMessage = GetRandomString();
+
+            return new TheoryData<Xeption>
+            {
+                new DelegatedAccessDependencyException(
+                    message: someMessage,
+                    innerException: someInnerException),
+
+                new DelegatedAccessServiceException(
+                    message: someMessage,
+                    innerException: someInnerException)
+            };
         }
 
         private static string GetRandomString() =>
