@@ -32,27 +32,26 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
 
                 return Created(addedDelegatedAccess);
             }
-            catch (DelegatedAccessValidationException delegatedValidationException)
+            catch (DelegatedAccessValidationException lookupValidationException)
             {
-                return BadRequest(delegatedValidationException.InnerException);
+                return BadRequest(lookupValidationException.InnerException);
             }
-            catch (DelegatedAccessDependencyValidationException delegatedAccessDependencyValidationException)
-               when (delegatedAccessDependencyValidationException.InnerException
-                    is AlreadyExistsDelegatedAccessException)
+            catch (DelegatedAccessDependencyValidationException lookupDependencyValidationException)
+               when (lookupDependencyValidationException.InnerException is AlreadyExistsDelegatedAccessException)
             {
-                return Conflict(delegatedAccessDependencyValidationException.InnerException);
+                return Conflict(lookupDependencyValidationException.InnerException);
             }
-            catch (DelegatedAccessDependencyValidationException delegatedAccessDependencyValidationException)
+            catch (DelegatedAccessDependencyValidationException lookupDependencyValidationException)
             {
-                return BadRequest(delegatedAccessDependencyValidationException.InnerException);
+                return BadRequest(lookupDependencyValidationException.InnerException);
             }
-            catch (DelegatedAccessDependencyException delegatedAccessDependencyException)
+            catch (DelegatedAccessDependencyException lookupDependencyException)
             {
-                return InternalServerError(delegatedAccessDependencyException);
+                return InternalServerError(lookupDependencyException);
             }
-            catch (DelegatedAccessServiceException delegatedAccessServiceException)
+            catch (DelegatedAccessServiceException lookupServiceException)
             {
-                return InternalServerError(delegatedAccessServiceException);
+                return InternalServerError(lookupServiceException);
             }
         }
 
@@ -94,6 +93,10 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             catch (DelegatedAccessValidationException delegatedAccessValidationException)
             {
                 return BadRequest(delegatedAccessValidationException.InnerException);
+            }
+            catch (DelegatedAccessDependencyValidationException delegatedAccessDependencyValidationException)
+            {
+                return BadRequest(delegatedAccessDependencyValidationException.InnerException);
             }
             catch (DelegatedAccessDependencyException delegatedAccessDependencyException)
             {
@@ -172,7 +175,7 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
             }
             catch (DelegatedAccessDependencyValidationException delegatedAccessDependencyValidationException)
             {
-                return BadRequest(delegatedAccessDependencyValidationException);
+                return BadRequest(delegatedAccessDependencyValidationException.InnerException);
             }
             catch (DelegatedAccessDependencyException delegatedAccessDependencyException)
             {
