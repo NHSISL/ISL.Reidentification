@@ -33,12 +33,18 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.OdsDatas
                 loggingBrokerMock.Object);
         }
 
+        private static DateTimeOffset GetRandomDateTimeOffset() =>
+            new DateTimeRange(earliestDate: new DateTime()).GetValue();
+
         private static OdsData CreateRandomOdsData() =>
-            CreateOdsDataFiller().Create();
+            CreateRandomOdsData(dateTimeOffset: GetRandomDateTimeOffset());
+
+        private static OdsData CreateRandomOdsData(DateTimeOffset dateTimeOffset) =>
+            CreateOdsDataFiller(dateTimeOffset).Create();
 
         private static IQueryable<OdsData> CreateRandomOdsDatas()
         {
-            return CreateOdsDataFiller()
+            return CreateOdsDataFiller(GetRandomDateTimeOffset())
                 .Create(GetRandomNumber())
                 .AsQueryable();
         }
@@ -46,11 +52,24 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.OdsDatas
         private SqlException CreateSqlException() =>
             (SqlException)RuntimeHelpers.GetUninitializedObject(type: typeof(SqlException));
 
+        private static string GetRandomStringWithLengthOf(int length)
+        {
+            return new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length)
+                .GetValue();
+        }
+
         private static int GetRandomNumber() =>
             new IntRange(max: 15, min: 2).GetValue();
 
-        private static Filler<OdsData> CreateOdsDataFiller() =>
-            new Filler<OdsData>();
+        private static Filler<OdsData> CreateOdsDataFiller(DateTimeOffset dateTimeOffset)
+        {
+            var filler = new Filler<OdsData>();
+
+            filler.Setup()
+                .OnType<DateTimeOffset>().Use(dateTimeOffset);
+
+            return filler;
+        }
 
         private static Expression<Func<Xeption, bool>> SameExceptionAs(
             Xeption expectedException)
