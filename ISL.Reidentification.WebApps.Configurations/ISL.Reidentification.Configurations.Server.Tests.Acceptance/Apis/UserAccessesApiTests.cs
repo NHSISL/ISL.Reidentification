@@ -28,6 +28,9 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
         private static UserAccess CreateRandomUserAccess() =>
             CreateRandomUserAccessFiller().Create();
 
+        private static string GetRandomStringWithLengthOf(int length) =>
+            new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length).GetValue();
+
         private static Filler<UserAccess> CreateRandomUserAccessFiller()
         {
             string user = Guid.NewGuid().ToString();
@@ -37,6 +40,16 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(now)
                 .OnType<DateTimeOffset?>().Use(now)
+
+                .OnProperty(userAccess => userAccess.FirstName)
+                    .Use(() => GetRandomStringWithLengthOf(255))
+
+                .OnProperty(userAccess => userAccess.LastName)
+                    .Use(() => GetRandomStringWithLengthOf(255))
+
+                .OnProperty(userAccess => userAccess.UserEmail)
+                    .Use(() => GetRandomStringWithLengthOf(320))
+
                 .OnProperty(userAccess => userAccess.CreatedDate).Use(now)
                 .OnProperty(userAccess => userAccess.CreatedBy).Use(user)
                 .OnProperty(userAccess => userAccess.UpdatedDate).Use(now)
