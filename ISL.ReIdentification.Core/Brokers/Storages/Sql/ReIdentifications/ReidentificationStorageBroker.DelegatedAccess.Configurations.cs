@@ -35,11 +35,8 @@ namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications
                 .HasMaxLength(320)
                 .IsRequired();
 
-            builder.Property(delegatedAccess => delegatedAccess.IsSystemAccess)
-                .IsRequired(false);
-
             builder.Property(delegatedAccess => delegatedAccess.IsApproved)
-                .IsRequired();
+                .IsRequired(false);
 
             builder.Property(delegatedAccess => delegatedAccess.Data)
                 .IsRequired(false);

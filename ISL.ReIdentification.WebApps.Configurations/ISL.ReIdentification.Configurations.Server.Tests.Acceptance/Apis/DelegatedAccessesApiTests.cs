@@ -73,11 +73,20 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(now)
 
-                .OnProperty(delegatedAccess => delegatedAccess.RequesterEmail)
+                .OnProperty(delegatedAccess => delegatedAccess.RequesterFirstName)
+                    .Use(() => GetRandomStringWithLengthOf(255))
+
+                .OnProperty(delegatedAccess => delegatedAccess.RequesterLastName)
                     .Use(() => GetRandomStringWithLengthOf(255))
 
                 .OnProperty(delegatedAccess => delegatedAccess.RequesterEmail)
                     .Use(() => GetRandomStringWithLengthOf(320))
+
+                .OnProperty(delegatedAccess => delegatedAccess.RecipientFirstName)
+                    .Use(() => GetRandomStringWithLengthOf(255))
+
+                .OnProperty(delegatedAccess => delegatedAccess.RecipientLastName)
+                    .Use(() => GetRandomStringWithLengthOf(255))
 
                 .OnProperty(delegatedAccess => delegatedAccess.RecipientEmail)
                     .Use(() => GetRandomStringWithLengthOf(320))
