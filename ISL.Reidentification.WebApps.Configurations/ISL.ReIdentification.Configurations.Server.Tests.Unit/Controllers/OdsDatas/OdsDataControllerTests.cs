@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Linq;
 using ISL.ReIdentification.Configurations.Server.Controllers;
 using ISL.ReIdentification.Core.Models.Foundations.OdsDatas;
@@ -55,12 +56,18 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.OdsD
             };
         }
 
+        private static DateTimeOffset GetRandomDateTimeOffset() =>
+            new DateTimeRange(earliestDate: new DateTime()).GetValue();
+
         private static OdsData CreateRandomOdsData() =>
-            CreateOdsDataFiller().Create();
+            CreateRandomOdsData(dateTimeOffset: GetRandomDateTimeOffset());
+
+        private static OdsData CreateRandomOdsData(DateTimeOffset dateTimeOffset) =>
+            CreateOdsDataFiller(dateTimeOffset).Create();
 
         private static IQueryable<OdsData> CreateRandomOdsDatas()
         {
-            return CreateOdsDataFiller()
+            return CreateOdsDataFiller(GetRandomDateTimeOffset())
                 .Create(GetRandomNumber())
                 .AsQueryable();
         }
@@ -71,7 +78,14 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.OdsD
         private static string GetRandomString() =>
             new MnemonicString(wordCount: GetRandomNumber()).GetValue();
 
-        private static Filler<OdsData> CreateOdsDataFiller() =>
-            new Filler<OdsData>();
+        private static Filler<OdsData> CreateOdsDataFiller(DateTimeOffset dateTimeOffset)
+        {
+            var filler = new Filler<OdsData>();
+
+            filler.Setup()
+                .OnType<DateTimeOffset>().Use(dateTimeOffset);
+
+            return filler;
+        }
     }
 }
