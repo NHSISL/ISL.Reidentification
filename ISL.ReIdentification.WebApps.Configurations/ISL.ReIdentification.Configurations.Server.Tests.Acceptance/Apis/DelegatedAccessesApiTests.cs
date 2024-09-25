@@ -74,6 +74,9 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
                 .OnType<DateTimeOffset>().Use(now)
 
                 .OnProperty(delegatedAccess => delegatedAccess.RequesterEmail)
+                    .Use(() => GetRandomStringWithLengthOf(255))
+
+                .OnProperty(delegatedAccess => delegatedAccess.RequesterEmail)
                     .Use(() => GetRandomStringWithLengthOf(320))
 
                 .OnProperty(delegatedAccess => delegatedAccess.RecipientEmail)

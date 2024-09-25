@@ -78,5 +78,8 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
 
                 return await this.reIdentificationStorageBroker.DeleteUserAccessAsync(maybeUserAccess);
             });
+
+        public ValueTask<bool> HasAccessToPseudoIdentifier(string userEmail, string pseudoIdentifier) =>
+            throw new NotImplementedException();
     }
 }
