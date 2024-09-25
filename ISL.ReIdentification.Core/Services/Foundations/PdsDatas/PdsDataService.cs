@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Brokers.Loggings;
-using ISL.ReIdentification.Core.Brokers.Storages.Sql.Pds;
+using ISL.ReIdentification.Core.Brokers.Storages.Sql.PatientOrgReference;
 using ISL.ReIdentification.Core.Models.Foundations.PdsDatas;
 
 namespace ISL.ReIdentification.Core.Services.Foundations.PdsDatas
