@@ -4,6 +4,7 @@ using ISL.ReIdentification.Core.Brokers.Storages.Sql.PatientOrgReference;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ISL.ReIdentification.Core.Migrations.PatientOrgReferenceStorageBrokerMigrations
 {
     [DbContext(typeof(PatientOrgReferenceStorageBroker))]
-    partial class PatientOrgReferenceStorageBrokerModelSnapshot : ModelSnapshot
+    [Migration("20240926130916_AddPdsData")]
+    partial class AddPdsData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

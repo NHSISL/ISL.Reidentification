@@ -11,6 +11,11 @@ namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.PatientOrgReference
     {
         private void AddPdsDataConfigurations(EntityTypeBuilder<PdsData> builder)
         {
+            builder.HasKey(pdsData => pdsData.RowId);
+
+            builder.Property(pdsData => pdsData.RowId)
+                .IsRequired();
+
             builder.Property(pdsData => pdsData.PseudoNhsNumber)
                 .HasMaxLength(15);
 
