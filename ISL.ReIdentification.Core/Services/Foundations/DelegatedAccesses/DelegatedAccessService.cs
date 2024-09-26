@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
@@ -33,6 +34,19 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
                 return await this.reIdentificationStorageBroker.InsertDelegatedAccessAsync(delegatedAccess);
             });
 
+        public ValueTask<DelegatedAccess> RetrieveDelegatedAccessByIdAsync(Guid delegatedAccessId) =>
+            TryCatch(async () =>
+            {
+                await ValidateDelegatedAccessIdAsync(delegatedAccessId);
+
+                DelegatedAccess maybeDelegatedAccess =
+                    await this.reIdentificationStorageBroker.SelectDelegatedAccessByIdAsync(delegatedAccessId);
+
+                await ValidateStorageDelegatedAccessAsync(maybeDelegatedAccess, delegatedAccessId);
+
+                return maybeDelegatedAccess;
+            });
+
         public ValueTask<IQueryable<DelegatedAccess>> RetrieveAllDelegatedAccessesAsync() =>
             TryCatch(this.reIdentificationStorageBroker.SelectAllDelegatedAccessesAsync);
 
@@ -48,6 +62,19 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
                 await ValidateAgainstStorageDelegatedAccessOnModifyAsync(delegatedAccess, maybeDelegatedAccess);
 
                 return await this.reIdentificationStorageBroker.UpdateDelegatedAccessAsync(delegatedAccess);
+            });
+
+        public ValueTask<DelegatedAccess> RemoveDelegatedAccessByIdAsync(Guid delegatedAccessId) =>
+            TryCatch(async () =>
+            {
+                await ValidateDelegatedAccessIdAsync(delegatedAccessId);
+
+                DelegatedAccess maybeDelegatedAccess =
+                    await this.reIdentificationStorageBroker.SelectDelegatedAccessByIdAsync(delegatedAccessId);
+
+                await ValidateStorageDelegatedAccessAsync(maybeDelegatedAccess, delegatedAccessId);
+
+                return await this.reIdentificationStorageBroker.DeleteDelegatedAccessAsync(maybeDelegatedAccess);
             });
     }
 }

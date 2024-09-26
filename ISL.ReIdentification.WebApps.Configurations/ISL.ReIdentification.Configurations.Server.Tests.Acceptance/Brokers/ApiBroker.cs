@@ -16,7 +16,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Brokers
 
         public ApiBroker()
         {
-            this.webApplicationFactory = new WebApplicationFactory<Program>();
+            this.webApplicationFactory = new AcceptanceTestApplicationFactory<Program>();
             this.httpClient = this.webApplicationFactory.CreateClient();
             this.apiFactoryClient = new RESTFulApiFactoryClient(this.httpClient);
         }

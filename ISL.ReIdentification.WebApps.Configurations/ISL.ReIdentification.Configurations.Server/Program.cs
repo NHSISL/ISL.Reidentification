@@ -6,11 +6,13 @@ using System.Text.Json;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
 using ISL.ReIdentification.Core.Brokers.Identifiers;
 using ISL.ReIdentification.Core.Brokers.Loggings;
-using ISL.ReIdentification.Core.Brokers.Storages.Sql.Ods;
+using ISL.ReIdentification.Core.Brokers.Storages.Sql.PatientOrgReference;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
 using ISL.ReIdentification.Core.Models.Foundations.Lookups;
 using ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses;
 using ISL.ReIdentification.Core.Services.Foundations.Lookups;
+using ISL.ReIdentification.Core.Services.Foundations.OdsDatas;
+using ISL.ReIdentification.Core.Services.Foundations.PdsDatas;
 using ISL.ReIdentification.Core.Services.Foundations.UserAccesses;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -39,7 +41,7 @@ namespace ISL.ReIdentification.Configurations.Server
 
             builder.Services.AddAuthorization();
             builder.Services.AddDbContext<ReIdentificationStorageBroker>();
-            builder.Services.AddDbContext<OdsStorageBroker>();
+            builder.Services.AddDbContext<PatientOrgReferenceStorageBroker>();
             builder.Services.AddHttpContextAccessor();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -112,7 +114,7 @@ namespace ISL.ReIdentification.Configurations.Server
             services.AddTransient<IDateTimeBroker, DateTimeBroker>();
             services.AddTransient<IIdentifierBroker, IdentifierBroker>();
             services.AddTransient<ILoggingBroker, LoggingBroker>();
-            services.AddTransient<IOdsStorageBroker, OdsStorageBroker>();
+            services.AddTransient<IPatientOrgReferenceStorageBroker, PatientOrgReferenceStorageBroker>();
             services.AddTransient<IReIdentificationStorageBroker, ReIdentificationStorageBroker>();
         }
 
@@ -120,6 +122,8 @@ namespace ISL.ReIdentification.Configurations.Server
         {
             services.AddTransient<IDelegatedAccessService, DelegatedAccessService>();
             services.AddTransient<ILookupService, LookupService>();
+            services.AddTransient<IOdsDataService, OdsDataService>();
+            services.AddTransient<IPdsDataService, PdsDataService>();
             services.AddTransient<IUserAccessService, UserAccessService>();
         }
 

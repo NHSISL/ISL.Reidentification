@@ -64,9 +64,8 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             //given
             Guid someLookupId = Guid.NewGuid();
             Lookup noLookup = null;
-
             var notFoundLookupException =
-                new NotFoundLookupException(someLookupId);
+                new NotFoundLookupException(message: $"Lookup not found with Id: {someLookupId}");
 
             var expectedLookupValidationException =
                 new LookupValidationException(

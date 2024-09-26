@@ -18,8 +18,20 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
             Validate(
                 (Rule: await IsInvalidAsync(delegatedAccess.Id), Parameter: nameof(DelegatedAccess.Id)),
 
+                (Rule: await IsInvalidAsync(delegatedAccess.RequesterFirstName),
+                Parameter: nameof(DelegatedAccess.RequesterFirstName)),
+
+                (Rule: await IsInvalidAsync(delegatedAccess.RequesterLastName),
+                Parameter: nameof(DelegatedAccess.RequesterLastName)),
+
                 (Rule: await IsInvalidAsync(delegatedAccess.RequesterEmail),
                 Parameter: nameof(DelegatedAccess.RequesterEmail)),
+
+                (Rule: await IsInvalidAsync(delegatedAccess.RecipientFirstName),
+                Parameter: nameof(DelegatedAccess.RecipientFirstName)),
+
+                (Rule: await IsInvalidAsync(delegatedAccess.RecipientLastName),
+                Parameter: nameof(DelegatedAccess.RecipientLastName)),
 
                 (Rule: await IsInvalidAsync(delegatedAccess.RecipientEmail),
                 Parameter: nameof(DelegatedAccess.RecipientEmail)),
@@ -36,8 +48,20 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
                 (Rule: await IsInvalidAsync(delegatedAccess.UpdatedDate),
                 Parameter: nameof(DelegatedAccess.UpdatedDate)),
 
+                (Rule: await IsInvalidLengthAsync(delegatedAccess.RequesterFirstName, 255),
+                Parameter: nameof(DelegatedAccess.RequesterFirstName)),
+
+                (Rule: await IsInvalidLengthAsync(delegatedAccess.RequesterLastName, 255),
+                Parameter: nameof(DelegatedAccess.RequesterLastName)),
+
                 (Rule: await IsInvalidLengthAsync(delegatedAccess.RequesterEmail, 320),
                 Parameter: nameof(DelegatedAccess.RequesterEmail)),
+
+                (Rule: await IsInvalidLengthAsync(delegatedAccess.RecipientFirstName, 255),
+                Parameter: nameof(DelegatedAccess.RecipientFirstName)),
+
+                (Rule: await IsInvalidLengthAsync(delegatedAccess.RecipientLastName, 255),
+                Parameter: nameof(DelegatedAccess.RecipientLastName)),
 
                 (Rule: await IsInvalidLengthAsync(delegatedAccess.RecipientEmail, 320),
                 Parameter: nameof(DelegatedAccess.RecipientEmail)),
@@ -76,14 +100,22 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
             Validate(
                 (Rule: await IsInvalidAsync(delegatedAccess.Id), Parameter: nameof(DelegatedAccess.Id)),
 
-                (Rule: await IsInvalidAsync(
-                    delegatedAccess.RequesterEmail),
+                (Rule: await IsInvalidAsync(delegatedAccess.RequesterFirstName),
+                Parameter: nameof(DelegatedAccess.RequesterFirstName)),
 
+                (Rule: await IsInvalidAsync(delegatedAccess.RequesterLastName),
+                Parameter: nameof(DelegatedAccess.RequesterLastName)),
+
+                (Rule: await IsInvalidAsync(delegatedAccess.RequesterEmail),
                 Parameter: nameof(DelegatedAccess.RequesterEmail)),
 
-                (Rule: await IsInvalidAsync(
-                    delegatedAccess.RecipientEmail),
+                (Rule: await IsInvalidAsync(delegatedAccess.RecipientFirstName),
+                Parameter: nameof(DelegatedAccess.RecipientFirstName)),
 
+                (Rule: await IsInvalidAsync(delegatedAccess.RecipientLastName),
+                Parameter: nameof(DelegatedAccess.RecipientLastName)),
+
+                (Rule: await IsInvalidAsync(delegatedAccess.RecipientEmail),
                 Parameter: nameof(DelegatedAccess.RecipientEmail)),
 
                 (Rule: await IsInvalidAsync(
@@ -104,14 +136,22 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
 
                 Parameter: nameof(DelegatedAccess.UpdatedDate)),
 
-                (Rule: await IsInvalidLengthAsync(
-                    delegatedAccess.RequesterEmail, 320),
+                (Rule: await IsInvalidLengthAsync(delegatedAccess.RequesterFirstName, 255),
+                Parameter: nameof(DelegatedAccess.RequesterFirstName)),
 
+                (Rule: await IsInvalidLengthAsync(delegatedAccess.RequesterLastName, 255),
+                Parameter: nameof(DelegatedAccess.RequesterLastName)),
+
+                (Rule: await IsInvalidLengthAsync(delegatedAccess.RequesterEmail, 320),
                 Parameter: nameof(DelegatedAccess.RequesterEmail)),
 
-                (Rule: await IsInvalidLengthAsync(
-                    delegatedAccess.RecipientEmail, 320),
+                (Rule: await IsInvalidLengthAsync(delegatedAccess.RecipientFirstName, 255),
+                Parameter: nameof(DelegatedAccess.RecipientFirstName)),
 
+                (Rule: await IsInvalidLengthAsync(delegatedAccess.RecipientLastName, 255),
+                Parameter: nameof(DelegatedAccess.RecipientLastName)),
+
+                (Rule: await IsInvalidLengthAsync(delegatedAccess.RecipientEmail, 320),
                 Parameter: nameof(DelegatedAccess.RecipientEmail)),
 
                 (Rule: await IsInvalidLengthAsync(
@@ -139,6 +179,9 @@ namespace ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses
                 (Rule: await IsNotRecentAsync(delegatedAccess.UpdatedDate),
                     Parameter: nameof(DelegatedAccess.UpdatedDate)));
         }
+
+        private static async ValueTask ValidateDelegatedAccessIdAsync(Guid delegatedAccessId) =>
+            Validate((Rule: await IsInvalidAsync(delegatedAccessId), Parameter: nameof(DelegatedAccess.Id)));
 
         private static void ValidateDelegatedAccessIsNotNull(DelegatedAccess delegatedAccess)
         {

@@ -57,7 +57,11 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
             // given
             var invalidDelegatedAccess = new DelegatedAccess
             {
+                RequesterFirstName = invalidText,
+                RequesterLastName = invalidText,
                 RequesterEmail = invalidText,
+                RecipientFirstName = invalidText,
+                RecipientLastName = invalidText,
                 RecipientEmail = invalidText,
                 IdentifierColumn = invalidText
             };
@@ -71,7 +75,23 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
                 values: "Id is invalid");
 
             invalidDelegatedAccessException.AddData(
+                key: nameof(DelegatedAccess.RequesterFirstName),
+                values: "Text is invalid");
+
+            invalidDelegatedAccessException.AddData(
+                key: nameof(DelegatedAccess.RequesterLastName),
+                values: "Text is invalid");
+
+            invalidDelegatedAccessException.AddData(
                 key: nameof(DelegatedAccess.RequesterEmail),
+                values: "Text is invalid");
+
+            invalidDelegatedAccessException.AddData(
+                key: nameof(DelegatedAccess.RecipientFirstName),
+                values: "Text is invalid");
+
+            invalidDelegatedAccessException.AddData(
+                key: nameof(DelegatedAccess.RecipientLastName),
                 values: "Text is invalid");
 
             invalidDelegatedAccessException.AddData(
@@ -139,11 +159,13 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
             var invalidDelegatedAccess = CreateRandomDelegatedAccess(dateTimeOffset: randomDateTimeOffset);
             var username = GetRandomStringWithLengthOf(256);
-            var email = GetRandomStringWithLengthOf(321);
-            var identifierColumn = GetRandomStringWithLengthOf(11);
-            invalidDelegatedAccess.RequesterEmail = email;
-            invalidDelegatedAccess.RecipientEmail = email;
-            invalidDelegatedAccess.IdentifierColumn = identifierColumn;
+            invalidDelegatedAccess.RequesterFirstName = GetRandomStringWithLengthOf(256);
+            invalidDelegatedAccess.RequesterLastName = GetRandomStringWithLengthOf(256);
+            invalidDelegatedAccess.RequesterEmail = GetRandomStringWithLengthOf(321);
+            invalidDelegatedAccess.RecipientFirstName = GetRandomStringWithLengthOf(256);
+            invalidDelegatedAccess.RecipientLastName = GetRandomStringWithLengthOf(256);
+            invalidDelegatedAccess.RecipientEmail = GetRandomStringWithLengthOf(321);
+            invalidDelegatedAccess.IdentifierColumn = GetRandomStringWithLengthOf(11);
             invalidDelegatedAccess.CreatedBy = username;
             invalidDelegatedAccess.UpdatedBy = username;
 
@@ -152,8 +174,24 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.DelegatedAcc
                     message: "Invalid delegated access. Please correct the errors and try again.");
 
             invalidDelegatedAccessException.AddData(
+                key: nameof(DelegatedAccess.RequesterFirstName),
+                values: $"Text exceed max length of {invalidDelegatedAccess.RequesterFirstName.Length - 1} characters");
+
+            invalidDelegatedAccessException.AddData(
+                key: nameof(DelegatedAccess.RequesterLastName),
+                values: $"Text exceed max length of {invalidDelegatedAccess.RequesterLastName.Length - 1} characters");
+
+            invalidDelegatedAccessException.AddData(
                 key: nameof(DelegatedAccess.RequesterEmail),
                 values: $"Text exceed max length of {invalidDelegatedAccess.RequesterEmail.Length - 1} characters");
+
+            invalidDelegatedAccessException.AddData(
+                key: nameof(DelegatedAccess.RecipientFirstName),
+                values: $"Text exceed max length of {invalidDelegatedAccess.RecipientFirstName.Length - 1} characters");
+
+            invalidDelegatedAccessException.AddData(
+                key: nameof(DelegatedAccess.RecipientLastName),
+                values: $"Text exceed max length of {invalidDelegatedAccess.RecipientLastName.Length - 1} characters");
 
             invalidDelegatedAccessException.AddData(
                 key: nameof(DelegatedAccess.RecipientEmail),

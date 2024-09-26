@@ -65,5 +65,21 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
 
                 return await this.reIdentificationStorageBroker.UpdateUserAccessAsync(userAccess);
             });
+
+        public ValueTask<UserAccess> RemoveUserAccessByIdAsync(Guid userAccessId) =>
+            TryCatch(async () =>
+            {
+                await ValidateUserAccessOnRemoveById(userAccessId);
+
+                var maybeUserAccess = await this.reIdentificationStorageBroker
+                    .SelectUserAccessByIdAsync(userAccessId);
+
+                await ValidateStorageUserAccessAsync(maybeUserAccess, userAccessId);
+
+                return await this.reIdentificationStorageBroker.DeleteUserAccessAsync(maybeUserAccess);
+            });
+
+        public ValueTask<bool> HasAccessToPseudoIdentifier(string userEmail, string pseudoIdentifier) =>
+            throw new NotImplementedException();
     }
 }
