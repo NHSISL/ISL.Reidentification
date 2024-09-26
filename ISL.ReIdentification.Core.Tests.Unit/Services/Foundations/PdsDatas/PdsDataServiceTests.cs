@@ -36,25 +36,31 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
-        private static int GetRandomNumber() =>
-            new IntRange(max: 15, min: 2).GetValue();
-
         private static PdsData CreateRandomPdsData() =>
-            CreatePdsDataFiller().Create();
+            CreateRandomPdsData(dateTimeOffset: GetRandomDateTimeOffset());
+
+        private static PdsData CreateRandomPdsData(DateTimeOffset dateTimeOffset) =>
+            CreatePdsDataFiller(dateTimeOffset).Create();
 
         private static IQueryable<PdsData> CreateRandomPdsDatas()
         {
-            return CreatePdsDataFiller()
+            return CreatePdsDataFiller(GetRandomDateTimeOffset())
                 .Create(GetRandomNumber())
                 .AsQueryable();
         }
 
-        private static Filler<PdsData> CreatePdsDataFiller()
+        private static int GetRandomNumber() =>
+            new IntRange(max: 15, min: 2).GetValue();
+
+        private static string GetRandomString() =>
+            new MnemonicString(wordCount: GetRandomNumber()).GetValue();
+
+        private static Filler<PdsData> CreatePdsDataFiller(DateTimeOffset dateTimeOffset)
         {
-            string user = Guid.NewGuid().ToString();
             var filler = new Filler<PdsData>();
 
-            filler.Setup();
+            filler.Setup()
+                .OnType<DateTimeOffset?>().Use(dateTimeOffset);
 
             return filler;
         }
