@@ -35,7 +35,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Look
 
             // when
             ActionResult<IQueryable<Lookup>> actualActionResult =
-                await this.lookupsController.GetAsync();
+                await this.lookupsController.Get();
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
