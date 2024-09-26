@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
-		<Nullable>disable</Nullable>
+		<Nullable>enable</Nullable>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<OutputType>Library</OutputType>
 		<NoWarn>CS1998</NoWarn>
@@ -35,6 +35,10 @@
 		<InternalsVisibleTo Include="ISL.ReIdentification.Api.Tests.Acceptance" />
 		<InternalsVisibleTo Include="ISL.ReIdentification.Clients" />
 		<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Migrations\ReidentificationStorageBrokerMigrations\" />
 	</ItemGroup>
 
 </Project>

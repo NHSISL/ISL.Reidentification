@@ -5,6 +5,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions;
+using ISL.ReIdentification.Core.Models.Foundations.OdsDatas;
 using ISL.ReIdentification.Core.Models.Foundations.PdsDatas;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -33,6 +34,7 @@ namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.PatientOrgReference
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            AddOdsDataConfigurations(modelBuilder.Entity<OdsData>());
             AddPdsDataConfigurations(modelBuilder.Entity<PdsData>());
         }
 

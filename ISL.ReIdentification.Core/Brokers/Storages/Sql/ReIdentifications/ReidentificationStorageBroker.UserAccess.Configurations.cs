@@ -11,11 +11,15 @@ namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications
     {
         private void AddUserAccessConfigurations(EntityTypeBuilder<UserAccess> builder)
         {
-            builder.Property(userAccess => userAccess.UserEmail)
-                .HasMaxLength(320)
+            builder.Property(userAccess => userAccess.FirstName)
+                .HasMaxLength(255)
                 .IsRequired();
 
-            builder.Property(userAccess => userAccess.RecipientEmail)
+            builder.Property(userAccess => userAccess.LastName)
+                .HasMaxLength(255)
+                .IsRequired();
+
+            builder.Property(userAccess => userAccess.UserEmail)
                 .HasMaxLength(320)
                 .IsRequired();
 
