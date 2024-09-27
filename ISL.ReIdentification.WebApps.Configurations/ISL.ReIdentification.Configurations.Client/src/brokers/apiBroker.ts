@@ -49,8 +49,18 @@ class ApiBroker {
         return axios.get(url, await this.config());
     }
 
+    //public async GetAsyncAbsolute(absoluteUri: string) {
+    //    return axios.get(absoluteUri, await this.config());
+    //}
+
     public async GetAsyncAbsolute(absoluteUri: string) {
-        return axios.get(absoluteUri, await this.config());
+        return axios.get(absoluteUri, {
+            headers: {
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache',
+                'Expires': '0'
+            }
+        });
     }
 
     public async PostAsync(relativeUrl: string, data: any) {

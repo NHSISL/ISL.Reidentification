@@ -33,7 +33,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Look
                     .ReturnsAsync(storageLookups);
 
             // when
-            ActionResult<IQueryable<Lookup>> actualActionResult = await lookupsController.GetAsync();
+            ActionResult<IQueryable<Lookup>> actualActionResult = await lookupsController.Get();
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
