@@ -3,10 +3,10 @@
 // ---------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using LHDS.Core.Models.Brokers.NECS;
+using ISL.ReIdentification.Core.Models.Brokers.NECS;
+using ISL.ReIdentification.Core.Models.Brokers.NECS.Requests;
 using RESTFulSense.Clients;
 
 namespace LHDS.Core.Brokers.NECS
@@ -24,10 +24,11 @@ namespace LHDS.Core.Brokers.NECS
             this.apiClient = SetupApiClient();
         }
 
-        public async ValueTask<List<string>> ReIdAsync(string pseudoNumber)
+        public async ValueTask<NecsReIdentificationResponse> ReIdAsync(NecsReidentificationRequest necsReidentificationRequest)
         {
             var returnedAddress =
-                await this.apiClient.GetContentAsync<List<string>>($"api/reid?skid={pseudoNumber}");
+                await this.apiClient.PostContentAsync<NecsReidentificationRequest, NecsReIdentificationResponse>
+                    ($"api/Reid/Process", necsReidentificationRequest);
 
             return returnedAddress;
         }
@@ -39,6 +40,9 @@ namespace LHDS.Core.Brokers.NECS
                 BaseAddress =
                     new Uri(uriString: this.necsConfiguration.ApiUrl),
             };
+
+            httpClient.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("X-API-KEY", necsConfiguration.ApiKey);
 
             return httpClient;
         }
