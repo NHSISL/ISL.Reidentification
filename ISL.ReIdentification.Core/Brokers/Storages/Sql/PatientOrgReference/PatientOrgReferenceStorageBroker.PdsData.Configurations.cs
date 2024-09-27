@@ -13,6 +13,26 @@ namespace ISL.ReIdentification.Core.Brokers.Storages.Sql.PatientOrgReference
         {
             builder.HasKey(pdsData => pdsData.RowId);
 
+            builder.HasMany(pdsData => pdsData.OdsDatas)
+                .WithOne(odsData => odsData.PdsData)
+                .HasForeignKey(odsData => odsData.OrganisationCode_Root)
+                .HasPrincipalKey(pdsData => pdsData.CcgOfRegistration);
+
+            builder.HasMany(pdsData => pdsData.OdsDatas)
+                .WithOne(odsData => odsData.PdsData)
+                .HasForeignKey(odsData => odsData.OrganisationCode_Root)
+                .HasPrincipalKey(pdsData => pdsData.CurrentCcgOfRegistration);
+
+            builder.HasMany(pdsData => pdsData.OdsDatas)
+                .WithOne(odsData => odsData.PdsData)
+                .HasForeignKey(odsData => odsData.OrganisationCode_Root)
+                .HasPrincipalKey(pdsData => pdsData.IcbOfRegistration);
+
+            builder.HasMany(pdsData => pdsData.OdsDatas)
+                .WithOne(odsData => odsData.PdsData)
+                .HasForeignKey(odsData => odsData.OrganisationCode_Root)
+                .HasPrincipalKey(pdsData => pdsData.CurrentIcbOfRegistration);
+
             builder.Property(pdsData => pdsData.RowId)
                 .IsRequired();
 
