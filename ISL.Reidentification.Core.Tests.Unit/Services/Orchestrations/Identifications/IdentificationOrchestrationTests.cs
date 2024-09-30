@@ -5,13 +5,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
 using ISL.ReIdentification.Core.Brokers.Identifiers;
 using ISL.ReIdentification.Core.Brokers.Loggings;
+using ISL.ReIdentification.Core.Models.Foundations.AccessAudits;
 using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications;
 using ISL.ReIdentification.Core.Services.Foundations.AccessAudits;
 using ISL.ReIdentification.Core.Services.Foundations.ReIdentifications;
 using ISL.ReIdentification.Core.Services.Orchestrations.Identifications;
+using KellermanSoftware.CompareNetObjects;
 using Moq;
 using Tynamix.ObjectFiller;
 
@@ -25,6 +28,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
         private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
         private readonly Mock<IIdentifierBroker> identifierBrokerMock;
         private readonly IIdentificationOrchestrationService identificationOrchestrationService;
+        private readonly ICompareLogic compareLogic;
 
         public IdentificationOrchestrationTests()
         {
@@ -33,6 +37,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
             this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
             this.identifierBrokerMock = new Mock<IIdentifierBroker>();
+            this.compareLogic = new CompareLogic();
 
             this.identificationOrchestrationService = new IdentificationOrchestrationService(
                 this.reIdentificationService.Object,
@@ -69,6 +74,14 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
                 .OnProperty(item => item.HasAccess).Use(hasAccess);
 
             return filler;
+        }
+
+        private Expression<Func<AccessAudit, bool>> SameAccessAuditAs(
+          AccessAudit expectedAccessAudit)
+        {
+            return actualAccessAudit =>
+                this.compareLogic.Compare(expectedAccessAudit, actualAccessAudit)
+                    .AreEqual;
         }
     }
 }

@@ -60,8 +60,16 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
             // then
             returnedIdentificationRequest.Should().BeEquivalentTo(expectedIdentificationRequest);
 
+            this.identifierBrokerMock.Verify(broker =>
+                broker.GetIdentifierAsync(),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
             this.accessAuditService.Verify(service =>
-                service.AddAccessAuditAsync(inputAccessAudit),
+                service.AddAccessAuditAsync(It.Is(SameAccessAuditAs(inputAccessAudit))),
                     Times.Once());
 
             this.accessAuditService.VerifyNoOtherCalls();
