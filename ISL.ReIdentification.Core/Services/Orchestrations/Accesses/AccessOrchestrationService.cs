@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
+using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.PatientOrgReference;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
@@ -19,16 +20,19 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
         private readonly IDateTimeBroker dateTimeBroker;
         private readonly IReIdentificationStorageBroker reIdentificationStorageBroker;
         private readonly IPatientOrgReferenceStorageBroker patientOrgReferenceStorageBroker;
+        private readonly ILoggingBroker loggingBroker;
 
         public AccessOrchestrationService(
             IDateTimeBroker dateTimeBroker,
             IReIdentificationStorageBroker reIdentificationStorageBroker,
-            IPatientOrgReferenceStorageBroker patientOrgReferenceStorageBroker
+            IPatientOrgReferenceStorageBroker patientOrgReferenceStorageBroker,
+            ILoggingBroker loggingBroker
             )
         {
             this.dateTimeBroker = dateTimeBroker;
             this.reIdentificationStorageBroker = reIdentificationStorageBroker;
             this.patientOrgReferenceStorageBroker = patientOrgReferenceStorageBroker;
+            this.loggingBroker = loggingBroker;
         }
 
         public ValueTask<AccessRequest> ProcessDelegatedAccessRequestAsync(AccessRequest accessRequest) =>

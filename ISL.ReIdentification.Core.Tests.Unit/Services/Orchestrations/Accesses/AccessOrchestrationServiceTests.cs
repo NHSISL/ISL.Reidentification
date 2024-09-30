@@ -4,7 +4,9 @@
 
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
+using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.PatientOrgReference;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
 using ISL.ReIdentification.Core.Models.Foundations.OdsDatas;
@@ -12,6 +14,7 @@ using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Services.Orchestrations.Accesses;
 using Moq;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
 {
@@ -20,6 +23,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
         private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
         private readonly Mock<IReIdentificationStorageBroker> reIdentificationStorageBrokerMock;
         private readonly Mock<IPatientOrgReferenceStorageBroker> patientOrgReferenceStorageBrokerMock;
+        private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly AccessOrchestrationService accessOrchestrationService;
 
         public AccessOrchestrationServiceTests()
@@ -27,12 +31,14 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
             this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
             this.reIdentificationStorageBrokerMock = new Mock<IReIdentificationStorageBroker>();
             this.patientOrgReferenceStorageBrokerMock = new Mock<IPatientOrgReferenceStorageBroker>();
+            this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
             this.accessOrchestrationService =
                 new AccessOrchestrationService(
                     dateTimeBrokerMock.Object,
                     reIdentificationStorageBrokerMock.Object,
-                    patientOrgReferenceStorageBrokerMock.Object);
+                    patientOrgReferenceStorageBrokerMock.Object,
+                    loggingBrokerMock.Object);
         }
 
         private static DateTimeOffset GetRandomPastDateTimeOffset()
@@ -108,6 +114,13 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
                 .OnProperty(userAccess => userAccess.UpdatedBy).Use(user);
 
             return filler;
+        }
+
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(
+            Xeption expectedException)
+        {
+            return actualException =>
+                actualException.SameExceptionAs(expectedException);
         }
     }
 }
