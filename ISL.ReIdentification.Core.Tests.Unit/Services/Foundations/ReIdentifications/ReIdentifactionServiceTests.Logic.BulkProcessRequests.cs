@@ -14,11 +14,11 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
     public partial class ReIdentificationServiceTests
     {
         [Fact]
-        public async Task ShouldProcessReidentificationRequestsAsync()
+        public async Task ShouldBulkProcessRequestsAsync()
         {
             // Given
-            int randomCount = GetRandomNumber();
-            int batchSize = this.necsConfiguration.ApiMaxBatchSize;
+            int batchSize = GetRandomNumber();
+            int randomCount = (batchSize * GetRandomNumber()) + GetRandomNumber();
             IdentificationRequest randomIdentificationRequest = CreateRandomIdentificationRequest(count: randomCount);
             IdentificationRequest inputIdentificationRequest = randomIdentificationRequest;
             IdentificationRequest storageIdentificationRequest = inputIdentificationRequest.DeepClone();
@@ -31,22 +31,15 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
                     this.loggingBrokerMock.Object)
                 { CallBase = true };
 
-            reIdentificationServiceMock.Setup(service =>
-                service.BulkProcessRequestsAsync(inputIdentificationRequest, batchSize))
-                    .ReturnsAsync(storageIdentificationRequest);
-
             ReIdentificationService service = reIdentificationServiceMock.Object;
 
             // When
             IdentificationRequest actualIdentificationRequest = await service
-                .ProcessReidentificationRequest(inputIdentificationRequest);
+                .BulkProcessRequestsAsync(inputIdentificationRequest, batchSize);
 
             // Then
             actualIdentificationRequest.Should().BeEquivalentTo(expectedIdentificationRequest);
 
-            reIdentificationServiceMock.Verify(service =>
-                service.BulkProcessRequestsAsync(inputIdentificationRequest, batchSize),
-                    Times.Once());
 
             this.necsBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

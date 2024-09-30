@@ -3,9 +3,12 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Models.Brokers.NECS;
+using ISL.ReIdentification.Core.Models.Brokers.NECS.Requests;
 using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications;
 using LHDS.Core.Brokers.NECS;
 
@@ -34,15 +37,60 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ReIdentifications
                 await ValidateIdentificationRequestOnProcessAsync(identificationRequests);
 
                 IdentificationRequest processedItems =
-                    await BulkProcessRequests(identificationRequests, necsConfiguration.ApiMaxBatchSize);
+                    await BulkProcessRequestsAsync(identificationRequests, necsConfiguration.ApiMaxBatchSize);
 
                 return processedItems;
             });
 
-        virtual internal async ValueTask<IdentificationRequest> BulkProcessRequests(
-            IdentificationRequest identificationRequests, int batchSize)
+        virtual internal async ValueTask<IdentificationRequest> BulkProcessRequestsAsync(
+            IdentificationRequest identificationRequest, int batchSize)
         {
-            throw new NotImplementedException();
+            int totalRecords = identificationRequest.IdentificationItems.Count;
+            var exceptions = new List<Exception>();
+
+            for (int i = 0; i < totalRecords; i += batchSize)
+            {
+                try
+                {
+                    NecsReidentificationRequest necsReidentificationRequest = new NecsReidentificationRequest
+                    {
+                        RequestId = Guid.NewGuid(),
+                        UserIdentifier = identificationRequest.UserIdentifier,
+                        Purpose = identificationRequest.Purpose,
+                        Organisation = identificationRequest.Organisation,
+                        Reason = identificationRequest.Reason,
+                    };
+
+                    List<NecsPseudonymisedItem> batch = identificationRequest.IdentificationItems.Skip(i)
+                        .Take(batchSize).ToList().Select(item =>
+                            new NecsPseudonymisedItem { RowNumber = item.RowNumber, Psuedo = item.Identifier })
+                                .ToList();
+
+                    necsReidentificationRequest.PseudonymisedNumbers.AddRange(batch);
+
+                    NecsReIdentificationResponse necsReIdentificationResponse =
+                        await necsBroker.ReIdAsync(necsReidentificationRequest);
+
+                    foreach (var item in necsReIdentificationResponse.Results)
+                    {
+                        var record = identificationRequest.IdentificationItems
+                            .FirstOrDefault(i => i.RowNumber == item.RowNumber);
+
+                        if (record != null)
+                        {
+                            record.Identifier = item.NhsNumber;
+                            record.Message = item.Message;
+                            record.IsReidentified = true;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    exceptions.Add(ex);
+                }
+            }
+
+            return identificationRequest;
         }
     }
 }

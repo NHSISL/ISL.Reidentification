@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications;
 using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications.Exceptions;
@@ -30,7 +31,10 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ReIdentifications
                 Parameter: nameof(IdentificationRequest.Organisation)),
 
                 (Rule: await IsInvalidAsync(identificationRequest.Reason),
-                Parameter: nameof(IdentificationRequest.Reason)));
+                Parameter: nameof(IdentificationRequest.Reason)),
+
+                (Rule: await IsNotUniqueAsync(identificationRequest.IdentificationItems),
+                Parameter: nameof(IdentificationRequest.IdentificationItems)));
         }
 
         private static void ValidateIdentificationRequestIsNotNull(IdentificationRequest identificationRequest)
@@ -52,6 +56,20 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ReIdentifications
             Condition = identificationItems is null || identificationItems.Count == 0,
             Message = "IdentificationItems is invalid"
         };
+
+        private static async ValueTask<dynamic> IsNotUniqueAsync(List<IdentificationItem>? identificationItems) => new
+        {
+            Condition = IsNotUniqueList(identificationItems),
+            Message = "IdentificationItems.RowNumber is invalid.  There are duplicate RowNumbers."
+        };
+
+        private static bool IsNotUniqueList(List<IdentificationItem>? identificationItems)
+        {
+            return identificationItems is not null
+                && identificationItems.Count >= 0
+                && identificationItems.Select(item => item.RowNumber)
+                    .Distinct().Count() != identificationItems.Count();
+        }
 
         private static async ValueTask<dynamic> IsInvalidLengthAsync(string text, int maxLength) => new
         {

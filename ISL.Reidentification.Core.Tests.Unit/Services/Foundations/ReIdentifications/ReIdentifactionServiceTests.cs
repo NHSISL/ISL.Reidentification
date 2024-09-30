@@ -56,23 +56,23 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
         private static string GetRandomStringWithLength(int length) =>
             new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length).GetValue();
 
-        private static IdentificationRequest CreateRandomIdentificationRequest() =>
-            CreateIdentificationRequestFiller().Create();
+        private static IdentificationRequest CreateRandomIdentificationRequest(int count) =>
+            CreateIdentificationRequestFiller(count).Create();
 
-        private static Filler<IdentificationRequest> CreateIdentificationRequestFiller()
+        private static Filler<IdentificationRequest> CreateIdentificationRequestFiller(int count)
         {
             var filler = new Filler<IdentificationRequest>();
 
             filler.Setup()
-                .OnProperty(request => request.IdentificationItems).Use(CreateRandomIdentificationItems);
+                .OnProperty(request => request.IdentificationItems).Use(CreateRandomIdentificationItems(count));
 
             return filler;
         }
 
-        private static List<IdentificationItem> CreateRandomIdentificationItems()
+        private static List<IdentificationItem> CreateRandomIdentificationItems(int count)
         {
             return CreateIdentificationItemFiller()
-                .Create(count: GetRandomNumber())
+                .Create(count)
                     .ToList();
         }
 

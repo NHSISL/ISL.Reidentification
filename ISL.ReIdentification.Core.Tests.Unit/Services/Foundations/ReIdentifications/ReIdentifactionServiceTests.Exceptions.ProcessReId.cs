@@ -18,7 +18,8 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
         public async Task ShouldThrowAggregateServiceExceptionOnProcessIfAggregateOccurredAndLogItAsync()
         {
             // given
-            IdentificationRequest someIdentificationRequest = CreateRandomIdentificationRequest();
+            int randomCount = GetRandomNumber();
+            IdentificationRequest someIdentificationRequest = CreateRandomIdentificationRequest(count: randomCount);
             var aggregateException = new AggregateException();
 
             var failedServiceReIdentificationException =
@@ -39,7 +40,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
                 { CallBase = true };
 
             reIdentificationServiceMock.Setup(service =>
-                service.BulkProcessRequests(It.IsAny<IdentificationRequest>(), It.IsAny<int>()))
+                service.BulkProcessRequestsAsync(It.IsAny<IdentificationRequest>(), It.IsAny<int>()))
                     .ThrowsAsync(aggregateException);
 
             IReIdentificationService service = reIdentificationServiceMock.Object;
@@ -57,7 +58,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
                 expectedReIdentificationServiceException);
 
             reIdentificationServiceMock.Verify(service =>
-                service.BulkProcessRequests(It.IsAny<IdentificationRequest>(), It.IsAny<int>()),
+                service.BulkProcessRequestsAsync(It.IsAny<IdentificationRequest>(), It.IsAny<int>()),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -73,7 +74,8 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
         public async Task ShouldThrowServiceExceptionOnProcessIfServiceErrorOccurredAndLogItAsync()
         {
             // given
-            IdentificationRequest someIdentificationRequest = CreateRandomIdentificationRequest();
+            int randomCount = GetRandomNumber();
+            IdentificationRequest someIdentificationRequest = CreateRandomIdentificationRequest(count: randomCount);
             var serviceException = new Exception();
 
             var failedServiceReIdentificationException =
@@ -94,7 +96,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
                 { CallBase = true };
 
             reIdentificationServiceMock.Setup(service =>
-                service.BulkProcessRequests(It.IsAny<IdentificationRequest>(), It.IsAny<int>()))
+                service.BulkProcessRequestsAsync(It.IsAny<IdentificationRequest>(), It.IsAny<int>()))
                     .ThrowsAsync(serviceException);
 
             IReIdentificationService service = reIdentificationServiceMock.Object;
@@ -112,7 +114,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
                 expectedReIdentificationServiceException);
 
             reIdentificationServiceMock.Verify(service =>
-                service.BulkProcessRequests(It.IsAny<IdentificationRequest>(), It.IsAny<int>()),
+                service.BulkProcessRequestsAsync(It.IsAny<IdentificationRequest>(), It.IsAny<int>()),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>

@@ -121,5 +121,53 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.necsBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnProcessIfDuplicateRowNumbersFoundAndLogItAsync()
+        {
+            // Given
+            int randomCount = GetRandomNumber();
+            string duplicateRowNumber = GetRandomString();
+            int batchSize = this.necsConfiguration.ApiMaxBatchSize;
+            IdentificationRequest randomIdentificationRequest = CreateRandomIdentificationRequest(count: randomCount);
+            randomIdentificationRequest.IdentificationItems.ForEach(item => item.RowNumber = duplicateRowNumber);
+            IdentificationRequest invalidIdentificationRequest = randomIdentificationRequest;
+
+            var invalidIdentificationRequestException =
+                new InvalidIdentificationRequestException(
+                    message: "Invalid identification request. Please correct the errors and try again.");
+
+            invalidIdentificationRequestException.AddData(
+                key: nameof(IdentificationRequest.IdentificationItems),
+                values: "IdentificationItems.RowNumber is invalid.  There are duplicate RowNumbers.");
+
+            var expectedIdentificationRequestValidationException =
+                new IdentificationRequestValidationException(
+                    message: "Re-identification validation error occurred, please fix errors and try again.",
+                    innerException: invalidIdentificationRequestException);
+
+            // when
+            ValueTask<IdentificationRequest> addIdentificationRequestTask =
+                this.reIdentificationService.ProcessReidentificationRequest(invalidIdentificationRequest);
+
+            IdentificationRequestValidationException actualIdentificationRequestValidationException =
+                await Assert.ThrowsAsync<IdentificationRequestValidationException>(addIdentificationRequestTask.AsTask);
+
+            // then
+            actualIdentificationRequestValidationException.Should()
+                .BeEquivalentTo(expectedIdentificationRequestValidationException);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedIdentificationRequestValidationException))),
+                        Times.Once);
+
+            this.necsBrokerMock.Verify(broker =>
+                broker.ReIdAsync(It.IsAny<NecsReidentificationRequest>()),
+                    Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.necsBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
