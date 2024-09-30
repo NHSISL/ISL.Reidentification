@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
+using ISL.ReIdentification.Core.Brokers.Identifiers;
 using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications;
 using ISL.ReIdentification.Core.Services.Foundations.AccessAudits;
@@ -22,6 +23,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
         private readonly Mock<IAccessAuditService> accessAuditService;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
+        private readonly Mock<IIdentifierBroker> identifierBrokerMock;
         private readonly IIdentificationOrchestrationService identificationOrchestrationService;
 
         public IdentificationOrchestrationTests()
@@ -30,12 +32,14 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
             this.accessAuditService = new Mock<IAccessAuditService>();
             this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
+            this.identifierBrokerMock = new Mock<IIdentifierBroker>();
 
             this.identificationOrchestrationService = new IdentificationOrchestrationService(
                 this.reIdentificationService.Object,
                 this.accessAuditService.Object,
                 this.loggingBrokerMock.Object,
-                this.dateTimeBrokerMock.Object);
+                this.dateTimeBrokerMock.Object,
+                this.identifierBrokerMock.Object);
         }
 
         private static string GetRandomString() =>

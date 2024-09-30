@@ -18,6 +18,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
         {
             // given
             DateTimeOffset someDateTimeOffset = GetRandomDateTimeOffset();
+            Guid someGuid = Guid.NewGuid();
             IdentificationRequest someIdentificationRequest = CreateRandomIdentificationRequest(false);
             IdentificationRequest inputIdentificationRequest = someIdentificationRequest;
             IdentificationRequest expectedIdentificationRequest = inputIdentificationRequest;
@@ -25,18 +26,27 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
 
             AccessAudit inputAccessAudit = new AccessAudit
             {
+                Id = someGuid,
                 PseudoIdentifier = inputIdentificationItem.Identifier,
                 UserEmail = inputIdentificationRequest.UserIdentifier,
                 Reason = inputIdentificationRequest.Reason,
                 HasAccess = (bool)inputIdentificationItem.HasAccess,
                 Message = inputIdentificationItem.Message,
-                CreatedBy = inputIdentificationRequest.Id.ToString(),
+                CreatedBy = "System",
                 CreatedDate = someDateTimeOffset,
-                UpdatedBy = inputIdentificationRequest.Id.ToString(),
+                UpdatedBy = "System",
                 UpdatedDate = someDateTimeOffset
             };
 
             AccessAudit outputAccessAudit = inputAccessAudit;
+
+            this.identifierBrokerMock.Setup(broker =>
+                broker.GetIdentifierAsync())
+                    .ReturnsAsync(someGuid);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(someDateTimeOffset);
 
             this.accessAuditService.Setup(service =>
                 service.AddAccessAuditAsync(inputAccessAudit))
@@ -54,6 +64,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
                 service.AddAccessAuditAsync(inputAccessAudit),
                     Times.Once());
 
+            this.accessAuditService.VerifyNoOtherCalls();
             this.reIdentificationService.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
