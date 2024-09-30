@@ -5,6 +5,7 @@
 using System;
 using System.Linq.Expressions;
 using ISL.ReIdentification.Core.Brokers.Loggings;
+using ISL.ReIdentification.Core.Models.Brokers.NECS;
 using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications;
 using ISL.ReIdentification.Core.Services.Foundations.ReIdentifications;
 using LHDS.Core.Brokers.NECS;
@@ -18,15 +19,18 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
     {
         private readonly Mock<INECSBroker> necsBrokerMock = new Mock<INECSBroker>();
         private readonly Mock<ILoggingBroker> loggingBrokerMock = new Mock<ILoggingBroker>();
+        private NECSConfiguration necsConfiguration;
         private readonly IReIdentificationService reIdentificationService;
 
         public ReIdentificationServiceTests()
         {
             this.necsBrokerMock = new Mock<INECSBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
+            this.necsConfiguration = new NECSConfiguration();
 
             this.reIdentificationService = new ReIdentificationService(
                 necsBroker: this.necsBrokerMock.Object,
+                necsConfiguration: necsConfiguration,
                 loggingBroker: this.loggingBrokerMock.Object);
         }
 
@@ -51,15 +55,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
         private static Filler<IdentificationRequest> CreateIdentificationRequestFiller()
         {
             var filler = new Filler<IdentificationRequest>();
-
-            filler.Setup()
-                .OnProperty(identificationRequest => 
-                    identificationRequest.Identifier).Use(GetRandomStringWithLength(10))
-
-                .OnProperty(identificationRequest => 
-                    identificationRequest.UserEmail).Use(GetRandomStringWithLength(100))
-
-                .OnProperty(identificationRequest => identificationRequest.IsReidentified).Use(false);
+            filler.Setup();
 
             return filler;
         }

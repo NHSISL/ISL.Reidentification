@@ -15,19 +15,20 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ReIdentifications
         {
             ValidateIdentificationRequestIsNotNull(identificationRequest);
 
-            Validate(
+            //TODO: Update validation logic
+            //Validate(
 
-                (Rule: await IsInvalidAsync(identificationRequest.Identifier),
-                Parameter: nameof(IdentificationRequest.Identifier)),
+            //    (Rule: await IsInvalidAsync(identificationRequest.Identifier),
+            //    Parameter: nameof(IdentificationRequest.Identifier)),
 
-                (Rule: await IsInvalidAsync(identificationRequest.UserEmail),
-                Parameter: nameof(IdentificationRequest.UserEmail)),
+            //    (Rule: await IsInvalidAsync(identificationRequest.UserEmail),
+            //    Parameter: nameof(IdentificationRequest.UserEmail)),
 
-                (Rule: await IsInvalidLengthAsync(identificationRequest.UserEmail, 320),
-                Parameter: nameof(IdentificationRequest.UserEmail)),
+            //    (Rule: await IsInvalidLengthAsync(identificationRequest.UserEmail, 320),
+            //    Parameter: nameof(IdentificationRequest.UserEmail)),
 
-                (Rule: await IsInvalidLengthAsync(identificationRequest.Identifier, 10),
-                Parameter: nameof(IdentificationRequest.Identifier)));
+            //    (Rule: await IsInvalidLengthAsync(identificationRequest.Identifier, 10),
+            //    Parameter: nameof(IdentificationRequest.Identifier)));
         }
 
         private static void ValidateIdentificationRequestIsNotNull(IdentificationRequest identificationRequest)
