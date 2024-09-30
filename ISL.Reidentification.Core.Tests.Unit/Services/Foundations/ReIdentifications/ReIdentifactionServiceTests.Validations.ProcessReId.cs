@@ -25,7 +25,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
 
             var expectedIdentificationRequestValidationException =
                 new IdentificationRequestValidationException(
-                    message: "Re identification validation error occurred, please fix errors and try again.",
+                    message: "Re-identification validation error occurred, please fix errors and try again.",
                     innerException: nullIdentificationRequestException);
 
             // when
@@ -90,7 +90,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
                 values: "Text is invalid");
 
             invalidIdentificationRequestException.AddData(
-                key: nameof(IdentificationRequest.Reason),
+                key: nameof(IdentificationRequest.IdentificationItems),
                 values: "IdentificationItems is invalid");
 
             var expectedIdentificationRequestValidationException =

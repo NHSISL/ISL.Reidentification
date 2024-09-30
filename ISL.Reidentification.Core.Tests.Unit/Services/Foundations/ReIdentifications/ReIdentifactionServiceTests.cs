@@ -28,7 +28,12 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
         {
             this.necsBrokerMock = new Mock<INECSBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
-            this.necsConfiguration = new NECSConfiguration();
+            this.necsConfiguration = new NECSConfiguration
+            {
+                ApiUrl = GetRandomString(),
+                ApiKey = GetRandomString(),
+                ApiMaxBatchSize = GetRandomNumber()
+            };
 
             this.reIdentificationService = new ReIdentificationService(
                 necsBroker: this.necsBrokerMock.Object,

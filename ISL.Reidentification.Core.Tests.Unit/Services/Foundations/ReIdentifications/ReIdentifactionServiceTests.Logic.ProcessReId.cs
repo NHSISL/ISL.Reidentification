@@ -17,30 +17,35 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
         public async Task ShouldProcessReidentificationRequestsAsync()
         {
             // Given
+            int randomCount = GetRandomNumber();
+            int batchSize = this.necsConfiguration.ApiMaxBatchSize;
             IdentificationRequest randomIdentificationRequest = CreateRandomIdentificationRequest();
             IdentificationRequest inputIdentificationRequest = randomIdentificationRequest;
             IdentificationRequest storageIdentificationRequest = inputIdentificationRequest.DeepClone();
             IdentificationRequest expectedIdentificationRequest = storageIdentificationRequest.DeepClone();
 
-
-            Mock<IReIdentificationService> reIdentificationServiceMock =
-                new Mock<IReIdentificationService> { CallBase = true };
+            Mock<ReIdentificationService> reIdentificationServiceMock =
+                new Mock<ReIdentificationService>(
+                    this.necsBrokerMock.Object,
+                    this.necsConfiguration,
+                    this.loggingBrokerMock.Object)
+                { CallBase = true };
 
             reIdentificationServiceMock.Setup(service =>
-                service.ProcessReidentificationRequest(inputIdentificationRequest))
+                service.BulkProcessRequests(inputIdentificationRequest, batchSize))
                     .ReturnsAsync(storageIdentificationRequest);
 
-            IReIdentificationService reIdentificationService = reIdentificationServiceMock.Object;
+            ReIdentificationService service = reIdentificationServiceMock.Object;
 
             // When
-            IdentificationRequest actualIdentificationRequest = await reIdentificationService
+            IdentificationRequest actualIdentificationRequest = await service
                 .ProcessReidentificationRequest(inputIdentificationRequest);
 
             // Then
             actualIdentificationRequest.Should().BeEquivalentTo(expectedIdentificationRequest);
 
             reIdentificationServiceMock.Verify(service =>
-                service.ProcessReidentificationRequest(inputIdentificationRequest),
+                service.BulkProcessRequests(inputIdentificationRequest, batchSize),
                     Times.Once());
 
             this.necsBrokerMock.VerifyNoOtherCalls();

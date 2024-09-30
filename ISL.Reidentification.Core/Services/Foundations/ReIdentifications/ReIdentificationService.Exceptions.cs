@@ -29,11 +29,20 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ReIdentifications
             {
                 throw await CreateAndLogValidationExceptionAsync(invalidIdentificationRequestException);
             }
+            catch (AggregateException aggregateException)
+            {
+                var failedServiceIdentificationRequestException =
+                    new FailedServiceReIdentificationException(
+                        message: "Failed re-identification aggregate service error occurred, please contact support.",
+                        innerException: aggregateException);
+
+                throw await CreateAndLogServiceExceptionAsync(failedServiceIdentificationRequestException);
+            }
             catch (Exception exception)
             {
                 var failedServiceIdentificationRequestException =
                     new FailedServiceReIdentificationException(
-                        message: "Failed service re identification error occurred, contact support.",
+                        message: "Failed re-identification service error occurred, please contact support.",
                         innerException: exception);
 
                 throw await CreateAndLogServiceExceptionAsync(failedServiceIdentificationRequestException);
@@ -44,7 +53,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ReIdentifications
             Xeption exception)
         {
             var accessAuditValidationException = new IdentificationRequestValidationException(
-                message: "Re identification validation error occurred, please fix errors and try again.",
+                message: "Re-identification validation error occurred, please fix errors and try again.",
                 innerException: exception);
 
             await this.loggingBroker.LogErrorAsync(accessAuditValidationException);
@@ -57,7 +66,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ReIdentifications
             CreateAndLogDependencyValidationExceptionAsync(Xeption exception)
         {
             var userAccessDependencyValidationException = new ReIdentificationDependencyValidationException(
-                message: "Re identification dependency validation error occurred, fix errors and try again.",
+                message: "Re-identification dependency validation error occurred, fix errors and try again.",
                 innerException: exception);
 
             await this.loggingBroker.LogErrorAsync(userAccessDependencyValidationException);
@@ -69,7 +78,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ReIdentifications
             Xeption exception)
         {
             var userAccessDependencyException = new ReIdentificationDependencyException(
-                message: "Re identification dependency error occurred, contact support.",
+                message: "Re-identification dependency error occurred, contact support.",
                 innerException: exception);
 
             await this.loggingBroker.LogErrorAsync(userAccessDependencyException);
@@ -81,7 +90,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ReIdentifications
            Xeption exception)
         {
             var userAccessServiceException = new ReIdentificationServiceException(
-                message: "Service error occurred, contact support.",
+                message: "Service error occurred, please contact support.",
                 innerException: exception);
 
             await this.loggingBroker.LogErrorAsync(userAccessServiceException);
