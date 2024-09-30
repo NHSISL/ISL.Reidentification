@@ -3,40 +3,48 @@
 // ---------------------------------------------------------
 
 using System.Threading.Tasks;
+using FluentAssertions;
+using Force.DeepCloner;
+using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications;
+using ISL.ReIdentification.Core.Services.Foundations.ReIdentifications;
+using Moq;
 
 namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifications
 {
     public partial class ReIdentificationServiceTests
     {
-        [Fact(Skip = "Removed to allow logic change")]
+        [Fact]
         public async Task ShouldProcessReidentificationRequestsAsync()
         {
-            //// Given
-            //IdentificationRequest randomIdentificationRequest = CreateRandomIdentificationRequest();
-            //IdentificationRequest inputIdentificationRequest = randomIdentificationRequest.DeepClone();
-            //IdentificationRequest storageIdentificationRequest = inputIdentificationRequest.DeepClone();
-            //storageIdentificationRequest.Identifier = GetRandomString();
-            //List<string> storageIdentities = new List<string> { storageIdentificationRequest.Identifier };
-            //IdentificationRequest expectedIdentificationRequest = storageIdentificationRequest.DeepClone();
-            //expectedIdentificationRequest.IsReidentified = true;
+            // Given
+            IdentificationRequest randomIdentificationRequest = CreateRandomIdentificationRequest();
+            IdentificationRequest inputIdentificationRequest = randomIdentificationRequest;
+            IdentificationRequest storageIdentificationRequest = inputIdentificationRequest.DeepClone();
+            IdentificationRequest expectedIdentificationRequest = storageIdentificationRequest.DeepClone();
 
-            //this.necsBrokerMock.Setup(broker =>
-            //    broker.ReIdAsync(inputIdentificationRequest.Identifier))
-            //        .ReturnsAsync(storageIdentities);
 
-            //// When
-            //IdentificationRequest actualIdentificationRequest = await this.reIdentificationService
-            //    .ProcessReidentificationRequest(inputIdentificationRequest);
+            Mock<IReIdentificationService> reIdentificationServiceMock =
+                new Mock<IReIdentificationService> { CallBase = true };
 
-            //// Then
-            //actualIdentificationRequest.Should().BeEquivalentTo(expectedIdentificationRequest);
+            reIdentificationServiceMock.Setup(service =>
+                service.ProcessReidentificationRequest(inputIdentificationRequest))
+                    .ReturnsAsync(storageIdentificationRequest);
 
-            //this.necsBrokerMock.Verify(broker =>
-            //    broker.ReIdAsync(inputIdentificationRequest.Identifier), 
-            //        Times.Once());
+            IReIdentificationService reIdentificationService = reIdentificationServiceMock.Object;
 
-            //this.necsBrokerMock.VerifyNoOtherCalls();
-            //this.loggingBrokerMock.VerifyNoOtherCalls();
+            // When
+            IdentificationRequest actualIdentificationRequest = await reIdentificationService
+                .ProcessReidentificationRequest(inputIdentificationRequest);
+
+            // Then
+            actualIdentificationRequest.Should().BeEquivalentTo(expectedIdentificationRequest);
+
+            reIdentificationServiceMock.Verify(service =>
+                service.ProcessReidentificationRequest(inputIdentificationRequest),
+                    Times.Once());
+
+            this.necsBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
 }

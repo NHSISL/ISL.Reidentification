@@ -31,9 +31,18 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ReIdentifications
             IdentificationRequest identificationRequests) =>
             TryCatch(async () =>
             {
-                // TODO: Change validation logic
-                // TODO: Add bulk re-identification logic here
-                throw new NotImplementedException();
+                await ValidateIdentificationRequestOnProcessAsync(identificationRequests);
+
+                IdentificationRequest processedItems =
+                    await BulkProcessRequests(identificationRequests, necsConfiguration.ApiMaxBatchSize);
+
+                return processedItems;
             });
+
+        virtual internal async ValueTask<IdentificationRequest> BulkProcessRequests(
+            IdentificationRequest identificationRequests, int batchSize)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

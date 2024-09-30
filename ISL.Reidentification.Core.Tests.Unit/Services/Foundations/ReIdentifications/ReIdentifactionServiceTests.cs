@@ -3,6 +3,8 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Models.Brokers.NECS;
@@ -55,7 +57,26 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
         private static Filler<IdentificationRequest> CreateIdentificationRequestFiller()
         {
             var filler = new Filler<IdentificationRequest>();
-            filler.Setup();
+
+            filler.Setup()
+                .OnProperty(request => request.IdentificationItems).Use(CreateRandomIdentificationItems);
+
+            return filler;
+        }
+
+        private static List<IdentificationItem> CreateRandomIdentificationItems()
+        {
+            return CreateIdentificationItemFiller()
+                .Create(count: GetRandomNumber())
+                    .ToList();
+        }
+
+        private static Filler<IdentificationItem> CreateIdentificationItemFiller()
+        {
+            var filler = new Filler<IdentificationItem>();
+
+            filler.Setup()
+                .OnProperty(address => address.HasAccess).Use(true);
 
             return filler;
         }
