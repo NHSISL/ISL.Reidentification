@@ -66,7 +66,9 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.OdsDatas
             var filler = new Filler<OdsData>();
 
             filler.Setup()
-                .OnType<DateTimeOffset>().Use(dateTimeOffset);
+                .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnType<DateTimeOffset?>().Use(dateTimeOffset)
+                .OnProperty(odsData => odsData.PdsData).IgnoreIt();
 
             return filler;
         }
