@@ -3,8 +3,10 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Force.DeepCloner;
 using ISL.ReIdentification.Core.Models.Foundations.AccessAudits;
 using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications;
 using Moq;
@@ -17,40 +19,37 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
         public async Task ShouldCreateAuditAccessRecordIfRequestDoesNotHaveAccessAsync()
         {
             // given
-            DateTimeOffset someDateTimeOffset = GetRandomDateTimeOffset();
-            Guid someGuid = Guid.NewGuid();
-            IdentificationRequest someIdentificationRequest = CreateRandomIdentificationRequest(false);
-            IdentificationRequest inputIdentificationRequest = someIdentificationRequest;
-            IdentificationRequest expectedIdentificationRequest = inputIdentificationRequest;
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            Guid randomGuid = Guid.NewGuid();
+            IdentificationRequest randomIdentificationRequest = CreateRandomIdentificationRequest(false);
+            IdentificationRequest inputIdentificationRequest = randomIdentificationRequest;
+            IdentificationRequest expectedIdentificationRequest = inputIdentificationRequest.DeepClone();
+            expectedIdentificationRequest.IdentificationItems[0].Identifier = "0000000000";
             IdentificationItem inputIdentificationItem = inputIdentificationRequest.IdentificationItems[0];
 
             AccessAudit inputAccessAudit = new AccessAudit
             {
-                Id = someGuid,
+                Id = randomGuid,
                 PseudoIdentifier = inputIdentificationItem.Identifier,
                 UserEmail = inputIdentificationRequest.UserIdentifier,
                 Reason = inputIdentificationRequest.Reason,
                 HasAccess = (bool)inputIdentificationItem.HasAccess,
                 Message = inputIdentificationItem.Message,
                 CreatedBy = "System",
-                CreatedDate = someDateTimeOffset,
+                CreatedDate = randomDateTimeOffset,
                 UpdatedBy = "System",
-                UpdatedDate = someDateTimeOffset
+                UpdatedDate = randomDateTimeOffset
             };
 
             AccessAudit outputAccessAudit = inputAccessAudit;
 
             this.identifierBrokerMock.Setup(broker =>
                 broker.GetIdentifierAsync())
-                    .ReturnsAsync(someGuid);
+                    .ReturnsAsync(randomGuid);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
-                    .ReturnsAsync(someDateTimeOffset);
-
-            this.accessAuditService.Setup(service =>
-                service.AddAccessAuditAsync(inputAccessAudit))
-                    .ReturnsAsync(outputAccessAudit);
+                    .ReturnsAsync(randomDateTimeOffset);
 
             // when
             var returnedIdentificationRequest =
@@ -59,6 +58,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
 
             // then
             returnedIdentificationRequest.Should().BeEquivalentTo(expectedIdentificationRequest);
+            returnedIdentificationRequest.IdentificationItems[0].Identifier.Should().BeEquivalentTo("0000000000");
 
             this.identifierBrokerMock.Verify(broker =>
                 broker.GetIdentifierAsync(),
@@ -66,11 +66,11 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
-                    Times.Once);
+                    Times.Exactly(inputIdentificationRequest.IdentificationItems.Count()));
 
             this.accessAuditService.Verify(service =>
                 service.AddAccessAuditAsync(It.Is(SameAccessAuditAs(inputAccessAudit))),
-                    Times.Once());
+                    Times.Exactly(inputIdentificationRequest.IdentificationItems.Count()));
 
             this.accessAuditService.VerifyNoOtherCalls();
             this.reIdentificationService.VerifyNoOtherCalls();

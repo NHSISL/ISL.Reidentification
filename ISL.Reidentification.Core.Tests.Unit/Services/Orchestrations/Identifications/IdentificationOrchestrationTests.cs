@@ -65,7 +65,6 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
         private static Filler<IdentificationRequest> CreateIdentificationRequestFiller() =>
             new Filler<IdentificationRequest>();
 
-
         private static Filler<IdentificationItem> CreateIdentificationItemFiller(bool hasAccess)
         {
             var filler = new Filler<IdentificationItem>();
