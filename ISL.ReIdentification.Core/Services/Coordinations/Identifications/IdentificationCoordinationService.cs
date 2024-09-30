@@ -2,10 +2,9 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Brokers.Loggings;
-using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications;
+using ISL.ReIdentification.Core.Models.Orchestrations.Accesses;
 using ISL.ReIdentification.Core.Services.Orchestrations.Accesses;
 
 namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
@@ -26,8 +25,10 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<List<IdentificationRequest>> ProcessIdentificationRequestsAsync(
-            List<IdentificationRequest> identificationRequests) =>
+        public ValueTask<AccessRequest> ProcessDelegatedAccessRequestAsync(AccessRequest accessRequest) =>
+            throw new System.NotImplementedException();
+
+        public ValueTask<AccessRequest> ProcessIdentificationRequestsAsync(AccessRequest accessRequest) =>
             throw new System.NotImplementedException();
     }
 }

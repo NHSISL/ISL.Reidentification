@@ -2,11 +2,13 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System.Text.Json;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
 using ISL.ReIdentification.Core.Brokers.Identifiers;
 using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.PatientOrgReference;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
+using ISL.ReIdentification.Core.Models.Foundations.Lookups;
 using ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses;
 using ISL.ReIdentification.Core.Services.Foundations.Lookups;
 using ISL.ReIdentification.Core.Services.Foundations.OdsDatas;
@@ -14,10 +16,13 @@ using ISL.ReIdentification.Core.Services.Foundations.PdsDatas;
 using ISL.ReIdentification.Core.Services.Foundations.UserAccesses;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
+using Microsoft.OData.Edm;
+using Microsoft.OData.ModelBuilder;
 
 namespace ISL.ReIdentification.Configurations.Server
 {
@@ -52,6 +57,31 @@ namespace ISL.ReIdentification.Configurations.Server
 
             // Register IConfiguration to be available for dependency injection
             builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+            JsonNamingPolicy jsonNamingPolicy = JsonNamingPolicy.CamelCase;
+
+            builder.Services.AddControllers()
+               .AddOData(options =>
+               {
+                   options.AddRouteComponents("odata", GetEdmModel());
+                   options.Select().Filter().Expand().OrderBy().Count().SetMaxTop(100);
+               })
+               .AddJsonOptions(options =>
+               {
+                   options.JsonSerializerOptions.PropertyNamingPolicy = jsonNamingPolicy;
+                   options.JsonSerializerOptions.DictionaryKeyPolicy = jsonNamingPolicy;
+                   options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                   options.JsonSerializerOptions.WriteIndented = true;
+               });
+
+            static IEdmModel GetEdmModel()
+            {
+                ODataConventionModelBuilder builder =
+                   new ODataConventionModelBuilder();
+
+                builder.EntitySet<Lookup>("Lookups");
+                return builder.GetEdmModel();
+            }
+
 
             var app = builder.Build();
             app.UseDefaultFiles();
