@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ISL.ReIdentification.Core.Brokers.Identifiers;
 using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Models.Brokers.NECS;
 using ISL.ReIdentification.Core.Models.Brokers.NECS.Requests;
@@ -17,15 +18,18 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ReIdentifications
     public partial class ReIdentificationService : IReIdentificationService
     {
         private readonly INECSBroker necsBroker;
+        private readonly IIdentifierBroker identifierBroker;
         private readonly NECSConfiguration necsConfiguration;
         private readonly ILoggingBroker loggingBroker;
 
         public ReIdentificationService(
             INECSBroker necsBroker,
+            IIdentifierBroker identifierBroker,
             NECSConfiguration necsConfiguration,
             ILoggingBroker loggingBroker)
         {
             this.necsBroker = necsBroker;
+            this.identifierBroker = identifierBroker;
             this.necsConfiguration = necsConfiguration;
             this.loggingBroker = loggingBroker;
         }
@@ -54,7 +58,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ReIdentifications
                 {
                     NecsReidentificationRequest necsReidentificationRequest = new NecsReidentificationRequest
                     {
-                        RequestId = Guid.NewGuid(),
+                        RequestId = await this.identifierBroker.GetIdentifierAsync(),
                         UserIdentifier = identificationRequest.UserIdentifier,
                         Purpose = identificationRequest.Purpose,
                         Organisation = identificationRequest.Organisation,

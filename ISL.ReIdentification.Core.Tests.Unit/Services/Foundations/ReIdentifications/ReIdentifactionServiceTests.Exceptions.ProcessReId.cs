@@ -35,6 +35,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
             Mock<ReIdentificationService> reIdentificationServiceMock =
                 new Mock<ReIdentificationService>(
                     this.necsBrokerMock.Object,
+                    this.identifierBrokerMock.Object,
                     this.necsConfiguration,
                     this.loggingBrokerMock.Object)
                 { CallBase = true };
@@ -91,6 +92,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
             Mock<ReIdentificationService> reIdentificationServiceMock =
                 new Mock<ReIdentificationService>(
                     this.necsBrokerMock.Object,
+                    this.identifierBrokerMock.Object,
                     this.necsConfiguration,
                     this.loggingBrokerMock.Object)
                 { CallBase = true };
