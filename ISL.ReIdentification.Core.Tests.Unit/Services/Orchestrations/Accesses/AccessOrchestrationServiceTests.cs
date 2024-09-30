@@ -4,6 +4,7 @@
 
 using System;
 using System.Linq;
+using ISL.ReIdentification.Core.Brokers.DateTimes;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.PatientOrgReference;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
 using ISL.ReIdentification.Core.Models.Foundations.OdsDatas;
@@ -16,17 +17,40 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
 {
     public partial class AccessOrchestrationServiceTests
     {
-        private readonly Mock<IPatientOrgReferenceStorageBroker> patientOrgReferenceStorageBrokerMock;
+        private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
         private readonly Mock<IReIdentificationStorageBroker> reIdentificationStorageBrokerMock;
+        private readonly Mock<IPatientOrgReferenceStorageBroker> patientOrgReferenceStorageBrokerMock;
         private readonly AccessOrchestrationService accessOrchestrationService;
 
         public AccessOrchestrationServiceTests()
         {
-            this.patientOrgReferenceStorageBrokerMock = new Mock<IPatientOrgReferenceStorageBroker>();
+            this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
             this.reIdentificationStorageBrokerMock = new Mock<IReIdentificationStorageBroker>();
+            this.patientOrgReferenceStorageBrokerMock = new Mock<IPatientOrgReferenceStorageBroker>();
+
             this.accessOrchestrationService =
-                new AccessOrchestrationService(patientOrgReferenceStorageBrokerMock.Object,
-                    reIdentificationStorageBrokerMock.Object);
+                new AccessOrchestrationService(
+                    dateTimeBrokerMock.Object,
+                    reIdentificationStorageBrokerMock.Object,
+                    patientOrgReferenceStorageBrokerMock.Object);
+        }
+
+        private static DateTimeOffset GetRandomPastDateTimeOffset()
+        {
+            DateTime now = DateTimeOffset.UtcNow.Date;
+            int randomDaysInPast = GetRandomNegativeNumber();
+            DateTime pastDateTime = now.AddDays(randomDaysInPast).Date;
+
+            return new DateTimeRange(earliestDate: pastDateTime, latestDate: now).GetValue();
+        }
+
+        private static DateTimeOffset GetRandomFutureDateTimeOffset()
+        {
+            DateTime futureStartDate = DateTimeOffset.UtcNow.AddDays(1).Date;
+            int randomDaysInFuture = GetRandomNumber();
+            DateTime futureEndDate = futureStartDate.AddDays(randomDaysInFuture).Date;
+
+            return new DateTimeRange(earliestDate: futureStartDate, latestDate: futureEndDate).GetValue();
         }
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
@@ -53,6 +77,9 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
 
         private static int GetRandomNumber() =>
             new IntRange(max: 15, min: 2).GetValue();
+
+        private static int GetRandomNegativeNumber() =>
+            -1 * new IntRange(min: 2, max: 10).GetValue();
 
         private static string GetRandomStringWithLength(int length) =>
             new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length).GetValue();
