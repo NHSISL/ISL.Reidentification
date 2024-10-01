@@ -3,7 +3,6 @@
 // ---------------------------------------------------------
 
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
@@ -26,9 +25,9 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
             IdentificationRequest randomIdentificationRequest =
                CreateRandomIdentificationRequest(hasAccess: false, itemCount: itemCount);
 
-            IdentificationRequest inputIdentificationRequest = randomIdentificationRequest;
+            IdentificationRequest inputIdentificationRequest = randomIdentificationRequest.DeepClone();
             IdentificationRequest outputIdentificationRequest = inputIdentificationRequest.DeepClone();
-            // outputIdentificationRequest.IdentificationItems.ForEach(item => item.Identifier = "0000000000");
+            outputIdentificationRequest.IdentificationItems.ForEach(item => item.Identifier = "0000000000");
             IdentificationRequest expectedIdentificationRequest = outputIdentificationRequest.DeepClone();
 
             this.identifierBrokerMock.Setup(broker =>
@@ -45,7 +44,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
                     .ProcessIdentificationRequestAsync(inputIdentificationRequest);
 
             // then
-            // actualIdentificationRequest.Should().BeEquivalentTo(expectedIdentificationRequest);
+            actualIdentificationRequest.Should().BeEquivalentTo(expectedIdentificationRequest);
 
             this.identifierBrokerMock.Verify(broker =>
                 broker.GetIdentifierAsync(),
@@ -55,14 +54,14 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Exactly(itemCount));
 
-            foreach (IdentificationItem item in inputIdentificationRequest.IdentificationItems)
+            foreach (IdentificationItem item in randomIdentificationRequest.IdentificationItems)
             {
                 AccessAudit inputAccessAudit = new AccessAudit
                 {
                     Id = randomGuid,
                     PseudoIdentifier = item.Identifier,
-                    UserEmail = inputIdentificationRequest.UserIdentifier,
-                    Reason = inputIdentificationRequest.Reason,
+                    UserEmail = randomIdentificationRequest.UserIdentifier,
+                    Reason = randomIdentificationRequest.Reason,
                     HasAccess = (bool)item.HasAccess,
                     Message = item.Message,
                     CreatedBy = "System",
@@ -97,12 +96,10 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
 
             IdentificationRequest inputIdentificationRequest = randomIdentificationRequest.DeepClone();
 
-            var hasAccessIdentificationItems = inputIdentificationRequest.IdentificationItems;
-
             IdentificationRequest inputHasAccessIdentificationRequest = new IdentificationRequest
             {
                 Id = inputIdentificationRequest.Id,
-                IdentificationItems = hasAccessIdentificationItems,
+                IdentificationItems = inputIdentificationRequest.IdentificationItems,
                 UserIdentifier = inputIdentificationRequest.UserIdentifier,
                 Purpose = inputIdentificationRequest.Purpose,
                 Organisation = inputIdentificationRequest.Organisation,
@@ -112,11 +109,10 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
             IdentificationRequest outputHasAccessIdentificationRequest =
                 inputHasAccessIdentificationRequest.DeepClone();
 
-            outputHasAccessIdentificationRequest.IdentificationItems[0].Identifier = reIdentifiedIdentifier;
+            //outputHasAccessIdentificationRequest.IdentificationItems
+            //    .ForEach(item => item.Identifier = reIdentifiedIdentifier);
 
-            IdentificationRequest expectedIdentificationRequest = outputHasAccessIdentificationRequest;
-            //expectedIdentificationRequest.IdentificationItems =
-            //    outputHasAccessIdentificationRequest.IdentificationItems;
+            IdentificationRequest expectedIdentificationRequest = outputHasAccessIdentificationRequest.DeepClone();
 
             this.identifierBrokerMock.Setup(broker =>
                broker.GetIdentifierAsync())
@@ -146,14 +142,14 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Exactly(itemCount));
 
-            foreach (IdentificationItem item in inputIdentificationRequest.IdentificationItems)
+            foreach (IdentificationItem item in randomIdentificationRequest.IdentificationItems)
             {
                 AccessAudit inputAccessAudit = new AccessAudit
                 {
                     Id = randomGuid,
                     PseudoIdentifier = item.Identifier,
-                    UserEmail = inputIdentificationRequest.UserIdentifier,
-                    Reason = inputIdentificationRequest.Reason,
+                    UserEmail = randomIdentificationRequest.UserIdentifier,
+                    Reason = randomIdentificationRequest.Reason,
                     HasAccess = (bool)item.HasAccess,
                     Message = item.Message,
                     CreatedBy = "System",
@@ -170,7 +166,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
             this.reIdentificationService.Verify(service =>
                 service.ProcessReidentificationRequest(It.Is(
                     SameIdentificationRequestAs(inputHasAccessIdentificationRequest))),
-                        Times.Exactly(inputIdentificationRequest.IdentificationItems.Count()));
+                        Times.Once);
 
             this.accessAuditService.VerifyNoOtherCalls();
             this.reIdentificationService.VerifyNoOtherCalls();

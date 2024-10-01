@@ -48,7 +48,7 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
                 AccessAudit accessAudit = new AccessAudit
                 {
                     Id = accessAuditId,
-                    PseudoIdentifier = "test",//item.Identifier,
+                    PseudoIdentifier = item.Identifier,
                     UserEmail = identificationRequest.UserIdentifier,
                     Reason = identificationRequest.Reason,
                     HasAccess = (bool)item.HasAccess,
@@ -63,7 +63,7 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
 
                 if (item.HasAccess is false)
                 {
-                    item.Identifier = "00000000001";
+                    item.Identifier = "0000000000";
                 }
             }
 
