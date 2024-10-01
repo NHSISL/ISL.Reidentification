@@ -41,6 +41,8 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
             IdentificationRequest identificationRequest) =>
         TryCatch(async () =>
         {
+            ValidateIdentificationRequestIsNotNull(identificationRequest);
+
             foreach (IdentificationItem item in identificationRequest.IdentificationItems)
             {
                 var now = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();

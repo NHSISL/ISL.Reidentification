@@ -22,50 +22,46 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
             {
                 return await returningIdentificationRequestFunction();
             }
-            catch (AccessAuditValidationException
-                accessAuditValidationException)
+            catch (NullIdentificationRequestException nullIdentificationRequestException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(nullIdentificationRequestException);
+            }
+            catch (AccessAuditValidationException accessAuditValidationException)
             {
                 throw await CreateAndLogDependencyValidationExceptionAsync(
                     accessAuditValidationException);
             }
-            catch (AccessAuditDependencyValidationException
-                accessAuditDependencyValidationException)
+            catch (AccessAuditDependencyValidationException accessAuditDependencyValidationException)
             {
                 throw await CreateAndLogDependencyValidationExceptionAsync(
                     accessAuditDependencyValidationException);
             }
-            catch (ReIdentificationValidationException
-                reIdentificationValidationException)
+            catch (ReIdentificationValidationException reIdentificationValidationException)
             {
                 throw await CreateAndLogDependencyValidationExceptionAsync(
                     reIdentificationValidationException);
             }
-            catch (ReIdentificationDependencyValidationException
-                reIdentificationDependencyValidationException)
+            catch (ReIdentificationDependencyValidationException reIdentificationDependencyValidationException)
             {
                 throw await CreateAndLogDependencyValidationExceptionAsync(
                     reIdentificationDependencyValidationException);
             }
-            catch (AccessAuditServiceException
-                accessAuditServiceException)
+            catch (AccessAuditServiceException accessAuditServiceException)
             {
                 throw await CreateAndLogDependencyExceptionAsync(
                     accessAuditServiceException);
             }
-            catch (AccessAuditDependencyException
-                accessAuditDependencyException)
+            catch (AccessAuditDependencyException accessAuditDependencyException)
             {
                 throw await CreateAndLogDependencyExceptionAsync(
                     accessAuditDependencyException);
             }
-            catch (ReIdentificationServiceException
-                reIdentificationServiceException)
+            catch (ReIdentificationServiceException reIdentificationServiceException)
             {
                 throw await CreateAndLogDependencyExceptionAsync(
                     reIdentificationServiceException);
             }
-            catch (ReIdentificationDependencyException
-                reIdentificationDependencyException)
+            catch (ReIdentificationDependencyException reIdentificationDependencyException)
             {
                 throw await CreateAndLogDependencyExceptionAsync(
                     reIdentificationDependencyException);
@@ -100,6 +96,19 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
             return identificationOrchestrationDependencyException;
         }
 
+        private async ValueTask<IdentificationOrchestrationValidationException>
+            CreateAndLogValidationExceptionAsync(Xeption exception)
+        {
+            var identificationOrchestrationValidationException =
+                new IdentificationOrchestrationValidationException(
+                    message: "Identification orchestration validation error occurred, " +
+                        "fix the errors and try again.",
+                    innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(identificationOrchestrationValidationException);
+
+            return identificationOrchestrationValidationException;
+        }
 
     }
 }
