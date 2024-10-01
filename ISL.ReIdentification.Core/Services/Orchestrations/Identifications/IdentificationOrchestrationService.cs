@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
 using ISL.ReIdentification.Core.Brokers.Identifiers;
@@ -10,6 +11,7 @@ using ISL.ReIdentification.Core.Models.Foundations.AccessAudits;
 using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications;
 using ISL.ReIdentification.Core.Services.Foundations.AccessAudits;
 using ISL.ReIdentification.Core.Services.Foundations.ReIdentifications;
+using Microsoft.IdentityModel.Tokens;
 
 namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
 {
@@ -64,6 +66,35 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
                     item.Identifier = "0000000000";
                 }
             }
+
+            var hasAccessIdentificationItems =
+                identificationRequest.IdentificationItems
+                    .FindAll(x => x.HasAccess == true).ToList();
+
+            if (hasAccessIdentificationItems.IsNullOrEmpty())
+            {
+                return identificationRequest;
+            }
+
+            IdentificationRequest hasAccessIdentificationRequest = new IdentificationRequest
+            {
+                Id = identificationRequest.Id,
+                IdentificationItems = hasAccessIdentificationItems,
+                UserIdentifier = identificationRequest.UserIdentifier,
+                Purpose = identificationRequest.Purpose,
+                Organisation = identificationRequest.Organisation,
+                Reason = identificationRequest.Reason
+            };
+
+            var reIdentifiedIdentificationRequest =
+                await this.reIdentificationService.ProcessReidentificationRequest(
+                    hasAccessIdentificationRequest);
+
+            //var reIdentifiedIdentificationItems =
+            //    reIdentifiedIdentificationRequest.IdentificationItems;
+
+            identificationRequest.IdentificationItems.RemoveAll(x => x.HasAccess == true);
+            identificationRequest.IdentificationItems.AddRange(reIdentifiedIdentificationRequest.IdentificationItems);
 
             return identificationRequest;
         }
