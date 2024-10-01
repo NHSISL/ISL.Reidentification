@@ -62,5 +62,55 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Theory]
+        [MemberData(nameof(DependencyExceptions))]
+        public async Task ShouldThrowDependencyOnProcessIdentificationRequestAndLogItAsync(
+            Xeption dependencyValidationException)
+        {
+            // given
+            int itemCount = GetRandomNumber();
+
+            IdentificationRequest someIdentificationRequest =
+               CreateRandomIdentificationRequest(hasAccess: false, itemCount: itemCount);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ThrowsAsync(dependencyValidationException);
+
+            var expectedIdentificationOrchestrationDependencyException =
+                new IdentificationOrchestrationDependencyException(
+                    message: "Identification orchestration dependency error occurred, " +
+                        "fix the errors and try again.",
+                    innerException: dependencyValidationException.InnerException as Xeption);
+
+            // when
+            ValueTask<IdentificationRequest> identificationRequestTask =
+                this.identificationOrchestrationService
+                    .ProcessIdentificationRequestAsync(someIdentificationRequest);
+
+            IdentificationOrchestrationDependencyException
+                actualIdentificationOrchestrationDependencyException =
+                await Assert.ThrowsAsync<IdentificationOrchestrationDependencyException>(
+                    identificationRequestTask.AsTask);
+
+            // then
+            actualIdentificationOrchestrationDependencyException
+                .Should().BeEquivalentTo(expectedIdentificationOrchestrationDependencyException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+               broker.LogErrorAsync(It.Is(SameExceptionAs(
+                   expectedIdentificationOrchestrationDependencyException))),
+                       Times.Once);
+
+            this.accessAuditService.VerifyNoOtherCalls();
+            this.reIdentificationService.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
