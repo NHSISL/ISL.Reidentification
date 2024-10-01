@@ -56,42 +56,52 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ReIdentifications
             {
                 try
                 {
-                    NecsReidentificationRequest necsReidentificationRequest = new NecsReidentificationRequest
+                    await TryCatch(async () =>
                     {
-                        RequestId = await this.identifierBroker.GetIdentifierAsync(),
-                        UserIdentifier = identificationRequest.UserIdentifier,
-                        Purpose = identificationRequest.Purpose,
-                        Organisation = identificationRequest.Organisation,
-                        Reason = identificationRequest.Reason,
-                    };
-
-                    List<NecsPseudonymisedItem> batch = identificationRequest.IdentificationItems.Skip(i)
-                        .Take(batchSize).ToList().Select(item =>
-                            new NecsPseudonymisedItem { RowNumber = item.RowNumber, Psuedo = item.Identifier })
-                                .ToList();
-
-                    necsReidentificationRequest.PseudonymisedNumbers.AddRange(batch);
-
-                    NecsReIdentificationResponse necsReIdentificationResponse =
-                        await necsBroker.ReIdAsync(necsReidentificationRequest);
-
-                    foreach (var item in necsReIdentificationResponse.Results)
-                    {
-                        var record = identificationRequest.IdentificationItems
-                            .FirstOrDefault(i => i.RowNumber == item.RowNumber);
-
-                        if (record != null)
+                        NecsReidentificationRequest necsReidentificationRequest = new NecsReidentificationRequest
                         {
-                            record.Identifier = item.NhsNumber;
-                            record.Message = item.Message;
-                            record.IsReidentified = true;
+                            RequestId = await this.identifierBroker.GetIdentifierAsync(),
+                            UserIdentifier = identificationRequest.UserIdentifier,
+                            Purpose = identificationRequest.Purpose,
+                            Organisation = identificationRequest.Organisation,
+                            Reason = identificationRequest.Reason,
+                        };
+
+                        List<NecsPseudonymisedItem> batch = identificationRequest.IdentificationItems.Skip(i)
+                            .Take(batchSize).ToList().Select(item =>
+                                new NecsPseudonymisedItem { RowNumber = item.RowNumber, Psuedo = item.Identifier })
+                                    .ToList();
+
+                        necsReidentificationRequest.PseudonymisedNumbers.AddRange(batch);
+
+                        NecsReIdentificationResponse necsReIdentificationResponse =
+                            await necsBroker.ReIdAsync(necsReidentificationRequest);
+
+                        foreach (var item in necsReIdentificationResponse.Results)
+                        {
+                            var record = identificationRequest.IdentificationItems
+                                .FirstOrDefault(i => i.RowNumber == item.RowNumber);
+
+                            if (record != null)
+                            {
+                                record.Identifier = item.NhsNumber;
+                                record.Message = item.Message;
+                                record.IsReidentified = true;
+                            }
                         }
-                    }
+                    });
                 }
                 catch (Exception ex)
                 {
                     exceptions.Add(ex);
                 }
+            }
+
+            if (exceptions.Any())
+            {
+                throw new AggregateException(
+                    message: $"Unable to process addresses in 1 of the batch(es) from {identificationRequest.Id}",
+                    innerExceptions: exceptions);
             }
 
             return identificationRequest;

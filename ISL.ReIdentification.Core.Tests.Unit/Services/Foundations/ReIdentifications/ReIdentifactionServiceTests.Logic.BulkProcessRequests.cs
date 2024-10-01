@@ -23,7 +23,6 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
             Guid randomIdentifier = Guid.NewGuid();
             int batchSize = GetRandomNumber();
             int randomCount = (batchSize * GetRandomNumber()) + GetRandomNumber();
-            int randomElapsedTime = GetRandomNumber();
             IdentificationRequest randomIdentificationRequest = CreateRandomIdentificationRequest(count: randomCount);
 
             (List<NecsReidentificationRequest> requests, List<NecsReIdentificationResponse> responses) =

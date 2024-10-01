@@ -15,6 +15,7 @@ using ISL.ReIdentification.Core.Services.Foundations.ReIdentifications;
 using KellermanSoftware.CompareNetObjects;
 using LHDS.Core.Brokers.NECS;
 using Moq;
+using RESTFulSense.Exceptions;
 using Tynamix.ObjectFiller;
 using Xeptions;
 
@@ -55,6 +56,32 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
             return actualNecsReidentificationRequest =>
                 this.compareLogic.Compare(expectedNecsReidentificationRequest, actualNecsReidentificationRequest)
                     .AreEqual;
+        }
+
+        public static TheoryData<Xeption> DependencyValidationExceptions()
+        {
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new HttpResponseUnauthorizedException(),
+                new HttpResponseUrlNotFoundException(),
+                new HttpResponseBadRequestException()
+            };
+        }
+
+        public static TheoryData<Xeption> DependencyExceptions()
+        {
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new HttpResponseInternalServerErrorException()
+            };
         }
 
         private (List<NecsReidentificationRequest> requests, List<NecsReIdentificationResponse> responses)
