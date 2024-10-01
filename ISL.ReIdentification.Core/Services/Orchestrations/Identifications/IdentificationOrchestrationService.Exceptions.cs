@@ -25,31 +25,55 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
             catch (AccessAuditValidationException
                 accessAuditValidationException)
             {
-                throw await CreateAndLogDependencyValidationException(
+                throw await CreateAndLogDependencyValidationExceptionAsync(
                     accessAuditValidationException);
             }
             catch (AccessAuditDependencyValidationException
                 accessAuditDependencyValidationException)
             {
-                throw await CreateAndLogDependencyValidationException(
+                throw await CreateAndLogDependencyValidationExceptionAsync(
                     accessAuditDependencyValidationException);
             }
             catch (ReIdentificationValidationException
                 reIdentificationValidationException)
             {
-                throw await CreateAndLogDependencyValidationException(
+                throw await CreateAndLogDependencyValidationExceptionAsync(
                     reIdentificationValidationException);
             }
             catch (ReIdentificationDependencyValidationException
                 reIdentificationDependencyValidationException)
             {
-                throw await CreateAndLogDependencyValidationException(
+                throw await CreateAndLogDependencyValidationExceptionAsync(
                     reIdentificationDependencyValidationException);
+            }
+            catch (AccessAuditServiceException
+                accessAuditServiceException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    accessAuditServiceException);
+            }
+            catch (AccessAuditDependencyException
+                accessAuditDependencyException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    accessAuditDependencyException);
+            }
+            catch (ReIdentificationServiceException
+                reIdentificationServiceException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    reIdentificationServiceException);
+            }
+            catch (ReIdentificationDependencyException
+                reIdentificationDependencyException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    reIdentificationDependencyException);
             }
         }
 
         private async ValueTask<IdentificationOrchestrationDependencyValidationException>
-            CreateAndLogDependencyValidationException(Xeption exception)
+            CreateAndLogDependencyValidationExceptionAsync(Xeption exception)
         {
             var identificationOrchestrationDependencyValidationException =
                 new IdentificationOrchestrationDependencyValidationException(
@@ -61,5 +85,21 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
 
             return identificationOrchestrationDependencyValidationException;
         }
+
+        private async ValueTask<IdentificationOrchestrationDependencyException>
+            CreateAndLogDependencyExceptionAsync(Xeption exception)
+        {
+            var identificationOrchestrationDependencyException =
+                new IdentificationOrchestrationDependencyException(
+                    message: "Identification orchestration dependency error occurred, " +
+                        "fix the errors and try again.",
+                    innerException: exception.InnerException as Xeption);
+
+            await this.loggingBroker.LogErrorAsync(identificationOrchestrationDependencyException);
+
+            return identificationOrchestrationDependencyException;
+        }
+
+
     }
 }
