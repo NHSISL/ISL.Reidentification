@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
 using ISL.ReIdentification.Core.Brokers.Loggings;
@@ -131,6 +132,13 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
         {
             return actualException =>
                 actualException.SameExceptionAs(expectedException);
+        }
+
+        public static IEnumerable<object[]> GetTestInvalidParameters()
+        {
+            yield return new object[] { null, null };
+            yield return new object[] { "", new List<string> { "" } };
+            yield return new object[] { " ", new List<string> { " " } };
         }
     }
 }
