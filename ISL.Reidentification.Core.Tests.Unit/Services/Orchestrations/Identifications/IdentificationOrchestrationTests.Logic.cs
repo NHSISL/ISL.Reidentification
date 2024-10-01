@@ -16,7 +16,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
     public partial class IdentificationOrchestrationTests
     {
         [Fact]
-        public async Task ShouldCreateAuditAccessRecordIfRequestDoesNotHaveAccessAsync()
+        public async Task ShouldCreateAuditAccessRecordIfRequestItemDoesNotHaveAccessAsync()
         {
             // given
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
@@ -52,15 +52,12 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
                     .ReturnsAsync(randomDateTimeOffset);
 
             // when
-            var returnedIdentificationRequest =
+            var actualIdentificationRequest =
                 await this.identificationOrchestrationService
                     .ProcessIdentificationRequestAsync(inputIdentificationRequest);
 
             // then
-            returnedIdentificationRequest.Should().BeEquivalentTo(expectedIdentificationRequest);
-
-            returnedIdentificationRequest.IdentificationItems[0].Identifier.Should()
-                .BeEquivalentTo(expectedIdentificationRequest.IdentificationItems[0].Identifier);
+            actualIdentificationRequest.Should().BeEquivalentTo(expectedIdentificationRequest);
 
             this.identifierBrokerMock.Verify(broker =>
                 broker.GetIdentifierAsync(),
@@ -78,6 +75,92 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
             this.reIdentificationService.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldCreateAuditAccessRecordAndPerformReIdentificationIfRequestItemHasAccessAsync()
+        {
+            // given
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            Guid randomGuid = Guid.NewGuid();
+            string randomString = GetRandomStringWithLength(10);
+            string reIdentifiedIdentifier = randomString;
+            IdentificationRequest randomIdentificationRequest = CreateRandomIdentificationRequest(true);
+            IdentificationRequest inputIdentificationRequest = randomIdentificationRequest;
+            IdentificationRequest expectedIdentificationRequest = inputIdentificationRequest.DeepClone();
+            IdentificationItem inputIdentificationItem = inputIdentificationRequest.IdentificationItems[0];
+
+            AccessAudit inputAccessAudit = new AccessAudit
+            {
+                Id = randomGuid,
+                PseudoIdentifier = inputIdentificationItem.Identifier,
+                UserEmail = inputIdentificationRequest.UserIdentifier,
+                Reason = inputIdentificationRequest.Reason,
+                HasAccess = (bool)inputIdentificationItem.HasAccess,
+                Message = inputIdentificationItem.Message,
+                CreatedBy = "System",
+                CreatedDate = randomDateTimeOffset,
+                UpdatedBy = "System",
+                UpdatedDate = randomDateTimeOffset
+            };
+
+            AccessAudit outputAccessAudit = inputAccessAudit;
+            var hasAccessIdentificationItems = expectedIdentificationRequest.IdentificationItems;
+
+            IdentificationRequest inputHasAccessIdentificationRequest = new IdentificationRequest
+            {
+                Id = inputIdentificationRequest.Id,
+                IdentificationItems = hasAccessIdentificationItems,
+                UserIdentifier = inputIdentificationRequest.UserIdentifier,
+                Purpose = inputIdentificationRequest.Purpose,
+                Organisation = inputIdentificationRequest.Organisation,
+                Reason = inputIdentificationRequest.Reason
+            };
+
+            IdentificationRequest outputHasAccessIdentificationRequest =
+                inputHasAccessIdentificationRequest.DeepClone();
+
+            outputHasAccessIdentificationRequest.IdentificationItems[0].Identifier = reIdentifiedIdentifier;
+
+            expectedIdentificationRequest.IdentificationItems =
+                outputHasAccessIdentificationRequest.IdentificationItems;
+
+            this.identifierBrokerMock.Setup(broker =>
+               broker.GetIdentifierAsync())
+                   .ReturnsAsync(randomGuid);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            this.reIdentificationService.Setup(service =>
+                service.ProcessReidentificationRequest(inputHasAccessIdentificationRequest))
+                    .ReturnsAsync(outputHasAccessIdentificationRequest);
+
+            // when
+            var actualIdentificationRequest =
+                await this.identificationOrchestrationService
+                    .ProcessIdentificationRequestAsync(inputIdentificationRequest);
+
+            // then
+            actualIdentificationRequest.Should().BeEquivalentTo(expectedIdentificationRequest);
+
+            this.identifierBrokerMock.Verify(broker =>
+                broker.GetIdentifierAsync(),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Exactly(inputIdentificationRequest.IdentificationItems.Count()));
+
+            this.accessAuditService.Verify(service =>
+                service.AddAccessAuditAsync(It.Is(SameAccessAuditAs(inputAccessAudit))),
+                    Times.Exactly(inputIdentificationRequest.IdentificationItems.Count()));
+
+            this.reIdentificationService.Verify(service =>
+                service.ProcessReidentificationRequest(It.Is(
+                    SameIdentificationRequestAs(inputHasAccessIdentificationRequest))),
+                        Times.Exactly(inputIdentificationRequest.IdentificationItems.Count()));
         }
     }
 }
