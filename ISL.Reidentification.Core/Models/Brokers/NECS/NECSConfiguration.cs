@@ -6,8 +6,8 @@ namespace ISL.ReIdentification.Core.Models.Brokers.NECS
 {
     public class NECSConfiguration
     {
-        public string ApiUrl { get; set; }
-        public string ApiKey { get; set; }
-        public int ApiBulkRequestLimit { get; set; }
+        public string ApiUrl { get; set; } = string.Empty;
+        public string ApiKey { get; set; } = string.Empty;
+        public int ApiMaxBatchSize { get; set; }
     }
 }
