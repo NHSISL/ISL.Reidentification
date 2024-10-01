@@ -37,8 +37,9 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
             this.identifierBroker = identifierBroker;
         }
 
-        public async ValueTask<IdentificationRequest> ProcessIdentificationRequestAsync(
-            IdentificationRequest identificationRequest)
+        public ValueTask<IdentificationRequest> ProcessIdentificationRequestAsync(
+            IdentificationRequest identificationRequest) =>
+        TryCatch(async () =>
         {
             foreach (IdentificationItem item in identificationRequest.IdentificationItems)
             {
@@ -101,6 +102,6 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
             }
 
             return identificationRequest;
-        }
+        });
     }
 }
