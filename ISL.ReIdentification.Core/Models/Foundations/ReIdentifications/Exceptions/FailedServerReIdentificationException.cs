@@ -8,9 +8,9 @@ using Xeptions;
 
 namespace ISL.ReIdentification.Core.Models.Foundations.ReIdentifications.Exceptions
 {
-    public class FailedServiceReIdentificationException : Xeption
+    public class FailedServerReIdentificationException : Xeption
     {
-        public FailedServiceReIdentificationException(string message, Exception innerException, IDictionary data)
+        public FailedServerReIdentificationException(string message, Exception innerException, IDictionary data)
             : base(message, innerException, data)
         { }
     }
