@@ -3,11 +3,22 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Linq;
+using ISL.ReIdentification.Core.Models.Foundations.OdsDatas;
 
 namespace ISL.ReIdentification.Core.Models.Foundations.PdsDatas
 {
-    public class PdsData : IKey
+    public class PdsData
     {
-        public Guid Id { get; set; }
+        public long RowId { get; set; }
+        public string? PseudoNhsNumber { get; set; }
+        public string? PrimaryCareProvider { get; set; }
+        public DateTimeOffset? PrimaryCareProviderBusinessEffectiveFromDate { get; set; }
+        public DateTimeOffset? PrimaryCareProviderBusinessEffectiveToDate { get; set; }
+        public string? CcgOfRegistration { get; set; }
+        public string? CurrentCcgOfRegistration { get; set; }
+        public string? IcbOfRegistration { get; set; }
+        public string? CurrentIcbOfRegistration { get; set; }
+        public IQueryable<OdsData> OdsDatas { get; set; }
     }
 }

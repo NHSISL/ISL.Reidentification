@@ -18,7 +18,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
         public async Task ShouldThrowCriticalDependencyExceptionOnRetrieveByIdIfSqlErrorOccursAndLogItAsync()
         {
             // given
-            Guid someId = Guid.NewGuid();
+            long someId = GetRandomNumber();
             SqlException sqlException = CreateSqlException();
 
             var failedStoragePdsDataException =
@@ -32,7 +32,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
                     innerException: failedStoragePdsDataException);
 
             this.patientOrgReferenceStorageBroker.Setup(broker =>
-                broker.SelectPdsDataByIdAsync(It.IsAny<Guid>()))
+                broker.SelectPdsDataByIdAsync(It.IsAny<long>()))
                     .ThrowsAsync(sqlException);
 
             // when
@@ -48,7 +48,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
                 .BeEquivalentTo(expectedPdsDataDependencyException);
 
             this.patientOrgReferenceStorageBroker.Verify(broker =>
-                broker.SelectPdsDataByIdAsync(It.IsAny<Guid>()),
+                broker.SelectPdsDataByIdAsync(It.IsAny<long>()),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -64,7 +64,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
         public async Task ShouldThrowServiceExceptionOnRetrieveByIdIfServiceErrorOccursAndLogItAsync()
         {
             // given
-            Guid someId = Guid.NewGuid();
+            long someId = GetRandomNumber();
             var serviceException = new Exception();
 
             var failedPdsDataServiceException =
@@ -78,7 +78,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
                     innerException: failedPdsDataServiceException);
 
             this.patientOrgReferenceStorageBroker.Setup(broker =>
-                broker.SelectPdsDataByIdAsync(It.IsAny<Guid>()))
+                broker.SelectPdsDataByIdAsync(It.IsAny<long>()))
                     .ThrowsAsync(serviceException);
 
             // when
@@ -94,7 +94,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
                 .BeEquivalentTo(expectedPdsDataServiceException);
 
             this.patientOrgReferenceStorageBroker.Verify(broker =>
-                broker.SelectPdsDataByIdAsync(It.IsAny<Guid>()),
+                broker.SelectPdsDataByIdAsync(It.IsAny<long>()),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
