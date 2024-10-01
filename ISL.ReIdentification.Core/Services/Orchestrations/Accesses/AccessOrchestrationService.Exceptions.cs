@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Orchestrations.Accesses.Exceptions;
@@ -23,6 +24,15 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
             {
                 throw CreateAndLogValidationException(invalidArgumentAccessOrchestrationException);
             }
+            catch (Exception exception)
+            {
+                var failedServiceAccessOrchestrationException =
+                    new FailedServiceAccessOrchestrationException(
+                        message: "Failed service access orchestration error occurred, contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedServiceAccessOrchestrationException);
+            }
         }
 
         private AccessValidationOrchestrationException CreateAndLogValidationException(Xeption exception)
@@ -35,6 +45,18 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
             this.loggingBroker.LogErrorAsync(accessValidationException);
 
             return accessValidationException;
+        }
+
+        private async ValueTask<AccessOrchestrationServiceException> CreateAndLogServiceExceptionAsync(
+           Xeption exception)
+        {
+            var accessOrchestrationServiceException = new AccessOrchestrationServiceException(
+                message: "Service error occurred, contact support.",
+                innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(accessOrchestrationServiceException);
+
+            return accessOrchestrationServiceException;
         }
     }
 }
