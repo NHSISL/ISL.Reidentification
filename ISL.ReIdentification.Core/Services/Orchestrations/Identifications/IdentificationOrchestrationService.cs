@@ -90,12 +90,14 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
                 await this.reIdentificationService.ProcessReidentificationRequest(
                     hasAccessIdentificationRequest);
 
-            //var reIdentifiedIdentificationItems =
-            //    reIdentifiedIdentificationRequest.IdentificationItems;
-            if (reIdentifiedIdentificationRequest != null)
+            foreach (IdentificationItem item in reIdentifiedIdentificationRequest.IdentificationItems)
             {
-                identificationRequest.IdentificationItems.RemoveAll(x => x.HasAccess == true);
-                identificationRequest.IdentificationItems.AddRange(reIdentifiedIdentificationRequest.IdentificationItems);
+                var record = identificationRequest.IdentificationItems
+                    .First(request => request.RowNumber == item.RowNumber);
+
+                record.Identifier = item.Identifier;
+                record.Message = item.Message;
+                record.IsReidentified = true;
             }
 
             return identificationRequest;

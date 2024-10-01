@@ -95,6 +95,15 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
                 CreateRandomIdentificationRequest(hasAccess: true, itemCount: itemCount);
 
             IdentificationRequest inputIdentificationRequest = randomIdentificationRequest.DeepClone();
+            IdentificationRequest outputIdentificationRequest = inputIdentificationRequest.DeepClone();
+
+            outputIdentificationRequest.IdentificationItems.ForEach(item =>
+            {
+                item.Identifier = $"{item.Identifier}I";
+                item.IsReidentified = true;
+            });
+
+            IdentificationRequest expectedIdentificationRequest = outputIdentificationRequest.DeepClone();
 
             IdentificationRequest inputHasAccessIdentificationRequest = new IdentificationRequest
             {
@@ -109,10 +118,11 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
             IdentificationRequest outputHasAccessIdentificationRequest =
                 inputHasAccessIdentificationRequest.DeepClone();
 
-            //outputHasAccessIdentificationRequest.IdentificationItems
-            //    .ForEach(item => item.Identifier = reIdentifiedIdentifier);
-
-            IdentificationRequest expectedIdentificationRequest = outputHasAccessIdentificationRequest.DeepClone();
+            outputHasAccessIdentificationRequest.IdentificationItems.ForEach(item =>
+            {
+                item.Identifier = $"{item.Identifier}I";
+                item.IsReidentified = true;
+            });
 
             this.identifierBrokerMock.Setup(broker =>
                broker.GetIdentifierAsync())
@@ -123,8 +133,9 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
                     .ReturnsAsync(randomDateTimeOffset);
 
             this.reIdentificationService.Setup(service =>
-                service.ProcessReidentificationRequest(inputHasAccessIdentificationRequest))
-                    .ReturnsAsync(outputHasAccessIdentificationRequest);
+                service.ProcessReidentificationRequest(
+                    It.Is(SameIdentificationRequestAs(inputHasAccessIdentificationRequest))))
+                        .ReturnsAsync(outputHasAccessIdentificationRequest);
 
             // when
             var actualIdentificationRequest =
