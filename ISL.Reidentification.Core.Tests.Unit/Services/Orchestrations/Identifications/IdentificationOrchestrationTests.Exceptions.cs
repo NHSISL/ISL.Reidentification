@@ -2,9 +2,11 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications;
+using ISL.ReIdentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using ISL.ReIdentification.Core.Models.Orchestrations.Identifications.Exceptions;
 using Moq;
 using Xeptions;
@@ -105,6 +107,65 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
             this.loggingBrokerMock.Verify(broker =>
                broker.LogErrorAsync(It.Is(SameExceptionAs(
                    expectedIdentificationOrchestrationDependencyException))),
+                       Times.Once);
+
+            this.accessAuditService.VerifyNoOtherCalls();
+            this.reIdentificationService.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccurredAndLogItAsync()
+        {
+            // given
+            int itemCount = GetRandomNumber();
+
+            IdentificationRequest someIdentificationRequest =
+               CreateRandomIdentificationRequest(hasAccess: false, itemCount: itemCount);
+
+            var serviceException = new Exception();
+
+            var failedServiceIdentificationOrchestrationException =
+                new FailedServiceIdentificationOrchestrationException(
+                    message: "Failed service identification orchestration error occurred, contact support.",
+                    innerException: serviceException);
+
+            var expectedIdentificationOrchestrationServiceException =
+                new UserAccessServiceException(
+                    message: "Service error occurred, contact support.",
+                    innerException: failedServiceIdentificationOrchestrationException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ThrowsAsync(serviceException);
+
+            // when
+            ValueTask<IdentificationRequest> identificationRequestTask =
+                this.identificationOrchestrationService
+                    .ProcessIdentificationRequestAsync(someIdentificationRequest);
+
+            IdentificationOrchestrationValidationException
+                actualIdentificationOrchestrationValidationException =
+                await Assert.ThrowsAsync<IdentificationOrchestrationValidationException>(
+                    identificationRequestTask.AsTask);
+
+            // then
+            actualIdentificationOrchestrationValidationException.Should().BeEquivalentTo(
+                expectedIdentificationOrchestrationServiceException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                        Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedIdentificationOrchestrationServiceException))),
+                        Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+               broker.LogErrorAsync(It.Is(SameExceptionAs(
+                   expectedIdentificationOrchestrationServiceException))),
                        Times.Once);
 
             this.accessAuditService.VerifyNoOtherCalls();
