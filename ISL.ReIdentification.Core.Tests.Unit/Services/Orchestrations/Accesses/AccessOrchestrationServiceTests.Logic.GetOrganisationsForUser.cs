@@ -24,14 +24,23 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
             string inputUserEmail = userEmail;
             UserAccess randomUserAccess = CreateRandomUserAccess();
             randomUserAccess.UserEmail = inputUserEmail;
-            IQueryable<UserAccess> randomUserAccesses = new List<UserAccess> { randomUserAccess }.AsQueryable();
+
+            IQueryable<UserAccess> randomUserAccesses =
+                new List<UserAccess> { randomUserAccess }
+                    .AsQueryable();
+
             IQueryable<UserAccess> storageUserAccesses = randomUserAccesses.DeepClone();
             OdsData randomOdsData = CreateRandomOdsData();
             randomOdsData.OrganisationCode_Root = randomUserAccess.OrgCode;
             randomOdsData.RelationshipStartDate = GetRandomPastDateTimeOffset();
             randomOdsData.RelationshipEndDate = GetRandomFutureDateTimeOffset();
-            IQueryable<OdsData> randomOdsDatas = new List<OdsData> { randomOdsData }.AsQueryable();
-            List<string> expectedOrganisations = new List<string> { randomOdsData.OrganisationCode_Root };
+
+            IQueryable<OdsData> randomOdsDatas =
+                new List<OdsData> { randomOdsData }
+                    .AsQueryable();
+
+            List<string> expectedOrganisations =
+                new List<string> { randomOdsData.OrganisationCode_Root };
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())

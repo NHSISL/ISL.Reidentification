@@ -3,13 +3,13 @@
 // ---------------------------------------------------------
 
 using System;
-using System.Linq;
 using System.Linq.Expressions;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
 using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.PatientOrgReference;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
 using ISL.ReIdentification.Core.Models.Foundations.OdsDatas;
+using ISL.ReIdentification.Core.Models.Foundations.PdsDatas;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Services.Orchestrations.Accesses;
 using Moq;
@@ -68,12 +68,11 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
         private static OdsData CreateRandomOdsData(DateTimeOffset dateTimeOffset) =>
             CreateOdsDataFiller(dateTimeOffset).Create();
 
-        private static IQueryable<OdsData> CreateRandomOdsDatas()
-        {
-            return CreateOdsDataFiller(GetRandomDateTimeOffset())
-                .Create(GetRandomNumber())
-                .AsQueryable();
-        }
+        private static PdsData CreateRandomPdsData() =>
+            CreateRandomPdsData(dateTimeOffset: GetRandomDateTimeOffset());
+
+        private static PdsData CreateRandomPdsData(DateTimeOffset dateTimeOffset) =>
+            CreatePdsDataFiller(dateTimeOffset).Create();
 
         private static UserAccess CreateRandomUserAccess() =>
             CreateRandomUserAccess(dateTimeOffset: GetRandomDateTimeOffset());
@@ -98,6 +97,17 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnType<DateTimeOffset?>().Use(dateTimeOffset)
                 .OnProperty(odsData => odsData.PdsData).IgnoreIt();
+
+            return filler;
+        }
+
+        private static Filler<PdsData> CreatePdsDataFiller(DateTimeOffset dateTimeOffset)
+        {
+            var filler = new Filler<PdsData>();
+
+            filler.Setup()
+                .OnType<DateTimeOffset?>().Use(dateTimeOffset)
+                .OnProperty(pdsData => pdsData.OdsDatas).IgnoreIt();
 
             return filler;
         }
