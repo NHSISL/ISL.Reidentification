@@ -53,7 +53,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ReIdentifications
             {
                 var failedServerReIdentificationException =
                     new FailedServerReIdentificationException(
-                        message: "Failed NECS service error occurred, please contact support.",
+                        message: "Failed NECS server error occurred, please contact support.",
                         innerException: httpResponseInternalServerErrorException,
                         data: httpResponseInternalServerErrorException.Data);
 

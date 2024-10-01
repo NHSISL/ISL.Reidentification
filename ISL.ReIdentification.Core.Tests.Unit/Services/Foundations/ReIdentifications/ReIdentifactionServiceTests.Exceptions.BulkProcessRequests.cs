@@ -17,7 +17,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
     {
         [Theory]
         [MemberData(nameof(DependencyValidationExceptions))]
-        public async Task ShouldThrowAggregateExceptionForValidationErrorsOnBulkProcessIfRequestsFailsAsync(
+        public async Task ShouldThrowAggregateExceptionForDependencyValidationErrorsOnBulkProcessIfRequestsFailsAsync(
             Xeption dependancyValidationException)
         {
             // Given
@@ -74,6 +74,71 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
             this.loggingBrokerMock.Verify(broker =>
                broker.LogErrorAsync(It.Is(SameExceptionAs(
                    reidentificationDependencyValidationException))),
+                       Times.Once);
+
+            this.necsBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Theory]
+        [MemberData(nameof(DependencyExceptions))]
+        public async Task ShouldThrowAggregateExceptionForDependencyExceptionsOnBulkProcessIfRequestsFailsAsync(
+            Xeption dependancyValidationException)
+        {
+            // Given
+            Guid randomIdentifier = Guid.NewGuid();
+            int batchSize = 1;
+            int randomCount = 1;
+            IdentificationRequest randomIdentificationRequest = CreateRandomIdentificationRequest(count: randomCount);
+            IdentificationRequest inputIdentificationRequest = randomIdentificationRequest;
+
+            Mock<ReIdentificationService> reIdentificationServiceMock =
+                new Mock<ReIdentificationService>(
+                    this.necsBrokerMock.Object,
+                    this.identifierBrokerMock.Object,
+                    this.necsConfiguration,
+                    this.loggingBrokerMock.Object)
+                { CallBase = true };
+
+            ReIdentificationService service = reIdentificationServiceMock.Object;
+
+            this.identifierBrokerMock.Setup(broker =>
+                broker.GetIdentifierAsync())
+                    .ThrowsAsync(dependancyValidationException);
+
+            var serverException =
+                new Exception(message: GetRandomString());
+
+            var failedServerReIdentificationException = new FailedServerReIdentificationException(
+                message: "Failed NECS server error occurred, please contact support.",
+                innerException: dependancyValidationException,
+                data: dependancyValidationException.Data);
+
+            var reidentificationDependencyException = new ReIdentificationDependencyException(
+                message: "Re-identification dependency error occurred, contact support.",
+                innerException: failedServerReIdentificationException);
+
+            var expectedAggregateException = new AggregateException(
+                message: $"Unable to process addresses in 1 of the batch(es) from {inputIdentificationRequest.Id}",
+                innerExceptions: reidentificationDependencyException);
+
+            // When
+            ValueTask<IdentificationRequest> reidentificationRequestTask = service
+                .BulkProcessRequestsAsync(inputIdentificationRequest, batchSize);
+
+            AggregateException actualAggregateException =
+                await Assert.ThrowsAsync<AggregateException>(reidentificationRequestTask.AsTask);
+
+            // Then
+            actualAggregateException.Should().BeEquivalentTo(expectedAggregateException);
+
+            this.identifierBrokerMock.Verify(broker =>
+                broker.GetIdentifierAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+               broker.LogErrorAsync(It.Is(SameExceptionAs(
+                   reidentificationDependencyException))),
                        Times.Once);
 
             this.necsBrokerMock.VerifyNoOtherCalls();
