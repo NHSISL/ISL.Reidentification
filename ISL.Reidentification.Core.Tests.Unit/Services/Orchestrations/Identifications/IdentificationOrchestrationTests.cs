@@ -10,13 +10,16 @@ using ISL.ReIdentification.Core.Brokers.DateTimes;
 using ISL.ReIdentification.Core.Brokers.Identifiers;
 using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Models.Foundations.AccessAudits;
+using ISL.ReIdentification.Core.Models.Foundations.AccessAudits.Exceptions;
 using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications;
+using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications.Exceptions;
 using ISL.ReIdentification.Core.Services.Foundations.AccessAudits;
 using ISL.ReIdentification.Core.Services.Foundations.ReIdentifications;
 using ISL.ReIdentification.Core.Services.Orchestrations.Identifications;
 using KellermanSoftware.CompareNetObjects;
 using Moq;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identifications
 {
@@ -105,6 +108,61 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
             return actualIdentificationRequest =>
                 this.compareLogic.Compare(expectedIdentificationRequest, actualIdentificationRequest)
                     .AreEqual;
+        }
+
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
+            actualException => actualException.SameExceptionAs(expectedException);
+
+        public static TheoryData<Xeption> DependencyValidationExceptions()
+        {
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new AccessAuditValidationException(
+                    message: "Access audit validation errors occured, please try again",
+                    innerException),
+
+                new AccessAuditDependencyValidationException(
+                    message: "Access audit dependency validation occurred, please try again.",
+                    innerException),
+
+                new ReIdentificationValidationException(
+                    message: "ReIdentification validation errors occurred, please try again.",
+                    innerException),
+
+                new ReIdentificationDependencyValidationException(
+                    message: "ReIdentification dependency validation occurred, please try again.",
+                    innerException),
+            };
+        }
+
+        public static TheoryData<Xeption> DependencyExceptions()
+        {
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new AccessAuditDependencyException(
+                    message: "Access audit dependency error occurred, please contact support.",
+                    innerException),
+
+                new AccessAuditServiceException(
+                    message: "Access audit service error occurred, please contact support.",
+                    innerException),
+
+                new ReIdentificationDependencyException(
+                    message: "ReIdentification dependency error occurred, please contact support.",
+                    innerException),
+
+                new ReIdentificationServiceException(
+                    message: "ReIdentification service error occurred, please contact support.",
+                    innerException),
+            };
         }
     }
 }
