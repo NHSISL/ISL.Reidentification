@@ -45,10 +45,10 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
                 var now = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
                 var accessAuditId = await this.identifierBroker.GetIdentifierAsync();
 
-                AccessAudit inputAccessAudit = new AccessAudit
+                AccessAudit accessAudit = new AccessAudit
                 {
                     Id = accessAuditId,
-                    PseudoIdentifier = item.Identifier,
+                    PseudoIdentifier = "test",//item.Identifier,
                     UserEmail = identificationRequest.UserIdentifier,
                     Reason = identificationRequest.Reason,
                     HasAccess = (bool)item.HasAccess,
@@ -59,11 +59,11 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
                     UpdatedDate = now
                 };
 
-                await this.accessAuditService.AddAccessAuditAsync(inputAccessAudit);
+                await this.accessAuditService.AddAccessAuditAsync(accessAudit);
 
                 if (item.HasAccess is false)
                 {
-                    item.Identifier = "0000000000";
+                    item.Identifier = "00000000001";
                 }
             }
 

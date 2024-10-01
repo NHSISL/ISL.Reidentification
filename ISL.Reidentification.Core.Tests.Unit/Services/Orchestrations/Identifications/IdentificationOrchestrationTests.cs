@@ -53,13 +53,19 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
         private static string GetRandomStringWithLength(int length) =>
             new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length).GetValue();
 
+        private static int GetRandomNumber() =>
+            new IntRange(max: 15, min: 2).GetValue();
+
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
-        private static IdentificationRequest CreateRandomIdentificationRequest(bool hasAccess)
+        private static IdentificationRequest CreateRandomIdentificationRequest(bool hasAccess, int itemCount)
         {
             IdentificationRequest randomIdentificationRequest = CreateIdentificationRequestFiller().Create();
-            List<IdentificationItem> randomIdentificationItem = CreateIdentificationItemFiller(hasAccess).Create(1).ToList();
+
+            List<IdentificationItem> randomIdentificationItem =
+                CreateRandomIdentificationItems(hasAccess, count: itemCount);
+
             randomIdentificationRequest.IdentificationItems = randomIdentificationItem;
 
             return randomIdentificationRequest;
@@ -67,6 +73,13 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
 
         private static Filler<IdentificationRequest> CreateIdentificationRequestFiller() =>
             new Filler<IdentificationRequest>();
+
+        private static List<IdentificationItem> CreateRandomIdentificationItems(bool hasAccess, int count)
+        {
+            return CreateIdentificationItemFiller(hasAccess)
+                .Create(count)
+                    .ToList();
+        }
 
         private static Filler<IdentificationItem> CreateIdentificationItemFiller(bool hasAccess)
         {
