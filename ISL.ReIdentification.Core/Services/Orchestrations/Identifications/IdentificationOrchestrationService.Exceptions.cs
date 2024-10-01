@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Foundations.AccessAudits.Exceptions;
 using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications;
@@ -66,6 +67,15 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
                 throw await CreateAndLogDependencyExceptionAsync(
                     reIdentificationDependencyException);
             }
+            catch (Exception exception)
+            {
+                var failedServiceIdentificationOrchestrationException =
+                    new FailedServiceIdentificationOrchestrationException(
+                        message: "Failed service identification orchestration error occurred, contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedServiceIdentificationOrchestrationException);
+            }
         }
 
         private async ValueTask<IdentificationOrchestrationDependencyValidationException>
@@ -110,5 +120,16 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
             return identificationOrchestrationValidationException;
         }
 
+        private async ValueTask<IdentificationOrchestrationServiceException> CreateAndLogServiceExceptionAsync(
+           Xeption exception)
+        {
+            var identificationOrchestrationServiceException = new IdentificationOrchestrationServiceException(
+                message: "Service error occurred, contact support.",
+                innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(identificationOrchestrationServiceException);
+
+            return identificationOrchestrationServiceException;
+        }
     }
 }

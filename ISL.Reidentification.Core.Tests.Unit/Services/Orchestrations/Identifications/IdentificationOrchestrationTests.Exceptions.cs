@@ -6,7 +6,6 @@ using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications;
-using ISL.ReIdentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using ISL.ReIdentification.Core.Models.Orchestrations.Identifications.Exceptions;
 using Moq;
 using Xeptions;
@@ -132,7 +131,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
                     innerException: serviceException);
 
             var expectedIdentificationOrchestrationServiceException =
-                new UserAccessServiceException(
+                new IdentificationOrchestrationServiceException(
                     message: "Service error occurred, contact support.",
                     innerException: failedServiceIdentificationOrchestrationException);
 
@@ -145,9 +144,9 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
                 this.identificationOrchestrationService
                     .ProcessIdentificationRequestAsync(someIdentificationRequest);
 
-            IdentificationOrchestrationValidationException
+            IdentificationOrchestrationServiceException
                 actualIdentificationOrchestrationValidationException =
-                await Assert.ThrowsAsync<IdentificationOrchestrationValidationException>(
+                await Assert.ThrowsAsync<IdentificationOrchestrationServiceException>(
                     identificationRequestTask.AsTask);
 
             // then
