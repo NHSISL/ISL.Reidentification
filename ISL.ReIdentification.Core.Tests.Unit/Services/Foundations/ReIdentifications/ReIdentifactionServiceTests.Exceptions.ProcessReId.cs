@@ -25,7 +25,8 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
             var failedServiceReIdentificationException =
                 new FailedServiceReIdentificationException(
                     message: "Failed re-identification aggregate service error occurred, please contact support.",
-                    innerException: aggregateException);
+                    innerException: aggregateException,
+                    data: aggregateException.Data);
 
             var expectedReIdentificationServiceException =
                 new ReIdentificationServiceException(
@@ -82,7 +83,8 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
             var failedServiceReIdentificationException =
                 new FailedServiceReIdentificationException(
                     message: "Failed re-identification service error occurred, please contact support.",
-                    innerException: serviceException);
+                    innerException: serviceException,
+                    data: serviceException.Data);
 
             var expectedReIdentificationServiceException =
                 new ReIdentificationServiceException(

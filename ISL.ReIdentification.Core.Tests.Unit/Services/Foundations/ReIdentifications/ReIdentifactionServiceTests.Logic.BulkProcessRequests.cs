@@ -28,6 +28,17 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
             (List<NecsReidentificationRequest> requests, List<NecsReIdentificationResponse> responses) =
                 CreateBatchedItems(randomIdentificationRequest, batchSize, randomIdentifier);
 
+            for (int i = 0; i < requests.Count; i++)
+            {
+                NecsReidentificationRequest necsReidentificationRequest = requests[i];
+                NecsReIdentificationResponse necsReIdentificationResponse = responses[i];
+
+                this.necsBrokerMock.Setup(broker =>
+                    broker.ReIdAsync(It.Is(SameNecsReidentificationRequestAs(necsReidentificationRequest))))
+                        .ReturnsAsync(necsReIdentificationResponse);
+            }
+
+
             IdentificationRequest inputIdentificationRequest = randomIdentificationRequest;
             IdentificationRequest outputIdentificationRequest = randomIdentificationRequest.DeepClone();
 
@@ -53,16 +64,6 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
             this.identifierBrokerMock.Setup(broker =>
                 broker.GetIdentifierAsync())
                     .ReturnsAsync(randomIdentifier);
-
-            for (int i = 0; i < requests.Count; i++)
-            {
-                NecsReidentificationRequest necsReidentificationRequest = requests[i];
-                NecsReIdentificationResponse necsReIdentificationResponse = responses[i];
-
-                this.necsBrokerMock.Setup(broker =>
-                    broker.ReIdAsync(It.Is(SameNecsReidentificationRequestAs(necsReidentificationRequest))))
-                        .ReturnsAsync(necsReIdentificationResponse);
-            }
 
             // When
             IdentificationRequest actualIdentificationRequest = await service

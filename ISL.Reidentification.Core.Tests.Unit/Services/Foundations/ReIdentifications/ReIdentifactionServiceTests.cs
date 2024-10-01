@@ -113,8 +113,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.ReIdentifica
                     ElapsedTime = GetRandomNumber(),
                     ProcessedCount = necsReidentificationRequest.PseudonymisedNumbers.Count,
                     Results = identificationRequest.IdentificationItems.Skip(i)
-                        .Take(batchSize).ToList()
-                        .Select(item =>
+                        .Take(batchSize).ToList().Select(item =>
                             new NecsReidentifiedItem
                             {
                                 RowNumber = item.RowNumber,

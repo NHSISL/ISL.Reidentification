@@ -64,7 +64,8 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ReIdentifications
                 var failedServiceIdentificationRequestException =
                     new FailedServiceReIdentificationException(
                         message: "Failed re-identification service error occurred, please contact support.",
-                        innerException: exception);
+                        innerException: exception,
+                        data: exception.Data);
 
                 throw await CreateAndLogServiceExceptionAsync(failedServiceIdentificationRequestException);
             }
@@ -90,7 +91,8 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ReIdentifications
                 var failedServiceIdentificationRequestException =
                     new FailedServiceReIdentificationException(
                         message: "Failed re-identification aggregate service error occurred, please contact support.",
-                        innerException: aggregateException);
+                        innerException: aggregateException,
+                        data: aggregateException.Data);
 
                 throw await CreateAndLogServiceExceptionAsync(failedServiceIdentificationRequestException);
             }
@@ -99,7 +101,8 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ReIdentifications
                 var failedServiceIdentificationRequestException =
                     new FailedServiceReIdentificationException(
                         message: "Failed re-identification service error occurred, please contact support.",
-                        innerException: exception);
+                        innerException: exception,
+                        data: exception.Data);
 
                 throw await CreateAndLogServiceExceptionAsync(failedServiceIdentificationRequestException);
             }
