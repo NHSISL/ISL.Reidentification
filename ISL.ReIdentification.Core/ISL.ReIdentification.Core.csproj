@@ -37,4 +37,8 @@
 		<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Migrations\PatientOrgReferenceStorageBrokerMigrations\" />
+	</ItemGroup>
+
 </Project>
