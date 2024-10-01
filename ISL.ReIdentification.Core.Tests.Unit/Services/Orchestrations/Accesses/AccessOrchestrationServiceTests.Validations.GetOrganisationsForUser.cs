@@ -29,11 +29,11 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
 
             invalidArgumentAccessOrchestrationException.AddData(
                 key: "userEmail",
-                values: "Text is required");
+                values: "Text is invalid");
 
             var expectedAccessValidationOrchestrationException =
                 new AccessValidationOrchestrationException(
-                    message: "Access orchestration validation error occurred, please try again.",
+                    message: "Access orchestration validation error occurred, please fix errors and try again.",
                     innerException: invalidArgumentAccessOrchestrationException);
 
             // When

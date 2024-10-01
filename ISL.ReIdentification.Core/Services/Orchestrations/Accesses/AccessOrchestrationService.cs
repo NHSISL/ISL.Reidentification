@@ -10,6 +10,7 @@ using ISL.ReIdentification.Core.Brokers.DateTimes;
 using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.PatientOrgReference;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
+using ISL.ReIdentification.Core.Models.Foundations.OdsDatas;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Models.Orchestrations.Accesses;
 
@@ -41,36 +42,44 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
         public ValueTask<AccessRequest> ValidateAccessForIdentificationRequestsAsync(AccessRequest accessRequest) =>
             throw new NotImplementedException();
 
-        virtual internal async ValueTask<List<string>> GetOrganisationsForUserAsync(string userEmail)
-        {
-            DateTimeOffset currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
-
-            UserAccess? maybeUserAccess =
-                this.reIdentificationStorageBroker.SelectAllUserAccessesAsync().Result
-                    .Where(userAccess => userAccess.UserEmail == userEmail)
-                    .SingleOrDefault();
-
-            List<string> userOrganisations = new List<string>();
-
-            if (maybeUserAccess is not null)
+        virtual internal ValueTask<List<string>> GetOrganisationsForUserAsync(string userEmail) =>
+            TryCatch(async () =>
             {
-                var userOrgCode = maybeUserAccess.OrgCode;
+                await ValidateUserEmail(userEmail);
+                DateTimeOffset currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
 
-                userOrganisations =
-                    this.patientOrgReferenceStorageBroker.SelectAllOdsDatasAsync().Result
-                        .Where(odsData => odsData.RelationshipEndDate > currentDateTime
-                            && odsData.RelationshipStartDate <= currentDateTime
-                            &&
-                                (odsData.OrganisationCode_Root == userOrgCode
-                                    || odsData.OrganisationCode_Parent == userOrgCode
+                IQueryable<UserAccess> userAccesses =
+                    await this.reIdentificationStorageBroker.SelectAllUserAccessesAsync();
+
+                UserAccess? maybeUserAccess =
+                    userAccesses
+                        .Where(userAccess => userAccess.UserEmail == userEmail)
+                        .SingleOrDefault();
+
+                List<string> userOrganisations = new List<string>();
+
+                if (maybeUserAccess is not null)
+                {
+                    var userOrgCode = maybeUserAccess.OrgCode;
+
+                    IQueryable<OdsData> odsDatas =
+                        await this.patientOrgReferenceStorageBroker.SelectAllOdsDatasAsync();
+
+                    userOrganisations =
+                        odsDatas
+                            .Where(odsData => odsData.RelationshipEndDate > currentDateTime
+                                && odsData.RelationshipStartDate <= currentDateTime
+                                &&
+                                    (odsData.OrganisationCode_Root == userOrgCode
+                                        || odsData.OrganisationCode_Parent == userOrgCode
+                                    )
                                 )
-                            )
-                        .Select(odsData => odsData.OrganisationCode_Root)
-                        .ToList();
-            }
+                            .Select(odsData => odsData.OrganisationCode_Root)
+                            .ToList();
+                }
 
-            return userOrganisations;
-        }
+                return userOrganisations;
+            });
 
         virtual internal ValueTask<bool> UserHasAccessToPatientAsync(string identifier, List<string> orgs)
         {
