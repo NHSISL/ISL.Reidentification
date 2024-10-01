@@ -86,8 +86,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
             string randomString = GetRandomStringWithLength(10);
             string reIdentifiedIdentifier = randomString;
             IdentificationRequest randomIdentificationRequest = CreateRandomIdentificationRequest(true);
-            IdentificationRequest inputIdentificationRequest = randomIdentificationRequest;
-            IdentificationRequest expectedIdentificationRequest = inputIdentificationRequest.DeepClone();
+            IdentificationRequest inputIdentificationRequest = randomIdentificationRequest.DeepClone();
             IdentificationItem inputIdentificationItem = inputIdentificationRequest.IdentificationItems[0];
 
             AccessAudit inputAccessAudit = new AccessAudit
@@ -105,7 +104,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
             };
 
             AccessAudit outputAccessAudit = inputAccessAudit;
-            var hasAccessIdentificationItems = expectedIdentificationRequest.IdentificationItems;
+            var hasAccessIdentificationItems = inputIdentificationRequest.IdentificationItems;
 
             IdentificationRequest inputHasAccessIdentificationRequest = new IdentificationRequest
             {
@@ -122,8 +121,9 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
 
             outputHasAccessIdentificationRequest.IdentificationItems[0].Identifier = reIdentifiedIdentifier;
 
-            expectedIdentificationRequest.IdentificationItems =
-                outputHasAccessIdentificationRequest.IdentificationItems;
+            IdentificationRequest expectedIdentificationRequest = outputHasAccessIdentificationRequest;
+            //expectedIdentificationRequest.IdentificationItems =
+            //    outputHasAccessIdentificationRequest.IdentificationItems;
 
             this.identifierBrokerMock.Setup(broker =>
                broker.GetIdentifierAsync())

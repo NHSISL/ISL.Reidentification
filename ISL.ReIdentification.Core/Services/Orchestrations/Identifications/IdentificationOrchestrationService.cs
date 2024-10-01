@@ -92,9 +92,11 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
 
             //var reIdentifiedIdentificationItems =
             //    reIdentifiedIdentificationRequest.IdentificationItems;
-
-            identificationRequest.IdentificationItems.RemoveAll(x => x.HasAccess == true);
-            identificationRequest.IdentificationItems.AddRange(reIdentifiedIdentificationRequest.IdentificationItems);
+            if (reIdentifiedIdentificationRequest != null)
+            {
+                identificationRequest.IdentificationItems.RemoveAll(x => x.HasAccess == true);
+                identificationRequest.IdentificationItems.AddRange(reIdentifiedIdentificationRequest.IdentificationItems);
+            }
 
             return identificationRequest;
         }
