@@ -2,7 +2,6 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Foundations.PdsDatas;
 using ISL.ReIdentification.Core.Models.Foundations.PdsDatas.Exceptions;
@@ -21,7 +20,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsD
         public async Task ShouldReturnBadRequestOnGetByIdIfValidationErrorOccurredAsync(Xeption validationException)
         {
             // given
-            Guid someId = Guid.NewGuid();
+            long someId = GetRandomNumber();
 
             BadRequestObjectResult expectedBadRequestObjectResult =
                 BadRequest(validationException.InnerException);
@@ -30,7 +29,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsD
                 new ActionResult<PdsData>(expectedBadRequestObjectResult);
 
             this.pdsDataServiceMock.Setup(service =>
-                service.RetrievePdsDataByIdAsync(It.IsAny<Guid>()))
+                service.RetrievePdsDataByIdAsync(It.IsAny<long>()))
                     .ThrowsAsync(validationException);
 
             // when
@@ -41,7 +40,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsD
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
             this.pdsDataServiceMock.Verify(service =>
-                service.RetrievePdsDataByIdAsync(It.IsAny<Guid>()),
+                service.RetrievePdsDataByIdAsync(It.IsAny<long>()),
                     Times.Once);
 
             this.pdsDataServiceMock.VerifyNoOtherCalls();
@@ -53,7 +52,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsD
             Xeption validationException)
         {
             // given
-            Guid someId = Guid.NewGuid();
+            long someId = GetRandomNumber();
 
             InternalServerErrorObjectResult expectedBadRequestObjectResult =
                 InternalServerError(validationException);
@@ -62,7 +61,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsD
                 new ActionResult<PdsData>(expectedBadRequestObjectResult);
 
             this.pdsDataServiceMock.Setup(service =>
-                service.RetrievePdsDataByIdAsync(It.IsAny<Guid>()))
+                service.RetrievePdsDataByIdAsync(It.IsAny<long>()))
                     .ThrowsAsync(validationException);
 
             // when
@@ -73,7 +72,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsD
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
             this.pdsDataServiceMock.Verify(service =>
-                service.RetrievePdsDataByIdAsync(It.IsAny<Guid>()),
+                service.RetrievePdsDataByIdAsync(It.IsAny<long>()),
                     Times.Once);
 
             this.pdsDataServiceMock.VerifyNoOtherCalls();
@@ -83,7 +82,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsD
         public async Task ShouldReturnNotFoundOnGetByIdIfItemDoesNotExistAsync()
         {
             // given
-            Guid someId = Guid.NewGuid();
+            long someId = GetRandomNumber();
             string someMessage = GetRandomString();
 
             var notFoundPdsDataException =
@@ -102,7 +101,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsD
                 new ActionResult<PdsData>(expectedNotFoundObjectResult);
 
             this.pdsDataServiceMock.Setup(service =>
-                service.RetrievePdsDataByIdAsync(It.IsAny<Guid>()))
+                service.RetrievePdsDataByIdAsync(It.IsAny<long>()))
                     .ThrowsAsync(pdsDataValidationException);
 
             // when
@@ -113,7 +112,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsD
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
             this.pdsDataServiceMock.Verify(service =>
-                service.RetrievePdsDataByIdAsync(It.IsAny<Guid>()),
+                service.RetrievePdsDataByIdAsync(It.IsAny<long>()),
                     Times.Once);
 
             this.pdsDataServiceMock.VerifyNoOtherCalls();

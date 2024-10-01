@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System;
+using ISL.ReIdentification.Core.Models.Foundations.PdsDatas;
 
 namespace ISL.ReIdentification.Core.Models.Foundations.OdsDatas
 {
@@ -17,5 +18,6 @@ namespace ISL.ReIdentification.Core.Models.Foundations.OdsDatas
         public DateTimeOffset RelationshipEndDate { get; set; }
         public string Path { get; set; }
         public int Depth { get; set; }
+        public PdsData PdsData { get; set; }
     }
 }
