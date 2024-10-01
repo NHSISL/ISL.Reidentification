@@ -161,6 +161,11 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
                 service.ProcessReidentificationRequest(It.Is(
                     SameIdentificationRequestAs(inputHasAccessIdentificationRequest))),
                         Times.Exactly(inputIdentificationRequest.IdentificationItems.Count()));
+
+            this.accessAuditService.VerifyNoOtherCalls();
+            this.reIdentificationService.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
