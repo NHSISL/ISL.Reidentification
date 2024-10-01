@@ -58,7 +58,9 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
 
             // then
             returnedIdentificationRequest.Should().BeEquivalentTo(expectedIdentificationRequest);
-            returnedIdentificationRequest.IdentificationItems[0].Identifier.Should().BeEquivalentTo("0000000000");
+
+            returnedIdentificationRequest.IdentificationItems[0].Identifier.Should()
+                .BeEquivalentTo(expectedIdentificationRequest.IdentificationItems[0].Identifier);
 
             this.identifierBrokerMock.Verify(broker =>
                 broker.GetIdentifierAsync(),
