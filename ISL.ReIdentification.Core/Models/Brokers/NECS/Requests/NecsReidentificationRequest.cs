@@ -14,7 +14,7 @@ namespace ISL.ReIdentification.Core.Models.Brokers.NECS.Requests
         public Guid RequestId { get; set; }
 
         [JsonProperty("pseudonymisedNumbers")]
-        public List<NecsPseudonymisedItem> PseudonymisedNumbers { get; set; }
+        public List<NecsPseudonymisedItem> PseudonymisedNumbers { get; set; } = new List<NecsPseudonymisedItem>();
 
         [JsonProperty("userIdentifier")]
         public string UserIdentifier { get; set; }

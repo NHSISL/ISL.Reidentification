@@ -2,7 +2,6 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Foundations.PdsDatas;
 using ISL.ReIdentification.Core.Models.Foundations.PdsDatas.Exceptions;
@@ -11,20 +10,20 @@ namespace ISL.ReIdentification.Core.Services.Foundations.PdsDatas
 {
     public partial class PdsDataService
     {
-        public async ValueTask ValidatePdsDataId(Guid pdsDataId) =>
-            Validate((Rule: await IsInvalidAsync(pdsDataId), Parameter: nameof(PdsData.Id)));
+        public async ValueTask ValidatePdsDataRowId(long pdsDataRowId) =>
+            Validate((Rule: await IsInvalidAsync(pdsDataRowId), Parameter: nameof(PdsData.RowId)));
 
-        private async static ValueTask ValidateStoragePdsData(PdsData maybePdsData, Guid pdsDataId)
+        private async static ValueTask ValidateStoragePdsData(PdsData maybePdsData, long pdsDataRowId)
         {
             if (maybePdsData is null)
             {
-                throw new NotFoundPdsDataException(message: $"PDS data not found with Id: {pdsDataId}");
+                throw new NotFoundPdsDataException(message: $"PDS data not found with Id: {pdsDataRowId}");
             }
         }
 
-        private static async ValueTask<dynamic> IsInvalidAsync(Guid id) => new
+        private static async ValueTask<dynamic> IsInvalidAsync(long id) => new
         {
-            Condition = id == Guid.Empty,
+            Condition = id == default(long),
             Message = "Id is invalid"
         };
 

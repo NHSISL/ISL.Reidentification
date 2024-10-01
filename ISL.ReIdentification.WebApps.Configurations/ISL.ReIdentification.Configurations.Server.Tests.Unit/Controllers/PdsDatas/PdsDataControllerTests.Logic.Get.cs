@@ -2,7 +2,6 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
 using System.Threading.Tasks;
 using Force.DeepCloner;
 using ISL.ReIdentification.Core.Models.Foundations.PdsDatas;
@@ -19,7 +18,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsD
         {
             // given
             PdsData randomPdsData = CreateRandomPdsData();
-            Guid inputId = randomPdsData.Id;
+            long inputId = randomPdsData.RowId;
             PdsData storagePdsData = randomPdsData;
             PdsData expectedPdsData = storagePdsData.DeepClone();
 
@@ -30,7 +29,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsD
                 new ActionResult<PdsData>(expectedObjectResult);
 
             pdsDataServiceMock
-                .Setup(service => service.RetrievePdsDataByIdAsync(It.IsAny<Guid>()))
+                .Setup(service => service.RetrievePdsDataByIdAsync(It.IsAny<long>()))
                     .ReturnsAsync(storagePdsData);
 
             // when
@@ -40,7 +39,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.PdsD
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
             pdsDataServiceMock
-                .Verify(service => service.RetrievePdsDataByIdAsync(It.IsAny<Guid>()),
+                .Verify(service => service.RetrievePdsDataByIdAsync(It.IsAny<long>()),
                     Times.Once);
 
             pdsDataServiceMock.VerifyNoOtherCalls();

@@ -14,12 +14,12 @@ namespace ISL.ReIdentification.Core.Models.Brokers.NECS.Requests
         public Guid UniqueRequestId { get; set; }
 
         [JsonProperty("results")]
-        public List<NecsReidentifiedItem> Results { get; set; }
+        public List<NecsReidentifiedItem> Results { get; set; } = new List<NecsReidentifiedItem>();
 
         [JsonProperty("elapsedTime")]
         public int ElapsedTime { get; set; }
 
         [JsonProperty("processedCount")]
-        public string ProcessedCount { get; set; }
+        public int ProcessedCount { get; set; }
     }
 }
