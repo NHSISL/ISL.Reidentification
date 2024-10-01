@@ -64,6 +64,8 @@ namespace ISL.ReIdentification.Core.Migrations.PatientOrgReferenceStorageBrokerM
 
                     b.HasKey("Id");
 
+                    b.HasIndex("OrganisationCode_Root");
+
                     b.ToTable("OdsDatas");
                 });
 
@@ -76,18 +78,22 @@ namespace ISL.ReIdentification.Core.Migrations.PatientOrgReferenceStorageBrokerM
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("RowId"));
 
                     b.Property<string>("CcgOfRegistration")
+                        .IsRequired()
                         .HasMaxLength(5)
                         .HasColumnType("nvarchar(5)");
 
                     b.Property<string>("CurrentCcgOfRegistration")
+                        .IsRequired()
                         .HasMaxLength(5)
                         .HasColumnType("nvarchar(5)");
 
                     b.Property<string>("CurrentIcbOfRegistration")
+                        .IsRequired()
                         .HasMaxLength(5)
                         .HasColumnType("nvarchar(5)");
 
                     b.Property<string>("IcbOfRegistration")
+                        .IsRequired()
                         .HasMaxLength(5)
                         .HasColumnType("nvarchar(5)");
 
@@ -107,7 +113,30 @@ namespace ISL.ReIdentification.Core.Migrations.PatientOrgReferenceStorageBrokerM
 
                     b.HasKey("RowId");
 
+                    b.HasAlternateKey("CcgOfRegistration");
+
+                    b.HasAlternateKey("CurrentCcgOfRegistration");
+
+                    b.HasAlternateKey("IcbOfRegistration");
+
                     b.ToTable("PdsDatas");
+                });
+
+            modelBuilder.Entity("ISL.ReIdentification.Core.Models.Foundations.OdsDatas.OdsData", b =>
+                {
+                    b.HasOne("ISL.ReIdentification.Core.Models.Foundations.PdsDatas.PdsData", "PdsData")
+                        .WithMany("OdsDatas")
+                        .HasForeignKey("OrganisationCode_Root")
+                        .HasPrincipalKey("CurrentIcbOfRegistration")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PdsData");
+                });
+
+            modelBuilder.Entity("ISL.ReIdentification.Core.Models.Foundations.PdsDatas.PdsData", b =>
+                {
+                    b.Navigation("OdsDatas");
                 });
 #pragma warning restore 612, 618
         }

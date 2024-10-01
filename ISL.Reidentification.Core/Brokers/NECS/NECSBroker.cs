@@ -24,7 +24,8 @@ namespace LHDS.Core.Brokers.NECS
             this.apiClient = SetupApiClient();
         }
 
-        public async ValueTask<NecsReIdentificationResponse> ReIdAsync(NecsReidentificationRequest necsReidentificationRequest)
+        public async ValueTask<NecsReIdentificationResponse> ReIdAsync(
+            NecsReidentificationRequest necsReidentificationRequest)
         {
             var returnedAddress =
                 await this.apiClient.PostContentAsync<NecsReidentificationRequest, NecsReIdentificationResponse>
@@ -41,8 +42,7 @@ namespace LHDS.Core.Brokers.NECS
                     new Uri(uriString: this.necsConfiguration.ApiUrl),
             };
 
-            httpClient.DefaultRequestHeaders.Authorization =
-                new System.Net.Http.Headers.AuthenticationHeaderValue("X-API-KEY", necsConfiguration.ApiKey);
+            httpClient.DefaultRequestHeaders.Add("X-API-KEY", necsConfiguration.ApiKey);
 
             return httpClient;
         }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ISL.ReIdentification.Core.Migrations.PatientOrgReferenceStorageBrokerMigrations
 {
     [DbContext(typeof(PatientOrgReferenceStorageBroker))]
-    [Migration("20240925141548_AddOdsData")]
-    partial class AddOdsData
+    [Migration("20241001090918_AddInitialMigration")]
+    partial class AddInitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -67,18 +67,79 @@ namespace ISL.ReIdentification.Core.Migrations.PatientOrgReferenceStorageBrokerM
 
                     b.HasKey("Id");
 
+                    b.HasIndex("OrganisationCode_Root");
+
                     b.ToTable("OdsDatas");
                 });
 
             modelBuilder.Entity("ISL.ReIdentification.Core.Models.Foundations.PdsDatas.PdsData", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("RowId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
 
-                    b.HasKey("Id");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("RowId"));
+
+                    b.Property<string>("CcgOfRegistration")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<string>("CurrentCcgOfRegistration")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<string>("CurrentIcbOfRegistration")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<string>("IcbOfRegistration")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<string>("PrimaryCareProvider")
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
+
+                    b.Property<DateTimeOffset?>("PrimaryCareProviderBusinessEffectiveFromDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("PrimaryCareProviderBusinessEffectiveToDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("PseudoNhsNumber")
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
+                    b.HasKey("RowId");
+
+                    b.HasAlternateKey("CcgOfRegistration");
+
+                    b.HasAlternateKey("CurrentCcgOfRegistration");
+
+                    b.HasAlternateKey("IcbOfRegistration");
 
                     b.ToTable("PdsDatas");
+                });
+
+            modelBuilder.Entity("ISL.ReIdentification.Core.Models.Foundations.OdsDatas.OdsData", b =>
+                {
+                    b.HasOne("ISL.ReIdentification.Core.Models.Foundations.PdsDatas.PdsData", "PdsData")
+                        .WithMany("OdsDatas")
+                        .HasForeignKey("OrganisationCode_Root")
+                        .HasPrincipalKey("CurrentIcbOfRegistration")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PdsData");
+                });
+
+            modelBuilder.Entity("ISL.ReIdentification.Core.Models.Foundations.PdsDatas.PdsData", b =>
+                {
+                    b.Navigation("OdsDatas");
                 });
 #pragma warning restore 612, 618
         }
