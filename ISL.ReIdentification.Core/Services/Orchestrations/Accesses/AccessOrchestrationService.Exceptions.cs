@@ -13,6 +13,7 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
     public partial class AccessOrchestrationService
     {
         private delegate ValueTask<List<string>> ReturningOrganisationsFunction();
+        private delegate ValueTask<bool> ReturningBooleanFunction();
 
         private async ValueTask<List<string>> TryCatch(ReturningOrganisationsFunction returningOrganisationsFunction)
         {
@@ -32,6 +33,18 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
                         innerException: exception);
 
                 throw await CreateAndLogServiceExceptionAsync(failedServiceAccessOrchestrationException);
+            }
+        }
+
+        private async ValueTask<bool> TryCatch(ReturningBooleanFunction returningBooleanFunction)
+        {
+            try
+            {
+                return await returningBooleanFunction();
+            }
+            catch (InvalidArgumentAccessOrchestrationException invalidArgumentAccessOrchestrationException)
+            {
+                throw CreateAndLogValidationException(invalidArgumentAccessOrchestrationException);
             }
         }
 

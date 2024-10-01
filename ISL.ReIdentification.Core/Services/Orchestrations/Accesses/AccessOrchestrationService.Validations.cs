@@ -3,6 +3,8 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Orchestrations.Accesses.Exceptions;
 
@@ -16,10 +18,23 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
                 (Rule: await IsInvalidAsync(userEmail), Parameter: nameof(userEmail)));
         }
 
+        private async ValueTask ValidateIdentifierAndOrgs(string identifier, List<string> orgs)
+        {
+            Validate(
+                (Rule: await IsInvalidAsync(identifier), Parameter: nameof(identifier)),
+                (Rule: await IsInvalidAsync(orgs), Parameter: nameof(orgs)));
+        }
+
         private static async ValueTask<dynamic> IsInvalidAsync(string name) => new
         {
             Condition = String.IsNullOrWhiteSpace(name),
             Message = "Text is invalid"
+        };
+
+        private static async ValueTask<dynamic> IsInvalidAsync(List<string> strings) => new
+        {
+            Condition = strings is null || strings.Where(stringText => String.IsNullOrWhiteSpace(stringText)).Any(),
+            Message = "List of text is invalid"
         };
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)

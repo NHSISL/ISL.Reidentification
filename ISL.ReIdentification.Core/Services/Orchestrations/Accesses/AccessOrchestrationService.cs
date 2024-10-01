@@ -82,26 +82,28 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
                 return userOrganisations;
             });
 
-        virtual internal async ValueTask<bool> UserHasAccessToPatientAsync(string identifier, List<string> orgs)
-        {
-            DateTimeOffset currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+        virtual internal ValueTask<bool> UserHasAccessToPatientAsync(string identifier, List<string> orgs) =>
+            TryCatch(async () =>
+            {
+                await ValidateIdentifierAndOrgs(identifier, orgs);
+                DateTimeOffset currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
 
-            IQueryable<PdsData> pdsDatas =
-                        await this.patientOrgReferenceStorageBroker.SelectAllPdsDatasAsync();
+                IQueryable<PdsData> pdsDatas =
+                            await this.patientOrgReferenceStorageBroker.SelectAllPdsDatasAsync();
 
-            bool userHasAccess =
-                pdsDatas
-                    .Where(pdsData => (pdsData.PrimaryCareProviderBusinessEffectiveToDate != null
-                            && pdsData.PrimaryCareProviderBusinessEffectiveToDate > currentDateTime)
-                        && (pdsData.PrimaryCareProviderBusinessEffectiveFromDate <= currentDateTime)
-                        && (orgs.Contains(pdsData.CcgOfRegistration)
-                            || orgs.Contains(pdsData.CurrentCcgOfRegistration)
-                            || orgs.Contains(pdsData.CurrentIcbOfRegistration)
-                            || orgs.Contains(pdsData.IcbOfRegistration))
-                        )
-                    .Any();
+                bool userHasAccess =
+                    pdsDatas
+                        .Where(pdsData => (pdsData.PrimaryCareProviderBusinessEffectiveToDate != null
+                                && pdsData.PrimaryCareProviderBusinessEffectiveToDate > currentDateTime)
+                            && (pdsData.PrimaryCareProviderBusinessEffectiveFromDate <= currentDateTime)
+                            && (orgs.Contains(pdsData.CcgOfRegistration)
+                                || orgs.Contains(pdsData.CurrentCcgOfRegistration)
+                                || orgs.Contains(pdsData.CurrentIcbOfRegistration)
+                                || orgs.Contains(pdsData.IcbOfRegistration))
+                            )
+                        .Any();
 
-            return userHasAccess;
-        }
+                return userHasAccess;
+            });
     }
 }
