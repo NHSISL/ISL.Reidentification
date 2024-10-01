@@ -11,6 +11,7 @@ using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.PatientOrgReference;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
 using ISL.ReIdentification.Core.Models.Foundations.OdsDatas;
+using ISL.ReIdentification.Core.Models.Foundations.PdsDatas;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Models.Orchestrations.Accesses;
 
@@ -81,9 +82,26 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
                 return userOrganisations;
             });
 
-        virtual internal ValueTask<bool> UserHasAccessToPatientAsync(string identifier, List<string> orgs)
+        virtual internal async ValueTask<bool> UserHasAccessToPatientAsync(string identifier, List<string> orgs)
         {
-            throw new NotImplementedException();
+            DateTimeOffset currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+
+            IQueryable<PdsData> pdsDatas =
+                        await this.patientOrgReferenceStorageBroker.SelectAllPdsDatasAsync();
+
+            bool userHasAccess =
+                pdsDatas
+                    .Where(pdsData => (pdsData.PrimaryCareProviderBusinessEffectiveToDate != null
+                            && pdsData.PrimaryCareProviderBusinessEffectiveToDate > currentDateTime)
+                        && (pdsData.PrimaryCareProviderBusinessEffectiveFromDate <= currentDateTime)
+                        && (orgs.Contains(pdsData.CcgOfRegistration)
+                            || orgs.Contains(pdsData.CurrentCcgOfRegistration)
+                            || orgs.Contains(pdsData.CurrentIcbOfRegistration)
+                            || orgs.Contains(pdsData.IcbOfRegistration))
+                        )
+                    .Any();
+
+            return userHasAccess;
         }
     }
 }
