@@ -14,10 +14,15 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
     public partial class AccessOrchestrationServiceTests
     {
         [Fact]
-        public async Task ShouldThrowServiceExceptionOnGetOrganisationsForUserIfServiceErrorOccurredAndLogItAsync()
+        public async Task ShouldThrowServiceExceptionOnUserHasAccessToPatientIfServiceErrorOccurredAndLogItAsync()
         {
             // given
-            string someUserEmail = GetRandomStringWithLength(10);
+            string someIdentifier = GetRandomStringWithLength(15);
+            string someUserOrganisation = GetRandomStringWithLength(5);
+
+            List<string> someUserOrganisations =
+                new List<string> { someUserOrganisation };
+
             var serviceException = new Exception();
 
             var failedServiceAccessOrchestrationException =
@@ -35,12 +40,12 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
                     .ThrowsAsync(serviceException);
 
             // when
-            ValueTask<List<string>> getOrganisationsForUserTask =
-                this.accessOrchestrationService.GetOrganisationsForUserAsync(someUserEmail);
+            ValueTask<bool> userHasAccessToPatientTask =
+                this.accessOrchestrationService.UserHasAccessToPatientAsync(someIdentifier, someUserOrganisations);
 
             AccessOrchestrationServiceException actualAccessOrchestrationServiceException =
                 await Assert.ThrowsAsync<AccessOrchestrationServiceException>(
-                    testCode: getOrganisationsForUserTask.AsTask);
+                    testCode: userHasAccessToPatientTask.AsTask);
 
             // then
             actualAccessOrchestrationServiceException.Should().BeEquivalentTo(
@@ -55,17 +60,12 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
                     expectedAccessOrchestrationServiceException))),
                         Times.Once);
 
-            this.reIdentificationStorageBrokerMock.Verify(broker =>
-                broker.SelectAllUserAccessesAsync(),
-                    Times.Never);
-
             this.patientOrgReferenceStorageBrokerMock.Verify(broker =>
-                broker.SelectAllOdsDatasAsync(),
+                broker.SelectAllPdsDatasAsync(),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.reIdentificationStorageBrokerMock.VerifyNoOtherCalls();
             this.patientOrgReferenceStorageBrokerMock.VerifyNoOtherCalls();
         }
     }
