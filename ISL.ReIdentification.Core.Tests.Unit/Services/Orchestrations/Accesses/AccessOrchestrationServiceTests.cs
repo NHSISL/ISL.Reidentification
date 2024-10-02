@@ -13,8 +13,10 @@ using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
 using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
 using ISL.ReIdentification.Core.Models.Foundations.OdsDatas;
 using ISL.ReIdentification.Core.Models.Foundations.PdsDatas;
+using ISL.ReIdentification.Core.Models.Foundations.PdsDatas.Exceptions;
 using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
+using ISL.ReIdentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using ISL.ReIdentification.Core.Models.Orchestrations.Accesses;
 using ISL.ReIdentification.Core.Services.Orchestrations.Accesses;
 using Moq;
@@ -109,6 +111,9 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
 
         private static int GetRandomNegativeNumber() =>
             -1 * new IntRange(min: 2, max: 10).GetValue();
+
+        private static string GetRandomString() =>
+            new MnemonicString().GetValue();
 
         private static string GetRandomStringWithLength(int length) =>
             new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length).GetValue();
@@ -214,6 +219,28 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
             yield return new object[] { null, null };
             yield return new object[] { "", new List<string> { "" } };
             yield return new object[] { " ", new List<string> { " " } };
+        }
+
+        public static TheoryData<Xeption> DependencyValidationExceptions()
+        {
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new UserAccessValidationException(
+                    message: "User access validation errors occured, please try again",
+                    innerException),
+
+                new UserAccessDependencyValidationException(
+                    message: "User access dependency validation occurred, please try again.",
+                    innerException),
+
+                new PdsDataValidationException(
+                    message: "Pds data validation errors occurred, please try again.",
+                    innerException)
+            };
         }
     }
 }
