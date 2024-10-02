@@ -8,6 +8,8 @@ using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
 using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications;
 using ISL.ReIdentification.Core.Models.Orchestrations.Accesses;
+using ISL.ReIdentification.Core.Models.Orchestrations.Accesses.Exceptions;
+using ISL.ReIdentification.Core.Models.Orchestrations.Identifications.Exceptions;
 using ISL.ReIdentification.Core.Services.Orchestrations.Accesses;
 using ISL.ReIdentification.Core.Services.Orchestrations.Identifications;
 using KellermanSoftware.CompareNetObjects;
@@ -37,6 +39,9 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Coordinations.Identifica
                 this.identificationOrchestrationServiceMock.Object,
                 this.loggingBrokerMock.Object);
         }
+
+        private static string GetRandomString() =>
+            new MnemonicString().GetValue();
 
         private static AccessRequest CreateRandomAccessRequest() =>
             CreateAccessRequestFiller().Create();
@@ -79,5 +84,31 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Coordinations.Identifica
 
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
             actualException => actualException.SameExceptionAs(expectedException);
+
+        public static TheoryData<Xeption> DependencyValidationExceptions()
+        {
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new AccessOrchestrationValidationException(
+                    message: "Access orchestration validation errors occured, please try again",
+                    innerException),
+
+                new AccessOrchestrationDependencyValidationException(
+                    message: "Access orchestration dependency validation occurred, please try again.",
+                    innerException),
+
+                new IdentificationOrchestrationValidationException(
+                    message: "Identification orchestration validation errors occurred, please try again.",
+                    innerException),
+
+                new IdentificationOrchestrationDependencyValidationException(
+                    message: "Identification orchestration dependency validation occurred, please try again.",
+                    innerException),
+            };
+        }
     }
 }
