@@ -242,5 +242,31 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
                     innerException)
             };
         }
+
+        public static TheoryData<Xeption> DependencyExceptions()
+        {
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new UserAccessDependencyException(
+                    message: "User access dependency error occurred, please contact support.",
+                    innerException),
+
+                new UserAccessServiceException(
+                    message: "User access service error occurred, please contact support.",
+                    innerException),
+
+                new PdsDataDependencyException(
+                    message: "Pds data dependency error occurred, please contact support.",
+                    innerException),
+
+                new PdsDataServiceException(
+                    message: "Pds data service error occurred, please contact support.",
+                    innerException),
+            };
+        }
     }
 }

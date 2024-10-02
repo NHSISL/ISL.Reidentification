@@ -65,5 +65,57 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
             this.reIdentificationStorageBrokerMock.VerifyNoOtherCalls();
             this.patientOrgReferenceStorageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Theory]
+        [MemberData(nameof(DependencyExceptions))]
+        public async Task ShouldThrowDependencyOnValidateAccessForIdentificationRequestAndLogItAsync(
+            Xeption dependencyException)
+        {
+            // given
+            var accessOrchestrationServiceMock = new Mock<AccessOrchestrationService>
+                (this.dateTimeBrokerMock.Object,
+                this.reIdentificationStorageBrokerMock.Object,
+                this.patientOrgReferenceStorageBrokerMock.Object,
+                this.loggingBrokerMock.Object)
+            { CallBase = true };
+
+            AccessRequest someAccessRequest = CreateRandomAccessRequest();
+
+            accessOrchestrationServiceMock.Setup(service =>
+                 service.GetOrganisationsForUserAsync(It.IsAny<string>()))
+                     .ThrowsAsync(dependencyException);
+
+            var expectedAccessOrchestrationDependencyException =
+                new AccessOrchestrationDependencyException(
+                    message: "Access orchestration dependency error occurred, " +
+                        "fix the errors and try again.",
+                    innerException: dependencyException.InnerException as Xeption);
+
+            AccessOrchestrationService accessOrchestrationService = accessOrchestrationServiceMock.Object;
+
+            // when
+            ValueTask<AccessRequest> validateAccessForIdentificationRequestTask =
+                accessOrchestrationService
+                    .ValidateAccessForIdentificationRequestsAsync(someAccessRequest);
+
+            AccessOrchestrationDependencyException
+                actualAccessOrchestrationDependencyException =
+                await Assert.ThrowsAsync<AccessOrchestrationDependencyException>(
+                    validateAccessForIdentificationRequestTask.AsTask);
+
+            // then
+            actualAccessOrchestrationDependencyException
+                .Should().BeEquivalentTo(expectedAccessOrchestrationDependencyException);
+
+            this.loggingBrokerMock.Verify(broker =>
+               broker.LogErrorAsync(It.Is(SameExceptionAs(
+                   expectedAccessOrchestrationDependencyException))),
+                       Times.Once);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.reIdentificationStorageBrokerMock.VerifyNoOtherCalls();
+            this.patientOrgReferenceStorageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
