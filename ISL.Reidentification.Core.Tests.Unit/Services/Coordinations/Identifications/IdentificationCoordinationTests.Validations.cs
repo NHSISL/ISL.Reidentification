@@ -21,7 +21,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Coordinations.Identifica
             AccessRequest randomAccessRequest = CreateRandomAccessRequest();
 
             var nullAccessRequestException =
-                new NullAccessRequestException(message: "Access request is null");
+                new NullAccessRequestException(message: "Access request is null.");
 
             var expectedIdentificationCoordinationValidationException =
                 new IdentificationCoordinationValidationException(

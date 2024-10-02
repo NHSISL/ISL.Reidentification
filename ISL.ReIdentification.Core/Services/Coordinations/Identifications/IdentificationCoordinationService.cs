@@ -28,8 +28,11 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
         public ValueTask<AccessRequest> ProcessDelegatedAccessRequestAsync(AccessRequest accessRequest) =>
             throw new System.NotImplementedException();
 
-        public async ValueTask<AccessRequest> ProcessIdentificationRequestsAsync(AccessRequest accessRequest)
+        public ValueTask<AccessRequest> ProcessIdentificationRequestsAsync(AccessRequest accessRequest) =>
+        TryCatch(async () =>
         {
+            ValidateAccessRequestIsNotNull(accessRequest);
+
             var returnedAccessRequest =
                 await this.accessOrchestrationService.ValidateAccessForIdentificationRequestsAsync(accessRequest);
 
@@ -40,6 +43,6 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
             returnedAccessRequest.IdentificationRequest = returnedIdentificationRequest;
 
             return returnedAccessRequest;
-        }
+        });
     }
 }

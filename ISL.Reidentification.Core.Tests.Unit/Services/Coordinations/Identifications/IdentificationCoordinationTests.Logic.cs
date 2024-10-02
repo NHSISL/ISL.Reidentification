@@ -34,7 +34,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Coordinations.Identifica
                     .ReturnsAsync(outputIdentificationRequest);
 
             // when
-            var actualAccessRequest =
+            AccessRequest actualAccessRequest =
                 await this.identificationCoordinationService.ProcessIdentificationRequestsAsync(inputAccessRequest);
 
             // then
