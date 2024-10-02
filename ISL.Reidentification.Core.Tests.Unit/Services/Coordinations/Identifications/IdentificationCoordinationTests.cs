@@ -94,7 +94,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Coordinations.Identifica
             return new TheoryData<Xeption>
             {
                 new AccessOrchestrationValidationException(
-                    message: "Access orchestration validation errors occured, please try again",
+                    message: "Access orchestration validation errors occured, please try again.",
                     innerException),
 
                 new AccessOrchestrationDependencyValidationException(
@@ -107,6 +107,32 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Coordinations.Identifica
 
                 new IdentificationOrchestrationDependencyValidationException(
                     message: "Identification orchestration dependency validation occurred, please try again.",
+                    innerException),
+            };
+        }
+
+        public static TheoryData<Xeption> DependencyExceptions()
+        {
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new AccessOrchestrationServiceException(
+                    message: "Access orchestration service error occurred, please contact support.",
+                    innerException),
+
+                new AccessOrchestrationDependencyException(
+                    message: "Access orchestration dependency error occurred, please contact support.",
+                    innerException),
+
+                new IdentificationOrchestrationServiceException(
+                    message: "Identification orchestration service error occurred, please contact support.",
+                    innerException),
+
+                new IdentificationOrchestrationDependencyException(
+                    message: "Identification orchestration dependency error occurred, please contact support.",
                     innerException),
             };
         }
