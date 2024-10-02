@@ -32,6 +32,7 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
         TryCatch(async () =>
         {
             ValidateAccessRequestIsNotNull(accessRequest);
+            ValidateIdentificationRequestIsNotNull(accessRequest.IdentificationRequest);
 
             var returnedAccessRequest =
                 await this.accessOrchestrationService.ValidateAccessForIdentificationRequestsAsync(accessRequest);
