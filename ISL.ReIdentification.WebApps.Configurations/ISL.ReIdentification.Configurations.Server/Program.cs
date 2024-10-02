@@ -9,6 +9,7 @@ using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.PatientOrgReference;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
 using ISL.ReIdentification.Core.Models.Foundations.Lookups;
+using ISL.ReIdentification.Core.Services.Foundations.AccessAudits;
 using ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses;
 using ISL.ReIdentification.Core.Services.Foundations.Lookups;
 using ISL.ReIdentification.Core.Services.Foundations.OdsDatas;
@@ -120,6 +121,7 @@ namespace ISL.ReIdentification.Configurations.Server
 
         private static void AddFoundationServices(IServiceCollection services)
         {
+            services.AddTransient<IAccessAuditService, AccessAuditService>();
             services.AddTransient<IDelegatedAccessService, DelegatedAccessService>();
             services.AddTransient<ILookupService, LookupService>();
             services.AddTransient<IOdsDataService, OdsDataService>();
