@@ -86,6 +86,26 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
                 throw await CreateAndLogDependencyValidationExceptionAsync(
                     pdsDataValidationException);
             }
+            catch (UserAccessServiceException userAccessServiceException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    userAccessServiceException);
+            }
+            catch (UserAccessDependencyException userAccessDependencyException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    userAccessDependencyException);
+            }
+            catch (PdsDataServiceException pdsDataServiceException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    pdsDataServiceException);
+            }
+            catch (PdsDataDependencyException pdsDataDependencyException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    pdsDataDependencyException);
+            }
         }
 
         private AccessOrchestrationValidationException CreateAndLogValidationException(Xeption exception)
@@ -138,6 +158,20 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
             await this.loggingBroker.LogErrorAsync(accessOrchestrationDependencyValidationException);
 
             return accessOrchestrationDependencyValidationException;
+        }
+
+        private async ValueTask<AccessOrchestrationDependencyException>
+            CreateAndLogDependencyExceptionAsync(Xeption exception)
+        {
+            var accessOrchestrationDependencyException =
+                new AccessOrchestrationDependencyException(
+                    message: "Access orchestration dependency error occurred, " +
+                        "fix the errors and try again.",
+                    innerException: exception.InnerException as Xeption);
+
+            await this.loggingBroker.LogErrorAsync(accessOrchestrationDependencyException);
+
+            return accessOrchestrationDependencyException;
         }
     }
 }
