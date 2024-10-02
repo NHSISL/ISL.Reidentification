@@ -17,12 +17,20 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
         public async Task ShouldValidateAccessForIdentificationRequests()
         {
             // given
-            var accessOrchestrationServiceMock = new Mock<AccessOrchestrationService> { CallBase = true };
+            var accessOrchestrationServiceMock = new Mock<AccessOrchestrationService>
+                (this.dateTimeBrokerMock.Object,
+                this.reIdentificationStorageBrokerMock.Object,
+                this.patientOrgReferenceStorageBrokerMock.Object,
+                this.loggingBrokerMock.Object)
+            { CallBase = true };
+
             string userEmail = GetRandomStringWithLength(10);
             string inputUserEmail = userEmail;
             string identifier = GetRandomStringWithLength(5);
             string inputIdentifier = identifier;
             AccessRequest accessRequest = CreateRandomAccessRequest();
+            accessRequest.IdentificationRequest.UserIdentifier = userEmail;
+            accessRequest.IdentificationRequest.IdentificationItems[0].Identifier = inputIdentifier;
             string userOrganisation = GetRandomStringWithLength(5);
 
             List<string> userOrganisations =
@@ -38,11 +46,12 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
                 service.UserHasAccessToPatientAsync(inputIdentifier, userOrganisations))
                     .ReturnsAsync(userHasAccessToPatientResult);
 
+            AccessOrchestrationService accessOrchestrationService = accessOrchestrationServiceMock.Object;
             AccessRequest expectedAccessRequest = accessRequest;
 
             // when
             AccessRequest actualAccessRequest =
-                await this.accessOrchestrationService.ValidateAccessForIdentificationRequestsAsync(accessRequest);
+                await accessOrchestrationService.ValidateAccessForIdentificationRequestsAsync(accessRequest);
 
             // then
             actualAccessRequest.Should().Be(expectedAccessRequest);

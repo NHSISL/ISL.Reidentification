@@ -40,8 +40,19 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
         public ValueTask<AccessRequest> ProcessDelegatedAccessRequestAsync(AccessRequest accessRequest) =>
             throw new NotImplementedException();
 
-        public ValueTask<AccessRequest> ValidateAccessForIdentificationRequestsAsync(AccessRequest accessRequest) =>
-            throw new NotImplementedException();
+        public async ValueTask<AccessRequest> ValidateAccessForIdentificationRequestsAsync(AccessRequest accessRequest)
+        {
+            List<string> userOrgs =
+                await GetOrganisationsForUserAsync(accessRequest.IdentificationRequest.UserIdentifier);
+
+            foreach (var identificationItem in accessRequest.IdentificationRequest.IdentificationItems)
+            {
+                identificationItem.HasAccess =
+                    await UserHasAccessToPatientAsync(identificationItem.Identifier, userOrgs);
+            }
+
+            return accessRequest;
+        }
 
         virtual internal ValueTask<List<string>> GetOrganisationsForUserAsync(string userEmail) =>
             TryCatch(async () =>

@@ -88,16 +88,12 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
         private static List<IdentificationItem> CreateRandomIdentificationItems()
         {
             return CreateIdentificationItemFiller()
-                .Create(GetRandomNumber())
+                .Create(1)
                 .ToList();
         }
 
-        private static List<IdentificationRequest> CreateRandomIdentificationRequests()
-        {
-            return CreateIdentificationRequestFiller()
-                .Create(GetRandomNumber())
-                .ToList();
-        }
+        private static IdentificationRequest CreateRandomIdentificationRequest() =>
+            CreateIdentificationRequestFiller().Create();
 
         private static AccessRequest CreateRandomAccessRequest() =>
             CreateAccessRequestFiller().Create();
@@ -180,8 +176,8 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
             var filler = new Filler<AccessRequest>();
 
             filler.Setup()
-                .OnProperty(accessRequest => accessRequest.IdentificationRequests)
-                    .Use(CreateRandomIdentificationRequests())
+                .OnProperty(accessRequest => accessRequest.IdentificationRequest)
+                    .Use(CreateRandomIdentificationRequest())
                 .OnProperty(accessRequest => accessRequest.DelegatedAccessRequest)
                     .Use(CreateRandomDelegatedAccess());
 
