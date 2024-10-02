@@ -106,6 +106,15 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
                 throw await CreateAndLogDependencyExceptionAsync(
                     pdsDataDependencyException);
             }
+            catch (Exception exception)
+            {
+                var failedServiceAccessOrchestrationException =
+                    new FailedServiceAccessOrchestrationException(
+                        message: "Failed service access orchestration error occurred, contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedServiceAccessOrchestrationException);
+            }
         }
 
         private AccessOrchestrationValidationException CreateAndLogValidationException(Xeption exception)
