@@ -7,6 +7,7 @@ using ISL.ReIdentification.Core.Models.Coordinations.Identifications.Exceptions;
 using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications.Exceptions;
 using ISL.ReIdentification.Core.Models.Orchestrations.Accesses;
 using ISL.ReIdentification.Core.Models.Orchestrations.Accesses.Exceptions;
+using ISL.ReIdentification.Core.Models.Orchestrations.Identifications.Exceptions;
 using Xeptions;
 
 namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
@@ -29,6 +30,26 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
             {
                 throw await CreateAndLogValidationExceptionAsync(nullIdentificationRequestException);
             }
+            catch (IdentificationOrchestrationValidationException identificationOrchestrationValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    identificationOrchestrationValidationException);
+            }
+            catch (IdentificationOrchestrationDependencyValidationException identificationOrchestrationDependencyValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    identificationOrchestrationDependencyValidationException);
+            }
+            catch (AccessOrchestrationValidationException accessOrchestrationValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    accessOrchestrationValidationException);
+            }
+            catch (AccessOrchestrationDependencyValidationException accessOrchestrationDependencyValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    accessOrchestrationDependencyValidationException);
+            }
         }
 
         private async ValueTask<IdentificationCoordinationValidationException>
@@ -43,6 +64,20 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
             await this.loggingBroker.LogErrorAsync(identificationCoordinationValidationException);
 
             return identificationCoordinationValidationException;
+        }
+
+        private async ValueTask<IdentificationCoordinationDependencyValidationException>
+            CreateAndLogDependencyValidationExceptionAsync(Xeption exception)
+        {
+            var identificationCoordinationDependencyValidationException =
+                new IdentificationCoordinationDependencyValidationException(
+                    message: "Identification coordination dependency validation error occurred, " +
+                        "fix the errors and try again.",
+                    innerException: exception.InnerException as Xeption);
+
+            await this.loggingBroker.LogErrorAsync(identificationCoordinationDependencyValidationException);
+
+            return identificationCoordinationDependencyValidationException;
         }
     }
 }
