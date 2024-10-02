@@ -6,12 +6,21 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ISL.ReIdentification.Core.Models.Orchestrations.Accesses;
 using ISL.ReIdentification.Core.Models.Orchestrations.Accesses.Exceptions;
 
 namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
 {
     public partial class AccessOrchestrationService
     {
+        private static void ValidateAccessRequestIsNotNull(AccessRequest accessRequest)
+        {
+            if (accessRequest is null)
+            {
+                throw new NullAccessRequestException("Access request is null.");
+            }
+        }
+
         private async ValueTask ValidateUserEmail(string userEmail)
         {
             Validate(
