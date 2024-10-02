@@ -54,10 +54,11 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
                    expectedIdentificationOrchestrationValidationException))),
                        Times.Once);
 
-            this.accessAuditService.VerifyNoOtherCalls();
-            this.reIdentificationService.VerifyNoOtherCalls();
+            this.accessAuditServiceMock.VerifyNoOtherCalls();
+            this.reIdentificationServiceMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
         }
     }
 }

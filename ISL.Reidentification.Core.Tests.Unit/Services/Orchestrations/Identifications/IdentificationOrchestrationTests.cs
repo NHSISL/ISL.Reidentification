@@ -25,8 +25,8 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
 {
     public partial class IdentificationOrchestrationTests
     {
-        private readonly Mock<IReIdentificationService> reIdentificationService;
-        private readonly Mock<IAccessAuditService> accessAuditService;
+        private readonly Mock<IReIdentificationService> reIdentificationServiceMock;
+        private readonly Mock<IAccessAuditService> accessAuditServiceMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
         private readonly Mock<IIdentifierBroker> identifierBrokerMock;
@@ -35,16 +35,16 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
 
         public IdentificationOrchestrationTests()
         {
-            this.reIdentificationService = new Mock<IReIdentificationService>();
-            this.accessAuditService = new Mock<IAccessAuditService>();
+            this.reIdentificationServiceMock = new Mock<IReIdentificationService>();
+            this.accessAuditServiceMock = new Mock<IAccessAuditService>();
             this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
             this.identifierBrokerMock = new Mock<IIdentifierBroker>();
             this.compareLogic = new CompareLogic();
 
             this.identificationOrchestrationService = new IdentificationOrchestrationService(
-                this.reIdentificationService.Object,
-                this.accessAuditService.Object,
+                this.reIdentificationServiceMock.Object,
+                this.accessAuditServiceMock.Object,
                 this.loggingBrokerMock.Object,
                 this.dateTimeBrokerMock.Object,
                 this.identifierBrokerMock.Object);

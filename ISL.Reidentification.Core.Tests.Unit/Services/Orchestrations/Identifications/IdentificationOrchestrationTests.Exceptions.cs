@@ -58,10 +58,11 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
                    expectedIdentificationOrchestrationDependencyValidationException))),
                        Times.Once);
 
-            this.accessAuditService.VerifyNoOtherCalls();
-            this.reIdentificationService.VerifyNoOtherCalls();
+            this.accessAuditServiceMock.VerifyNoOtherCalls();
+            this.reIdentificationServiceMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
         }
 
         [Theory]
@@ -108,10 +109,11 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
                    expectedIdentificationOrchestrationDependencyException))),
                        Times.Once);
 
-            this.accessAuditService.VerifyNoOtherCalls();
-            this.reIdentificationService.VerifyNoOtherCalls();
+            this.accessAuditServiceMock.VerifyNoOtherCalls();
+            this.reIdentificationServiceMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -167,10 +169,11 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
                    expectedIdentificationOrchestrationServiceException))),
                        Times.Once);
 
-            this.accessAuditService.VerifyNoOtherCalls();
-            this.reIdentificationService.VerifyNoOtherCalls();
+            this.accessAuditServiceMock.VerifyNoOtherCalls();
+            this.reIdentificationServiceMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
         }
     }
 }

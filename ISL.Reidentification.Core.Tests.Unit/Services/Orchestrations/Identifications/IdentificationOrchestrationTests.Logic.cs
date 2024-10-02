@@ -70,15 +70,16 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
                     UpdatedDate = randomDateTimeOffset
                 };
 
-                this.accessAuditService.Verify(service =>
+                this.accessAuditServiceMock.Verify(service =>
                     service.AddAccessAuditAsync(It.Is(SameAccessAuditAs(inputAccessAudit))),
                         Times.Once);
             }
 
-            this.accessAuditService.VerifyNoOtherCalls();
-            this.reIdentificationService.VerifyNoOtherCalls();
+            this.accessAuditServiceMock.VerifyNoOtherCalls();
+            this.reIdentificationServiceMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -132,7 +133,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(randomDateTimeOffset);
 
-            this.reIdentificationService.Setup(service =>
+            this.reIdentificationServiceMock.Setup(service =>
                 service.ProcessReidentificationRequest(
                     It.Is(SameIdentificationRequestAs(inputHasAccessIdentificationRequest))))
                         .ReturnsAsync(outputHasAccessIdentificationRequest);
@@ -169,20 +170,21 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Identific
                     UpdatedDate = randomDateTimeOffset
                 };
 
-                this.accessAuditService.Verify(service =>
+                this.accessAuditServiceMock.Verify(service =>
                     service.AddAccessAuditAsync(It.Is(SameAccessAuditAs(inputAccessAudit))),
                         Times.Once);
             }
 
-            this.reIdentificationService.Verify(service =>
+            this.reIdentificationServiceMock.Verify(service =>
                 service.ProcessReidentificationRequest(It.Is(
                     SameIdentificationRequestAs(inputHasAccessIdentificationRequest))),
                         Times.Once);
 
-            this.accessAuditService.VerifyNoOtherCalls();
-            this.reIdentificationService.VerifyNoOtherCalls();
+            this.accessAuditServiceMock.VerifyNoOtherCalls();
+            this.reIdentificationServiceMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
