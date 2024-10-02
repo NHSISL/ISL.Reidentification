@@ -5,6 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ISL.ReIdentification.Core.Models.Foundations.PdsDatas.Exceptions;
+using ISL.ReIdentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using ISL.ReIdentification.Core.Models.Orchestrations.Accesses;
 using ISL.ReIdentification.Core.Models.Orchestrations.Accesses.Exceptions;
 using Xeptions;
@@ -69,6 +71,21 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
             {
                 throw await CreateAndLogValidationExceptionAsync(nullAccessRequestException);
             }
+            catch (UserAccessValidationException userAccessValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    userAccessValidationException);
+            }
+            catch (UserAccessDependencyValidationException userAccessDependencyValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    userAccessDependencyValidationException);
+            }
+            catch (PdsDataValidationException pdsDataValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    pdsDataValidationException);
+            }
         }
 
         private AccessOrchestrationValidationException CreateAndLogValidationException(Xeption exception)
@@ -107,6 +124,20 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
             await this.loggingBroker.LogErrorAsync(accessOrchestrationValidationException);
 
             return accessOrchestrationValidationException;
+        }
+
+        private async ValueTask<AccessOrchestrationDependencyValidationException>
+            CreateAndLogDependencyValidationExceptionAsync(Xeption exception)
+        {
+            var accessOrchestrationDependencyValidationException =
+                new AccessOrchestrationDependencyValidationException(
+                    message: "Access orchestration dependency validation error occurred, " +
+                        "fix the errors and try again.",
+                    innerException: exception.InnerException as Xeption);
+
+            await this.loggingBroker.LogErrorAsync(accessOrchestrationDependencyValidationException);
+
+            return accessOrchestrationDependencyValidationException;
         }
     }
 }

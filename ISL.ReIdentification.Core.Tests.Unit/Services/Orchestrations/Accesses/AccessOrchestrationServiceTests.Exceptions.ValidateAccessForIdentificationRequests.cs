@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using ISL.ReIdentification.Core.Models.Orchestrations.Accesses;
 using ISL.ReIdentification.Core.Models.Orchestrations.Accesses.Exceptions;
+using ISL.ReIdentification.Core.Services.Orchestrations.Accesses;
 using Moq;
 using Xeptions;
 
@@ -19,12 +20,18 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
             Xeption dependencyValidationException)
         {
             // given
-            AccessRequest someAccessRequest =
-               CreateRandomAccessRequest();
+            var accessOrchestrationServiceMock = new Mock<AccessOrchestrationService>
+                (this.dateTimeBrokerMock.Object,
+                this.reIdentificationStorageBrokerMock.Object,
+                this.patientOrgReferenceStorageBrokerMock.Object,
+                this.loggingBrokerMock.Object)
+            { CallBase = true };
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffsetAsync())
-                    .ThrowsAsync(dependencyValidationException);
+            AccessRequest someAccessRequest = CreateRandomAccessRequest();
+
+            accessOrchestrationServiceMock.Setup(service =>
+                 service.GetOrganisationsForUserAsync(It.IsAny<string>()))
+                     .ThrowsAsync(dependencyValidationException);
 
             var expectedAccessOrchestrationDependencyValidationException =
                 new AccessOrchestrationDependencyValidationException(
@@ -32,9 +39,11 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
                         "fix the errors and try again.",
                     innerException: dependencyValidationException.InnerException as Xeption);
 
+            AccessOrchestrationService accessOrchestrationService = accessOrchestrationServiceMock.Object;
+
             // when
             ValueTask<AccessRequest> validateAccessForIdentificationRequestTask =
-                this.accessOrchestrationService
+                accessOrchestrationService
                     .ValidateAccessForIdentificationRequestsAsync(someAccessRequest);
 
             AccessOrchestrationDependencyValidationException
@@ -45,10 +54,6 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
             // then
             actualAccessOrchestrationDependencyValidationException
                 .Should().BeEquivalentTo(expectedAccessOrchestrationDependencyValidationException);
-
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffsetAsync(),
-                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                broker.LogErrorAsync(It.Is(SameExceptionAs(
