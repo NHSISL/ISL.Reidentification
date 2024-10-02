@@ -18,6 +18,7 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
         private delegate ValueTask<List<string>> ReturningOrganisationsFunction();
         private delegate ValueTask<bool> ReturningBooleanFunction();
         private delegate ValueTask<AccessRequest> ReturningAccessRequestFunction();
+        private delegate ValueTask ReturningNothingFunction();
 
         private async ValueTask<List<string>> TryCatch(ReturningOrganisationsFunction returningOrganisationsFunction)
         {
@@ -55,6 +56,72 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
                 var failedServiceAccessOrchestrationException =
                     new FailedServiceAccessOrchestrationException(
                         message: "Failed service access orchestration error occurred, contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedServiceAccessOrchestrationException);
+            }
+        }
+
+        private async ValueTask TryCatch(ReturningNothingFunction returningNothingFunction)
+        {
+            try
+            {
+                await returningNothingFunction();
+            }
+            catch (NullAccessRequestException nullAccessRequestException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(nullAccessRequestException);
+            }
+            catch (UserAccessValidationException userAccessValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    userAccessValidationException);
+            }
+            catch (UserAccessDependencyValidationException userAccessDependencyValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    userAccessDependencyValidationException);
+            }
+            catch (PdsDataValidationException pdsDataValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    pdsDataValidationException);
+            }
+            catch (UserAccessServiceException userAccessServiceException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    userAccessServiceException);
+            }
+            catch (UserAccessDependencyException userAccessDependencyException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    userAccessDependencyException);
+            }
+            catch (PdsDataServiceException pdsDataServiceException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    pdsDataServiceException);
+            }
+            catch (PdsDataDependencyException pdsDataDependencyException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    pdsDataDependencyException);
+            }
+            catch (AggregateException aggregateException)
+            {
+                var failedAccessOrchestrationServiceException =
+                    new FailedServiceAccessOrchestrationException(
+                        message: "Failed access aggregate orchestration service error occurred, " +
+                            "please contact support.",
+                        innerException: aggregateException);
+
+                throw await CreateAndLogServiceExceptionAsync(failedAccessOrchestrationServiceException);
+            }
+            catch (Exception exception)
+            {
+                var failedServiceAccessOrchestrationException =
+                    new FailedServiceAccessOrchestrationException(
+                        message: "Failed access aggregate orchestration service error occurred, please contact support.",
                         innerException: exception);
 
                 throw await CreateAndLogServiceExceptionAsync(failedServiceAccessOrchestrationException);
@@ -106,11 +173,21 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
                 throw await CreateAndLogDependencyExceptionAsync(
                     pdsDataDependencyException);
             }
+            catch (AggregateException aggregateException)
+            {
+                var failedAccessOrchestrationServiceException =
+                    new FailedServiceAccessOrchestrationException(
+                        message: "Failed access aggregate orchestration service error occurred, " +
+                            "please contact support.",
+                        innerException: aggregateException);
+
+                throw await CreateAndLogServiceExceptionAsync(failedAccessOrchestrationServiceException);
+            }
             catch (Exception exception)
             {
                 var failedServiceAccessOrchestrationException =
                     new FailedServiceAccessOrchestrationException(
-                        message: "Failed service access orchestration error occurred, contact support.",
+                        message: "Failed access orchestration service error occurred, please contact support.",
                         innerException: exception);
 
                 throw await CreateAndLogServiceExceptionAsync(failedServiceAccessOrchestrationException);
@@ -133,7 +210,7 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
            Xeption exception)
         {
             var accessOrchestrationServiceException = new AccessOrchestrationServiceException(
-                message: "Service error occurred, contact support.",
+                message: "Access orchestration service error occurred, please contact support.",
                 innerException: exception);
 
             await this.loggingBroker.LogErrorAsync(accessOrchestrationServiceException);

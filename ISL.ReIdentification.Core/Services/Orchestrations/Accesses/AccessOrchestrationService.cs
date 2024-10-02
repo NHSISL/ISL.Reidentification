@@ -14,6 +14,7 @@ using ISL.ReIdentification.Core.Models.Foundations.OdsDatas;
 using ISL.ReIdentification.Core.Models.Foundations.PdsDatas;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Models.Orchestrations.Accesses;
+using Xeptions;
 
 namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
 {
@@ -49,10 +50,30 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
                 List<string> userOrgs =
                     await GetOrganisationsForUserAsync(accessRequest.IdentificationRequest.UserIdentifier);
 
+                var exceptions = new List<Exception>();
+
                 foreach (var identificationItem in accessRequest.IdentificationRequest.IdentificationItems)
                 {
-                    identificationItem.HasAccess =
-                        await UserHasAccessToPatientAsync(identificationItem.Identifier, userOrgs);
+                    try
+                    {
+                        await TryCatch(async () =>
+                        {
+                            identificationItem.HasAccess =
+                                await UserHasAccessToPatientAsync(identificationItem.Identifier, userOrgs);
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        ((Xeption)ex).AddData("IdentificationItemError", identificationItem.RowNumber);
+                        exceptions.Add(ex);
+                    }
+                }
+
+                if (exceptions.Any())
+                {
+                    throw new AggregateException(
+                        $"Unable to validate access for {exceptions.Count} identification requests.",
+                        exceptions);
                 }
 
                 return accessRequest;

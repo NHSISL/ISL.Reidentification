@@ -268,5 +268,38 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
                     innerException),
             };
         }
+
+        public static TheoryData<Xeption> LoopDependencyValidationExceptions()
+        {
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new PdsDataValidationException(
+                    message: "Pds data validation errors occurred, please try again.",
+                    innerException)
+            };
+        }
+
+        public static TheoryData<Xeption> LoopDependencyExceptions()
+        {
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
+
+            return new TheoryData<Xeption>
+            {
+
+                new PdsDataDependencyException(
+                    message: "Pds data dependency error occurred, please contact support.",
+                    innerException),
+
+                new PdsDataServiceException(
+                    message: "Pds data service error occurred, please contact support.",
+                    innerException),
+            };
+        }
     }
 }

@@ -32,7 +32,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
 
             var expectedAccessOrchestrationServiceException =
                 new AccessOrchestrationServiceException(
-                    message: "Service error occurred, contact support.",
+                    message: "Access orchestration service error occurred, please contact support.",
                     innerException: failedServiceAccessOrchestrationException);
 
             this.dateTimeBrokerMock.Setup(broker =>
