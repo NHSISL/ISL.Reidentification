@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Linq.Expressions;
 using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
 using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications;
@@ -12,6 +13,7 @@ using ISL.ReIdentification.Core.Services.Orchestrations.Identifications;
 using KellermanSoftware.CompareNetObjects;
 using Moq;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace ISL.ReIdentification.Core.Tests.Unit.Services.Coordinations.Identifications
 {
@@ -74,5 +76,8 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Coordinations.Identifica
 
             return filler;
         }
+
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
+            actualException => actualException.SameExceptionAs(expectedException);
     }
 }
