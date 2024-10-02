@@ -21,8 +21,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Coordinations.Identifica
             IdentificationRequest randomIdentificationRequest = CreateRandomIdentificationRequest();
             AccessRequest inputAccessRequest = randomAccessRequest;
             AccessRequest outputOrchestrationAccessRequest = CreateRandomAccessRequest();
-            IdentificationRequest inputIdentificationRequest = outputOrchestrationAccessRequest.IdentificationRequest;
-            IdentificationRequest outputIdentificationRequest = randomIdentificationRequest;
+            IdentificationRequest outputIdentificationRequest = randomIdentificationRequest.DeepClone();
             outputOrchestrationAccessRequest.IdentificationRequest = outputIdentificationRequest;
             AccessRequest expectedAccessRequest = outputOrchestrationAccessRequest.DeepClone();
 
@@ -31,12 +30,12 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Coordinations.Identifica
                     .ReturnsAsync(outputOrchestrationAccessRequest);
 
             this.identificationOrchestrationServiceMock.Setup(service =>
-                service.ProcessIdentificationRequestAsync(inputIdentificationRequest))
+                service.ProcessIdentificationRequestAsync(outputOrchestrationAccessRequest.IdentificationRequest))
                     .ReturnsAsync(outputIdentificationRequest);
 
             // when
             var actualAccessRequest =
-                this.identificationCoordinationService.ProcessIdentificationRequestsAsync(inputAccessRequest);
+                await this.identificationCoordinationService.ProcessIdentificationRequestsAsync(inputAccessRequest);
 
             // then
             actualAccessRequest.Should().BeEquivalentTo(expectedAccessRequest);
@@ -46,14 +45,12 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Coordinations.Identifica
                     Times.Once);
 
             this.identificationOrchestrationServiceMock.Verify(service =>
-                service.ProcessIdentificationRequestAsync(inputIdentificationRequest),
+                service.ProcessIdentificationRequestAsync(outputOrchestrationAccessRequest.IdentificationRequest),
                     Times.Once);
 
             this.accessOrchestrationServiceMock.VerifyNoOtherCalls();
             this.identificationOrchestrationServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
-
-
     }
 }
