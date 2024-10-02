@@ -32,7 +32,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
                 values: "Text is invalid");
 
             var expectedAccessValidationOrchestrationException =
-                new AccessValidationOrchestrationException(
+                new AccessOrchestrationValidationException(
                     message: "Access orchestration validation error occurred, please fix errors and try again.",
                     innerException: invalidArgumentAccessOrchestrationException);
 
@@ -40,8 +40,8 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
             ValueTask<List<string>> getOrganisationsForUserTask = this.accessOrchestrationService
                 .GetOrganisationsForUserAsync(invalidUserEmail);
 
-            AccessValidationOrchestrationException actualAccessValidationOrchestrationException =
-                await Assert.ThrowsAsync<AccessValidationOrchestrationException>(
+            AccessOrchestrationValidationException actualAccessValidationOrchestrationException =
+                await Assert.ThrowsAsync<AccessOrchestrationValidationException>(
                     getOrganisationsForUserTask.AsTask);
 
             // Then

@@ -57,10 +57,10 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
             }
         }
 
-        private AccessValidationOrchestrationException CreateAndLogValidationException(Xeption exception)
+        private AccessOrchestrationValidationException CreateAndLogValidationException(Xeption exception)
         {
             var accessValidationException =
-                new AccessValidationOrchestrationException(
+                new AccessOrchestrationValidationException(
                     message: "Access orchestration validation error occurred, please fix errors and try again.",
                     innerException: exception);
 

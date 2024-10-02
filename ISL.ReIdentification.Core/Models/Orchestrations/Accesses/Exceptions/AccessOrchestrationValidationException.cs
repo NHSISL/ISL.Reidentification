@@ -6,9 +6,9 @@ using Xeptions;
 
 namespace ISL.ReIdentification.Core.Models.Orchestrations.Accesses.Exceptions
 {
-    public class AccessValidationOrchestrationException : Xeption
+    public class AccessOrchestrationValidationException : Xeption
     {
-        public AccessValidationOrchestrationException(string message, Xeption innerException)
+        public AccessOrchestrationValidationException(string message, Xeption innerException)
             : base(message, innerException)
         { }
     }

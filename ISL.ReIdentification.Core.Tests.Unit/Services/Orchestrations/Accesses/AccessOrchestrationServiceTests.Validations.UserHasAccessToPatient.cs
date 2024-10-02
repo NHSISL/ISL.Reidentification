@@ -36,7 +36,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
                 values: "List of text is invalid");
 
             var expectedAccessValidationOrchestrationException =
-                new AccessValidationOrchestrationException(
+                new AccessOrchestrationValidationException(
                     message: "Access orchestration validation error occurred, please fix errors and try again.",
                     innerException: invalidArgumentAccessOrchestrationException);
 
@@ -44,8 +44,8 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
             ValueTask<bool> getUserHasAccessToPatientTask = this.accessOrchestrationService
                 .UserHasAccessToPatientAsync(invalidIdentifier, invalidOrganisations);
 
-            AccessValidationOrchestrationException actualAccessValidationOrchestrationException =
-                await Assert.ThrowsAsync<AccessValidationOrchestrationException>(
+            AccessOrchestrationValidationException actualAccessValidationOrchestrationException =
+                await Assert.ThrowsAsync<AccessOrchestrationValidationException>(
                     getUserHasAccessToPatientTask.AsTask);
 
             // Then
