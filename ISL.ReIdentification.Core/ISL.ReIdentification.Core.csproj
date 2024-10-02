@@ -38,7 +38,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Migrations\ReidentificationStorageBrokerMigrations\" />
+	  <Folder Include="Migrations\PatientOrgReferenceStorageBrokerMigrations\" />
 	</ItemGroup>
 
 </Project>
