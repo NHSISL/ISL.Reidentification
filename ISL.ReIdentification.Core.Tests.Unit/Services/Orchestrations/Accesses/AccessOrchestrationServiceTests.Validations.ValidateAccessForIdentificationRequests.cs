@@ -34,7 +34,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
             // when
             ValueTask<AccessRequest> identificationRequestTask =
                 this.accessOrchestrationService
-                    .ValidateAccessForIdentificationRequestsAsync(nullAccessRequest);
+                    .ValidateAccessForIdentificationRequestAsync(nullAccessRequest);
 
             AccessOrchestrationValidationException
                 actualAccessOrchestrationValidationException =

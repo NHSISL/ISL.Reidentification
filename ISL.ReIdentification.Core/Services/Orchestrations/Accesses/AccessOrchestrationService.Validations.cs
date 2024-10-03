@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Orchestrations.Accesses;
 using ISL.ReIdentification.Core.Models.Orchestrations.Accesses.Exceptions;
@@ -42,8 +41,8 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
 
         private static async ValueTask<dynamic> IsInvalidAsync(List<string> strings) => new
         {
-            Condition = strings is null || strings.Where(stringText => String.IsNullOrWhiteSpace(stringText)).Any(),
-            Message = "List of text is invalid"
+            Condition = strings is null,
+            Message = "List is invalid"
         };
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)

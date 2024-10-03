@@ -51,7 +51,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
 
             // when
             AccessRequest actualAccessRequest =
-                await accessOrchestrationService.ValidateAccessForIdentificationRequestsAsync(accessRequest);
+                await accessOrchestrationService.ValidateAccessForIdentificationRequestAsync(accessRequest);
 
             // then
             actualAccessRequest.Should().Be(expectedAccessRequest);
@@ -105,7 +105,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
 
             // when
             AccessRequest actualAccessRequest =
-                await accessOrchestrationService.ValidateAccessForIdentificationRequestsAsync(accessRequest);
+                await accessOrchestrationService.ValidateAccessForIdentificationRequestAsync(accessRequest);
 
             // then
             actualAccessRequest.Should().Be(expectedAccessRequest);

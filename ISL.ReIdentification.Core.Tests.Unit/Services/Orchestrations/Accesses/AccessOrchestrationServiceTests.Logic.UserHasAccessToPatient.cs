@@ -14,7 +14,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
 {
     public partial class AccessOrchestrationServiceTests
     {
-        [Fact]
+        [Theory]
         public async Task ShouldGetUserHasAccessToPatient()
         {
             // given

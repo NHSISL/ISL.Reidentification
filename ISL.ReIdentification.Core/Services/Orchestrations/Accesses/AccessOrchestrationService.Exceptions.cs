@@ -107,16 +107,6 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
                 throw await CreateAndLogDependencyExceptionAsync(
                     pdsDataDependencyException);
             }
-            catch (AggregateException aggregateException)
-            {
-                var failedAccessOrchestrationServiceException =
-                    new FailedServiceAccessOrchestrationException(
-                        message: "Failed access aggregate orchestration service error occurred, " +
-                            "please contact support.",
-                        innerException: aggregateException);
-
-                throw await CreateAndLogServiceExceptionAsync(failedAccessOrchestrationServiceException);
-            }
             catch (Exception exception)
             {
                 var failedServiceAccessOrchestrationException =

@@ -8,40 +8,39 @@ using System.Linq;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
 using ISL.ReIdentification.Core.Brokers.Loggings;
-using ISL.ReIdentification.Core.Brokers.Storages.Sql.PatientOrgReference;
-using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
-using ISL.ReIdentification.Core.Models.Foundations.OdsDatas;
 using ISL.ReIdentification.Core.Models.Foundations.PdsDatas;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Models.Orchestrations.Accesses;
+using ISL.ReIdentification.Core.Services.Foundations.PdsDatas;
+using ISL.ReIdentification.Core.Services.Foundations.UserAccesses;
+using Microsoft.EntityFrameworkCore;
 using Xeptions;
 
 namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
 {
     public partial class AccessOrchestrationService : IAccessOrchestrationService
     {
+        private readonly IUserAccessService userAccessService;
+        private readonly IPdsDataService pdsDataService;
         private readonly IDateTimeBroker dateTimeBroker;
-        private readonly IReIdentificationStorageBroker reIdentificationStorageBroker;
-        private readonly IPatientOrgReferenceStorageBroker patientOrgReferenceStorageBroker;
         private readonly ILoggingBroker loggingBroker;
 
         public AccessOrchestrationService(
+            IUserAccessService userAccessService,
+            IPdsDataService pdsDataService,
             IDateTimeBroker dateTimeBroker,
-            IReIdentificationStorageBroker reIdentificationStorageBroker,
-            IPatientOrgReferenceStorageBroker patientOrgReferenceStorageBroker,
-            ILoggingBroker loggingBroker
-            )
+            ILoggingBroker loggingBroker)
         {
+            this.userAccessService = userAccessService;
+            this.pdsDataService = pdsDataService;
             this.dateTimeBroker = dateTimeBroker;
-            this.reIdentificationStorageBroker = reIdentificationStorageBroker;
-            this.patientOrgReferenceStorageBroker = patientOrgReferenceStorageBroker;
             this.loggingBroker = loggingBroker;
         }
 
         public ValueTask<AccessRequest> ProcessDelegatedAccessRequestAsync(AccessRequest accessRequest) =>
             throw new NotImplementedException();
 
-        public ValueTask<AccessRequest> ValidateAccessForIdentificationRequestsAsync(
+        public ValueTask<AccessRequest> ValidateAccessForIdentificationRequestAsync(
             AccessRequest accessRequest) =>
             TryCatch(async () =>
             {
@@ -50,35 +49,48 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
                 List<string> userOrgs =
                     await GetOrganisationsForUserAsync(accessRequest.IdentificationRequest.UserIdentifier);
 
-                var exceptions = new List<Exception>();
+                AccessRequest validatedAccessRequest = await CheckUserAccessToPatientsAsync(accessRequest, userOrgs);
 
-                foreach (var identificationItem in accessRequest.IdentificationRequest.IdentificationItems)
-                {
-                    try
-                    {
-                        await TryCatch(async () =>
-                        {
-                            identificationItem.HasAccess =
-                                await UserHasAccessToPatientAsync(identificationItem.Identifier, userOrgs);
-                        });
-                    }
-                    catch (Exception ex)
-                    {
-                        ((Xeption)ex).AddData("IdentificationItemError", identificationItem.RowNumber);
-                        exceptions.Add(ex);
-                    }
-                }
-
-                if (exceptions.Any())
-                {
-                    throw new AggregateException(
-                        $"Unable to validate access for {exceptions.Count} identification requests.",
-                        exceptions);
-                }
-
-                return accessRequest;
+                return validatedAccessRequest;
             });
 
+
+        virtual internal async ValueTask<AccessRequest> CheckUserAccessToPatientsAsync(
+            AccessRequest accessRequest, List<string> userOrgs)
+        {
+            var exceptions = new List<Exception>();
+
+            foreach (var identificationItem in accessRequest.IdentificationRequest.IdentificationItems)
+            {
+                try
+                {
+                    await TryCatch(async () =>
+                    {
+                        identificationItem.HasAccess =
+                            await UserHasAccessToPatientAsync(identificationItem.Identifier, userOrgs);
+                    });
+                }
+                catch (Exception ex)
+                {
+                    ((Xeption)ex).AddData("IdentificationItemError", identificationItem.RowNumber);
+                    exceptions.Add(ex);
+                }
+            }
+
+            if (exceptions.Any())
+            {
+                throw new AggregateException(
+                    $"Unable to validate access for {exceptions.Count} identification requests.",
+                    exceptions);
+            }
+
+            return accessRequest;
+        }
+
+
+        // We can remove this try catch as this method does not have the responsibility of exception handling
+        // We only need a logic test - use theory to cover all the allowed cases and a 2nd logic test to cover the exclusions
+        // keep validation tests
         virtual internal ValueTask<List<string>> GetOrganisationsForUserAsync(string userEmail) =>
             TryCatch(async () =>
             {
@@ -86,38 +98,24 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
                 DateTimeOffset currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
 
                 IQueryable<UserAccess> userAccesses =
-                    await this.reIdentificationStorageBroker.SelectAllUserAccessesAsync();
+                    await this.userAccessService
+                        .RetrieveAllUserAccessesAsync();
 
-                UserAccess? maybeUserAccess =
-                    userAccesses
-                        .Where(userAccess => userAccess.UserEmail == userEmail)
-                        .SingleOrDefault();
+                List<string> userAccess = await userAccesses
+                    .Where(userAccess =>
+                        userAccess.UserEmail == userEmail
+                        && userAccess.ActiveFrom <= currentDateTime
+                        && (userAccess.ActiveTo == null || userAccess.ActiveTo > currentDateTime))
+                    .Select(userAccess => userAccess.OrgCode)
+                    .ToListAsync();
 
-                List<string> userOrganisations = new List<string>();
-
-                if (maybeUserAccess is not null)
-                {
-                    var userOrgCode = maybeUserAccess.OrgCode;
-
-                    IQueryable<OdsData> odsDatas =
-                        await this.patientOrgReferenceStorageBroker.SelectAllOdsDatasAsync();
-
-                    userOrganisations =
-                        odsDatas
-                            .Where(odsData => odsData.RelationshipEndDate > currentDateTime
-                                && odsData.RelationshipStartDate <= currentDateTime
-                                &&
-                                    (odsData.OrganisationCode_Root == userOrgCode
-                                        || odsData.OrganisationCode_Parent == userOrgCode
-                                    )
-                                )
-                            .Select(odsData => odsData.OrganisationCode_Root)
-                            .ToList();
-                }
-
-                return userOrganisations;
+                return userAccess;
             });
 
+
+        // Drop the try catch as this method does not have the responsibility of exception handling
+        // We only need a logic test - use theory to cover all the allowed cases and a 2nd logic test to cover the exclusions
+        // keep validation tests
         virtual internal ValueTask<bool> UserHasAccessToPatientAsync(string identifier, List<string> orgs) =>
             TryCatch(async () =>
             {
@@ -125,13 +123,20 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
                 DateTimeOffset currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
 
                 IQueryable<PdsData> pdsDatas =
-                            await this.patientOrgReferenceStorageBroker.SelectAllPdsDatasAsync();
+                            await this.pdsDataService.RetrieveAllPdsDatasAsync();
 
                 bool userHasAccess =
                     pdsDatas
-                        .Where(pdsData => (pdsData.PrimaryCareProviderBusinessEffectiveToDate != null
-                                && pdsData.PrimaryCareProviderBusinessEffectiveToDate > currentDateTime)
+                        .Where(pdsData =>
+                                // needs to match the patient identifier
+                                pdsData.PseudoNhsNumber == identifier
+
+                            // Check the primary care provider is active
+                            && (pdsData.PrimaryCareProviderBusinessEffectiveToDate == null
+                                || pdsData.PrimaryCareProviderBusinessEffectiveToDate > currentDateTime)
                             && (pdsData.PrimaryCareProviderBusinessEffectiveFromDate <= currentDateTime)
+
+                            // check that the patient is registered with an organisation
                             && (orgs.Contains(pdsData.CcgOfRegistration)
                                 || orgs.Contains(pdsData.CurrentCcgOfRegistration)
                                 || orgs.Contains(pdsData.CurrentIcbOfRegistration)
