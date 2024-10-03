@@ -17,7 +17,7 @@ namespace ISL.ReIdentification.Core.Brokers.Notifications
         /// <exception cref="NotificationValidationProviderException" />
         /// <exception cref="NotificationDependencyProviderException" />
         /// <exception cref="NotificationServiceProviderException" />
-        public ValueTask<string> SendEmailAsync(
+        ValueTask<string> SendEmailAsync(
             string toEmail,
             string subject,
             string body,
@@ -30,8 +30,20 @@ namespace ISL.ReIdentification.Core.Brokers.Notifications
         /// <exception cref="NotificationValidationProviderException" />
         /// <exception cref="NotificationDependencyProviderException" />
         /// <exception cref="NotificationServiceProviderException" />
-        public ValueTask<string> SendSmsAsync(
+        ValueTask<string> SendSmsAsync(
             string templateId,
             Dictionary<string, dynamic> personalisation);
+
+        /// <summary>
+        /// Sends a letter using the specified template ID and personalisation contents.
+        /// </summary>
+        /// <returns>A string representing the unique identifier of the sent letter.</returns>
+        /// <exception cref="NotificationValidationProviderException" />
+        /// <exception cref="NotificationDependencyProviderException" />
+        /// <exception cref="NotificationServiceProviderException" />
+        ValueTask<string> SendLetterAsync(
+            string templateId,
+            Dictionary<string, dynamic> personalisation,
+            string clientReference = "");
     }
 }
