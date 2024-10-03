@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using ISL.ReIdentification.Core.Models.Coordinations.Identifications.Exceptions;
@@ -18,6 +19,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Coordinations.Identifica
         public async Task ShouldThrowDependencyValidationExceptionOnProcessIdentificationRequestAndLogItAsync(
             Xeption dependencyValidationException)
         {
+            // given
             AccessRequest someAccessRequest = CreateRandomAccessRequest();
 
             this.accessOrchestrationServiceMock.Setup(service =>
@@ -62,6 +64,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Coordinations.Identifica
         public async Task ShouldThrowDependencyExceptionOnProcessIdentificationRequestAndLogItAsync(
             Xeption dependencyException)
         {
+            // given
             AccessRequest someAccessRequest = CreateRandomAccessRequest();
 
             this.accessOrchestrationServiceMock.Setup(service =>
@@ -95,6 +98,49 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Coordinations.Identifica
                broker.LogErrorAsync(It.Is(SameExceptionAs(
                    expectedIdentificationCoordinationDependencyException))),
                        Times.Once);
+
+            this.accessOrchestrationServiceMock.VerifyNoOtherCalls();
+            this.identificationOrchestrationServiceMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnProcessIdentificationRequestAndLogItAsync()
+        {
+            // given
+            AccessRequest someAccessRequest = CreateRandomAccessRequest();
+            Exception someException = new Exception();
+
+            this.accessOrchestrationServiceMock.Setup(service =>
+                service.ValidateAccessForIdentificationRequestsAsync(someAccessRequest))
+                    .ThrowsAsync(someException);
+
+            var expectedIdentificationCoordinationServiceException =
+                new IdentificationCoordinationServiceException(
+                    message: "Identification coordination service error occurred, " +
+                        "fix the errors and try again.",
+                    innerException: someException);
+
+            // when
+            ValueTask<AccessRequest> accessRequestTask =
+                this.identificationCoordinationService.ProcessIdentificationRequestsAsync(someAccessRequest);
+
+            IdentificationCoordinationServiceException
+                actualIdentificationCoordinationServiceException =
+                    await Assert.ThrowsAsync<IdentificationCoordinationServiceException>(
+                        accessRequestTask.AsTask);
+
+            // then
+            actualIdentificationCoordinationServiceException
+                .Should().BeEquivalentTo(expectedIdentificationCoordinationServiceException);
+
+            this.accessOrchestrationServiceMock.Verify(service =>
+                service.ValidateAccessForIdentificationRequestsAsync(someAccessRequest),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(expectedIdentificationCoordinationServiceException))),
+                    Times.Once);
 
             this.accessOrchestrationServiceMock.VerifyNoOtherCalls();
             this.identificationOrchestrationServiceMock.VerifyNoOtherCalls();
