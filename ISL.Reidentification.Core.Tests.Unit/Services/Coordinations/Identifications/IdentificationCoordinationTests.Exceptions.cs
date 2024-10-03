@@ -60,32 +60,32 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Coordinations.Identifica
         [Theory]
         [MemberData(nameof(DependencyExceptions))]
         public async Task ShouldThrowDependencyExceptionOnProcessIdentificationRequestAndLogItAsync(
-            Xeption dependencyValidationException)
+            Xeption dependencyException)
         {
             AccessRequest someAccessRequest = CreateRandomAccessRequest();
 
             this.accessOrchestrationServiceMock.Setup(service =>
                 service.ValidateAccessForIdentificationRequestsAsync(someAccessRequest))
-                    .ThrowsAsync(dependencyValidationException);
+                    .ThrowsAsync(dependencyException);
 
-            var expectedIdentificationCoordinationDependencyValidationException =
-                new IdentificationCoordinationDependencyValidationException(
-                    message: "Identification coordination dependency validation error occurred, " +
+            var expectedIdentificationCoordinationDependencyException =
+                new IdentificationCoordinationDependencyException(
+                    message: "Identification coordination dependency error occurred, " +
                         "fix the errors and try again.",
-                    innerException: dependencyValidationException.InnerException as Xeption);
+                    innerException: dependencyException.InnerException as Xeption);
 
             // when
             ValueTask<AccessRequest> accessRequestTask =
                 this.identificationCoordinationService.ProcessIdentificationRequestsAsync(someAccessRequest);
 
-            IdentificationCoordinationDependencyValidationException
-                actualIdentificationCoordinationDependencyValidationException =
-                    await Assert.ThrowsAsync<IdentificationCoordinationDependencyValidationException>(
+            IdentificationCoordinationDependencyException
+                actualIdentificationCoordinationDependencyException =
+                    await Assert.ThrowsAsync<IdentificationCoordinationDependencyException>(
                         accessRequestTask.AsTask);
 
             // then
-            actualIdentificationCoordinationDependencyValidationException
-                .Should().BeEquivalentTo(expectedIdentificationCoordinationDependencyValidationException);
+            actualIdentificationCoordinationDependencyException
+                .Should().BeEquivalentTo(expectedIdentificationCoordinationDependencyException);
 
             this.accessOrchestrationServiceMock.Verify(service =>
                 service.ValidateAccessForIdentificationRequestsAsync(someAccessRequest),
@@ -93,7 +93,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Coordinations.Identifica
 
             this.loggingBrokerMock.Verify(broker =>
                broker.LogErrorAsync(It.Is(SameExceptionAs(
-                   expectedIdentificationCoordinationDependencyValidationException))),
+                   expectedIdentificationCoordinationDependencyException))),
                        Times.Once);
 
             this.accessOrchestrationServiceMock.VerifyNoOtherCalls();

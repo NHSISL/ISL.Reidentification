@@ -50,6 +50,26 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
                 throw await CreateAndLogDependencyValidationExceptionAsync(
                     accessOrchestrationDependencyValidationException);
             }
+            catch (AccessOrchestrationServiceException accessOrchestrationServiceException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    accessOrchestrationServiceException);
+            }
+            catch (AccessOrchestrationDependencyException accessOrchestrationDependencyException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    accessOrchestrationDependencyException);
+            }
+            catch (IdentificationOrchestrationServiceException identificationOrchestrationServiceException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    identificationOrchestrationServiceException);
+            }
+            catch (IdentificationOrchestrationDependencyException identificationOrchestrationDependencyException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    identificationOrchestrationDependencyException);
+            }
         }
 
         private async ValueTask<IdentificationCoordinationValidationException>
@@ -78,6 +98,20 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
             await this.loggingBroker.LogErrorAsync(identificationCoordinationDependencyValidationException);
 
             return identificationCoordinationDependencyValidationException;
+        }
+
+        private async ValueTask<IdentificationCoordinationDependencyException>
+            CreateAndLogDependencyExceptionAsync(Xeption exception)
+        {
+            var identificationCoordinationDependencyException =
+                new IdentificationCoordinationDependencyException(
+                    message: "Identification coordination dependency error occurred, " +
+                        "fix the errors and try again.",
+                    innerException: exception.InnerException as Xeption);
+
+            await this.loggingBroker.LogErrorAsync(identificationCoordinationDependencyException);
+
+            return identificationCoordinationDependencyException;
         }
     }
 }
