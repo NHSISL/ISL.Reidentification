@@ -30,6 +30,18 @@ namespace ISL.ReIdentification.Core.Brokers.Notifications
             string subject,
             string body,
             Dictionary<string, dynamic> personalisation) =>
-            await this.notificationAbstractionProvider.SendEmailAsync(toEmail, subject, body, personalisation);
+                await this.notificationAbstractionProvider.SendEmailAsync(toEmail, subject, body, personalisation);
+
+        /// <summary>
+        /// Sends a SMS using the specified template ID and personalisation items.
+        /// </summary>
+        /// <returns>A string representing the unique identifier of the sent SMS.</returns>
+        /// <exception cref="NotificationValidationProviderException" />
+        /// <exception cref="NotificationDependencyProviderException" />
+        /// <exception cref="NotificationServiceProviderException" />
+        public async ValueTask<string> SendSmsAsync(
+            string templateId,
+            Dictionary<string, dynamic> personalisation) =>
+                await this.notificationAbstractionProvider.SendSmsAsync(templateId, personalisation);
     }
 }
