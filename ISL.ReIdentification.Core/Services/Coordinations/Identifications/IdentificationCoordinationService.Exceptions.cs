@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Coordinations.Identifications.Exceptions;
 using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications.Exceptions;
@@ -70,6 +71,10 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
                 throw await CreateAndLogDependencyExceptionAsync(
                     identificationOrchestrationDependencyException);
             }
+            catch (Exception exception)
+            {
+                throw await CreateAndLogServiceExceptionAsync(exception);
+            }
         }
 
         private async ValueTask<IdentificationCoordinationValidationException>
@@ -112,6 +117,20 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
             await this.loggingBroker.LogErrorAsync(identificationCoordinationDependencyException);
 
             return identificationCoordinationDependencyException;
+        }
+
+        private async ValueTask<IdentificationCoordinationServiceException>
+            CreateAndLogServiceExceptionAsync(Exception exception)
+        {
+            var identificationCoordinationServiceException =
+                new IdentificationCoordinationServiceException(
+                    message: "Identification coordination service error occurred, " +
+                        "fix the errors and try again.",
+                    innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(identificationCoordinationServiceException);
+
+            return identificationCoordinationServiceException;
         }
     }
 }
