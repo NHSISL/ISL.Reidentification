@@ -3,9 +3,12 @@
 // ---------------------------------------------------------
 
 using System.Text.Json;
+using ISL.Providers.Notifications.Abstractions;
+using ISL.Providers.Notifications.GovukNotify.Providers.Notifications;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
 using ISL.ReIdentification.Core.Brokers.Identifiers;
 using ISL.ReIdentification.Core.Brokers.Loggings;
+using ISL.ReIdentification.Core.Brokers.Notifications;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.PatientOrgReference;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
 using ISL.ReIdentification.Core.Models.Foundations.Lookups;
@@ -108,7 +111,10 @@ namespace ISL.ReIdentification.Configurations.Server
         }
 
         private static void AddProviders(IServiceCollection services)
-        { }
+        {
+            services.AddTransient<INotificationAbstractionProvider, NotificationAbstractionProvider>();
+            services.AddTransient<INotificationProvider, GovukNotifyProvider>();
+        }
 
         private static void AddBrokers(IServiceCollection services)
         {
@@ -117,6 +123,7 @@ namespace ISL.ReIdentification.Configurations.Server
             services.AddTransient<ILoggingBroker, LoggingBroker>();
             services.AddTransient<IPatientOrgReferenceStorageBroker, PatientOrgReferenceStorageBroker>();
             services.AddTransient<IReIdentificationStorageBroker, ReIdentificationStorageBroker>();
+            services.AddTransient<INotificationBroker, NotificationBroker>();
         }
 
         private static void AddFoundationServices(IServiceCollection services)

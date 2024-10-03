@@ -30,7 +30,7 @@ namespace ISL.ReIdentification.Core.Brokers.Notifications
             string subject,
             string body,
             Dictionary<string, dynamic> personalisation) =>
-                await this.notificationAbstractionProvider.SendEmailAsync(toEmail, subject, body, personalisation);
+            await this.notificationAbstractionProvider.SendEmailAsync(toEmail, subject, body, personalisation);
 
         /// <summary>
         /// Sends a SMS using the specified template ID and personalisation items.
@@ -42,7 +42,7 @@ namespace ISL.ReIdentification.Core.Brokers.Notifications
         public async ValueTask<string> SendSmsAsync(
             string templateId,
             Dictionary<string, dynamic> personalisation) =>
-                await this.notificationAbstractionProvider.SendSmsAsync(templateId, personalisation);
+            await this.notificationAbstractionProvider.SendSmsAsync(templateId, personalisation);
 
         /// <summary>
         /// Sends a letter using the specified template ID and personalisation contents.
@@ -55,6 +55,19 @@ namespace ISL.ReIdentification.Core.Brokers.Notifications
             string templateId,
             Dictionary<string, dynamic> personalisation,
             string clientReference = "") =>
-                await this.notificationAbstractionProvider.SendLetterAsync(templateId, personalisation, clientReference);
+            await this.notificationAbstractionProvider.SendLetterAsync(templateId, personalisation, clientReference);
+
+        /// <summary>
+        /// Sends a letter using the specified template ID and PDF contents.
+        /// </summary>
+        /// <returns>A string representing the unique identifier of the sent letter.</returns>
+        /// <exception cref="NotificationValidationProviderException" />
+        /// <exception cref="NotificationDependencyProviderException" />
+        /// <exception cref="NotificationServiceProviderException" />
+        public async ValueTask<string> SendPrecompiledLetterAsync(
+            string templateId,
+            byte[] pdfContents,
+            string postage = "") =>
+            await this.notificationAbstractionProvider.SendPrecompiledLetterAsync(templateId, pdfContents, postage);
     }
 }

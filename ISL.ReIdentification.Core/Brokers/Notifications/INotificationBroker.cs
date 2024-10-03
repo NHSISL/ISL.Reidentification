@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ISL.ReIdentification.Core.Brokers.Notifications
 {
-    internal interface INotificationBroker
+    public interface INotificationBroker
     {
         /// <summary>
         /// Sends an email to the specified email address with the specified
@@ -45,5 +45,17 @@ namespace ISL.ReIdentification.Core.Brokers.Notifications
             string templateId,
             Dictionary<string, dynamic> personalisation,
             string clientReference = "");
+
+        /// <summary>
+        /// Sends a letter using the specified template ID and PDF contents.
+        /// </summary>
+        /// <returns>A string representing the unique identifier of the sent letter.</returns>
+        /// <exception cref="NotificationValidationProviderException" />
+        /// <exception cref="NotificationDependencyProviderException" />
+        /// <exception cref="NotificationServiceProviderException" />
+        ValueTask<string> SendPrecompiledLetterAsync(
+            string templateId,
+            byte[] pdfContents,
+            string postage = "");
     }
 }
