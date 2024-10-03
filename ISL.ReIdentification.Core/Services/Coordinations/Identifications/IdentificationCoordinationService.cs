@@ -31,8 +31,7 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
         public ValueTask<AccessRequest> ProcessIdentificationRequestsAsync(AccessRequest accessRequest) =>
         TryCatch(async () =>
         {
-            ValidateAccessRequestIsNotNull(accessRequest);
-            ValidateIdentificationRequestIsNotNull(accessRequest.IdentificationRequest);
+            ValidateOnProcessIdentificationRequests(accessRequest);
 
             var returnedAccessRequest =
                 await this.accessOrchestrationService.ValidateAccessForIdentificationRequestsAsync(accessRequest);

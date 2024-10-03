@@ -11,6 +11,12 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
 {
     public partial class IdentificationCoordinationService : IIdentificationCoordinationService
     {
+        private static void ValidateOnProcessIdentificationRequests(AccessRequest accessRequest)
+        {
+            ValidateAccessRequestIsNotNull(accessRequest);
+            ValidateIdentificationRequestIsNotNull(accessRequest.IdentificationRequest);
+        }
+
         private static void ValidateAccessRequestIsNotNull(AccessRequest accessRequest)
         {
             if (accessRequest is null)
