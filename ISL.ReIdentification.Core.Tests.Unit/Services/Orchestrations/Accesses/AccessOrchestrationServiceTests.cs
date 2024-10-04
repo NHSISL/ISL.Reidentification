@@ -288,7 +288,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
             };
         }
 
-        public static TheoryData<Xeption> LoopDependencyExceptions()
+        public static TheoryData<Xeption> PdsDependencyExceptions()
         {
             string randomMessage = GetRandomString();
             string exceptionMessage = randomMessage;

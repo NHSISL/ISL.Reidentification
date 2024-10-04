@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Force.DeepCloner;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
 using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Models.Foundations.PdsDatas;
@@ -69,8 +70,9 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
                 }
                 catch (Exception ex)
                 {
-                    ((Xeption)ex).AddData("IdentificationItemError", identificationItem.RowNumber);
-                    exceptions.Add(ex);
+                    var exception = ex.DeepClone() as Xeption;
+                    exception.AddData("IdentificationItemError", identificationItem.RowNumber);
+                    exceptions.Add(exception);
                 }
             }
 
