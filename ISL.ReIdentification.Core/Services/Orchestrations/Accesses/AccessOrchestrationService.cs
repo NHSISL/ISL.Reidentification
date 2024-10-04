@@ -100,10 +100,10 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
                     .RetrieveAllUserAccessesAsync();
 
             List<string> userAccess = await userAccesses
-                .Where(userAccess =>
-                    userAccess.UserEmail == userEmail
-                    && userAccess.ActiveFrom <= currentDateTime
-                    && (userAccess.ActiveTo == null || userAccess.ActiveTo > currentDateTime))
+                //.Where(userAccess =>
+                //    userAccess.UserEmail == userEmail
+                //    && userAccess.ActiveFrom <= currentDateTime
+                //    && (userAccess.ActiveTo == null || userAccess.ActiveTo > currentDateTime))
                 .Select(userAccess => userAccess.OrgCode)
                 .ToListAsync();
 

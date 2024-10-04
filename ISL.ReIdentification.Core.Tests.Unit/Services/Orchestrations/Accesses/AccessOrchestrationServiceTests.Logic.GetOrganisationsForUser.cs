@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
-using ISL.ReIdentification.Core.Models.Foundations.OdsDatas;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using Moq;
 
@@ -30,17 +29,9 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
                     .AsQueryable();
 
             IQueryable<UserAccess> storageUserAccesses = randomUserAccesses.DeepClone();
-            OdsData randomOdsData = CreateRandomOdsData();
-            randomOdsData.OrganisationCode_Root = randomUserAccess.OrgCode;
-            randomOdsData.RelationshipStartDate = GetRandomPastDateTimeOffset();
-            randomOdsData.RelationshipEndDate = GetRandomFutureDateTimeOffset();
-
-            IQueryable<OdsData> randomOdsDatas =
-                new List<OdsData> { randomOdsData }
-                    .AsQueryable();
 
             List<string> expectedOrganisations =
-                new List<string> { randomOdsData.OrganisationCode_Root };
+                new List<string>();
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
