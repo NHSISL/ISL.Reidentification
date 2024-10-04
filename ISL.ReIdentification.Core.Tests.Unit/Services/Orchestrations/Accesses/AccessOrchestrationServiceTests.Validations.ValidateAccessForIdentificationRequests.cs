@@ -52,8 +52,8 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.reIdentificationStorageBrokerMock.VerifyNoOtherCalls();
-            this.patientOrgReferenceStorageBrokerMock.VerifyNoOtherCalls();
+            this.userAccessServiceMock.VerifyNoOtherCalls();
+            this.pdsDataServiceMock.VerifyNoOtherCalls();
         }
     }
 }

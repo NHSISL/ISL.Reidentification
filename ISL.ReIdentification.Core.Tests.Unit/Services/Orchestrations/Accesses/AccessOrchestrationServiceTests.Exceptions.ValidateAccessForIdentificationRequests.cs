@@ -17,15 +17,15 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
     public partial class AccessOrchestrationServiceTests
     {
         [Theory]
-        [MemberData(nameof(DependencyValidations))]
+        [MemberData(nameof(DependencyValidationExceptions))]
         public async Task ShouldThrowDependencyValidationOnValidateAccessForIdentificationRequestAndLogItAsync(
             Xeption dependencyValidationException)
         {
             // given
             var accessOrchestrationServiceMock = new Mock<AccessOrchestrationService>
-                (this.dateTimeBrokerMock.Object,
-                this.reIdentificationStorageBrokerMock.Object,
-                this.patientOrgReferenceStorageBrokerMock.Object,
+                (this.userAccessServiceMock.Object,
+                this.pdsDataServiceMock.Object,
+                this.dateTimeBrokerMock.Object,
                 this.loggingBrokerMock.Object)
             { CallBase = true };
 
@@ -64,20 +64,20 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.reIdentificationStorageBrokerMock.VerifyNoOtherCalls();
-            this.patientOrgReferenceStorageBrokerMock.VerifyNoOtherCalls();
+            this.userAccessServiceMock.VerifyNoOtherCalls();
+            this.pdsDataServiceMock.VerifyNoOtherCalls();
         }
 
         [Theory]
-        [MemberData(nameof(Dependencies))]
+        [MemberData(nameof(DependencyExceptions))]
         public async Task ShouldThrowDependencyOnValidateAccessForIdentificationRequestAndLogItAsync(
             Xeption dependencyException)
         {
             // given
             var accessOrchestrationServiceMock = new Mock<AccessOrchestrationService>
-                (this.dateTimeBrokerMock.Object,
-                this.reIdentificationStorageBrokerMock.Object,
-                this.patientOrgReferenceStorageBrokerMock.Object,
+                (this.userAccessServiceMock.Object,
+                this.pdsDataServiceMock.Object,
+                this.dateTimeBrokerMock.Object,
                 this.loggingBrokerMock.Object)
             { CallBase = true };
 
@@ -116,62 +116,33 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.reIdentificationStorageBrokerMock.VerifyNoOtherCalls();
-            this.patientOrgReferenceStorageBrokerMock.VerifyNoOtherCalls();
+            this.userAccessServiceMock.VerifyNoOtherCalls();
+            this.pdsDataServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task ShouldThrowAggregateServiceExceptionOnAddIfServiceErrorsInLoopOccurredAndLogItAsync()
+        public async Task ShouldThrowAggregateServiceExceptionOnProcessIfServiceErrorsOccurredAndLogItAsync()
         {
             // given
-            List<Exception> exceptions = new List<Exception>();
-            var serviceException = new Exception();
             var accessOrchestrationServiceMock = new Mock<AccessOrchestrationService>
-                (this.dateTimeBrokerMock.Object,
-                this.reIdentificationStorageBrokerMock.Object,
-                this.patientOrgReferenceStorageBrokerMock.Object,
+                (this.userAccessServiceMock.Object,
+                this.pdsDataServiceMock.Object,
+                this.dateTimeBrokerMock.Object,
                 this.loggingBrokerMock.Object)
             { CallBase = true };
 
-            AccessOrchestrationService accessOrchestrationService = accessOrchestrationServiceMock.Object;
+            AccessOrchestrationService service = accessOrchestrationServiceMock.Object;
 
             AccessRequest someAccessRequest = CreateRandomAccessRequest();
-            string userEmail = GetRandomStringWithLength(10);
             string userOrganisation = GetRandomStringWithLength(5);
+            string message = GetRandomStringWithLength(10);
 
             List<string> userOrganisations =
                 new List<string> { userOrganisation };
 
-            accessOrchestrationServiceMock.Setup(service =>
-                 service.GetOrganisationsForUserAsync(userEmail))
-                     .ReturnsAsync(userOrganisations);
-
-            var innerFailedAccessOrchestrationServiceException =
-                new FailedServiceAccessOrchestrationException(
-                    message: "Failed access orchestration service error occurred, please contact support.",
-                    innerException: serviceException);
-
-            var innerAccessOrchestrationServiceException =
-                new AccessOrchestrationServiceException(
-                    message: "Access orchestration service error occurred, please contact support.",
-                    innerException: innerFailedAccessOrchestrationServiceException);
-
-            foreach (var identificationItem in someAccessRequest.IdentificationRequest.IdentificationItems)
-            {
-                accessOrchestrationServiceMock.Setup(service =>
-                 service.UserHasAccessToPatientAsync(It.IsAny<string>(), It.IsAny<List<string>>()))
-                     .ThrowsAsync(serviceException);
-
-                innerAccessOrchestrationServiceException
-                    .AddData("IdentificationItemError", identificationItem.RowNumber);
-
-                exceptions.Add(innerAccessOrchestrationServiceException);
-            }
-
             var aggregateException =
                 new AggregateException(
-                    message: $"Unable to validate access for {exceptions.Count} identification requests.",
-                    exceptions);
+                    message: message);
 
             var failedAccessOrchestrationServiceException =
                 new FailedServiceAccessOrchestrationException(
@@ -184,10 +155,13 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
                     message: "Access orchestration service error occurred, please contact support.",
                     innerException: failedAccessOrchestrationServiceException);
 
+            accessOrchestrationServiceMock.Setup(service =>
+                 service.GetOrganisationsForUserAsync(It.IsAny<string>()))
+                     .ThrowsAsync(aggregateException);
+
             // when
             ValueTask<AccessRequest> validateAccessForIdentificationRequestTask =
-                accessOrchestrationService
-                    .ValidateAccessForIdentificationRequestAsync(someAccessRequest);
+                service.ValidateAccessForIdentificationRequestAsync(someAccessRequest);
 
             AccessOrchestrationServiceException
                 actualAccessOrchestrationServiceException =
@@ -198,25 +172,9 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
             actualAccessOrchestrationServiceException
                 .Should().BeEquivalentTo(expectedAccessOrchestrationServiceException);
 
-            foreach (var identificationItem in someAccessRequest.IdentificationRequest.IdentificationItems)
-            {
-                accessOrchestrationServiceMock.Verify(service =>
-                    service.UserHasAccessToPatientAsync(It.IsAny<string>(), It.IsAny<List<string>>()),
-                        Times.Once());
-
-                this.loggingBrokerMock.Verify(broker =>
-                    broker.LogErrorAsync(It.Is(SameExceptionAs(
-                        innerAccessOrchestrationServiceException))),
-                            Times.Once);
-            }
-
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffsetAsync(),
-                Times.Once);
-
-            this.reIdentificationStorageBrokerMock.Verify(broker =>
-                broker.SelectAllUserAccessesAsync(),
-                Times.Once);
+            accessOrchestrationServiceMock.Verify(service =>
+                service.GetOrganisationsForUserAsync(It.IsAny<string>()),
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -225,17 +183,17 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.reIdentificationStorageBrokerMock.VerifyNoOtherCalls();
-            this.patientOrgReferenceStorageBrokerMock.VerifyNoOtherCalls();
+            this.userAccessServiceMock.VerifyNoOtherCalls();
+            this.pdsDataServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
         public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccurredAndLogItAsync()
         {
             var accessOrchestrationServiceMock = new Mock<AccessOrchestrationService>
-                (this.dateTimeBrokerMock.Object,
-                this.reIdentificationStorageBrokerMock.Object,
-                this.patientOrgReferenceStorageBrokerMock.Object,
+                (this.userAccessServiceMock.Object,
+                this.pdsDataServiceMock.Object,
+                this.dateTimeBrokerMock.Object,
                 this.loggingBrokerMock.Object)
             { CallBase = true };
 
@@ -279,8 +237,8 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.reIdentificationStorageBrokerMock.VerifyNoOtherCalls();
-            this.patientOrgReferenceStorageBrokerMock.VerifyNoOtherCalls();
+            this.userAccessServiceMock.VerifyNoOtherCalls();
+            this.pdsDataServiceMock.VerifyNoOtherCalls();
         }
     }
 }

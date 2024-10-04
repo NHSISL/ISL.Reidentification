@@ -14,7 +14,8 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
 {
     public partial class AccessOrchestrationServiceTests
     {
-        [Theory]
+        //[Theory]
+        [Fact]
         public async Task ShouldGetUserHasAccessToPatient()
         {
             // given
@@ -41,8 +42,8 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(DateTimeOffset.UtcNow);
 
-            this.patientOrgReferenceStorageBrokerMock.Setup(broker =>
-                broker.SelectAllPdsDatasAsync())
+            this.pdsDataServiceMock.Setup(service =>
+                service.RetrieveAllPdsDatasAsync())
                     .ReturnsAsync(randomPdsDatas);
 
             // when
@@ -56,13 +57,13 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
-            this.patientOrgReferenceStorageBrokerMock.Verify(broker =>
-                broker.SelectAllPdsDatasAsync(),
+            this.pdsDataServiceMock.Verify(service =>
+                service.RetrieveAllPdsDatasAsync(),
                     Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.reIdentificationStorageBrokerMock.VerifyNoOtherCalls();
-            this.patientOrgReferenceStorageBrokerMock.VerifyNoOtherCalls();
+            this.userAccessServiceMock.VerifyNoOtherCalls();
+            this.pdsDataServiceMock.VerifyNoOtherCalls();
         }
     }
 }

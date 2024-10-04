@@ -46,13 +46,9 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(DateTimeOffset.UtcNow);
 
-            this.reIdentificationStorageBrokerMock.Setup(broker =>
-                broker.SelectAllUserAccessesAsync())
+            this.userAccessServiceMock.Setup(service =>
+                service.RetrieveAllUserAccessesAsync())
                     .ReturnsAsync(storageUserAccesses);
-
-            this.patientOrgReferenceStorageBrokerMock.Setup(broker =>
-                broker.SelectAllOdsDatasAsync())
-                    .ReturnsAsync(randomOdsDatas);
 
             // when
             List<string> actualOrganisations = await this.accessOrchestrationService
@@ -65,17 +61,13 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
-            this.reIdentificationStorageBrokerMock.Verify(broker =>
-                broker.SelectAllUserAccessesAsync(),
-                    Times.Once);
-
-            this.patientOrgReferenceStorageBrokerMock.Verify(broker =>
-                broker.SelectAllOdsDatasAsync(),
+            this.userAccessServiceMock.Verify(service =>
+                service.RetrieveAllUserAccessesAsync(),
                     Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.reIdentificationStorageBrokerMock.VerifyNoOtherCalls();
-            this.patientOrgReferenceStorageBrokerMock.VerifyNoOtherCalls();
+            this.userAccessServiceMock.VerifyNoOtherCalls();
+            this.pdsDataServiceMock.VerifyNoOtherCalls();
         }
     }
 }

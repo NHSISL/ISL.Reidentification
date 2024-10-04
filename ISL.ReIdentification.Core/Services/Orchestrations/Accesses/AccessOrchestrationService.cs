@@ -64,11 +64,8 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
             {
                 try
                 {
-                    await TryCatch(async () =>
-                    {
-                        identificationItem.HasAccess =
-                            await UserHasAccessToPatientAsync(identificationItem.Identifier, userOrgs);
-                    });
+                    identificationItem.HasAccess =
+                        await UserHasAccessToPatientAsync(identificationItem.Identifier, userOrgs);
                 }
                 catch (Exception ex)
                 {
@@ -91,60 +88,58 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
         // We can remove this try catch as this method does not have the responsibility of exception handling
         // We only need a logic test - use theory to cover all the allowed cases and a 2nd logic test to cover the exclusions
         // keep validation tests
-        virtual internal ValueTask<List<string>> GetOrganisationsForUserAsync(string userEmail) =>
-            TryCatch(async () =>
-            {
-                await ValidateUserEmail(userEmail);
-                DateTimeOffset currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+        virtual internal async ValueTask<List<string>> GetOrganisationsForUserAsync(string userEmail)
+        {
+            await ValidateUserEmail(userEmail);
+            DateTimeOffset currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
 
-                IQueryable<UserAccess> userAccesses =
-                    await this.userAccessService
-                        .RetrieveAllUserAccessesAsync();
+            IQueryable<UserAccess> userAccesses =
+                await this.userAccessService
+                    .RetrieveAllUserAccessesAsync();
 
-                List<string> userAccess = await userAccesses
-                    .Where(userAccess =>
-                        userAccess.UserEmail == userEmail
-                        && userAccess.ActiveFrom <= currentDateTime
-                        && (userAccess.ActiveTo == null || userAccess.ActiveTo > currentDateTime))
-                    .Select(userAccess => userAccess.OrgCode)
-                    .ToListAsync();
+            List<string> userAccess = await userAccesses
+                .Where(userAccess =>
+                    userAccess.UserEmail == userEmail
+                    && userAccess.ActiveFrom <= currentDateTime
+                    && (userAccess.ActiveTo == null || userAccess.ActiveTo > currentDateTime))
+                .Select(userAccess => userAccess.OrgCode)
+                .ToListAsync();
 
-                return userAccess;
-            });
+            return userAccess;
+        }
 
 
         // Drop the try catch as this method does not have the responsibility of exception handling
         // We only need a logic test - use theory to cover all the allowed cases and a 2nd logic test to cover the exclusions
         // keep validation tests
-        virtual internal ValueTask<bool> UserHasAccessToPatientAsync(string identifier, List<string> orgs) =>
-            TryCatch(async () =>
-            {
-                await ValidateIdentifierAndOrgs(identifier, orgs);
-                DateTimeOffset currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+        virtual internal async ValueTask<bool> UserHasAccessToPatientAsync(string identifier, List<string> orgs)
+        {
+            await ValidateIdentifierAndOrgs(identifier, orgs);
+            DateTimeOffset currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
 
-                IQueryable<PdsData> pdsDatas =
-                            await this.pdsDataService.RetrieveAllPdsDatasAsync();
+            IQueryable<PdsData> pdsDatas =
+                        await this.pdsDataService.RetrieveAllPdsDatasAsync();
 
-                bool userHasAccess =
-                    pdsDatas
-                        .Where(pdsData =>
-                                // needs to match the patient identifier
-                                pdsData.PseudoNhsNumber == identifier
+            bool userHasAccess =
+                pdsDatas
+                    .Where(pdsData =>
+                            // needs to match the patient identifier
+                            pdsData.PseudoNhsNumber == identifier
 
-                            // Check the primary care provider is active
-                            && (pdsData.PrimaryCareProviderBusinessEffectiveToDate == null
-                                || pdsData.PrimaryCareProviderBusinessEffectiveToDate > currentDateTime)
-                            && (pdsData.PrimaryCareProviderBusinessEffectiveFromDate <= currentDateTime)
+                        // Check the primary care provider is active
+                        && (pdsData.PrimaryCareProviderBusinessEffectiveToDate == null
+                            || pdsData.PrimaryCareProviderBusinessEffectiveToDate > currentDateTime)
+                        && (pdsData.PrimaryCareProviderBusinessEffectiveFromDate <= currentDateTime)
 
-                            // check that the patient is registered with an organisation
-                            && (orgs.Contains(pdsData.CcgOfRegistration)
-                                || orgs.Contains(pdsData.CurrentCcgOfRegistration)
-                                || orgs.Contains(pdsData.CurrentIcbOfRegistration)
-                                || orgs.Contains(pdsData.IcbOfRegistration))
-                            )
-                        .Any();
+                        // check that the patient is registered with an organisation
+                        && (orgs.Contains(pdsData.CcgOfRegistration)
+                            || orgs.Contains(pdsData.CurrentCcgOfRegistration)
+                            || orgs.Contains(pdsData.CurrentIcbOfRegistration)
+                            || orgs.Contains(pdsData.IcbOfRegistration))
+                        )
+                    .Any();
 
-                return userHasAccess;
-            });
+            return userHasAccess;
+        }
     }
 }

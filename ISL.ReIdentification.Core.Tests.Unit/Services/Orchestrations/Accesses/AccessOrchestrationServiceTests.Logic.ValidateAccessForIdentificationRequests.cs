@@ -19,8 +19,8 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
             // given
             var accessOrchestrationServiceMock = new Mock<AccessOrchestrationService>
                 (this.dateTimeBrokerMock.Object,
-                this.reIdentificationStorageBrokerMock.Object,
-                this.patientOrgReferenceStorageBrokerMock.Object,
+                this.userAccessServiceMock.Object,
+                this.pdsDataServiceMock.Object,
                 this.loggingBrokerMock.Object)
             { CallBase = true };
 
@@ -73,8 +73,8 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
             // given
             var accessOrchestrationServiceMock = new Mock<AccessOrchestrationService>
                 (this.dateTimeBrokerMock.Object,
-                this.reIdentificationStorageBrokerMock.Object,
-                this.patientOrgReferenceStorageBrokerMock.Object,
+                this.userAccessServiceMock.Object,
+                this.pdsDataServiceMock.Object,
                 this.loggingBrokerMock.Object)
             { CallBase = true };
 

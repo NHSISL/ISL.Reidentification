@@ -60,13 +60,13 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
                     expectedAccessOrchestrationServiceException))),
                         Times.Once);
 
-            this.patientOrgReferenceStorageBrokerMock.Verify(broker =>
-                broker.SelectAllPdsDatasAsync(),
+            this.pdsDataServiceMock.Verify(broker =>
+                broker.RetrieveAllPdsDatasAsync(),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.patientOrgReferenceStorageBrokerMock.VerifyNoOtherCalls();
+            this.pdsDataServiceMock.VerifyNoOtherCalls();
         }
     }
 }

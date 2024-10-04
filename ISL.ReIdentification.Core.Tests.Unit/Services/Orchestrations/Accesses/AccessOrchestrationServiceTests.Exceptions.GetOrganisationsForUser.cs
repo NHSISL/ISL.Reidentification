@@ -55,18 +55,14 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
                     expectedAccessOrchestrationServiceException))),
                         Times.Once);
 
-            this.reIdentificationStorageBrokerMock.Verify(broker =>
-                broker.SelectAllUserAccessesAsync(),
-                    Times.Never);
-
-            this.patientOrgReferenceStorageBrokerMock.Verify(broker =>
-                broker.SelectAllOdsDatasAsync(),
+            this.userAccessServiceMock.Verify(broker =>
+                broker.RetrieveAllUserAccessesAsync(),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.reIdentificationStorageBrokerMock.VerifyNoOtherCalls();
-            this.patientOrgReferenceStorageBrokerMock.VerifyNoOtherCalls();
+            this.userAccessServiceMock.VerifyNoOtherCalls();
+            this.pdsDataServiceMock.VerifyNoOtherCalls();
         }
     }
 }

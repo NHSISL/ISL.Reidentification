@@ -111,7 +111,7 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
             {
                 var failedServiceAccessOrchestrationException =
                     new FailedServiceAccessOrchestrationException(
-                        message: "Failed access aggregate orchestration service error occurred, please contact support.",
+                        message: "Failed access service orchestration service error occurred, please contact support.",
                         innerException: exception);
 
                 throw await CreateAndLogServiceExceptionAsync(failedServiceAccessOrchestrationException);
