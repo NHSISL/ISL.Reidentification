@@ -90,7 +90,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
         private static List<IdentificationItem> CreateRandomIdentificationItems()
         {
             return CreateIdentificationItemFiller()
-                .Create(1)
+                .Create(GetRandomNumber())
                 .ToList();
         }
 
