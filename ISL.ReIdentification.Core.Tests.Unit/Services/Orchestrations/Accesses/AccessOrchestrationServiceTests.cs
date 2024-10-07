@@ -70,14 +70,8 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
-        private static PdsData CreateRandomPdsData() =>
-            CreateRandomPdsData(dateTimeOffset: GetRandomDateTimeOffset());
-
         private static PdsData CreateRandomPdsData(DateTimeOffset dateTimeOffset) =>
             CreatePdsDataFiller(dateTimeOffset).Create();
-
-        private static UserAccess CreateRandomUserAccess() =>
-            CreateRandomUserAccess(dateTimeOffset: GetRandomDateTimeOffset());
 
         private static UserAccess CreateRandomUserAccess(DateTimeOffset dateTimeOffset) =>
             CreateUserAccessesFiller(dateTimeOffset).Create();
@@ -216,16 +210,6 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
             yield return new object[] { " ", new List<string> { " " } };
         }
 
-        public static TheoryData<string, List<string>> GetTestInvalidParametersTest()
-        {
-            return new TheoryData<string, List<string>>
-            {
-
-                { "", new List<string> { "" } },
-                { " ", new List<string> { " " } }
-            };
-        }
-
         public static TheoryData<Xeption> DependencyValidationExceptions()
         {
             string randomMessage = GetRandomString();
@@ -263,39 +247,6 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
                 new UserAccessServiceException(
                     message: "User access service error occurred, please contact support.",
                     innerException),
-
-                new PdsDataDependencyException(
-                    message: "Pds data dependency error occurred, please contact support.",
-                    innerException),
-
-                new PdsDataServiceException(
-                    message: "Pds data service error occurred, please contact support.",
-                    innerException),
-            };
-        }
-
-        public static TheoryData<Xeption> LoopDependencyValidationExceptions()
-        {
-            string randomMessage = GetRandomString();
-            string exceptionMessage = randomMessage;
-            var innerException = new Xeption(exceptionMessage);
-
-            return new TheoryData<Xeption>
-            {
-                new PdsDataValidationException(
-                    message: "Pds data validation errors occurred, please try again.",
-                    innerException)
-            };
-        }
-
-        public static TheoryData<Xeption> PdsDependencyExceptions()
-        {
-            string randomMessage = GetRandomString();
-            string exceptionMessage = randomMessage;
-            var innerException = new Xeption(exceptionMessage);
-
-            return new TheoryData<Xeption>
-            {
 
                 new PdsDataDependencyException(
                     message: "Pds data dependency error occurred, please contact support.",

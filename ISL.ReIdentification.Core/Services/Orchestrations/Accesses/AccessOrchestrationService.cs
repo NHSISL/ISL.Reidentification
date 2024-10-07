@@ -85,10 +85,6 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
             return accessRequest;
         }
 
-
-        // We can remove this try catch as this method does not have the responsibility of exception handling
-        // We only need a logic test - use theory to cover all the allowed cases and a 2nd logic test to cover the exclusions
-        // keep validation tests
         virtual internal async ValueTask<List<string>> GetOrganisationsForUserAsync(string userEmail)
         {
             await ValidateUserEmail(userEmail);
@@ -111,10 +107,6 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
             return organisationsForUser;
         }
 
-
-        // Drop the try catch as this method does not have the responsibility of exception handling
-        // We only need a logic test - use theory to cover all the allowed cases and a 2nd logic test to cover the exclusions
-        // keep validation tests
         virtual internal async ValueTask<bool> UserHasAccessToPatientAsync(string identifier, List<string> orgs)
         {
             await ValidateIdentifierAndOrgsNotNull(identifier, orgs);
