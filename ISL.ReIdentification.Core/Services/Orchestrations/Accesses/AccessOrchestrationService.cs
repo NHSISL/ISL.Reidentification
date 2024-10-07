@@ -119,15 +119,10 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
             bool userHasAccess =
                 pdsDatas
                     .Where(pdsData =>
-                            // needs to match the patient identifier
                             pdsData.PseudoNhsNumber == identifier
-
-                        // Check the primary care provider is active
                         && (pdsData.PrimaryCareProviderBusinessEffectiveToDate == null
                             || pdsData.PrimaryCareProviderBusinessEffectiveToDate > currentDateTime)
                         && (pdsData.PrimaryCareProviderBusinessEffectiveFromDate <= currentDateTime)
-
-                        // check that the patient is registered with an organisation
                         && (orgs.Contains(pdsData.CcgOfRegistration)
                             || orgs.Contains(pdsData.CurrentCcgOfRegistration)
                             || orgs.Contains(pdsData.CurrentIcbOfRegistration)
