@@ -317,5 +317,23 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
                 futureActiveToUserAccess
             };
         }
+
+        public static TheoryData<UserAccess, bool> GetOrganisationsReturnsNoOrgs()
+        {
+            UserAccess randomUserAccess = CreateRandomUserAccess(GetRandomPastDateTimeOffset());
+            UserAccess futureActiveFromUserAccess = randomUserAccess.DeepClone();
+            UserAccess pastActiveToUserAccess = randomUserAccess.DeepClone();
+            UserAccess differentEmailUserAccess = randomUserAccess.DeepClone();
+            futureActiveFromUserAccess.ActiveFrom = GetRandomFutureDateTimeOffset();
+            pastActiveToUserAccess.ActiveTo = GetRandomPastDateTimeOffset();
+            differentEmailUserAccess.ActiveTo = null;
+
+            return new TheoryData<UserAccess, bool>
+            {
+                { pastActiveToUserAccess, false },
+                { futureActiveFromUserAccess, false },
+                { differentEmailUserAccess, true }
+            };
+        }
     }
 }

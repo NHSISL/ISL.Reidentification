@@ -55,5 +55,55 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
             this.userAccessServiceMock.VerifyNoOtherCalls();
             this.pdsDataServiceMock.VerifyNoOtherCalls();
         }
+
+        [Theory]
+        [MemberData(nameof(GetOrganisationsReturnsNoOrgs))]
+        public async Task ShouldGetOrganisationsForUserReturnsNoOrganisations(
+            UserAccess returnedUserAccess, bool changeEmail)
+        {
+            // given
+            DateTimeOffset currentDateTimeOffset = DateTimeOffset.UtcNow;
+            string inputUserEmail = returnedUserAccess.UserEmail;
+            string differentEmail = GetRandomStringWithLength(50);
+
+            if (changeEmail)
+            {
+                returnedUserAccess.UserEmail = differentEmail;
+            }
+
+            IQueryable<UserAccess> returnedUserAccesses =
+                new List<UserAccess> { returnedUserAccess }
+                    .AsQueryable();
+
+            List<string> expectedOrganisations =
+                new List<string>();
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(currentDateTimeOffset);
+
+            this.userAccessServiceMock.Setup(service =>
+                service.RetrieveAllUserAccessesAsync())
+                    .ReturnsAsync(returnedUserAccesses);
+
+            // when
+            List<string> actualOrganisations = await this.accessOrchestrationService
+                .GetOrganisationsForUserAsync(inputUserEmail);
+
+            // then
+            actualOrganisations.Should().BeEquivalentTo(expectedOrganisations);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.userAccessServiceMock.Verify(service =>
+                service.RetrieveAllUserAccessesAsync(),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.userAccessServiceMock.VerifyNoOtherCalls();
+            this.pdsDataServiceMock.VerifyNoOtherCalls();
+        }
     }
 }
