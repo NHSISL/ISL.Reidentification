@@ -70,12 +70,6 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
-        private static OdsData CreateRandomOdsData() =>
-            CreateRandomOdsData(dateTimeOffset: GetRandomDateTimeOffset());
-
-        private static OdsData CreateRandomOdsData(DateTimeOffset dateTimeOffset) =>
-            CreateOdsDataFiller(dateTimeOffset).Create();
-
         private static PdsData CreateRandomPdsData() =>
             CreateRandomPdsData(dateTimeOffset: GetRandomDateTimeOffset());
 
@@ -333,6 +327,36 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
                 { pastActiveToUserAccess, false },
                 { futureActiveFromUserAccess, false },
                 { differentEmailUserAccess, true }
+            };
+        }
+
+        public static TheoryData<PdsData, string> UserHasAccessToPatientTrue()
+        {
+            string randomString = GetRandomString();
+            string organisation = randomString;
+            PdsData randomPdsData = CreateRandomPdsData(GetRandomPastDateTimeOffset());
+            PdsData nullEffectiveToPdsData = randomPdsData.DeepClone();
+            PdsData futureEffectiveToPdsData = randomPdsData.DeepClone();
+            nullEffectiveToPdsData.PrimaryCareProviderBusinessEffectiveToDate = null;
+            nullEffectiveToPdsData.CcgOfRegistration = organisation;
+            futureEffectiveToPdsData.PrimaryCareProviderBusinessEffectiveToDate = GetRandomFutureDateTimeOffset();
+            futureEffectiveToPdsData.CcgOfRegistration = organisation;
+            PdsData basePdsData = randomPdsData.DeepClone();
+            basePdsData.PrimaryCareProviderBusinessEffectiveToDate = null;
+            PdsData currentCcgOfRegistrationPdsData = basePdsData.DeepClone();
+            PdsData currentIcbOfRegistration = basePdsData.DeepClone();
+            PdsData icbOfRegistration = basePdsData.DeepClone();
+            currentCcgOfRegistrationPdsData.CurrentCcgOfRegistration = organisation;
+            currentIcbOfRegistration.CurrentIcbOfRegistration = organisation;
+            icbOfRegistration.IcbOfRegistration = organisation;
+
+            return new TheoryData<PdsData, string>
+            {
+                { nullEffectiveToPdsData, organisation },
+                { futureEffectiveToPdsData, organisation },
+                { currentCcgOfRegistrationPdsData, organisation },
+                { currentIcbOfRegistration, organisation },
+                { icbOfRegistration, organisation }
             };
         }
     }

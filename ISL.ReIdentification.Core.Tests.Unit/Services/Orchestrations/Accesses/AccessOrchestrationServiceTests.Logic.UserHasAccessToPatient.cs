@@ -14,26 +14,19 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
 {
     public partial class AccessOrchestrationServiceTests
     {
-        //[Theory]
-        [Fact]
-        public async Task ShouldGetUserHasAccessToPatient()
+        [Theory]
+        [MemberData(nameof(UserHasAccessToPatientTrue))]
+        public async Task ShouldGetUserHasAccessToPatient(PdsData returnedPdsData, string userOrganisation)
         {
             // given
             string identifier = GetRandomStringWithLength(15);
-            string inputIdentifier = identifier;
-            string userOrganisation = GetRandomStringWithLength(5);
+            string inputIdentifier = returnedPdsData.PseudoNhsNumber;
 
             List<string> userOrganisations =
                 new List<string> { userOrganisation };
 
-            PdsData randomPdsData = CreateRandomPdsData();
-            randomPdsData.PseudoNhsNumber = identifier;
-            randomPdsData.PrimaryCareProviderBusinessEffectiveFromDate = GetRandomPastDateTimeOffset();
-            randomPdsData.PrimaryCareProviderBusinessEffectiveToDate = GetRandomFutureDateTimeOffset();
-            randomPdsData.CcgOfRegistration = userOrganisation;
-
-            IQueryable<PdsData> randomPdsDatas =
-                new List<PdsData>() { randomPdsData }
+            IQueryable<PdsData> returnedPdsDatas =
+                new List<PdsData>() { returnedPdsData }
                     .AsQueryable();
 
             bool expectedResult = true;
@@ -44,7 +37,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
 
             this.pdsDataServiceMock.Setup(service =>
                 service.RetrieveAllPdsDatasAsync())
-                    .ReturnsAsync(randomPdsDatas);
+                    .ReturnsAsync(returnedPdsDatas);
 
             // when
             bool actualResult = await this.accessOrchestrationService
