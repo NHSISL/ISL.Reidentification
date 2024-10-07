@@ -23,7 +23,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Coordinations.Identifica
             AccessRequest someAccessRequest = CreateRandomAccessRequest();
 
             this.accessOrchestrationServiceMock.Setup(service =>
-                service.ValidateAccessForIdentificationRequestsAsync(someAccessRequest))
+                service.ValidateAccessForIdentificationRequestAsync(someAccessRequest))
                     .ThrowsAsync(dependencyValidationException);
 
             var expectedIdentificationCoordinationDependencyValidationException =
@@ -46,7 +46,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Coordinations.Identifica
                 .Should().BeEquivalentTo(expectedIdentificationCoordinationDependencyValidationException);
 
             this.accessOrchestrationServiceMock.Verify(service =>
-                service.ValidateAccessForIdentificationRequestsAsync(someAccessRequest),
+                service.ValidateAccessForIdentificationRequestAsync(someAccessRequest),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -68,7 +68,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Coordinations.Identifica
             AccessRequest someAccessRequest = CreateRandomAccessRequest();
 
             this.accessOrchestrationServiceMock.Setup(service =>
-                service.ValidateAccessForIdentificationRequestsAsync(someAccessRequest))
+                service.ValidateAccessForIdentificationRequestAsync(someAccessRequest))
                     .ThrowsAsync(dependencyException);
 
             var expectedIdentificationCoordinationDependencyException =
@@ -91,7 +91,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Coordinations.Identifica
                 .Should().BeEquivalentTo(expectedIdentificationCoordinationDependencyException);
 
             this.accessOrchestrationServiceMock.Verify(service =>
-                service.ValidateAccessForIdentificationRequestsAsync(someAccessRequest),
+                service.ValidateAccessForIdentificationRequestAsync(someAccessRequest),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -112,7 +112,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Coordinations.Identifica
             Exception someException = new Exception();
 
             this.accessOrchestrationServiceMock.Setup(service =>
-                service.ValidateAccessForIdentificationRequestsAsync(someAccessRequest))
+                service.ValidateAccessForIdentificationRequestAsync(someAccessRequest))
                     .ThrowsAsync(someException);
 
             var expectedIdentificationCoordinationServiceException =
@@ -135,7 +135,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Coordinations.Identifica
                 .Should().BeEquivalentTo(expectedIdentificationCoordinationServiceException);
 
             this.accessOrchestrationServiceMock.Verify(service =>
-                service.ValidateAccessForIdentificationRequestsAsync(someAccessRequest),
+                service.ValidateAccessForIdentificationRequestAsync(someAccessRequest),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>

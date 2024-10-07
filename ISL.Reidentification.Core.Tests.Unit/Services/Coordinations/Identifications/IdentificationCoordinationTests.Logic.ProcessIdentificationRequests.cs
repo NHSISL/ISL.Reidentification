@@ -26,7 +26,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Coordinations.Identifica
             AccessRequest expectedAccessRequest = outputOrchestrationAccessRequest.DeepClone();
 
             this.accessOrchestrationServiceMock.Setup(service =>
-                service.ValidateAccessForIdentificationRequestsAsync(inputAccessRequest))
+                service.ValidateAccessForIdentificationRequestAsync(inputAccessRequest))
                     .ReturnsAsync(outputOrchestrationAccessRequest);
 
             this.identificationOrchestrationServiceMock.Setup(service =>
@@ -41,7 +41,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Coordinations.Identifica
             actualAccessRequest.Should().BeEquivalentTo(expectedAccessRequest);
 
             this.accessOrchestrationServiceMock.Verify(service =>
-                service.ValidateAccessForIdentificationRequestsAsync(inputAccessRequest),
+                service.ValidateAccessForIdentificationRequestAsync(inputAccessRequest),
                     Times.Once);
 
             this.identificationOrchestrationServiceMock.Verify(service =>
