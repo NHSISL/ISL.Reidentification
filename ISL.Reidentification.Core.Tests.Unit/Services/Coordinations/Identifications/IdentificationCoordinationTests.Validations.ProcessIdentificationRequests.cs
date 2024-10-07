@@ -30,7 +30,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Coordinations.Identifica
                     innerException: nullAccessRequestException);
 
             this.accessOrchestrationServiceMock.Setup(service =>
-                service.ValidateAccessForIdentificationRequestsAsync(nullAccessRequest))
+                service.ValidateAccessForIdentificationRequestAsync(nullAccessRequest))
                     .ThrowsAsync(nullAccessRequestException);
 
             // when
@@ -72,7 +72,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Coordinations.Identifica
                     innerException: nullIdentificationRequestException);
 
             this.accessOrchestrationServiceMock.Setup(service =>
-                service.ValidateAccessForIdentificationRequestsAsync(inputAccessRequest))
+                service.ValidateAccessForIdentificationRequestAsync(inputAccessRequest))
                     .ThrowsAsync(nullIdentificationRequestException);
 
             // when

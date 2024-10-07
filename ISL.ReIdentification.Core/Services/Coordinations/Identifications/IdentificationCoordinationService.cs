@@ -34,7 +34,7 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
             ValidateOnProcessIdentificationRequests(accessRequest);
 
             var returnedAccessRequest =
-                await this.accessOrchestrationService.ValidateAccessForIdentificationRequestsAsync(accessRequest);
+                await this.accessOrchestrationService.ValidateAccessForIdentificationRequestAsync(accessRequest);
 
             var returnedIdentificationRequest =
                 await this.identificationOrchestrationService
