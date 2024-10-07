@@ -216,6 +216,16 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
             yield return new object[] { " ", new List<string> { " " } };
         }
 
+        public static TheoryData<string, List<string>> GetTestInvalidParametersTest()
+        {
+            return new TheoryData<string, List<string>>
+            {
+
+                { "", new List<string> { "" } },
+                { " ", new List<string> { " " } }
+            };
+        }
+
         public static TheoryData<Xeption> DependencyValidationExceptions()
         {
             string randomMessage = GetRandomString();

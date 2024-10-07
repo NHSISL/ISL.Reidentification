@@ -5,6 +5,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Force.DeepCloner;
 using ISL.ReIdentification.Core.Models.Orchestrations.Accesses;
 using ISL.ReIdentification.Core.Services.Orchestrations.Accesses;
 using Moq;
@@ -26,45 +27,46 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
 
             string userEmail = GetRandomStringWithLength(10);
             string inputUserEmail = userEmail;
-            string identifier = GetRandomStringWithLength(5);
-            string inputIdentifier = identifier;
-            AccessRequest accessRequest = CreateRandomAccessRequest();
-            accessRequest.IdentificationRequest.UserIdentifier = userEmail;
-            accessRequest.IdentificationRequest.IdentificationItems[0].Identifier = inputIdentifier;
+            AccessRequest randomAccessRequest = CreateRandomAccessRequest();
+            AccessRequest inputAccessRequest = randomAccessRequest.DeepClone();
+            inputAccessRequest.IdentificationRequest.UserIdentifier = userEmail;
+            AccessRequest outputAccessRequest = inputAccessRequest.DeepClone();
+            outputAccessRequest.IdentificationRequest.IdentificationItems.ForEach(x => x.HasAccess = true);
+            AccessRequest expectedAccessRequest = outputAccessRequest.DeepClone();
             string userOrganisation = GetRandomStringWithLength(5);
 
             List<string> userOrganisations =
                 new List<string> { userOrganisation };
-
-            bool userHasAccessToPatientResult = true;
 
             accessOrchestrationServiceMock.Setup(service =>
                 service.GetOrganisationsForUserAsync(inputUserEmail))
                     .ReturnsAsync(userOrganisations);
 
             accessOrchestrationServiceMock.Setup(service =>
-                service.UserHasAccessToPatientAsync(inputIdentifier, userOrganisations))
-                    .ReturnsAsync(userHasAccessToPatientResult);
+                service.CheckUserAccessToPatientsAsync(inputAccessRequest, userOrganisations))
+                    .ReturnsAsync(outputAccessRequest);
 
             AccessOrchestrationService accessOrchestrationService = accessOrchestrationServiceMock.Object;
-            AccessRequest expectedAccessRequest = accessRequest;
 
             // when
             AccessRequest actualAccessRequest =
-                await accessOrchestrationService.ValidateAccessForIdentificationRequestAsync(accessRequest);
+                await accessOrchestrationService.ValidateAccessForIdentificationRequestAsync(inputAccessRequest);
 
             // then
-            actualAccessRequest.Should().Be(expectedAccessRequest);
+            actualAccessRequest.Should().BeEquivalentTo(expectedAccessRequest);
 
             accessOrchestrationServiceMock.Verify(service =>
                 service.GetOrganisationsForUserAsync(inputUserEmail),
                     Times.Once);
 
             accessOrchestrationServiceMock.Verify(service =>
-                service.UserHasAccessToPatientAsync(inputIdentifier, userOrganisations),
+                service.CheckUserAccessToPatientsAsync(inputAccessRequest, userOrganisations),
                     Times.Once);
 
             accessOrchestrationServiceMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.userAccessServiceMock.VerifyNoOtherCalls();
+            this.pdsDataServiceMock.VerifyNoOtherCalls();
         }
 
         //[Fact]

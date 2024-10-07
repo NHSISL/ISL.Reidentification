@@ -117,6 +117,7 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
         // keep validation tests
         virtual internal async ValueTask<bool> UserHasAccessToPatientAsync(string identifier, List<string> orgs)
         {
+            await ValidateIdentifierAndOrgsNotNull(identifier, orgs);
             await ValidateIdentifierAndOrgs(identifier, orgs);
             DateTimeOffset currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
 

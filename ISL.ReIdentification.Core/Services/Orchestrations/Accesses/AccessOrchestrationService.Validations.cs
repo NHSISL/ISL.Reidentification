@@ -23,25 +23,50 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
         private async ValueTask ValidateUserEmail(string userEmail)
         {
             Validate(
-                (Rule: await IsInvalidAsync(userEmail), Parameter: nameof(userEmail)));
+                (Rule: await IsInvalidEmptyAsync(userEmail), Parameter: nameof(userEmail)));
         }
 
         private async ValueTask ValidateIdentifierAndOrgs(string identifier, List<string> orgs)
         {
-            Validate(
-                (Rule: await IsInvalidAsync(identifier), Parameter: nameof(identifier)),
-                (Rule: await IsInvalidAsync(orgs), Parameter: nameof(orgs)));
+            await ValidateIdentifierAndOrgsNotNull(identifier, orgs);
+            await ValidateIdentifierAndOrgsEmpty(identifier, orgs);
         }
 
-        private static async ValueTask<dynamic> IsInvalidAsync(string name) => new
+        private async ValueTask ValidateIdentifierAndOrgsNotNull(string identifier, List<string> orgs)
+        {
+            Validate(
+                (Rule: await IsInvalidNullAsync(identifier), Parameter: nameof(identifier)),
+                (Rule: await IsInvalidNullAsync(orgs), Parameter: nameof(orgs)));
+        }
+
+        private async ValueTask ValidateIdentifierAndOrgsEmpty(string identifier, List<string> orgs)
+        {
+            Validate(
+                (Rule: await IsInvalidEmptyAsync(identifier), Parameter: nameof(identifier)),
+                (Rule: await IsInvalidEmptyAsync(orgs), Parameter: nameof(orgs)));
+        }
+
+        private static async ValueTask<dynamic> IsInvalidNullAsync(string name) => new
+        {
+            Condition = name is null,
+            Message = "Text is invalid"
+        };
+
+        private static async ValueTask<dynamic> IsInvalidNullAsync(List<string> strings) => new
+        {
+            Condition = strings is null,
+            Message = "List is invalid"
+        };
+
+        private static async ValueTask<dynamic> IsInvalidEmptyAsync(string name) => new
         {
             Condition = String.IsNullOrWhiteSpace(name),
             Message = "Text is invalid"
         };
 
-        private static async ValueTask<dynamic> IsInvalidAsync(List<string> strings) => new
+        private static async ValueTask<dynamic> IsInvalidEmptyAsync(List<string> strings) => new
         {
-            Condition = strings is null,
+            Condition = strings.Exists(x => String.IsNullOrWhiteSpace(x)),
             Message = "List is invalid"
         };
 
