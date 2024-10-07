@@ -128,6 +128,10 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
             {
                 throw await CreateAndLogValidationExceptionAsync(nullAccessRequestException);
             }
+            catch (InvalidArgumentAccessOrchestrationException invalidArgumentAccessOrchestrationException)
+            {
+                throw CreateAndLogValidationException(invalidArgumentAccessOrchestrationException);
+            }
             catch (UserAccessValidationException userAccessValidationException)
             {
                 throw await CreateAndLogDependencyValidationExceptionAsync(

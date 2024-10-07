@@ -18,9 +18,9 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
         {
             // given
             var accessOrchestrationServiceMock = new Mock<AccessOrchestrationService>
-                (this.dateTimeBrokerMock.Object,
-                this.userAccessServiceMock.Object,
+                (this.userAccessServiceMock.Object,
                 this.pdsDataServiceMock.Object,
+                this.dateTimeBrokerMock.Object,
                 this.loggingBrokerMock.Object)
             { CallBase = true };
 
