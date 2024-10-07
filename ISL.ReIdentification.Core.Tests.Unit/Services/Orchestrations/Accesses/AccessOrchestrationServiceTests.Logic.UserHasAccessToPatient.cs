@@ -54,6 +54,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
                     Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
             this.userAccessServiceMock.VerifyNoOtherCalls();
             this.pdsDataServiceMock.VerifyNoOtherCalls();
         }
@@ -105,6 +106,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
                     Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
             this.userAccessServiceMock.VerifyNoOtherCalls();
             this.pdsDataServiceMock.VerifyNoOtherCalls();
         }

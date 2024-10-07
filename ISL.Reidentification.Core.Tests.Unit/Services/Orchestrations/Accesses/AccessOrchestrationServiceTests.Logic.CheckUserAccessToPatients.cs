@@ -60,6 +60,10 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
                     Times.Exactly(inputAccessRequest.IdentificationRequest.IdentificationItems.Count));
 
             accessOrchestrationServiceMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.userAccessServiceMock.VerifyNoOtherCalls();
+            this.pdsDataServiceMock.VerifyNoOtherCalls();
         }
     }
 }

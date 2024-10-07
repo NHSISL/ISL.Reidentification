@@ -65,6 +65,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
 
             accessOrchestrationServiceMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
             this.userAccessServiceMock.VerifyNoOtherCalls();
             this.pdsDataServiceMock.VerifyNoOtherCalls();
         }
