@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Force.DeepCloner;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using Moq;
 
@@ -15,23 +14,19 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
 {
     public partial class AccessOrchestrationServiceTests
     {
-        [Fact]
-        public async Task ShouldGetOrganisationsForUser()
+        [Theory]
+        [MemberData(nameof(GetOrganisationsReturnsOrgs))]
+        public async Task ShouldGetOrganisationsForUserReturnsOrganisations(UserAccess returnedUserAccess)
         {
             // given
-            string userEmail = GetRandomStringWithLength(50);
-            string inputUserEmail = userEmail;
-            UserAccess randomUserAccess = CreateRandomUserAccess();
-            randomUserAccess.UserEmail = inputUserEmail;
+            string inputUserEmail = returnedUserAccess.UserEmail;
 
-            IQueryable<UserAccess> randomUserAccesses =
-                new List<UserAccess> { randomUserAccess }
+            IQueryable<UserAccess> returnedUserAccesses =
+                new List<UserAccess> { returnedUserAccess }
                     .AsQueryable();
 
-            IQueryable<UserAccess> storageUserAccesses = randomUserAccesses.DeepClone();
-
             List<string> expectedOrganisations =
-                new List<string>();
+                new List<string> { returnedUserAccess.OrgCode };
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
@@ -39,7 +34,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
 
             this.userAccessServiceMock.Setup(service =>
                 service.RetrieveAllUserAccessesAsync())
-                    .ReturnsAsync(storageUserAccesses);
+                    .ReturnsAsync(returnedUserAccesses);
 
             // when
             List<string> actualOrganisations = await this.accessOrchestrationService

@@ -14,7 +14,6 @@ using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Models.Orchestrations.Accesses;
 using ISL.ReIdentification.Core.Services.Foundations.PdsDatas;
 using ISL.ReIdentification.Core.Services.Foundations.UserAccesses;
-using Microsoft.EntityFrameworkCore;
 using Xeptions;
 
 namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
@@ -99,15 +98,17 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
                 await this.userAccessService
                     .RetrieveAllUserAccessesAsync();
 
-            List<string> userAccess = await userAccesses
-                //.Where(userAccess =>
-                //    userAccess.UserEmail == userEmail
-                //    && userAccess.ActiveFrom <= currentDateTime
-                //    && (userAccess.ActiveTo == null || userAccess.ActiveTo > currentDateTime))
-                .Select(userAccess => userAccess.OrgCode)
-                .ToListAsync();
+            userAccesses = userAccesses
+                .Where(userAccess =>
+                    userAccess.UserEmail == userEmail
+                    && userAccess.ActiveFrom <= currentDateTime
+                    && (userAccess.ActiveTo == null || userAccess.ActiveTo > currentDateTime));
 
-            return userAccess;
+            List<string> organisationsForUser = userAccesses
+                .Select(userAccess => userAccess.OrgCode)
+                .ToList();
+
+            return organisationsForUser;
         }
 
 

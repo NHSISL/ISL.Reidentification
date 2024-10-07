@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using Force.DeepCloner;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
 using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
@@ -269,11 +270,6 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
             };
         }
 
-        //public static TheoryData<AccessRequest, AccessRequest, bool> DependencyValidationExceptions()
-        //{
-
-        //}
-
         public static TheoryData<Xeption> LoopDependencyValidationExceptions()
         {
             string randomMessage = GetRandomString();
@@ -304,6 +300,21 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
                 new PdsDataServiceException(
                     message: "Pds data service error occurred, please contact support.",
                     innerException),
+            };
+        }
+
+        public static TheoryData<UserAccess> GetOrganisationsReturnsOrgs()
+        {
+            UserAccess randomUserAccess = CreateRandomUserAccess(GetRandomPastDateTimeOffset());
+            UserAccess nullActiveToUserAccess = randomUserAccess.DeepClone();
+            UserAccess futureActiveToUserAccess = randomUserAccess.DeepClone();
+            nullActiveToUserAccess.ActiveTo = null;
+            futureActiveToUserAccess.ActiveTo = GetRandomFutureDateTimeOffset();
+
+            return new TheoryData<UserAccess>
+            {
+                nullActiveToUserAccess,
+                futureActiveToUserAccess
             };
         }
     }
