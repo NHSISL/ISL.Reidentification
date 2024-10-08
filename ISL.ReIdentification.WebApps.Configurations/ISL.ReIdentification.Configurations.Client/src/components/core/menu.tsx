@@ -1,4 +1,4 @@
-import { faFileLines, faHome, faCog, faUser, faAddressBook, faUserDoctor } from '@fortawesome/free-solid-svg-icons';
+import { faFileLines, faHome, faCog, faUser, faAddressBook, faUserDoctor, faChartBar } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { ListGroup } from 'react-bootstrap';
@@ -57,11 +57,41 @@ const MenuComponent: React.FC = () => {
             </ListGroup.Item>
 
             <ListGroup.Item
+                className={`bg-dark text-white ${activePath === '/reports' ? 'active' : ''}`}
+                onClick={() => handleItemClick('/reports')}>
+                <FontAwesomeIcon icon={faChartBar} className="me-2 fa-icon" />
+                <SecuredLink to="/reports">Reports</SecuredLink>
+
+                {/* Nested items under Reports */}
+                <ListGroup variant="flush" className="mt-2 ms-3">
+                    <ListGroup.Item
+                        className={`bg-dark text-white border-0 ${activePath === '/reports/1' ? 'active' : ''}`}
+                        onClick={() => handleItemClick('/reports/report1')}>
+                        <SecuredLink to="/reports/report1">Report 1</SecuredLink>
+                    </ListGroup.Item>
+                    <ListGroup.Item
+                        className={`bg-dark text-white border-0 ${activePath === '/reports/2' ? 'active' : ''}`}
+                        onClick={() => handleItemClick('/report/report2')}>
+                        <SecuredLink to="/reports/report2">Report 2</SecuredLink>
+                    </ListGroup.Item>
+                    <ListGroup.Item
+                        className={`bg-dark text-white border-0 ${activePath === '/report3/financial' ? 'active' : ''}`}
+                        onClick={() => handleItemClick('/reports/report3')}>
+                        <SecuredLink to="/reports/report3">Report 3</SecuredLink>
+                    </ListGroup.Item>
+                </ListGroup>
+            </ListGroup.Item>
+
+
+
+            <ListGroup.Item
                 className={`bg-dark text-white ${activePath === '/configuration/home' ? 'active' : ''}`}
                 onClick={() => handleItemClick('/configuration/home')}>
                 <FontAwesomeIcon icon={faCog} className="me-2 fa-icon" />
                 <SecuredLink to="/configuration/home">Configuration</SecuredLink>
             </ListGroup.Item>
+
+
 
             {/*<ListGroup.Item*/}
             {/*    className={`bg-light ${activePath === '/page1/1' ? 'active' : ''}`}*/}
