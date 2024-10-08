@@ -28,13 +28,6 @@ const MenuComponent: React.FC = () => {
             </ListGroup.Item>
 
             <ListGroup.Item
-                className={`bg-light ${activePath === '/configuration/home' ? 'active' : ''}`}
-                onClick={() => handleItemClick('/configuration/home')}>
-                <FontAwesomeIcon icon={faCog} className="me-2 fa-icon" />
-                <SecuredLink to="/configuration/home">Configuration</SecuredLink>
-            </ListGroup.Item>
-
-            <ListGroup.Item
                 className={`bg-light ${activePath === '/userAccess' ? 'active' : ''}`}
                 onClick={() => handleItemClick('/userAccess')}>
                 <FontAwesomeIcon icon={faCog} className="me-2 fa-icon" />
@@ -46,6 +39,27 @@ const MenuComponent: React.FC = () => {
                 onClick={() => handleItemClick('/delegatedUserAccess')}>
                 <FontAwesomeIcon icon={faCog} className="me-2 fa-icon" />
                 <SecuredLink to="/delegatedUserAccess">Delegated User Access</SecuredLink>
+            </ListGroup.Item>
+
+            <ListGroup.Item
+                className={`bg-light ${activePath === '/pdsData' ? 'active' : ''}`}
+                onClick={() => handleItemClick('/pdsData')}>
+                <FontAwesomeIcon icon={faCog} className="me-2 fa-icon" />
+                <SecuredLink to="/pdsData">PDS Data</SecuredLink>
+            </ListGroup.Item>
+
+            <ListGroup.Item
+                className={`bg-light ${activePath === '/odsData' ? 'active' : ''}`}
+                onClick={() => handleItemClick('/odsData')}>
+                <FontAwesomeIcon icon={faCog} className="me-2 fa-icon" />
+                <SecuredLink to="/odsData">Ods Data</SecuredLink>
+            </ListGroup.Item>
+
+            <ListGroup.Item
+                className={`bg-light ${activePath === '/configuration/home' ? 'active' : ''}`}
+                onClick={() => handleItemClick('/configuration/home')}>
+                <FontAwesomeIcon icon={faCog} className="me-2 fa-icon" />
+                <SecuredLink to="/configuration/home">Configuration</SecuredLink>
             </ListGroup.Item>
 
             {/*<ListGroup.Item*/}

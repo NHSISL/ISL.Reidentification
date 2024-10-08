@@ -1,7 +1,6 @@
 import { useMsal } from "@azure/msal-react";
 import { Guid } from "guid-typescript";
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "react-query";
-import { Lookup } from "../../models/lookups/lookup";
 import UserAccessBroker from "../../brokers/apiBroker.userAccess";
 import { UserAccess } from "../../models/userAccess/userAccess";
 
@@ -65,7 +64,7 @@ export const userAccessService = {
             return broker.PutUserAccessAsync(userAccess);
         },
             {
-                onSuccess: (data: Lookup) => {
+                onSuccess: (data: UserAccess) => {
                     queryClient.invalidateQueries("UserAccessGetAll");
                     queryClient.invalidateQueries(["UserAccessGetById", { id: data.id }]);
                 }
