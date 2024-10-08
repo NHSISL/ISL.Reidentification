@@ -18,6 +18,8 @@ import { ConfigurationHome } from './pages/configuration/configurationHome';
 import { Lookups } from './pages/configuration/lookups';
 import { UserAccess } from './pages/userAccess';
 import { DelegatedUserAccess } from './pages/delegatedUserAccess';
+import { OdsData } from './pages/odsData';
+import { PdsData } from './pages/pdsData';
 
 // TODO:
 //      - API Secured Routes
@@ -49,6 +51,14 @@ function App({ instance }: any) {
                 {
                     path: "delegatedUserAccess",
                     element: <DelegatedUserAccess />
+                },
+                {
+                    path: "odsData",
+                    element: <OdsData />
+                },
+                {
+                    path: "pdsData",
+                    element: <PdsData />
                 },
                 {
                     path: "page1/:id",
