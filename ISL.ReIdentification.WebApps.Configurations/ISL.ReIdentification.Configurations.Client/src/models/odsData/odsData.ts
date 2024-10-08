@@ -1,6 +1,6 @@
 import { Guid } from "guid-typescript";
 import { PdsData } from "../pds/pdsData";
-export class Ods {
+export class OdsData {
     public id: Guid;
     public organisationCode_Root: string;
     public organisationPrimaryRole_Root: string;
