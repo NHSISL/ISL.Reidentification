@@ -1,4 +1,4 @@
-import { faFileLines, faHome, faCog } from '@fortawesome/free-solid-svg-icons';
+import { faFileLines, faHome, faCog, faUser, faAddressBook, faUserDoctor } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { ListGroup } from 'react-bootstrap';
@@ -8,6 +8,7 @@ import { FeatureSwitch } from '../accessControls/featureSwitch';
 import { SecuredComponent } from '../securitys/securedComponents';
 import securityPoints from '../../securityMatrix';
 import { SecuredLink } from '../securitys/securedLinks';
+import { faUserFriends } from '@fortawesome/free-solid-svg-icons/faUserFriends';
 
 const MenuComponent: React.FC = () => {
     const location = useLocation();
@@ -21,42 +22,42 @@ const MenuComponent: React.FC = () => {
 
         <ListGroup variant="flush" className="text-start border-0">
             <ListGroup.Item
-                className={`bg-light ${activePath === '/' ? 'active' : ''}`}
+                className={`bg-dark text-white ${activePath === '/' ? 'active' : ''}`}
                 onClick={() => handleItemClick('/')}>
                 <FontAwesomeIcon icon={faHome} className="me-2 fa-icon" />
                 <SecuredLink to="/home">Home</SecuredLink>
             </ListGroup.Item>
 
             <ListGroup.Item
-                className={`bg-light ${activePath === '/userAccess' ? 'active' : ''}`}
+                className={`bg-dark text-white ${activePath === '/userAccess' ? 'active' : ''}`}
                 onClick={() => handleItemClick('/userAccess')}>
-                <FontAwesomeIcon icon={faCog} className="me-2 fa-icon" />
+                <FontAwesomeIcon icon={faUser} className="me-2 fa-icon" />
                 <SecuredLink to="/userAccess">UserAccess</SecuredLink>
             </ListGroup.Item>
 
             <ListGroup.Item
-                className={`bg-light ${activePath === '/delegatedUserAccess' ? 'active' : ''}`}
+                className={`bg-dark text-white ${activePath === '/delegatedUserAccess' ? 'active' : ''}`}
                 onClick={() => handleItemClick('/delegatedUserAccess')}>
-                <FontAwesomeIcon icon={faCog} className="me-2 fa-icon" />
+                <FontAwesomeIcon icon={faUserFriends} className="me-2 fa-icon" />
                 <SecuredLink to="/delegatedUserAccess">Delegated User Access</SecuredLink>
             </ListGroup.Item>
 
             <ListGroup.Item
-                className={`bg-light ${activePath === '/pdsData' ? 'active' : ''}`}
+                className={`bg-dark text-white ${activePath === '/pdsData' ? 'active' : ''}`}
                 onClick={() => handleItemClick('/pdsData')}>
-                <FontAwesomeIcon icon={faCog} className="me-2 fa-icon" />
+                <FontAwesomeIcon icon={faAddressBook} className="me-2 fa-icon" />
                 <SecuredLink to="/pdsData">PDS Data</SecuredLink>
             </ListGroup.Item>
 
             <ListGroup.Item
-                className={`bg-light ${activePath === '/odsData' ? 'active' : ''}`}
+                className={`bg-dark text-white ${activePath === '/odsData' ? 'active' : ''}`}
                 onClick={() => handleItemClick('/odsData')}>
-                <FontAwesomeIcon icon={faCog} className="me-2 fa-icon" />
+                <FontAwesomeIcon icon={faUserDoctor} className="me-2 fa-icon" />
                 <SecuredLink to="/odsData">Ods Data</SecuredLink>
             </ListGroup.Item>
 
             <ListGroup.Item
-                className={`bg-light ${activePath === '/configuration/home' ? 'active' : ''}`}
+                className={`bg-dark text-white ${activePath === '/configuration/home' ? 'active' : ''}`}
                 onClick={() => handleItemClick('/configuration/home')}>
                 <FontAwesomeIcon icon={faCog} className="me-2 fa-icon" />
                 <SecuredLink to="/configuration/home">Configuration</SecuredLink>

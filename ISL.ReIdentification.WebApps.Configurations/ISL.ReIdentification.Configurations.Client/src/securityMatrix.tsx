@@ -16,6 +16,30 @@ const securityPoints = {
         edit: [],
         delete: [],
         view: [],
+    },
+    userAccess: {
+        add: [],
+        edit: [],
+        delete: [],
+        view: [],
+    },
+    delegatedUserAccess: {
+        add: [],
+        edit: [],
+        delete: [],
+        view: [],
+    },
+    odsData: {
+        add: [],
+        edit: [],
+        delete: [],
+        view: [],
+    },
+    pdsData: {
+        add: [],
+        edit: [],
+        delete: [],
+        view: [],
     }
 }
 

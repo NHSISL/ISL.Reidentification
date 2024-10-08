@@ -1,4 +1,7 @@
 export enum FeatureDefinitions {
     Configuration,
-    Test
+    UserAccess,
+    DelegatedUserAccess,
+    Ods,
+    PdS
 }
