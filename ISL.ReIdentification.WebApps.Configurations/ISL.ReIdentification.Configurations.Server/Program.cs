@@ -124,6 +124,7 @@ namespace ISL.ReIdentification.Configurations.Server
                 ApiKey = notificationConfigurations.ApiKey
             };
 
+            services.AddSingleton(notificationConfigurations);
             services.AddSingleton(notifyConfigurations);
             services.AddTransient<INotificationAbstractionProvider, NotificationAbstractionProvider>();
             services.AddTransient<INotificationProvider, GovukNotifyProvider>();
