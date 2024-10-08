@@ -20,6 +20,7 @@ using ISL.ReIdentification.Core.Services.Foundations.Lookups;
 using ISL.ReIdentification.Core.Services.Foundations.OdsDatas;
 using ISL.ReIdentification.Core.Services.Foundations.PdsDatas;
 using ISL.ReIdentification.Core.Services.Foundations.UserAccesses;
+using ISL.ReIdentification.Core.Services.Orchestrations.Accesses;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.OData;
@@ -152,7 +153,9 @@ namespace ISL.ReIdentification.Configurations.Server
         { }
 
         private static void AddOrchestrationServices(IServiceCollection services)
-        { }
+        {
+            services.AddTransient<IAccessOrchestrationService, AccessOrchestrationService>();
+        }
 
         private static void AddCoordinationServices(IServiceCollection services)
         { }

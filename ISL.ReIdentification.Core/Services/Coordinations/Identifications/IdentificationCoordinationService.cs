@@ -29,6 +29,20 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
             throw new System.NotImplementedException();
 
         public ValueTask<AccessRequest> ProcessIdentificationRequestsAsync(AccessRequest accessRequest) =>
-            throw new System.NotImplementedException();
+        TryCatch(async () =>
+        {
+            ValidateOnProcessIdentificationRequests(accessRequest);
+
+            var returnedAccessRequest =
+                await this.accessOrchestrationService.ValidateAccessForIdentificationRequestAsync(accessRequest);
+
+            var returnedIdentificationRequest =
+                await this.identificationOrchestrationService
+                    .ProcessIdentificationRequestAsync(returnedAccessRequest.IdentificationRequest);
+
+            returnedAccessRequest.IdentificationRequest = returnedIdentificationRequest;
+
+            return returnedAccessRequest;
+        });
     }
 }
