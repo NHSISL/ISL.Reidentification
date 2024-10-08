@@ -41,6 +41,13 @@ const MenuComponent: React.FC = () => {
                 <SecuredLink to="/userAccess">UserAccess</SecuredLink>
             </ListGroup.Item>
 
+            <ListGroup.Item
+                className={`bg-light ${activePath === '/delegatedUserAccess' ? 'active' : ''}`}
+                onClick={() => handleItemClick('/delegatedUserAccess')}>
+                <FontAwesomeIcon icon={faCog} className="me-2 fa-icon" />
+                <SecuredLink to="/delegatedUserAccess">Delegated User Access</SecuredLink>
+            </ListGroup.Item>
+
             {/*<ListGroup.Item*/}
             {/*    className={`bg-light ${activePath === '/page1/1' ? 'active' : ''}`}*/}
             {/*    onClick={() => handleItemClick('/page1/1')}>*/}

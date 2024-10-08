@@ -17,6 +17,7 @@ import { Home } from './pages/home';
 import { ConfigurationHome } from './pages/configuration/configurationHome';
 import { Lookups } from './pages/configuration/lookups';
 import { UserAccess } from './pages/userAccess';
+import { DelegatedUserAccess } from './pages/delegatedUserAccess';
 
 // TODO:
 //      - API Secured Routes
@@ -44,6 +45,10 @@ function App({ instance }: any) {
                 {
                     path: "userAccess",
                     element: <UserAccess />
+                },
+                {
+                    path: "delegatedUserAccess",
+                    element: <DelegatedUserAccess />
                 },
                 {
                     path: "page1/:id",
