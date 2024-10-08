@@ -1,6 +1,5 @@
 import { Guid } from "guid-typescript";
 
-
 export class PdsData {
     public rowId: Guid;
     public pseudoNhsNumber: string;
@@ -11,7 +10,6 @@ export class PdsData {
     public currentCcgOfRegistration: string;
     public icbOfRegistration?: string;
     public currentIcbOfRegistration?: string;
-
 
     constructor(pds: any) {
         this.rowId = pds.rowId ? Guid.parse(pds.rowId) : Guid.parse(Guid.EMPTY);

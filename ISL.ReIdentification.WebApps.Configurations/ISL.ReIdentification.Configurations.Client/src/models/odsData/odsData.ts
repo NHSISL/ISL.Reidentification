@@ -1,6 +1,5 @@
 import { Guid } from "guid-typescript";
-import { PdsData } from "../pds/pds";
-
+import { PdsData } from "../pds/pdsData";
 export class Ods {
     public id: Guid;
     public organisationCode_Root: string;
