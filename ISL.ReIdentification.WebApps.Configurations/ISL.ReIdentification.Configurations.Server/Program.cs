@@ -4,6 +4,7 @@
 
 using System.Text.Json;
 using ISL.Providers.Notifications.Abstractions;
+using ISL.Providers.Notifications.GovukNotify.Models;
 using ISL.Providers.Notifications.GovukNotify.Providers.Notifications;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
 using ISL.ReIdentification.Core.Brokers.Identifiers;
@@ -11,6 +12,7 @@ using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Brokers.Notifications;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.PatientOrgReference;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
+using ISL.ReIdentification.Core.Models.Brokers.Notifications;
 using ISL.ReIdentification.Core.Models.Foundations.Lookups;
 using ISL.ReIdentification.Core.Services.Foundations.AccessAudits;
 using ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses;
@@ -52,7 +54,7 @@ namespace ISL.ReIdentification.Configurations.Server
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddControllers();
-            AddProviders(builder.Services);
+            AddProviders(builder.Services, builder.Configuration);
             AddBrokers(builder.Services);
             AddFoundationServices(builder.Services);
             AddProcessingServices(builder.Services);
@@ -110,8 +112,18 @@ namespace ISL.ReIdentification.Configurations.Server
             app.Run();
         }
 
-        private static void AddProviders(IServiceCollection services)
+        private static void AddProviders(IServiceCollection services, IConfiguration configuration)
         {
+            NotificationConfigurations notificationConfigurations = configuration
+                .GetSection("notificationConfigurations")
+                    .Get<NotificationConfigurations>();
+
+            NotifyConfigurations notifyConfigurations = new NotifyConfigurations
+            {
+                ApiKey = notificationConfigurations.ApiKey
+            };
+
+            services.AddSingleton(notifyConfigurations);
             services.AddTransient<INotificationAbstractionProvider, NotificationAbstractionProvider>();
             services.AddTransient<INotificationProvider, GovukNotifyProvider>();
         }
