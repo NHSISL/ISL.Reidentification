@@ -1,5 +1,6 @@
 import { Container } from "react-bootstrap"
 import BreadCrumbBase from "../components/bases/layouts/BreadCrumb/BreadCrumbBase"
+import DelegatedUserAccessTable from "../components/delegatedUserAccess/delegatedUserAccessTable"
 
 export const DelegatedUserAccess = () => {
     return (
@@ -11,9 +12,8 @@ export const DelegatedUserAccess = () => {
                     currentLink="Delegated User Access">
                 </BreadCrumbBase>
                 <div className="mt-3">
-                    <h1>Delegated User Access</h1>
                     <p>Role Needs to be in Security Matrix and Azure AD against user.</p>
-                    {/* <UserAccess/>*/}
+                     <DelegatedUserAccessTable/>
                 </div>
             </section>
         </Container>

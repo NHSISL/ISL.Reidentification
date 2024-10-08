@@ -1,5 +1,6 @@
 import { Container } from "react-bootstrap"
 import BreadCrumbBase from "../components/bases/layouts/BreadCrumb/BreadCrumbBase"
+import PdsTable from "../components/pdsData/pdsTable"
 
 export const PdsData = () => {
     return (
@@ -11,9 +12,8 @@ export const PdsData = () => {
                     currentLink="Pds Data">
                 </BreadCrumbBase>
                 <div className="mt-3">
-                    <h1>Pds Data</h1>
                     <p>Role Needs to be in Security Matrix and Azure AD against user.</p>
-                    {/* <UserAccess/>*/}
+                    <PdsTable />
                 </div>
             </section>
         </Container>

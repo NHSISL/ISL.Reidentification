@@ -38,7 +38,7 @@ export const SecuredLink = ({ to, children, allowedRoles = [], deniedRoles = [] 
 
     if (isAuthenticated && (allowedRoles.length === 0 || userIsInRole(allowedRoles))) {
         return <span>
-            <Link to={to}>
+            <Link to={to} className="text-white">
                 {children}
             </Link>
         </span>
