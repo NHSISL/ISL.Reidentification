@@ -21,15 +21,15 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             Guid someId = Guid.NewGuid();
             SqlException sqlException = CreateSqlException();
 
-            var failedLookupStorageException =
-                new FailedLookupStorageException(
+            var failedStorageLookupException =
+                new FailedStorageLookupException(
                     message: "Failed lookup storage error occurred, contact support.",
                     innerException: sqlException);
 
             var expectedLookupDependencyException =
                 new LookupDependencyException(
                     message: "Lookup dependency error occurred, contact support.",
-                    innerException: failedLookupStorageException);
+                    innerException: failedStorageLookupException);
 
             this.reIdentificationStorageBroker.Setup(broker =>
                 broker.SelectLookupByIdAsync(It.IsAny<Guid>()))

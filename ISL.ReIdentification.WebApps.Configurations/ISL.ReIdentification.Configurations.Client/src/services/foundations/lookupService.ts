@@ -1,6 +1,6 @@
 import { useMsal } from "@azure/msal-react";
 import { Guid } from "guid-typescript";
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "react-query";
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import LookupBroker from "../../brokers/apiBroker.lookups";
 import { Lookup } from "../../models/lookups/lookup";
 
@@ -28,27 +28,27 @@ export const lookupService = {
     useRetrieveAllLookups: (query: string) => {
         const broker = new LookupBroker();
 
-        return useQuery(
-            ["LookupGetAll", { query: query }],
-            () => broker.GetAllLookupsAsync(query),
-            { staleTime: Infinity });
+        return useQuery({
+            queryKey: ["LookupGetAll", { query: query }],
+            queryFn: () => broker.GetAllLookupsAsync(query),
+            staleTime: Infinity
+        });
     },
 
     useRetrieveAllLookupPages: (query: string) => {
         const broker = new LookupBroker();
 
-        return useInfiniteQuery(
-            ["LookupGetAll", { query: query }],
-            ({ pageParam }: { pageParam?: string }) => {
+        return useInfiniteQuery({
+            queryKey: ["LookupGetAll", { query: query }],
+            queryFn: ({ pageParam }: { pageParam?: string }) => {
                 if (!pageParam) {
                     return broker.GetLookupFirstPagesAsync(query)
                 }
                 return broker.GetLookupSubsequentPagesAsync(pageParam)
             },
-            {
-                getNextPageParam: (lastPage: { nextPage?: string }) => lastPage.nextPage,
-                staleTime: Infinity
-            });
+            getNextPageParam: (lastPage: { nextPage?: string }) => lastPage.nextPage,
+            staleTime: Infinity
+        });
     },
 
     useModifyLookup: () => {

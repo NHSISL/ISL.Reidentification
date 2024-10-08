@@ -1,4 +1,5 @@
-import { Guid } from 'guid-typescript';
+import { Guid } from "guid-typescript";
+
 
 export class Lookup {
     public id: Guid;

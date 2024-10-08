@@ -74,7 +74,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.Lookups
         {
             if (maybeLookup is null)
             {
-                throw new NotFoundLookupException(lookupId);
+                throw new NotFoundLookupException(message: $"Lookup not found with Id: {lookupId}");
             }
         }
 

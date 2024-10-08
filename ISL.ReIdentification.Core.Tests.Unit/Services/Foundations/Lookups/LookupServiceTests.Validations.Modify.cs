@@ -317,7 +317,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
             Lookup nullLookup = null;
 
             var notFoundLookupException =
-                new NotFoundLookupException(nonExistLookup.Id);
+                new NotFoundLookupException(message: $"Lookup not found with Id: {nonExistLookup.Id}");
 
             var expectedLookupValidationException =
                 new LookupValidationException(
