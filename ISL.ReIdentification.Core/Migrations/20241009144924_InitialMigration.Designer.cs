@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ISL.ReIdentification.Core.Migrations
 {
     [DbContext(typeof(ReIdentificationStorageBroker))]
-    [Migration("20241009142739_InitialMigration")]
+    [Migration("20241009144924_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
