@@ -24,7 +24,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Impersonatio
 
             var failedImpersonationContextStorageException =
                 new FailedStorageImpersonationContextException(
-                    message: "Failed delegated access storage error occurred, contact support.",
+                    message: "Failed impersonation context storage error occurred, contact support.",
                         innerException: sqlException);
 
             var expectedImpersonationContextDependencyException =
@@ -87,7 +87,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Impersonatio
 
             var failedOperationImpersonationContextException =
                 new FailedOperationImpersonationContextException(
-                    message: "Failed operation delegated access error occurred, contact support.",
+                    message: "Failed operation impersonation context error occurred, contact support.",
                     innerException: dbUpdateException);
 
             var expectedImpersonationContextDependencyException =
@@ -141,7 +141,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Impersonatio
 
             var lockedImpersonationContextException =
                 new LockedImpersonationContextException(
-                    message: "Locked delegated access record error occurred, please try again.",
+                    message: "Locked impersonation context record error occurred, please try again.",
                     innerException: dbUpdateConcurrencyException);
 
             var expectedImpersonationContextDependencyValidationException =
@@ -200,7 +200,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Impersonatio
 
             var failedServiceImpersonationContextException =
                 new FailedServiceImpersonationContextException(
-                    message: "Failed service delegated access error occurred, contact support.",
+                    message: "Failed service impersonation context error occurred, contact support.",
                     innerException: serviceException);
 
             var expectedImpersonationContextServiceException =

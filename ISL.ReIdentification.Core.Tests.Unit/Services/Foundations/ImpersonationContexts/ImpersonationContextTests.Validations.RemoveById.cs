@@ -21,7 +21,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Impersonatio
 
             var invalidImpersonationContextException =
                 new InvalidImpersonationContextException(
-                    message: "Invalid delegated access. Please correct the errors and try again.");
+                    message: "Invalid impersonation context. Please correct the errors and try again.");
 
             invalidImpersonationContextException.AddData(
                 key: nameof(ImpersonationContext.Id),

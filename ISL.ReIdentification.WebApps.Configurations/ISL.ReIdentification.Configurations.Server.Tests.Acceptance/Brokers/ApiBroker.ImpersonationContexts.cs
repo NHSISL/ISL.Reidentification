@@ -13,21 +13,24 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Brokers
     {
         private const string ImpersonationContextsRelativeUrl = "api/impersonationContexts";
 
-        public async ValueTask<ImpersonationContext> PostImpersonationContextAsync(ImpersonationContext impersonationContext) =>
-            await this.apiFactoryClient.PostContentAsync(ImpersonationContextsRelativeUrl, impersonationContext);
+        public async ValueTask<ImpersonationContext> PostImpersonationContextAsync(
+            ImpersonationContext impersonationContext) =>
+                await this.apiFactoryClient.PostContentAsync(ImpersonationContextsRelativeUrl, impersonationContext);
 
         public async ValueTask<List<ImpersonationContext>> GetAllImpersonationContextsAsync() =>
-            await this.apiFactoryClient.GetContentAsync<List<ImpersonationContext>>($"{ImpersonationContextsRelativeUrl}/");
+            await this.apiFactoryClient.GetContentAsync<List<ImpersonationContext>>(
+                $"{ImpersonationContextsRelativeUrl}/");
 
         public async ValueTask<ImpersonationContext> GetImpersonationContextByIdAsync(Guid impersonationContextId) =>
             await this.apiFactoryClient
                 .GetContentAsync<ImpersonationContext>($"{ImpersonationContextsRelativeUrl}/{impersonationContextId}");
 
         public async ValueTask<ImpersonationContext> DeleteImpersonationContextByIdAsync(Guid impersonationContextId) =>
-            await this.apiFactoryClient
-                .DeleteContentAsync<ImpersonationContext>($"{ImpersonationContextsRelativeUrl}/{impersonationContextId}");
+            await this.apiFactoryClient.DeleteContentAsync<ImpersonationContext>(
+                $"{ImpersonationContextsRelativeUrl}/{impersonationContextId}");
 
-        public async ValueTask<ImpersonationContext> PutImpersonationContextAsync(ImpersonationContext impersonationContext) =>
-            await this.apiFactoryClient.PutContentAsync(ImpersonationContextsRelativeUrl, impersonationContext);
+        public async ValueTask<ImpersonationContext> PutImpersonationContextAsync(
+            ImpersonationContext impersonationContext) =>
+                await this.apiFactoryClient.PutContentAsync(ImpersonationContextsRelativeUrl, impersonationContext);
     }
 }

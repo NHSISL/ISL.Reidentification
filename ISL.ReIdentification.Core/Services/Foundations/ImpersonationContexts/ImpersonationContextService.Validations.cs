@@ -193,7 +193,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ImpersonationContexts
         {
             if (impersonationContext is null)
             {
-                throw new NullImpersonationContextException("Delegated access is null.");
+                throw new NullImpersonationContextException("Impersonation context is null.");
             }
         }
 
@@ -322,7 +322,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ImpersonationContexts
         {
             var invalidImpersonationContextException =
                 new InvalidImpersonationContextException(
-                    message: "Invalid delegated access. Please correct the errors and try again.");
+                    message: "Invalid impersonation context. Please correct the errors and try again.");
 
             foreach ((dynamic rule, string parameter) in validations)
             {
