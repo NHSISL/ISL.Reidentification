@@ -5,9 +5,9 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
-using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses.Exceptions;
-using ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses;
+using ISL.ReIdentification.Core.Models.Foundations.ImpersonationContexts;
+using ISL.ReIdentification.Core.Models.Foundations.ImpersonationContexts.Exceptions;
+using ISL.ReIdentification.Core.Services.Foundations.ImpersonationContexts;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
 
@@ -15,175 +15,175 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class DelegatedAccessesController : RESTFulController
+    public class ImpersonationContextsController : RESTFulController
     {
-        private readonly IDelegatedAccessService delegatedAccessService;
+        private readonly IImpersonationContextService impersonationContextService;
 
-        public DelegatedAccessesController(IDelegatedAccessService delegatedAccessService) =>
-            this.delegatedAccessService = delegatedAccessService;
+        public ImpersonationContextsController(IImpersonationContextService impersonationContextService) =>
+            this.impersonationContextService = impersonationContextService;
 
         [HttpPost]
-        public async ValueTask<ActionResult<DelegatedAccess>> PostDelegatedAccessAsync(DelegatedAccess delegatedAccess)
+        public async ValueTask<ActionResult<ImpersonationContext>> PostImpersonationContextAsync(ImpersonationContext impersonationContext)
         {
             try
             {
-                DelegatedAccess addedDelegatedAccess =
-                    await this.delegatedAccessService.AddDelegatedAccessAsync(delegatedAccess);
+                ImpersonationContext addedImpersonationContext =
+                    await this.impersonationContextService.AddImpersonationContextAsync(impersonationContext);
 
-                return Created(addedDelegatedAccess);
+                return Created(addedImpersonationContext);
             }
-            catch (DelegatedAccessValidationException lookupValidationException)
+            catch (ImpersonationContextValidationException lookupValidationException)
             {
                 return BadRequest(lookupValidationException.InnerException);
             }
-            catch (DelegatedAccessDependencyValidationException lookupDependencyValidationException)
-               when (lookupDependencyValidationException.InnerException is AlreadyExistsDelegatedAccessException)
+            catch (ImpersonationContextDependencyValidationException lookupDependencyValidationException)
+               when (lookupDependencyValidationException.InnerException is AlreadyExistsImpersonationContextException)
             {
                 return Conflict(lookupDependencyValidationException.InnerException);
             }
-            catch (DelegatedAccessDependencyValidationException lookupDependencyValidationException)
+            catch (ImpersonationContextDependencyValidationException lookupDependencyValidationException)
             {
                 return BadRequest(lookupDependencyValidationException.InnerException);
             }
-            catch (DelegatedAccessDependencyException lookupDependencyException)
+            catch (ImpersonationContextDependencyException lookupDependencyException)
             {
                 return InternalServerError(lookupDependencyException);
             }
-            catch (DelegatedAccessServiceException lookupServiceException)
+            catch (ImpersonationContextServiceException lookupServiceException)
             {
                 return InternalServerError(lookupServiceException);
             }
         }
 
         [HttpGet]
-        public async ValueTask<ActionResult<IQueryable<DelegatedAccess>>> GetAsync()
+        public async ValueTask<ActionResult<IQueryable<ImpersonationContext>>> GetAsync()
         {
             try
             {
-                IQueryable<DelegatedAccess> delegatedAccesses =
-                    await this.delegatedAccessService.RetrieveAllDelegatedAccessesAsync();
+                IQueryable<ImpersonationContext> impersonationContexts =
+                    await this.impersonationContextService.RetrieveAllImpersonationContextsAsync();
 
-                return Ok(delegatedAccesses);
+                return Ok(impersonationContexts);
             }
-            catch (DelegatedAccessDependencyException delegatedAccessDependencyException)
+            catch (ImpersonationContextDependencyException impersonationContextDependencyException)
             {
-                return InternalServerError(delegatedAccessDependencyException);
+                return InternalServerError(impersonationContextDependencyException);
             }
-            catch (DelegatedAccessServiceException delegatedAccessServiceException)
+            catch (ImpersonationContextServiceException impersonationContextServiceException)
             {
-                return InternalServerError(delegatedAccessServiceException);
+                return InternalServerError(impersonationContextServiceException);
             }
         }
 
-        [HttpGet("{delegatedAccessId}")]
-        public async ValueTask<ActionResult<DelegatedAccess>> GetDelegatedAccessByIdAsync(Guid delegatedAccessId)
+        [HttpGet("{impersonationContextId}")]
+        public async ValueTask<ActionResult<ImpersonationContext>> GetImpersonationContextByIdAsync(Guid impersonationContextId)
         {
             try
             {
-                DelegatedAccess delegatedAccess =
-                    await this.delegatedAccessService.RetrieveDelegatedAccessByIdAsync(delegatedAccessId);
+                ImpersonationContext impersonationContext =
+                    await this.impersonationContextService.RetrieveImpersonationContextByIdAsync(impersonationContextId);
 
-                return Ok(delegatedAccess);
+                return Ok(impersonationContext);
             }
-            catch (DelegatedAccessValidationException delegatedAccessValidationException)
-                when (delegatedAccessValidationException.InnerException is NotFoundDelegatedAccessException)
+            catch (ImpersonationContextValidationException impersonationContextValidationException)
+                when (impersonationContextValidationException.InnerException is NotFoundImpersonationContextException)
             {
-                return NotFound(delegatedAccessValidationException.InnerException);
+                return NotFound(impersonationContextValidationException.InnerException);
             }
-            catch (DelegatedAccessValidationException delegatedAccessValidationException)
+            catch (ImpersonationContextValidationException impersonationContextValidationException)
             {
-                return BadRequest(delegatedAccessValidationException.InnerException);
+                return BadRequest(impersonationContextValidationException.InnerException);
             }
-            catch (DelegatedAccessDependencyValidationException delegatedAccessDependencyValidationException)
+            catch (ImpersonationContextDependencyValidationException impersonationContextDependencyValidationException)
             {
-                return BadRequest(delegatedAccessDependencyValidationException.InnerException);
+                return BadRequest(impersonationContextDependencyValidationException.InnerException);
             }
-            catch (DelegatedAccessDependencyException delegatedAccessDependencyException)
+            catch (ImpersonationContextDependencyException impersonationContextDependencyException)
             {
-                return InternalServerError(delegatedAccessDependencyException);
+                return InternalServerError(impersonationContextDependencyException);
             }
-            catch (DelegatedAccessServiceException delegatedAccessServiceException)
+            catch (ImpersonationContextServiceException impersonationContextServiceException)
             {
-                return InternalServerError(delegatedAccessServiceException);
+                return InternalServerError(impersonationContextServiceException);
             }
         }
 
         [HttpPut]
-        public async ValueTask<ActionResult<DelegatedAccess>> PutDelegatedAccessAsync(DelegatedAccess delegatedAccess)
+        public async ValueTask<ActionResult<ImpersonationContext>> PutImpersonationContextAsync(ImpersonationContext impersonationContext)
         {
             try
             {
-                DelegatedAccess modifiedDelegatedAccess =
-                    await this.delegatedAccessService.ModifyDelegatedAccessAsync(delegatedAccess);
+                ImpersonationContext modifiedImpersonationContext =
+                    await this.impersonationContextService.ModifyImpersonationContextAsync(impersonationContext);
 
-                return Ok(modifiedDelegatedAccess);
+                return Ok(modifiedImpersonationContext);
             }
-            catch (DelegatedAccessValidationException delegatedAccessValidationException)
-                when (delegatedAccessValidationException.InnerException
-                    is NotFoundDelegatedAccessException)
+            catch (ImpersonationContextValidationException impersonationContextValidationException)
+                when (impersonationContextValidationException.InnerException
+                    is NotFoundImpersonationContextException)
             {
-                return NotFound(delegatedAccessValidationException.InnerException);
+                return NotFound(impersonationContextValidationException.InnerException);
             }
-            catch (DelegatedAccessValidationException delegatedAccessValidationException)
+            catch (ImpersonationContextValidationException impersonationContextValidationException)
             {
-                return BadRequest(delegatedAccessValidationException.InnerException);
+                return BadRequest(impersonationContextValidationException.InnerException);
             }
-            catch (DelegatedAccessDependencyValidationException delegatedAccessDependencyValidationException)
-                when (delegatedAccessDependencyValidationException.InnerException
-                    is AlreadyExistsDelegatedAccessException)
+            catch (ImpersonationContextDependencyValidationException impersonationContextDependencyValidationException)
+                when (impersonationContextDependencyValidationException.InnerException
+                    is AlreadyExistsImpersonationContextException)
             {
-                return Conflict(delegatedAccessDependencyValidationException.InnerException);
+                return Conflict(impersonationContextDependencyValidationException.InnerException);
             }
-            catch (DelegatedAccessDependencyValidationException delegatedAccessDependencyValidationException)
+            catch (ImpersonationContextDependencyValidationException impersonationContextDependencyValidationException)
             {
-                return BadRequest(delegatedAccessDependencyValidationException.InnerException);
+                return BadRequest(impersonationContextDependencyValidationException.InnerException);
             }
-            catch (DelegatedAccessDependencyException delegatedAccessDependencyException)
+            catch (ImpersonationContextDependencyException impersonationContextDependencyException)
             {
-                return InternalServerError(delegatedAccessDependencyException);
+                return InternalServerError(impersonationContextDependencyException);
             }
-            catch (DelegatedAccessServiceException delegatedAccessServiceException)
+            catch (ImpersonationContextServiceException impersonationContextServiceException)
             {
-                return InternalServerError(delegatedAccessServiceException);
+                return InternalServerError(impersonationContextServiceException);
             }
         }
 
-        [HttpDelete("{delegatedAccessId}")]
-        public async ValueTask<ActionResult<DelegatedAccess>> DeleteDelegatedAccessByIdAsync(Guid delegatedAccessId)
+        [HttpDelete("{impersonationContextId}")]
+        public async ValueTask<ActionResult<ImpersonationContext>> DeleteImpersonationContextByIdAsync(Guid impersonationContextId)
         {
             try
             {
-                DelegatedAccess deletedDelegatedAccess =
-                    await this.delegatedAccessService.RemoveDelegatedAccessByIdAsync(delegatedAccessId);
+                ImpersonationContext deletedImpersonationContext =
+                    await this.impersonationContextService.RemoveImpersonationContextByIdAsync(impersonationContextId);
 
-                return Ok(deletedDelegatedAccess);
+                return Ok(deletedImpersonationContext);
             }
-            catch (DelegatedAccessValidationException delegatedAccessValidationException)
-                when (delegatedAccessValidationException.InnerException
-                    is NotFoundDelegatedAccessException)
+            catch (ImpersonationContextValidationException impersonationContextValidationException)
+                when (impersonationContextValidationException.InnerException
+                    is NotFoundImpersonationContextException)
             {
-                return NotFound(delegatedAccessValidationException.InnerException);
+                return NotFound(impersonationContextValidationException.InnerException);
             }
-            catch (DelegatedAccessValidationException delegatedAccessValidationException)
+            catch (ImpersonationContextValidationException impersonationContextValidationException)
             {
-                return BadRequest(delegatedAccessValidationException.InnerException);
+                return BadRequest(impersonationContextValidationException.InnerException);
             }
-            catch (DelegatedAccessDependencyValidationException delegatedAccessDependencyValidationException)
-                when (delegatedAccessDependencyValidationException.InnerException is LockedDelegatedAccessException)
+            catch (ImpersonationContextDependencyValidationException impersonationContextDependencyValidationException)
+                when (impersonationContextDependencyValidationException.InnerException is LockedImpersonationContextException)
             {
-                return Locked(delegatedAccessDependencyValidationException.InnerException);
+                return Locked(impersonationContextDependencyValidationException.InnerException);
             }
-            catch (DelegatedAccessDependencyValidationException delegatedAccessDependencyValidationException)
+            catch (ImpersonationContextDependencyValidationException impersonationContextDependencyValidationException)
             {
-                return BadRequest(delegatedAccessDependencyValidationException.InnerException);
+                return BadRequest(impersonationContextDependencyValidationException.InnerException);
             }
-            catch (DelegatedAccessDependencyException delegatedAccessDependencyException)
+            catch (ImpersonationContextDependencyException impersonationContextDependencyException)
             {
-                return InternalServerError(delegatedAccessDependencyException);
+                return InternalServerError(impersonationContextDependencyException);
             }
-            catch (DelegatedAccessServiceException delegatedAccessServiceException)
+            catch (ImpersonationContextServiceException impersonationContextServiceException)
             {
-                return InternalServerError(delegatedAccessServiceException);
+                return InternalServerError(impersonationContextServiceException);
             }
         }
     }

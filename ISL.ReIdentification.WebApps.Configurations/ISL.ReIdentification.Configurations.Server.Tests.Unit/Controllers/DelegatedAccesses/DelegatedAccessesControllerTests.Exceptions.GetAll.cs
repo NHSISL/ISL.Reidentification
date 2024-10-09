@@ -4,16 +4,16 @@
 
 using System.Linq;
 using System.Threading.Tasks;
-using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
+using ISL.ReIdentification.Core.Models.Foundations.ImpersonationContexts;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RESTFulSense.Clients.Extensions;
 using RESTFulSense.Models;
 using Xeptions;
 
-namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.DelegatedAccesses
+namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.ImpersonationContexts
 {
-    public partial class DelegatedAccessesControllerTests
+    public partial class ImpersonationContextsControllerTests
     {
         [Theory]
         [MemberData(nameof(ServerExceptions))]
@@ -21,30 +21,30 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
             Xeption serverException)
         {
             // given
-            IQueryable<DelegatedAccess> someDelegatedAccesses = CreateRandomDelegatedAccesses();
+            IQueryable<ImpersonationContext> someImpersonationContexts = CreateRandomImpersonationContexts();
 
             InternalServerErrorObjectResult expectedInternalServerErrorObjectResult =
                 InternalServerError(serverException);
 
             var expectedActionResult =
-                new ActionResult<IQueryable<DelegatedAccess>>(expectedInternalServerErrorObjectResult);
+                new ActionResult<IQueryable<ImpersonationContext>>(expectedInternalServerErrorObjectResult);
 
-            this.delegatedAccessServiceMock.Setup(service =>
-                service.RetrieveAllDelegatedAccessesAsync())
+            this.impersonationContextServiceMock.Setup(service =>
+                service.RetrieveAllImpersonationContextsAsync())
                     .ThrowsAsync(serverException);
 
             // when
-            ActionResult<IQueryable<DelegatedAccess>> actualActionResult =
-                await this.delegatedAccessesController.GetAsync();
+            ActionResult<IQueryable<ImpersonationContext>> actualActionResult =
+                await this.impersonationContextsController.GetAsync();
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
-            this.delegatedAccessServiceMock.Verify(service =>
-                service.RetrieveAllDelegatedAccessesAsync(),
+            this.impersonationContextServiceMock.Verify(service =>
+                service.RetrieveAllImpersonationContextsAsync(),
                     Times.Once);
 
-            this.delegatedAccessServiceMock.VerifyNoOtherCalls();
+            this.impersonationContextServiceMock.VerifyNoOtherCalls();
         }
     }
 }

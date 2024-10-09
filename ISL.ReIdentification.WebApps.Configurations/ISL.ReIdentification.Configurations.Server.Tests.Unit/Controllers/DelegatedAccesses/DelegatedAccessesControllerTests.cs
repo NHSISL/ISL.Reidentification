@@ -5,25 +5,25 @@
 using System;
 using System.Linq;
 using ISL.ReIdentification.Configurations.Server.Controllers;
-using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
-using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses.Exceptions;
-using ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses;
+using ISL.ReIdentification.Core.Models.Foundations.ImpersonationContexts;
+using ISL.ReIdentification.Core.Models.Foundations.ImpersonationContexts.Exceptions;
+using ISL.ReIdentification.Core.Services.Foundations.ImpersonationContexts;
 using Moq;
 using RESTFulSense.Controllers;
 using Tynamix.ObjectFiller;
 using Xeptions;
 
-namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.DelegatedAccesses
+namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.ImpersonationContexts
 {
-    public partial class DelegatedAccessesControllerTests : RESTFulController
+    public partial class ImpersonationContextsControllerTests : RESTFulController
     {
-        private readonly Mock<IDelegatedAccessService> delegatedAccessServiceMock;
-        private readonly DelegatedAccessesController delegatedAccessesController;
+        private readonly Mock<IImpersonationContextService> impersonationContextServiceMock;
+        private readonly ImpersonationContextsController impersonationContextsController;
 
-        public DelegatedAccessesControllerTests()
+        public ImpersonationContextsControllerTests()
         {
-            delegatedAccessServiceMock = new Mock<IDelegatedAccessService>();
-            delegatedAccessesController = new DelegatedAccessesController(delegatedAccessServiceMock.Object);
+            impersonationContextServiceMock = new Mock<IImpersonationContextService>();
+            impersonationContextsController = new ImpersonationContextsController(impersonationContextServiceMock.Object);
         }
 
         public static TheoryData<Xeption> ValidationExceptions()
@@ -33,11 +33,11 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
 
             return new TheoryData<Xeption>
             {
-                new DelegatedAccessValidationException(
+                new ImpersonationContextValidationException(
                     message: someMessage,
                     innerException: someInnerException),
 
-                new DelegatedAccessDependencyValidationException(
+                new ImpersonationContextDependencyValidationException(
                     message: someMessage,
                     innerException: someInnerException)
             };
@@ -50,11 +50,11 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
 
             return new TheoryData<Xeption>
             {
-                new DelegatedAccessDependencyException(
+                new ImpersonationContextDependencyException(
                     message: someMessage,
                     innerException: someInnerException),
 
-                new DelegatedAccessServiceException(
+                new ImpersonationContextServiceException(
                     message: someMessage,
                     innerException: someInnerException)
             };
@@ -66,26 +66,26 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
         private static int GetRandomNumber() =>
             new IntRange(min: 2, max: 10).GetValue();
 
-        private static DelegatedAccess CreateRandomDelegatedAccess() =>
-            CreateDelegatedAccessFiller().Create();
+        private static ImpersonationContext CreateRandomImpersonationContext() =>
+            CreateImpersonationContextFiller().Create();
 
-        private static IQueryable<DelegatedAccess> CreateRandomDelegatedAccesses()
+        private static IQueryable<ImpersonationContext> CreateRandomImpersonationContexts()
         {
-            return CreateDelegatedAccessFiller()
+            return CreateImpersonationContextFiller()
                 .Create(count: GetRandomNumber())
                     .AsQueryable();
         }
 
-        private static Filler<DelegatedAccess> CreateDelegatedAccessFiller()
+        private static Filler<ImpersonationContext> CreateImpersonationContextFiller()
         {
             string user = Guid.NewGuid().ToString();
             DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;
-            var filler = new Filler<DelegatedAccess>();
+            var filler = new Filler<ImpersonationContext>();
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
-                .OnProperty(delegatedAccess => delegatedAccess.CreatedBy).Use(user)
-                .OnProperty(delegatedAccess => delegatedAccess.UpdatedBy).Use(user);
+                .OnProperty(impersonationContext => impersonationContext.CreatedBy).Use(user)
+                .OnProperty(impersonationContext => impersonationContext.UpdatedBy).Use(user);
 
             return filler;
         }

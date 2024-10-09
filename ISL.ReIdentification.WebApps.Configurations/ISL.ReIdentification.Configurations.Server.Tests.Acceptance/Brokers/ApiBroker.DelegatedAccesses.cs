@@ -5,29 +5,29 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Models.DelegatedAccesses;
+using ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Models.ImpersonationContexts;
 
 namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Brokers
 {
     public partial class ApiBroker
     {
-        private const string DelegatedAccessesRelativeUrl = "api/delegatedAccesses";
+        private const string ImpersonationContextsRelativeUrl = "api/impersonationContexts";
 
-        public async ValueTask<DelegatedAccess> PostDelegatedAccessAsync(DelegatedAccess delegatedAccess) =>
-            await this.apiFactoryClient.PostContentAsync(DelegatedAccessesRelativeUrl, delegatedAccess);
+        public async ValueTask<ImpersonationContext> PostImpersonationContextAsync(ImpersonationContext impersonationContext) =>
+            await this.apiFactoryClient.PostContentAsync(ImpersonationContextsRelativeUrl, impersonationContext);
 
-        public async ValueTask<List<DelegatedAccess>> GetAllDelegatedAccessesAsync() =>
-            await this.apiFactoryClient.GetContentAsync<List<DelegatedAccess>>($"{DelegatedAccessesRelativeUrl}/");
+        public async ValueTask<List<ImpersonationContext>> GetAllImpersonationContextsAsync() =>
+            await this.apiFactoryClient.GetContentAsync<List<ImpersonationContext>>($"{ImpersonationContextsRelativeUrl}/");
 
-        public async ValueTask<DelegatedAccess> GetDelegatedAccessByIdAsync(Guid delegatedAccessId) =>
+        public async ValueTask<ImpersonationContext> GetImpersonationContextByIdAsync(Guid impersonationContextId) =>
             await this.apiFactoryClient
-                .GetContentAsync<DelegatedAccess>($"{DelegatedAccessesRelativeUrl}/{delegatedAccessId}");
+                .GetContentAsync<ImpersonationContext>($"{ImpersonationContextsRelativeUrl}/{impersonationContextId}");
 
-        public async ValueTask<DelegatedAccess> DeleteDelegatedAccessByIdAsync(Guid delegatedAccessId) =>
+        public async ValueTask<ImpersonationContext> DeleteImpersonationContextByIdAsync(Guid impersonationContextId) =>
             await this.apiFactoryClient
-                .DeleteContentAsync<DelegatedAccess>($"{DelegatedAccessesRelativeUrl}/{delegatedAccessId}");
+                .DeleteContentAsync<ImpersonationContext>($"{ImpersonationContextsRelativeUrl}/{impersonationContextId}");
 
-        public async ValueTask<DelegatedAccess> PutDelegatedAccessAsync(DelegatedAccess delegatedAccess) =>
-            await this.apiFactoryClient.PutContentAsync(DelegatedAccessesRelativeUrl, delegatedAccess);
+        public async ValueTask<ImpersonationContext> PutImpersonationContextAsync(ImpersonationContext impersonationContext) =>
+            await this.apiFactoryClient.PutContentAsync(ImpersonationContextsRelativeUrl, impersonationContext);
     }
 }

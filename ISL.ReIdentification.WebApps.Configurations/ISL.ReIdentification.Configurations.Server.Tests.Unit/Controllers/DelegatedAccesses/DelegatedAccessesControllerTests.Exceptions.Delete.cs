@@ -4,17 +4,17 @@
 
 using System;
 using System.Threading.Tasks;
-using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
-using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses.Exceptions;
+using ISL.ReIdentification.Core.Models.Foundations.ImpersonationContexts;
+using ISL.ReIdentification.Core.Models.Foundations.ImpersonationContexts.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RESTFulSense.Clients.Extensions;
 using RESTFulSense.Models;
 using Xeptions;
 
-namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.DelegatedAccesses
+namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.ImpersonationContexts
 {
-    public partial class DelegatedAccessesControllerTests
+    public partial class ImpersonationContextsControllerTests
     {
         [Theory]
         [MemberData(nameof(ValidationExceptions))]
@@ -27,24 +27,24 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
                 BadRequest(validationException.InnerException);
 
             var expectedActionResult =
-                new ActionResult<DelegatedAccess>(expectedBadRequestObjectResult);
+                new ActionResult<ImpersonationContext>(expectedBadRequestObjectResult);
 
-            this.delegatedAccessServiceMock.Setup(service =>
-                service.RemoveDelegatedAccessByIdAsync(It.IsAny<Guid>()))
+            this.impersonationContextServiceMock.Setup(service =>
+                service.RemoveImpersonationContextByIdAsync(It.IsAny<Guid>()))
                     .ThrowsAsync(validationException);
 
             // when
-            ActionResult<DelegatedAccess> actualActionResult =
-                await this.delegatedAccessesController.DeleteDelegatedAccessByIdAsync(someId);
+            ActionResult<ImpersonationContext> actualActionResult =
+                await this.impersonationContextsController.DeleteImpersonationContextByIdAsync(someId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
-            this.delegatedAccessServiceMock.Verify(service =>
-                service.RemoveDelegatedAccessByIdAsync(It.IsAny<Guid>()),
+            this.impersonationContextServiceMock.Verify(service =>
+                service.RemoveImpersonationContextByIdAsync(It.IsAny<Guid>()),
                     Times.Once);
 
-            this.delegatedAccessServiceMock.VerifyNoOtherCalls();
+            this.impersonationContextServiceMock.VerifyNoOtherCalls();
         }
 
         [Theory]
@@ -59,24 +59,24 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
                 InternalServerError(validationException);
 
             var expectedActionResult =
-                new ActionResult<DelegatedAccess>(expectedBadRequestObjectResult);
+                new ActionResult<ImpersonationContext>(expectedBadRequestObjectResult);
 
-            this.delegatedAccessServiceMock.Setup(service =>
-                service.RemoveDelegatedAccessByIdAsync(It.IsAny<Guid>()))
+            this.impersonationContextServiceMock.Setup(service =>
+                service.RemoveImpersonationContextByIdAsync(It.IsAny<Guid>()))
                     .ThrowsAsync(validationException);
 
             // when
-            ActionResult<DelegatedAccess> actualActionResult =
-                await this.delegatedAccessesController.DeleteDelegatedAccessByIdAsync(someId);
+            ActionResult<ImpersonationContext> actualActionResult =
+                await this.impersonationContextsController.DeleteImpersonationContextByIdAsync(someId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
-            this.delegatedAccessServiceMock.Verify(service =>
-                service.RemoveDelegatedAccessByIdAsync(It.IsAny<Guid>()),
+            this.impersonationContextServiceMock.Verify(service =>
+                service.RemoveImpersonationContextByIdAsync(It.IsAny<Guid>()),
                     Times.Once);
 
-            this.delegatedAccessServiceMock.VerifyNoOtherCalls();
+            this.impersonationContextServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -86,37 +86,37 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
             Guid someId = Guid.NewGuid();
             string someMessage = GetRandomString();
 
-            var notFoundDelegatedAccessException =
-                new NotFoundDelegatedAccessException(
+            var notFoundImpersonationContextException =
+                new NotFoundImpersonationContextException(
                     message: someMessage);
 
-            var delegatedAccessValidationException =
-                new DelegatedAccessValidationException(
+            var impersonationContextValidationException =
+                new ImpersonationContextValidationException(
                     message: someMessage,
-                    innerException: notFoundDelegatedAccessException);
+                    innerException: notFoundImpersonationContextException);
 
             NotFoundObjectResult expectedNotFoundObjectResult =
-                NotFound(notFoundDelegatedAccessException);
+                NotFound(notFoundImpersonationContextException);
 
             var expectedActionResult =
-                new ActionResult<DelegatedAccess>(expectedNotFoundObjectResult);
+                new ActionResult<ImpersonationContext>(expectedNotFoundObjectResult);
 
-            this.delegatedAccessServiceMock.Setup(service =>
-                service.RemoveDelegatedAccessByIdAsync(It.IsAny<Guid>()))
-                    .ThrowsAsync(delegatedAccessValidationException);
+            this.impersonationContextServiceMock.Setup(service =>
+                service.RemoveImpersonationContextByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(impersonationContextValidationException);
 
             // when
-            ActionResult<DelegatedAccess> actualActionResult =
-                await this.delegatedAccessesController.DeleteDelegatedAccessByIdAsync(someId);
+            ActionResult<ImpersonationContext> actualActionResult =
+                await this.impersonationContextsController.DeleteImpersonationContextByIdAsync(someId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
-            this.delegatedAccessServiceMock.Verify(service =>
-                service.RemoveDelegatedAccessByIdAsync(It.IsAny<Guid>()),
+            this.impersonationContextServiceMock.Verify(service =>
+                service.RemoveImpersonationContextByIdAsync(It.IsAny<Guid>()),
                     Times.Once);
 
-            this.delegatedAccessServiceMock.VerifyNoOtherCalls();
+            this.impersonationContextServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -127,38 +127,38 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
             var someInnerException = new Exception();
             string someMessage = GetRandomString();
 
-            var lockedDelegatedAccessException =
-                new LockedDelegatedAccessException(
+            var lockedImpersonationContextException =
+                new LockedImpersonationContextException(
                     message: someMessage,
                     innerException: someInnerException);
 
-            var delegatedAccessDependencyValidationException =
-                new DelegatedAccessDependencyValidationException(
+            var impersonationContextDependencyValidationException =
+                new ImpersonationContextDependencyValidationException(
                     message: someMessage,
-                    innerException: lockedDelegatedAccessException);
+                    innerException: lockedImpersonationContextException);
 
             LockedObjectResult expectedConflictObjectResult =
-                Locked(lockedDelegatedAccessException);
+                Locked(lockedImpersonationContextException);
 
             var expectedActionResult =
-                new ActionResult<DelegatedAccess>(expectedConflictObjectResult);
+                new ActionResult<ImpersonationContext>(expectedConflictObjectResult);
 
-            this.delegatedAccessServiceMock.Setup(service =>
-                service.RemoveDelegatedAccessByIdAsync(It.IsAny<Guid>()))
-                    .ThrowsAsync(delegatedAccessDependencyValidationException);
+            this.impersonationContextServiceMock.Setup(service =>
+                service.RemoveImpersonationContextByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(impersonationContextDependencyValidationException);
 
             // when
-            ActionResult<DelegatedAccess> actualActionResult =
-                await this.delegatedAccessesController.DeleteDelegatedAccessByIdAsync(someId);
+            ActionResult<ImpersonationContext> actualActionResult =
+                await this.impersonationContextsController.DeleteImpersonationContextByIdAsync(someId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
-            this.delegatedAccessServiceMock.Verify(service =>
-                service.RemoveDelegatedAccessByIdAsync(It.IsAny<Guid>()),
+            this.impersonationContextServiceMock.Verify(service =>
+                service.RemoveImpersonationContextByIdAsync(It.IsAny<Guid>()),
                     Times.Once);
 
-            this.delegatedAccessServiceMock.VerifyNoOtherCalls();
+            this.impersonationContextServiceMock.VerifyNoOtherCalls();
         }
     }
 }

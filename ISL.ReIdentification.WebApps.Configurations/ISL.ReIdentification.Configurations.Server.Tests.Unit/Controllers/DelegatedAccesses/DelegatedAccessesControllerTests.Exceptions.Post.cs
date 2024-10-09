@@ -4,47 +4,47 @@
 
 using System;
 using System.Threading.Tasks;
-using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
-using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses.Exceptions;
+using ISL.ReIdentification.Core.Models.Foundations.ImpersonationContexts;
+using ISL.ReIdentification.Core.Models.Foundations.ImpersonationContexts.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RESTFulSense.Clients.Extensions;
 using RESTFulSense.Models;
 using Xeptions;
 
-namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.DelegatedAccesses
+namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.ImpersonationContexts
 {
-    public partial class DelegatedAccessesControllerTests
+    public partial class ImpersonationContextsControllerTests
     {
         [Theory]
         [MemberData(nameof(ValidationExceptions))]
         public async Task ShouldReturnBadRequestOnPostIfValidationErrorOccurredAsync(Xeption validationException)
         {
             // given
-            DelegatedAccess someDelegatedAccess = CreateRandomDelegatedAccess();
+            ImpersonationContext someImpersonationContext = CreateRandomImpersonationContext();
 
             BadRequestObjectResult expectedBadRequestObjectResult =
                 BadRequest(validationException.InnerException);
 
             var expectedActionResult =
-                new ActionResult<DelegatedAccess>(expectedBadRequestObjectResult);
+                new ActionResult<ImpersonationContext>(expectedBadRequestObjectResult);
 
-            this.delegatedAccessServiceMock.Setup(service =>
-                service.AddDelegatedAccessAsync(It.IsAny<DelegatedAccess>()))
+            this.impersonationContextServiceMock.Setup(service =>
+                service.AddImpersonationContextAsync(It.IsAny<ImpersonationContext>()))
                     .ThrowsAsync(validationException);
 
             // when
-            ActionResult<DelegatedAccess> actualActionResult =
-                await this.delegatedAccessesController.PostDelegatedAccessAsync(someDelegatedAccess);
+            ActionResult<ImpersonationContext> actualActionResult =
+                await this.impersonationContextsController.PostImpersonationContextAsync(someImpersonationContext);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
-            this.delegatedAccessServiceMock.Verify(service =>
-                service.AddDelegatedAccessAsync(It.IsAny<DelegatedAccess>()),
+            this.impersonationContextServiceMock.Verify(service =>
+                service.AddImpersonationContextAsync(It.IsAny<ImpersonationContext>()),
                     Times.Once);
 
-            this.delegatedAccessServiceMock.VerifyNoOtherCalls();
+            this.impersonationContextServiceMock.VerifyNoOtherCalls();
         }
 
         [Theory]
@@ -53,73 +53,73 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.Dele
             Xeption validationException)
         {
             // given
-            DelegatedAccess someDelegatedAccess = CreateRandomDelegatedAccess();
+            ImpersonationContext someImpersonationContext = CreateRandomImpersonationContext();
 
             InternalServerErrorObjectResult expectedBadRequestObjectResult =
                 InternalServerError(validationException);
 
             var expectedActionResult =
-                new ActionResult<DelegatedAccess>(expectedBadRequestObjectResult);
+                new ActionResult<ImpersonationContext>(expectedBadRequestObjectResult);
 
-            this.delegatedAccessServiceMock.Setup(service =>
-                service.AddDelegatedAccessAsync(It.IsAny<DelegatedAccess>()))
+            this.impersonationContextServiceMock.Setup(service =>
+                service.AddImpersonationContextAsync(It.IsAny<ImpersonationContext>()))
                     .ThrowsAsync(validationException);
 
             // when
-            ActionResult<DelegatedAccess> actualActionResult =
-                await this.delegatedAccessesController.PostDelegatedAccessAsync(someDelegatedAccess);
+            ActionResult<ImpersonationContext> actualActionResult =
+                await this.impersonationContextsController.PostImpersonationContextAsync(someImpersonationContext);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
-            this.delegatedAccessServiceMock.Verify(service =>
-                service.AddDelegatedAccessAsync(It.IsAny<DelegatedAccess>()),
+            this.impersonationContextServiceMock.Verify(service =>
+                service.AddImpersonationContextAsync(It.IsAny<ImpersonationContext>()),
                     Times.Once);
 
-            this.delegatedAccessServiceMock.VerifyNoOtherCalls();
+            this.impersonationContextServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task ShouldReturnConflictOnPostIfAlreadyExistsDelegatedAccessErrorOccurredAsync()
+        public async Task ShouldReturnConflictOnPostIfAlreadyExistsImpersonationContextErrorOccurredAsync()
         {
             // given
-            DelegatedAccess someDelegatedAccess = CreateRandomDelegatedAccess();
+            ImpersonationContext someImpersonationContext = CreateRandomImpersonationContext();
             var someInnerException = new Exception();
             string someMessage = GetRandomString();
 
-            var alreadyExistsDelegatedAccessException =
-                new AlreadyExistsDelegatedAccessException(
+            var alreadyExistsImpersonationContextException =
+                new AlreadyExistsImpersonationContextException(
                     message: someMessage,
                     innerException: someInnerException,
                     data: someInnerException.Data);
 
-            var delegatedAccessDependencyValidationException =
-                new DelegatedAccessDependencyValidationException(
+            var impersonationContextDependencyValidationException =
+                new ImpersonationContextDependencyValidationException(
                     message: someMessage,
-                    innerException: alreadyExistsDelegatedAccessException);
+                    innerException: alreadyExistsImpersonationContextException);
 
             ConflictObjectResult expectedConflictObjectResult =
-                Conflict(alreadyExistsDelegatedAccessException);
+                Conflict(alreadyExistsImpersonationContextException);
 
             var expectedActionResult =
-                new ActionResult<DelegatedAccess>(expectedConflictObjectResult);
+                new ActionResult<ImpersonationContext>(expectedConflictObjectResult);
 
-            this.delegatedAccessServiceMock.Setup(service =>
-                service.AddDelegatedAccessAsync(It.IsAny<DelegatedAccess>()))
-                    .ThrowsAsync(delegatedAccessDependencyValidationException);
+            this.impersonationContextServiceMock.Setup(service =>
+                service.AddImpersonationContextAsync(It.IsAny<ImpersonationContext>()))
+                    .ThrowsAsync(impersonationContextDependencyValidationException);
 
             // when
-            ActionResult<DelegatedAccess> actualActionResult =
-                await this.delegatedAccessesController.PostDelegatedAccessAsync(someDelegatedAccess);
+            ActionResult<ImpersonationContext> actualActionResult =
+                await this.impersonationContextsController.PostImpersonationContextAsync(someImpersonationContext);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
-            this.delegatedAccessServiceMock.Verify(service =>
-                service.AddDelegatedAccessAsync(It.IsAny<DelegatedAccess>()),
+            this.impersonationContextServiceMock.Verify(service =>
+                service.AddImpersonationContextAsync(It.IsAny<ImpersonationContext>()),
                     Times.Once);
 
-            this.delegatedAccessServiceMock.VerifyNoOtherCalls();
+            this.impersonationContextServiceMock.VerifyNoOtherCalls();
         }
     }
 }

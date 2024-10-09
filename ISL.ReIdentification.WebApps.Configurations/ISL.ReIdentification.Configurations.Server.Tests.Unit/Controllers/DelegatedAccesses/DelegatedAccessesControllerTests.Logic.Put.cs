@@ -4,46 +4,46 @@
 
 using System.Threading.Tasks;
 using Force.DeepCloner;
-using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
+using ISL.ReIdentification.Core.Models.Foundations.ImpersonationContexts;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RESTFulSense.Clients.Extensions;
 
-namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.DelegatedAccesses
+namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.ImpersonationContexts
 {
-    public partial class DelegatedAccessesControllerTests
+    public partial class ImpersonationContextsControllerTests
     {
         [Fact]
         public async Task ShouldReturnOkOnPutAsync()
         {
             // given
-            DelegatedAccess randomDelegatedAccess = CreateRandomDelegatedAccess();
-            DelegatedAccess inputDelegatedAccess = randomDelegatedAccess;
-            DelegatedAccess storageDelegatedAccess = inputDelegatedAccess.DeepClone();
-            DelegatedAccess expectedDelegatedAccess = storageDelegatedAccess.DeepClone();
+            ImpersonationContext randomImpersonationContext = CreateRandomImpersonationContext();
+            ImpersonationContext inputImpersonationContext = randomImpersonationContext;
+            ImpersonationContext storageImpersonationContext = inputImpersonationContext.DeepClone();
+            ImpersonationContext expectedImpersonationContext = storageImpersonationContext.DeepClone();
 
             var expectedObjectResult =
-                new OkObjectResult(expectedDelegatedAccess);
+                new OkObjectResult(expectedImpersonationContext);
 
             var expectedActionResult =
-                new ActionResult<DelegatedAccess>(expectedObjectResult);
+                new ActionResult<ImpersonationContext>(expectedObjectResult);
 
-            delegatedAccessServiceMock
-                .Setup(service => service.ModifyDelegatedAccessAsync(inputDelegatedAccess))
-                    .ReturnsAsync(storageDelegatedAccess);
+            impersonationContextServiceMock
+                .Setup(service => service.ModifyImpersonationContextAsync(inputImpersonationContext))
+                    .ReturnsAsync(storageImpersonationContext);
 
             // when
-            ActionResult<DelegatedAccess> actualActionResult = await delegatedAccessesController
-                .PutDelegatedAccessAsync(randomDelegatedAccess);
+            ActionResult<ImpersonationContext> actualActionResult = await impersonationContextsController
+                .PutImpersonationContextAsync(randomImpersonationContext);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
-            delegatedAccessServiceMock
-               .Verify(service => service.ModifyDelegatedAccessAsync(inputDelegatedAccess),
+            impersonationContextServiceMock
+               .Verify(service => service.ModifyImpersonationContextAsync(inputImpersonationContext),
                    Times.Once);
 
-            delegatedAccessServiceMock.VerifyNoOtherCalls();
+            impersonationContextServiceMock.VerifyNoOtherCalls();
         }
     }
 }
