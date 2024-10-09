@@ -9,7 +9,7 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Identifications
 {
     public interface IIdentificationCoordinationService
     {
-        ValueTask<AccessRequest> ProcessDelegatedAccessRequestAsync(AccessRequest accessRequest);
+        ValueTask<AccessRequest> ProcessImpersonationContextRequestAsync(AccessRequest accessRequest);
         ValueTask<AccessRequest> ProcessIdentificationRequestsAsync(AccessRequest accessRequest);
     }
 }

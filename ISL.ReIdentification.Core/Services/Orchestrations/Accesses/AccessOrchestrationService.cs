@@ -37,7 +37,7 @@ namespace ISL.ReIdentification.Core.Services.Orchestrations.Accesses
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<AccessRequest> ProcessDelegatedAccessRequestAsync(AccessRequest accessRequest) =>
+        public ValueTask<AccessRequest> ProcessImpersonationContextRequestAsync(AccessRequest accessRequest) =>
             throw new NotImplementedException();
 
         public ValueTask<AccessRequest> ValidateAccessForIdentificationRequestAsync(

@@ -20,7 +20,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
             IQueryable<PdsData> storagePdsData = randomPdsData;
             IQueryable<PdsData> expectedPdsData = storagePdsData;
 
-            this.patientOrgReferenceStorageBroker.Setup(broker =>
+            this.reIdentificationStorageBrokerMock.Setup(broker =>
                 broker.SelectAllPdsDatasAsync())
                     .ReturnsAsync(storagePdsData);
 
@@ -31,11 +31,11 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
             // then
             actualPdsData.Should().BeEquivalentTo(expectedPdsData);
 
-            this.patientOrgReferenceStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBrokerMock.Verify(broker =>
                 broker.SelectAllPdsDatasAsync(),
                     Times.Once);
 
-            this.patientOrgReferenceStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }

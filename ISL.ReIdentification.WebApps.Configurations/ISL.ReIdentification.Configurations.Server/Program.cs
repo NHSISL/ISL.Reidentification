@@ -15,7 +15,7 @@ using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
 using ISL.ReIdentification.Core.Models.Brokers.Notifications;
 using ISL.ReIdentification.Core.Models.Foundations.Lookups;
 using ISL.ReIdentification.Core.Services.Foundations.AccessAudits;
-using ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses;
+using ISL.ReIdentification.Core.Services.Foundations.ImpersonationContexts;
 using ISL.ReIdentification.Core.Services.Foundations.Lookups;
 using ISL.ReIdentification.Core.Services.Foundations.OdsDatas;
 using ISL.ReIdentification.Core.Services.Foundations.PdsDatas;
@@ -48,7 +48,6 @@ namespace ISL.ReIdentification.Configurations.Server
 
             builder.Services.AddAuthorization();
             builder.Services.AddDbContext<ReIdentificationStorageBroker>();
-            builder.Services.AddDbContext<PatientOrgReferenceStorageBroker>();
             builder.Services.AddHttpContextAccessor();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -135,7 +134,6 @@ namespace ISL.ReIdentification.Configurations.Server
             services.AddTransient<IDateTimeBroker, DateTimeBroker>();
             services.AddTransient<IIdentifierBroker, IdentifierBroker>();
             services.AddTransient<ILoggingBroker, LoggingBroker>();
-            services.AddTransient<IPatientOrgReferenceStorageBroker, PatientOrgReferenceStorageBroker>();
             services.AddTransient<IReIdentificationStorageBroker, ReIdentificationStorageBroker>();
             services.AddTransient<INotificationBroker, NotificationBroker>();
         }
@@ -143,7 +141,7 @@ namespace ISL.ReIdentification.Configurations.Server
         private static void AddFoundationServices(IServiceCollection services)
         {
             services.AddTransient<IAccessAuditService, AccessAuditService>();
-            services.AddTransient<IDelegatedAccessService, DelegatedAccessService>();
+            services.AddTransient<IImpersonationContextService, ImpersonationContextService>();
             services.AddTransient<ILookupService, LookupService>();
             services.AddTransient<IOdsDataService, OdsDataService>();
             services.AddTransient<IPdsDataService, PdsDataService>();

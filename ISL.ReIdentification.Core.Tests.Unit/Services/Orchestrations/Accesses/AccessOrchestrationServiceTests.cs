@@ -9,7 +9,7 @@ using System.Linq.Expressions;
 using Force.DeepCloner;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
 using ISL.ReIdentification.Core.Brokers.Loggings;
-using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
+using ISL.ReIdentification.Core.Models.Foundations.ImpersonationContexts;
 using ISL.ReIdentification.Core.Models.Foundations.OdsDatas;
 using ISL.ReIdentification.Core.Models.Foundations.PdsDatas;
 using ISL.ReIdentification.Core.Models.Foundations.PdsDatas.Exceptions;
@@ -89,11 +89,11 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
         private static AccessRequest CreateRandomAccessRequest() =>
             CreateAccessRequestFiller().Create();
 
-        private static DelegatedAccess CreateRandomDelegatedAccess() =>
-            CreateRandomDelegatedAccess(dateTimeOffset: GetRandomDateTimeOffset());
+        private static ImpersonationContext CreateRandomImpersonationContext() =>
+            CreateRandomImpersonationContext(dateTimeOffset: GetRandomDateTimeOffset());
 
-        private static DelegatedAccess CreateRandomDelegatedAccess(DateTimeOffset dateTimeOffset) =>
-            CreateDelegatedAccessesFiller(dateTimeOffset).Create();
+        private static ImpersonationContext CreateRandomImpersonationContext(DateTimeOffset dateTimeOffset) =>
+            CreateImpersonationContextsFiller(dateTimeOffset).Create();
 
         private static int GetRandomNumber() =>
             new IntRange(max: 15, min: 2).GetValue();
@@ -172,26 +172,26 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
             filler.Setup()
                 .OnProperty(accessRequest => accessRequest.IdentificationRequest)
                     .Use(CreateRandomIdentificationRequest())
-                .OnProperty(accessRequest => accessRequest.DelegatedAccessRequest)
-                    .Use(CreateRandomDelegatedAccess());
+                .OnProperty(accessRequest => accessRequest.ImpersonationContextRequest)
+                    .Use(CreateRandomImpersonationContext());
 
             return filler;
         }
 
-        private static Filler<DelegatedAccess> CreateDelegatedAccessesFiller(DateTimeOffset dateTimeOffset)
+        private static Filler<ImpersonationContext> CreateImpersonationContextsFiller(DateTimeOffset dateTimeOffset)
         {
             string user = Guid.NewGuid().ToString();
-            var filler = new Filler<DelegatedAccess>();
+            var filler = new Filler<ImpersonationContext>();
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnType<DateTimeOffset?>().Use(dateTimeOffset)
 
-                .OnProperty(delegatedAccess => delegatedAccess.IdentifierColumn)
+                .OnProperty(impersonationContext => impersonationContext.IdentifierColumn)
                     .Use(() => GetRandomStringWithLength(10))
 
-                .OnProperty(delegatedAccess => delegatedAccess.CreatedBy).Use(user)
-                .OnProperty(delegatedAccess => delegatedAccess.UpdatedBy).Use(user);
+                .OnProperty(impersonationContext => impersonationContext.CreatedBy).Use(user)
+                .OnProperty(impersonationContext => impersonationContext.UpdatedBy).Use(user);
 
             return filler;
         }

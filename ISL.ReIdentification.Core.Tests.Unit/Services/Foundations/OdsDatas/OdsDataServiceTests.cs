@@ -7,7 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using ISL.ReIdentification.Core.Brokers.Loggings;
-using ISL.ReIdentification.Core.Brokers.Storages.Sql.PatientOrgReference;
+using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
 using ISL.ReIdentification.Core.Models.Foundations.OdsDatas;
 using ISL.ReIdentification.Core.Services.Foundations.OdsDatas;
 using Microsoft.Data.SqlClient;
@@ -19,17 +19,17 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.OdsDatas
 {
     public partial class OdsDataServiceTests
     {
-        private readonly Mock<IPatientOrgReferenceStorageBroker> patientOrgReferenceStorageBroker;
+        private readonly Mock<IReIdentificationStorageBroker> reIdentificationStorageBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly IOdsDataService odsDataService;
 
         public OdsDataServiceTests()
         {
-            this.patientOrgReferenceStorageBroker = new Mock<IPatientOrgReferenceStorageBroker>();
+            this.reIdentificationStorageBrokerMock = new Mock<IReIdentificationStorageBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
             this.odsDataService = new OdsDataService(
-                patientOrgReferenceStorageBroker.Object,
+                reIdentificationStorageBrokerMock.Object,
                 loggingBrokerMock.Object);
         }
 
