@@ -8,6 +8,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Force.DeepCloner;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
+using ISL.ReIdentification.Core.Brokers.Hashing;
 using ISL.ReIdentification.Core.Brokers.Loggings;
 using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
 using ISL.ReIdentification.Core.Models.Foundations.OdsDatas;
@@ -17,6 +18,7 @@ using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses.Exceptions;
 using ISL.ReIdentification.Core.Models.Orchestrations.Accesses;
+using ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses;
 using ISL.ReIdentification.Core.Services.Foundations.PdsDatas;
 using ISL.ReIdentification.Core.Services.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Services.Orchestrations.Accesses;
@@ -30,16 +32,20 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Orchestrations.Accesses
     {
         private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
         private readonly Mock<IUserAccessService> userAccessServiceMock;
+        private readonly Mock<IDelegatedAccessService> delegatedAccessServiceMock;
         private readonly Mock<IPdsDataService> pdsDataServiceMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
+        private readonly Mock<IHashBroker> hashBrokerMock;
         private readonly AccessOrchestrationService accessOrchestrationService;
 
         public AccessOrchestrationServiceTests()
         {
             this.userAccessServiceMock = new Mock<IUserAccessService>();
+            this.delegatedAccessServiceMock = new Mock<IDelegatedAccessService>();
             this.pdsDataServiceMock = new Mock<IPdsDataService>();
             this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
+            this.hashBrokerMock = new Mock<IHashBroker>();
 
             this.accessOrchestrationService =
                 new AccessOrchestrationService(
