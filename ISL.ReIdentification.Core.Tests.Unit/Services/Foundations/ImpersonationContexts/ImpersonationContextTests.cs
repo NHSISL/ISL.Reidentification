@@ -90,11 +90,11 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Impersonatio
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnType<DateTimeOffset?>().Use(dateTimeOffset)
 
-                .OnProperty(delegatedAccess => delegatedAccess.IdentifierColumn)
+                .OnProperty(impersonationContext => impersonationContext.IdentifierColumn)
                     .Use(() => GetRandomStringWithLengthOf(10))
 
-                .OnProperty(delegatedAccess => delegatedAccess.CreatedBy).Use(user)
-                .OnProperty(delegatedAccess => delegatedAccess.UpdatedBy).Use(user);
+                .OnProperty(impersonationContext => impersonationContext.CreatedBy).Use(user)
+                .OnProperty(impersonationContext => impersonationContext.UpdatedBy).Use(user);
 
             return filler;
         }
