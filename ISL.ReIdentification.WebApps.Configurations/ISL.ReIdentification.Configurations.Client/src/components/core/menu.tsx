@@ -32,7 +32,7 @@ const MenuComponent: React.FC = () => {
                 className={`bg-dark text-white ${activePath === '/userAccess' ? 'active' : ''}`}
                 onClick={() => handleItemClick('/userAccess')}>
                 <FontAwesomeIcon icon={faUser} className="me-2 fa-icon" />
-                <SecuredLink to="/userAccess">UserAccess</SecuredLink>
+                <SecuredLink to="/userAccess">User Access</SecuredLink>
             </ListGroup.Item>
 
             <ListGroup.Item
@@ -46,43 +46,15 @@ const MenuComponent: React.FC = () => {
                 className={`bg-dark text-white ${activePath === '/pdsData' ? 'active' : ''}`}
                 onClick={() => handleItemClick('/pdsData')}>
                 <FontAwesomeIcon icon={faAddressBook} className="me-2 fa-icon" />
-                <SecuredLink to="/pdsData">PDS Data</SecuredLink>
+                <SecuredLink to="/pdsData">PDS Data View</SecuredLink>
             </ListGroup.Item>
 
             <ListGroup.Item
                 className={`bg-dark text-white ${activePath === '/odsData' ? 'active' : ''}`}
                 onClick={() => handleItemClick('/odsData')}>
                 <FontAwesomeIcon icon={faUserDoctor} className="me-2 fa-icon" />
-                <SecuredLink to="/odsData">Ods Data</SecuredLink>
+                <SecuredLink to="/odsData">Ods Data View</SecuredLink>
             </ListGroup.Item>
-
-            <ListGroup.Item
-                className={`bg-dark text-white ${activePath === '/reports' ? 'active' : ''}`}
-                onClick={() => handleItemClick('/reports')}>
-                <FontAwesomeIcon icon={faChartBar} className="me-2 fa-icon" />
-                <SecuredLink to="/reports">Reports</SecuredLink>
-
-                {/* Nested items under Reports */}
-                <ListGroup variant="flush" className="mt-2 ms-3">
-                    <ListGroup.Item
-                        className={`bg-dark text-white border-0 ${activePath === '/reports/1' ? 'active' : ''}`}
-                        onClick={() => handleItemClick('/reports/report1')}>
-                        <SecuredLink to="/reports/report1">Report 1</SecuredLink>
-                    </ListGroup.Item>
-                    <ListGroup.Item
-                        className={`bg-dark text-white border-0 ${activePath === '/reports/2' ? 'active' : ''}`}
-                        onClick={() => handleItemClick('/report/report2')}>
-                        <SecuredLink to="/reports/report2">Report 2</SecuredLink>
-                    </ListGroup.Item>
-                    <ListGroup.Item
-                        className={`bg-dark text-white border-0 ${activePath === '/report3/financial' ? 'active' : ''}`}
-                        onClick={() => handleItemClick('/reports/report3')}>
-                        <SecuredLink to="/reports/report3">Report 3</SecuredLink>
-                    </ListGroup.Item>
-                </ListGroup>
-            </ListGroup.Item>
-
-
 
             <ListGroup.Item
                 className={`bg-dark text-white ${activePath === '/configuration/home' ? 'active' : ''}`}
