@@ -258,6 +258,9 @@ namespace ISL.ReIdentification.Core.Migrations
                         .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
                     b.Property<string>("UpdatedBy")
                         .IsRequired()
                         .HasMaxLength(255)

@@ -21,7 +21,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.OdsDatas
             OdsData storageOdsData = inputOdsData;
             OdsData expectedOdsData = storageOdsData.DeepClone();
 
-            this.reIdentificationStorageBrokerMock.Setup(broker =>
+            this.patientOrgReferenceStorageBroker.Setup(broker =>
                 broker.SelectOdsDataByIdAsync(inputOdsData.Id))
                     .ReturnsAsync(storageOdsData);
 
@@ -31,11 +31,11 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.OdsDatas
             // then
             actualOdsData.Should().BeEquivalentTo(expectedOdsData);
 
-            this.reIdentificationStorageBrokerMock.Verify(broker =>
+            this.patientOrgReferenceStorageBroker.Verify(broker =>
                 broker.SelectOdsDataByIdAsync(inputOdsData.Id),
                     Times.Once());
 
-            this.reIdentificationStorageBrokerMock.VerifyNoOtherCalls();
+            this.patientOrgReferenceStorageBroker.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }

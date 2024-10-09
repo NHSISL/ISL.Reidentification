@@ -33,7 +33,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.AccessAudits
                     .ReturnsAsync(deletedAccessAudit);
 
             // when
-            AccessAudit actualAccessAudit = 
+            AccessAudit actualAccessAudit =
                 await this.accessAuditService.RemoveAccessAuditByIdAsync(inputAccessAuditId);
 
             // then
