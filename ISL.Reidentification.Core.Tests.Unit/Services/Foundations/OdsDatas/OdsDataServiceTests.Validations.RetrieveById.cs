@@ -47,12 +47,12 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.OdsDatas
                     expectedOdsDataValidationException))),
                         Times.Once);
 
-            this.patientOrgReferenceStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBrokerMock.Verify(broker =>
                 broker.SelectOdsDataByIdAsync(It.IsAny<Guid>()),
                     Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.patientOrgReferenceStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -69,7 +69,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.OdsDatas
                     message: "OdsData validation error occurred, please fix errors and try again.",
                     innerException: notFoundOdsDataException);
 
-            this.patientOrgReferenceStorageBroker.Setup(broker =>
+            this.reIdentificationStorageBrokerMock.Setup(broker =>
                 broker.SelectOdsDataByIdAsync(It.IsAny<Guid>()))
                     .ReturnsAsync(noOdsData);
 
@@ -84,7 +84,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.OdsDatas
             //then
             actualOdsDataValidationException.Should().BeEquivalentTo(expectedOdsDataValidationException);
 
-            this.patientOrgReferenceStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBrokerMock.Verify(broker =>
                 broker.SelectOdsDataByIdAsync(It.IsAny<Guid>()),
                     Times.Once());
 
@@ -93,7 +93,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.OdsDatas
                     expectedOdsDataValidationException))),
                         Times.Once);
 
-            this.patientOrgReferenceStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
