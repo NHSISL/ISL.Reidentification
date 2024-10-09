@@ -1,5 +1,6 @@
 import { Container } from "react-bootstrap"
 import BreadCrumbBase from "../components/bases/layouts/BreadCrumb/BreadCrumbBase"
+import EntraUserSearch from "../components/EntraUserSearch/entraUserSearch"
 
 export const UserAccess = () => {
     return (
@@ -15,6 +16,7 @@ export const UserAccess = () => {
                     <p>Role Needs to be in Security Matrix and Azure AD against user.</p>
                     {/* <UserAccess/>*/}
                 </div>
+                <EntraUserSearch />
             </section>
         </Container>
     )

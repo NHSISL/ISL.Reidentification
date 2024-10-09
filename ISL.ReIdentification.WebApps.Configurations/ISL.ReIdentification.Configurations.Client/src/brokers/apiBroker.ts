@@ -4,6 +4,13 @@ import { loginRequest, msalConfig } from '../authConfig';
 
 class ApiBroker {
     msalInstance = new PublicClientApplication(msalConfig);
+    scope: any;
+
+    constructor();
+    constructor(scope?: string) {
+        this.scope = [scope] || loginRequest.scopes;
+    }
+
 
     private async initialize() {
         await this.msalInstance.initialize();
@@ -16,7 +23,7 @@ class ApiBroker {
         const accounts = this.msalInstance.getAllAccounts();
 
         const request = {
-            scopes: loginRequest.scopes,
+            scopes: this.scope,
             account: activeAccount || accounts[0]
         };
 
@@ -54,13 +61,7 @@ class ApiBroker {
     //}
 
     public async GetAsyncAbsolute(absoluteUri: string) {
-        return axios.get(absoluteUri, {
-            headers: {
-                'Cache-Control': 'no-cache',
-                'Pragma': 'no-cache',
-                'Expires': '0'
-            }
-        });
+        return axios.get(absoluteUri, await this.config());;
     }
 
     public async PostAsync(relativeUrl: string, data: any) {
