@@ -41,7 +41,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ImpersonationContexts
             catch (SqlException sqlException)
             {
                 var failedStorageImpersonationContextException = new FailedStorageImpersonationContextException(
-                    message: "Failed delegated access storage error occurred, contact support.",
+                    message: "Failed impersonation context storage error occurred, contact support.",
                     innerException: sqlException);
 
                 throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageImpersonationContextException);
@@ -60,7 +60,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ImpersonationContexts
             {
                 var concurrencyGemException =
                     new LockedImpersonationContextException(
-                        message: "Locked delegated access record error occurred, please try again.",
+                        message: "Locked impersonation context record error occurred, please try again.",
                         innerException: dbUpdateConcurrencyException);
 
                 throw await CreateAndLogDependencyValidationExceptionAsync(concurrencyGemException);
@@ -69,7 +69,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ImpersonationContexts
             {
                 var failedOperationImpersonationContextException =
                     new FailedOperationImpersonationContextException(
-                        message: "Failed operation delegated access error occurred, contact support.",
+                        message: "Failed operation impersonation context error occurred, contact support.",
                         innerException: dbUpdateException);
 
                 throw await CreateAndLogDependencyExceptionAsync(failedOperationImpersonationContextException);
@@ -78,7 +78,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ImpersonationContexts
             {
                 var failedServiceImpersonationContextException =
                     new FailedServiceImpersonationContextException(
-                        message: "Failed service delegated access error occurred, contact support.",
+                        message: "Failed service impersonation context error occurred, contact support.",
                         innerException: exception);
 
                 throw await CreateAndLogServiceExceptionAsync(failedServiceImpersonationContextException);
@@ -95,7 +95,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ImpersonationContexts
             catch (SqlException sqlException)
             {
                 var failedStorageImpersonationContextException = new FailedStorageImpersonationContextException(
-                   message: "Failed delegated access storage error occurred, contact support.",
+                   message: "Failed impersonation context storage error occurred, contact support.",
                    innerException: sqlException);
 
                 throw await CreateAndLogCriticalDependencyExceptionAsync(failedStorageImpersonationContextException);
@@ -104,7 +104,7 @@ namespace ISL.ReIdentification.Core.Services.Foundations.ImpersonationContexts
             {
                 var failedServiceImpersonationContextException =
                     new FailedServiceImpersonationContextException(
-                       message: "Failed service delegated access error occurred, contact support.",
+                       message: "Failed service impersonation context error occurred, contact support.",
                         innerException: exception);
 
                 throw await CreateAndLogServiceExceptionAsync(failedServiceImpersonationContextException);

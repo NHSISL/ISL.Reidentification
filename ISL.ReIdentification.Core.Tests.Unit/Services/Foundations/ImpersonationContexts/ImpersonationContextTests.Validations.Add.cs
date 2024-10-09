@@ -18,7 +18,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Impersonatio
         {
             //given
             ImpersonationContext nullImpersonationContext = null;
-            var nullImpersonationContextException = new NullImpersonationContextException(message: "Delegated access is null.");
+            var nullImpersonationContextException = new NullImpersonationContextException(message: "Impersonation context is null.");
 
             var expectedImpersonationContextValidationException =
                 new ImpersonationContextValidationException(
@@ -68,7 +68,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Impersonatio
 
             var invalidImpersonationContextException =
                 new InvalidImpersonationContextException(
-                    message: "Invalid delegated access. Please correct the errors and try again.");
+                    message: "Invalid impersonation context. Please correct the errors and try again.");
 
             invalidImpersonationContextException.AddData(
                 key: nameof(ImpersonationContext.Id),
@@ -171,7 +171,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Impersonatio
 
             var invalidImpersonationContextException =
                 new InvalidImpersonationContextException(
-                    message: "Invalid delegated access. Please correct the errors and try again.");
+                    message: "Invalid impersonation context. Please correct the errors and try again.");
 
             invalidImpersonationContextException.AddData(
                 key: nameof(ImpersonationContext.RequesterFirstName),
@@ -262,7 +262,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Impersonatio
             invalidImpersonationContext.UpdatedDate = GetRandomDateTimeOffset();
 
             var invalidImpersonationContextException = new InvalidImpersonationContextException(
-                message: "Invalid delegated access. Please correct the errors and try again.");
+                message: "Invalid impersonation context. Please correct the errors and try again.");
 
             invalidImpersonationContextException.AddData(
                 key: nameof(ImpersonationContext.UpdatedBy),
@@ -334,7 +334,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Impersonatio
             invalidImpersonationContext.UpdatedDate = invalidDate;
 
             var invalidImpersonationContextException = new InvalidImpersonationContextException(
-                message: "Invalid delegated access. Please correct the errors and try again.");
+                message: "Invalid impersonation context. Please correct the errors and try again.");
 
             invalidImpersonationContextException.AddData(
             key: nameof(ImpersonationContext.CreatedDate),
