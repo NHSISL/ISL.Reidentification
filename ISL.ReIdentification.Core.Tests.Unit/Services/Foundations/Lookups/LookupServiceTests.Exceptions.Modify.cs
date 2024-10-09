@@ -72,7 +72,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
         }
 
         [Fact]
-        public async void ShouldThrowValidationExceptionOnModifyIfReferenceErrorOccursAndLogItAsync()
+        public async Task ShouldThrowValidationExceptionOnModifyIfReferenceErrorOccursAndLogItAsync()
         {
             // given
             Lookup someLookup = CreateRandomLookup();
