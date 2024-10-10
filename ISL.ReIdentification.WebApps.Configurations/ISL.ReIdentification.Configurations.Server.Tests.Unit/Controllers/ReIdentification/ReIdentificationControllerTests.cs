@@ -48,6 +48,23 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.ReId
             };
         }
 
+        public static TheoryData<Xeption> ServerExceptions()
+        {
+            var someInnerException = new Xeption();
+            string someMessage = GetRandomString();
+
+            return new TheoryData<Xeption>
+            {
+                new IdentificationCoordinationDependencyException(
+                    message: someMessage,
+                    innerException: someInnerException),
+
+                new IdentificationCoordinationServiceException(
+                    message: someMessage,
+                    innerException: someInnerException)
+            };
+        }
+
         private static string GetRandomString() =>
             new MnemonicString(wordCount: GetRandomNumber()).GetValue();
 
