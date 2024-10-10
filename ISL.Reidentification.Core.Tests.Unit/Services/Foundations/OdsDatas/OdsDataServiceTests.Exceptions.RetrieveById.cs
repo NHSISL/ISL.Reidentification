@@ -29,7 +29,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.OdsDatas
                 message: "OdsData dependency error occurred, contact support.",
                 innerException: failedStorageOdsDataException);
 
-            this.patientOrgReferenceStorageBroker.Setup(broker =>
+            this.reIdentificationStorageBrokerMock.Setup(broker =>
                 broker.SelectOdsDataByIdAsync(randomOdsDataId))
                     .ThrowsAsync(sqlException);
 
@@ -44,7 +44,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.OdsDatas
             // then
             actualOdsDataDependencyException.Should().BeEquivalentTo(expectedOdsDataDependencyException);
 
-            this.patientOrgReferenceStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBrokerMock.Verify(broker =>
                 broker.SelectOdsDataByIdAsync(randomOdsDataId),
                     Times.Once());
 
@@ -53,7 +53,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.OdsDatas
                     expectedOdsDataDependencyException))),
                         Times.Once());
 
-            this.patientOrgReferenceStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
 
@@ -72,7 +72,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.OdsDatas
                 message: "Service error occurred, contact support.",
                 innerException: failedServiceOdsDataException);
 
-            this.patientOrgReferenceStorageBroker.Setup(broker =>
+            this.reIdentificationStorageBrokerMock.Setup(broker =>
                 broker.SelectOdsDataByIdAsync(randomOdsDataId))
                     .ThrowsAsync(serviceException);
 
@@ -87,7 +87,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.OdsDatas
             // then
             actualOdsDataDependencyException.Should().BeEquivalentTo(expectedOdsDataServiceException);
 
-            this.patientOrgReferenceStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBrokerMock.Verify(broker =>
                 broker.SelectOdsDataByIdAsync(randomOdsDataId),
                     Times.Once());
 
@@ -96,7 +96,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.OdsDatas
                     expectedOdsDataServiceException))),
                         Times.Once());
 
-            this.patientOrgReferenceStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }

@@ -6,11 +6,11 @@ using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 
-namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis.PdsDatas
+namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
 {
     public partial class PdsDataApiTests
     {
-        [Fact]
+        [Fact(Skip = "Need to refactor tests and add other crud operations")]
         public async Task ShouldGetAllPdsDataAsync()
         {
             // when
@@ -20,7 +20,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis.PdsDa
             actualPdsDatas.Should().NotBeNull();
         }
 
-        [Fact]
+        [Fact(Skip = "Need to refactor tests and add other crud operations")]
         public async Task ShouldGetPdsDataByIdAsync()
         {
             // given

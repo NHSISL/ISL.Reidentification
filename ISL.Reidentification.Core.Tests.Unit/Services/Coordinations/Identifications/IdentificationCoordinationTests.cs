@@ -5,7 +5,7 @@
 using System;
 using System.Linq.Expressions;
 using ISL.ReIdentification.Core.Brokers.Loggings;
-using ISL.ReIdentification.Core.Models.Foundations.DelegatedAccesses;
+using ISL.ReIdentification.Core.Models.Foundations.ImpersonationContexts;
 using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications;
 using ISL.ReIdentification.Core.Models.Orchestrations.Accesses;
 using ISL.ReIdentification.Core.Models.Orchestrations.Accesses.Exceptions;
@@ -51,7 +51,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Coordinations.Identifica
             var filler = new Filler<AccessRequest>();
 
             filler.Setup()
-                .OnProperty(request => request.DelegatedAccessRequest).Use(CreateRandomDelegatedAccess);
+                .OnProperty(request => request.ImpersonationContextRequest).Use(CreateRandomImpersonationContext);
 
             return filler;
         }
@@ -65,15 +65,15 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Coordinations.Identifica
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
-        private static DelegatedAccess CreateRandomDelegatedAccess() =>
-            CreateRandomDelegatedAccess(dateTimeOffset: GetRandomDateTimeOffset());
+        private static ImpersonationContext CreateRandomImpersonationContext() =>
+            CreateRandomImpersonationContext(dateTimeOffset: GetRandomDateTimeOffset());
 
-        private static DelegatedAccess CreateRandomDelegatedAccess(DateTimeOffset dateTimeOffset) =>
-            CreateDelegatedAccessesFiller(dateTimeOffset).Create();
+        private static ImpersonationContext CreateRandomImpersonationContext(DateTimeOffset dateTimeOffset) =>
+            CreateImpersonationContextsFiller(dateTimeOffset).Create();
 
-        private static Filler<DelegatedAccess> CreateDelegatedAccessesFiller(DateTimeOffset dateTimeOffset)
+        private static Filler<ImpersonationContext> CreateImpersonationContextsFiller(DateTimeOffset dateTimeOffset)
         {
-            var filler = new Filler<DelegatedAccess>();
+            var filler = new Filler<ImpersonationContext>();
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
