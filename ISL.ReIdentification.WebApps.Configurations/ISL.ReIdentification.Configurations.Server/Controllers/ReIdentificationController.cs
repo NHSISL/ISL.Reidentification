@@ -3,9 +3,9 @@
 // ---------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications;
+using ISL.ReIdentification.Core.Models.Orchestrations.Accesses;
+using ISL.ReIdentification.Core.Services.Orchestrations.Identifications;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
 
@@ -15,9 +15,14 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
     [Route("api/[controller]")]
     public class ReIdentificationController : RESTFulController
     {
+        private readonly IIdentificationCoordinationService identificationCoordinationService;
+
+        public ReIdentificationController(IIdentificationCoordinationService identificationCoordinationService) =>
+            this.identificationCoordinationService = identificationCoordinationService;
+
         [HttpPost]
-        public async ValueTask<ActionResult<List<string>>>
-            PostIdentificationRequestsAsync(List<IdentificationRequest> identificationRequests) =>
+        public async ValueTask<ActionResult<AccessRequest>>
+            PostIdentificationRequestsAsync(AccessRequest accessRequest) =>
                 throw new NotImplementedException();
     }
 }
