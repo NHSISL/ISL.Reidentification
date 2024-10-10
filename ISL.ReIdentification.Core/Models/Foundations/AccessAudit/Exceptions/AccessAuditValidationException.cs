@@ -6,7 +6,7 @@ using Xeptions;
 
 namespace ISL.ReIdentification.Core.Models.Foundations.AccessAudits.Exceptions
 {
-    public class AccessAuditValidationException : Xeption 
+    public class AccessAuditValidationException : Xeption
     {
         public AccessAuditValidationException(string message, Xeption innerException)
             : base(message, innerException)

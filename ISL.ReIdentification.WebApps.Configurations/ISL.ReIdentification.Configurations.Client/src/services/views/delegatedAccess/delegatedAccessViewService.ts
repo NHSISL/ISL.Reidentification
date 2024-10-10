@@ -1,63 +1,63 @@
 import { useEffect, useState } from "react";
 import { Guid } from "guid-typescript";
-import { DelegatedAccessView } from "../../../models/views/components/delegatedAccess/delegatedAccessView";
-import { delegatedAccessService } from "../../foundations/delegatedAccessService";
+import { ImpersonationContextView } from "../../../models/views/components/impersonationContext/impersonationContextView";
+import { impersonationContextService } from "../../foundations/impersonationContextService";
 
-type DelegatedAccessViewServiceResponse = {
-    mappedDelegatedAccesses: DelegatedAccessView[] | undefined;
-    pages: Array<{ data: DelegatedAccessView[] }>;
+type ImpersonationContextViewServiceResponse = {
+    mappedImpersonationContexts: ImpersonationContextView[] | undefined;
+    pages: Array<{ data: ImpersonationContextView[] }>;
     isLoading: boolean;
     fetchNextPage: () => void;
     isFetchingNextPage: boolean;
     hasNextPage: boolean;
-    data: { pages: Array<{ data: DelegatedAccessView[] }> } | undefined;
+    data: { pages: Array<{ data: ImpersonationContextView[] }> } | undefined;
     refetch: () => void;
 };
 
-export const delegatedAccessViewService = {
-    useCreateDelegatedAccess: () => {
-        return delegatedAccessService.useCreatedelegatedAccess();
+export const impersonationContextViewService = {
+    useCreateImpersonationContext: () => {
+        return impersonationContextService.useCreateimpersonationContext();
     },
 
-    useGetAllDelegatedAccesses: (searchTerm?: string): DelegatedAccessViewServiceResponse => {
+    useGetAllImpersonationContexts: (searchTerm?: string): ImpersonationContextViewServiceResponse => {
         let query = `?$orderby=createdDate desc`;
 
         if (searchTerm) {
             query = query + `&$filter=contains(Name,'${searchTerm}')`;
         }
 
-        const response = delegatedAccessService.useRetrieveAllDelegatedAccessPages(query);
-        const [mappedDelegatedAccesses, setMappedDelegatedAccesses] = useState<Array<DelegatedAccessView>>();
-        const [pages, setPages] = useState<Array<{ data: DelegatedAccessView[] }>>([]);
+        const response = impersonationContextService.useRetrieveAllImpersonationContextPages(query);
+        const [mappedImpersonationContexts, setMappedImpersonationContexts] = useState<Array<ImpersonationContextView>>();
+        const [pages, setPages] = useState<Array<{ data: ImpersonationContextView[] }>>([]);
 
         useEffect(() => {
             if (response.data && response.data.pages) {
-                const delegatedAccesses: Array<DelegatedAccessView> = [];
-                response.data.pages.forEach((x: { data: DelegatedAccessView[] }) => {
-                    x.data.forEach((delegatedAccess: DelegatedAccessView) => {
-                        delegatedAccesses.push(new DelegatedAccessView(
-                            delegatedAccess.id,
-                            delegatedAccess.requesterEmail,
-                            delegatedAccess.recipientEmail,
-                            delegatedAccess.isDelegatedAccess,
-                            delegatedAccess.isApproved,
-                            delegatedAccess.data,
-                            delegatedAccess.identifierColumn,
-                            delegatedAccess.createdBy,
-                            delegatedAccess.createdDate,
-                            delegatedAccess.updatedBy,
-                            delegatedAccess.updatedDate,
+                const impersonationContexts: Array<ImpersonationContextView> = [];
+                response.data.pages.forEach((x: { data: ImpersonationContextView[] }) => {
+                    x.data.forEach((impersonationContext: ImpersonationContextView) => {
+                        impersonationContexts.push(new ImpersonationContextView(
+                            impersonationContext.id,
+                            impersonationContext.requesterEmail,
+                            impersonationContext.recipientEmail,
+                            impersonationContext.isImpersonationContext,
+                            impersonationContext.isApproved,
+                            impersonationContext.data,
+                            impersonationContext.identifierColumn,
+                            impersonationContext.createdBy,
+                            impersonationContext.createdDate,
+                            impersonationContext.updatedBy,
+                            impersonationContext.updatedDate,
                         ));
                     });
                 });
 
-                setMappedDelegatedAccesses(delegatedAccesses);
+                setMappedImpersonationContexts(impersonationContexts);
                 setPages(response.data.pages);
             }
         }, [response.data]);
 
         return {
-            mappedDelegatedAccesses,
+            mappedImpersonationContexts,
             pages,
             isLoading: response.isLoading,
             fetchNextPage: response.fetchNextPage,
@@ -68,43 +68,43 @@ export const delegatedAccessViewService = {
         };
     },
 
-    useGetDelegatedAccessById: (id: Guid) => {
+    useGetImpersonationContextById: (id: Guid) => {
         const query = `?$filter=id eq ${id}`;
-        const response = delegatedAccessService.useRetrieveAllDelegatedAccessPages(query);
-        const [mappedDelegatedAccess, setMappedDelegatedAccess] = useState<DelegatedAccessView>();
+        const response = impersonationContextService.useRetrieveAllImpersonationContextPages(query);
+        const [mappedImpersonationContext, setMappedImpersonationContext] = useState<ImpersonationContextView>();
 
         useEffect(() => {
             if (response.data && response.data.pages && response.data.pages[0].data[0]) {
-                const delegatedAccess = response.data.pages[0].data[0];
-                const delegatedAccessView = new DelegatedAccessView(
-                    delegatedAccess.id,
-                    delegatedAccess.requesterEmail,
-                    delegatedAccess.recipientEmail,
-                    delegatedAccess.isDelegatedAccess,
-                    delegatedAccess.isApproved,
-                    delegatedAccess.data,
-                    delegatedAccess.identifierColumn,
-                    delegatedAccess.createdBy,
-                    delegatedAccess.createdDate,
-                    delegatedAccess.updatedBy,
-                    delegatedAccess.updatedDate
+                const impersonationContext = response.data.pages[0].data[0];
+                const impersonationContextView = new ImpersonationContextView(
+                    impersonationContext.id,
+                    impersonationContext.requesterEmail,
+                    impersonationContext.recipientEmail,
+                    impersonationContext.isImpersonationContext,
+                    impersonationContext.isApproved,
+                    impersonationContext.data,
+                    impersonationContext.identifierColumn,
+                    impersonationContext.createdBy,
+                    impersonationContext.createdDate,
+                    impersonationContext.updatedBy,
+                    impersonationContext.updatedDate
                 );
 
-                setMappedDelegatedAccess(delegatedAccessView);
+                setMappedImpersonationContext(impersonationContextView);
             }
         }, [response.data]);
 
         return {
-            mappedDelegatedAccess,
+            mappedImpersonationContext,
             ...response
         };
     },
 
-    useUpdateDelegatedAccess: () => {
-        return delegatedAccessService.useModifyDelegatedAccess();
+    useUpdateImpersonationContext: () => {
+        return impersonationContextService.useModifyImpersonationContext();
     },
 
-    useRemoveDelegatedAccess: () => {
-        return delegatedAccessService.useRemoveDelegatedAccess();
+    useRemoveImpersonationContext: () => {
+        return impersonationContextService.useRemoveImpersonationContext();
     },
 };

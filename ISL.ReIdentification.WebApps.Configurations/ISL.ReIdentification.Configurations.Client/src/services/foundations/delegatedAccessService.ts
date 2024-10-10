@@ -1,49 +1,49 @@
 import { useMsal } from "@azure/msal-react";
 import { Guid } from "guid-typescript";
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "react-query";
-import DelegatedAccessBroker from "../../brokers/apiBroker.delegatedAccess";
-import { DelegatedAccess } from "../../models/delegatedAccess/delegatedAccess";
+import ImpersonationContextBroker from "../../brokers/apiBroker.impersonationContext";
+import { ImpersonationContext } from "../../models/impersonationContext/impersonationContext";
 
-export const delegatedAccessService = {
-    useCreatedelegatedAccess: () => {
-        const broker = new DelegatedAccessBroker();
+export const impersonationContextService = {
+    useCreateimpersonationContext: () => {
+        const broker = new ImpersonationContextBroker();
         const queryClient = useQueryClient();
         const msal = useMsal();
 
-        return useMutation((delegatedAccess: DelegatedAccess) => {
+        return useMutation((impersonationContext: ImpersonationContext) => {
             const date = new Date();
-            delegatedAccess.createdDate = v.updatedDate = date;
-            delegatedAccess.createdBy = delegatedAccess.updatedBy = msal.accounts[0].username;
+            impersonationContext.createdDate = v.updatedDate = date;
+            impersonationContext.createdBy = impersonationContext.updatedBy = msal.accounts[0].username;
 
-            return broker.PostDelegatedAccessAsync(delegatedAccess);
+            return broker.PostImpersonationContextAsync(impersonationContext);
         },
             {
-                onSuccess: (variables: DelegatedAccess) => {
-                    queryClient.invalidateQueries("DelegatedAccessGetAll");
+                onSuccess: (variables: ImpersonationContext) => {
+                    queryClient.invalidateQueries("ImpersonationContextGetAll");
                     queryClient.invalidateQueries(["DelgatedAccessGetById", { id: variables.id }]);
                 }
             });
     },
 
-    useRetrieveAllDelegatedAccess: (query: string) => {
-        const broker = new DelegatedAccessBroker();
+    useRetrieveAllImpersonationContext: (query: string) => {
+        const broker = new ImpersonationContextBroker();
 
         return useQuery(
-            ["DelegatedAccessGetAll", { query: query }],
-            () => broker.GetAllDelegatedAccessAsync(query),
+            ["ImpersonationContextGetAll", { query: query }],
+            () => broker.GetAllImpersonationContextAsync(query),
             { staleTime: Infinity });
     },
 
-    useRetrieveAllDelegatedAccessPages: (query: string) => {
-        const broker = new DelegatedAccessBroker();
+    useRetrieveAllImpersonationContextPages: (query: string) => {
+        const broker = new ImpersonationContextBroker();
 
         return useInfiniteQuery(
-            ["DelegatedAccessGetAll", { query: query }],
+            ["ImpersonationContextGetAll", { query: query }],
             ({ pageParam }: { pageParam?: string }) => {
                 if (!pageParam) {
-                    return broker.GetDelegatedAccessFirstPagesAsync(query)
+                    return broker.GetImpersonationContextFirstPagesAsync(query)
                 }
-                return broker.GetDelegatedAccessSubsequentPagesAsync(pageParam)
+                return broker.GetImpersonationContextSubsequentPagesAsync(pageParam)
             },
             {
                 getNextPageParam: (lastPage: { nextPage?: string }) => lastPage.nextPage,
@@ -51,37 +51,37 @@ export const delegatedAccessService = {
             });
     },
 
-    useModifyDelegatedAccess: () => {
-        const broker = new DelegatedAccessBroker();
+    useModifyImpersonationContext: () => {
+        const broker = new ImpersonationContextBroker();
         const queryClient = useQueryClient();
         const msal = useMsal();
 
-        return useMutation((delegatedAccess: DelegatedAccess) => {
+        return useMutation((impersonationContext: ImpersonationContext) => {
             const date = new Date();
-            delegatedAccess.updatedDate = date;
-            delegatedAccess.updatedBy = msal.accounts[0].username;
+            impersonationContext.updatedDate = date;
+            impersonationContext.updatedBy = msal.accounts[0].username;
 
-            return broker.PutDelegatedAccessAsync(delegatedAccess);
+            return broker.PutImpersonationContextAsync(impersonationContext);
         },
             {
-                onSuccess: (data: DelegatedAccess) => {
-                    queryClient.invalidateQueries("DelegatedAccessGetAll");
-                    queryClient.invalidateQueries(["DelegatedAccessGetById", { id: data.id }]);
+                onSuccess: (data: ImpersonationContext) => {
+                    queryClient.invalidateQueries("ImpersonationContextGetAll");
+                    queryClient.invalidateQueries(["ImpersonationContextGetById", { id: data.id }]);
                 }
             });
     },
 
-    useRemoveDelegatedAccess: () => {
-        const broker = new DelegatedAccessBroker();
+    useRemoveImpersonationContext: () => {
+        const broker = new ImpersonationContextBroker();
         const queryClient = useQueryClient();
 
         return useMutation((id: Guid) => {
-            return broker.DeleteDelegatedAccessByIdAsync(id);
+            return broker.DeleteImpersonationContextByIdAsync(id);
         },
             {
                 onSuccess: (data: { id: Guid }) => {
-                    queryClient.invalidateQueries("DelegatedAccessGetAll");
-                    queryClient.invalidateQueries(["DelegatedAccessGetById", { id: data.id }]);
+                    queryClient.invalidateQueries("ImpersonationContextGetAll");
+                    queryClient.invalidateQueries(["ImpersonationContextGetById", { id: data.id }]);
                 }
             });
     },

@@ -1,10 +1,10 @@
 import { Guid } from 'guid-typescript';
 
-export class DelegatedAccessView {
+export class ImpersonationContextView {
     public id: Guid;
     public requesterEmail: string;
     public recipientEmail: string;
-    public isDelegatedAccess: boolean;
+    public isImpersonationContext: boolean;
     public isApproved: boolean;
     public data: Uint8Array;
     public identifierColumn: string;
@@ -17,7 +17,7 @@ export class DelegatedAccessView {
         id: Guid,
         requesterEmail: string,
         recipientEmail: string,
-        isDelegatedAccess: boolean,
+        isImpersonationContext: boolean,
         isApproved: boolean,
         data: Uint8Array,
         identifierColumn: string,
@@ -29,7 +29,7 @@ export class DelegatedAccessView {
         this.id = id;
         this.requesterEmail = requesterEmail || "";
         this.recipientEmail = recipientEmail || "";
-        this.isDelegatedAccess = isDelegatedAccess || false;
+        this.isImpersonationContext = isImpersonationContext || false;
         this.isApproved = isApproved || false;
         this.data = data || 0;
         this.identifierColumn = identifierColumn || "";
