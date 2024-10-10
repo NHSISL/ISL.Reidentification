@@ -2,7 +2,6 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
 using System.Threading.Tasks;
 using ISL.ReIdentification.Core.Models.Orchestrations.Accesses;
 using ISL.ReIdentification.Core.Services.Orchestrations.Identifications;
@@ -22,7 +21,12 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
 
         [HttpPost]
         public async ValueTask<ActionResult<AccessRequest>>
-            PostIdentificationRequestsAsync(AccessRequest accessRequest) =>
-                throw new NotImplementedException();
+            PostIdentificationRequestsAsync(AccessRequest accessRequest)
+        {
+            AccessRequest addedAccessRequest =
+                await this.identificationCoordinationService.ProcessIdentificationRequestsAsync(accessRequest);
+
+            return Created(addedAccessRequest);
+        }
     }
 }
