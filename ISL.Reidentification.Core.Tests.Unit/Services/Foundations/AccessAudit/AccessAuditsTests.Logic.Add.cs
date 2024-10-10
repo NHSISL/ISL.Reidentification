@@ -32,7 +32,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.AccessAudits
             actualAccessAudit.Should().BeEquivalentTo(expectedAccessAudit);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffsetAsync(), 
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
             this.reIdentificationStorageBroker.Verify(broker =>

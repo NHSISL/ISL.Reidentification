@@ -1,9 +1,12 @@
+// ---------------------------------------------------------
+// Copyright (c) North East London ICB. All rights reserved.
+// ---------------------------------------------------------
+
 using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
-using Moq;
 using ISL.ReIdentification.Core.Models.Foundations.Lookups;
-using Xunit;
+using Moq;
 
 namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.Lookups
 {

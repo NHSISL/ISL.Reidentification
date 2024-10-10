@@ -48,12 +48,12 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
                     expectedPdsDataValidationException))),
                         Times.Once);
 
-            this.patientOrgReferenceStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBrokerMock.Verify(broker =>
                 broker.SelectPdsDataByIdAsync(It.IsAny<long>()),
                     Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.patientOrgReferenceStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -71,7 +71,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
                     message: "PdsData validation error occurred, please fix errors and try again.",
                     innerException: notFoundPdsDataException);
 
-            this.patientOrgReferenceStorageBroker.Setup(broker =>
+            this.reIdentificationStorageBrokerMock.Setup(broker =>
                 broker.SelectPdsDataByIdAsync(It.IsAny<long>()))
                     .ReturnsAsync(noPdsData);
 
@@ -86,7 +86,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
             //then
             actualPdsDataValidationException.Should().BeEquivalentTo(expectedPdsDataValidationException);
 
-            this.patientOrgReferenceStorageBroker.Verify(broker =>
+            this.reIdentificationStorageBrokerMock.Verify(broker =>
                 broker.SelectPdsDataByIdAsync(It.IsAny<long>()),
                     Times.Once());
 
@@ -95,7 +95,7 @@ namespace ISL.ReIdentification.Core.Tests.Unit.Services.Foundations.PdsDatas
                     expectedPdsDataValidationException))),
                         Times.Once);
 
-            this.patientOrgReferenceStorageBroker.VerifyNoOtherCalls();
+            this.reIdentificationStorageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }

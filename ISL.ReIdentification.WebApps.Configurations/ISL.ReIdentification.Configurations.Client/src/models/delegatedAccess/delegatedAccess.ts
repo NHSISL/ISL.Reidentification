@@ -1,10 +1,10 @@
 import { Guid } from 'guid-typescript';
 
-export class DelegatedAccess {
+export class ImpersonationContext {
     public id: Guid;
     public requesterEmail: string;
     public recipientEmail: string;
-    public isDelegatedAccess: boolean;
+    public isImpersonationContext: boolean;
     public isApproved: boolean;
     public data: Uint8Array;
     public identifierColumn: string;
@@ -13,17 +13,17 @@ export class DelegatedAccess {
     public updatedBy?: string;
     public updatedDate?: Date | undefined;
 
-    constructor(delegatedAccess: any) {
-        this.id = delegatedAccess.id ? Guid.parse(delegatedAccess.id) : Guid.parse(Guid.EMPTY);
-        this.requesterEmail = delegatedAccess.requesterEmail || "";
-        this.recipientEmail = delegatedAccess.recipientEmail || "";
-        this.isDelegatedAccess = delegatedAccess.isDelegatedAccess || false;
-        this.isApproved = delegatedAccess.isApproved || false;
-        this.data = delegatedAccess.data || 0;
-        this.identifierColumn = delegatedAccess.identifierColumn || ""; 
-        this.createdDate = delegatedAccess.createdDate ? new Date(delegatedAccess.createdDate) : undefined;
-        this.createdBy = delegatedAccess.createdBy || "";
-        this.updatedDate = delegatedAccess.updatedDate ? new Date(delegatedAccess.updatedDate) : undefined;
-        this.updatedBy = delegatedAccess.updatedBy || "";
+    constructor(impersonationContext: any) {
+        this.id = impersonationContext.id ? Guid.parse(impersonationContext.id) : Guid.parse(Guid.EMPTY);
+        this.requesterEmail = impersonationContext.requesterEmail || "";
+        this.recipientEmail = impersonationContext.recipientEmail || "";
+        this.isImpersonationContext = impersonationContext.isImpersonationContext || false;
+        this.isApproved = impersonationContext.isApproved || false;
+        this.data = impersonationContext.data || 0;
+        this.identifierColumn = impersonationContext.identifierColumn || ""; 
+        this.createdDate = impersonationContext.createdDate ? new Date(impersonationContext.createdDate) : undefined;
+        this.createdBy = impersonationContext.createdBy || "";
+        this.updatedDate = impersonationContext.updatedDate ? new Date(impersonationContext.updatedDate) : undefined;
+        this.updatedBy = impersonationContext.updatedBy || "";
     }
 }

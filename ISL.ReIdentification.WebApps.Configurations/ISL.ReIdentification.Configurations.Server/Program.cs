@@ -3,16 +3,20 @@
 // ---------------------------------------------------------
 
 using System.Text.Json;
+using ISL.Providers.Notifications.Abstractions;
+using ISL.Providers.Notifications.GovukNotify.Models;
+using ISL.Providers.Notifications.GovukNotify.Providers.Notifications;
 using FluentAssertions.Common;
 using ISL.ReIdentification.Core.Brokers.DateTimes;
 using ISL.ReIdentification.Core.Brokers.Identifiers;
 using ISL.ReIdentification.Core.Brokers.Loggings;
-using ISL.ReIdentification.Core.Brokers.Storages.Sql.PatientOrgReference;
+using ISL.ReIdentification.Core.Brokers.Notifications;
 using ISL.ReIdentification.Core.Brokers.Storages.Sql.ReIdentifications;
+using ISL.ReIdentification.Core.Models.Brokers.Notifications;
 using ISL.ReIdentification.Core.Models.Foundations.Lookups;
 using ISL.ReIdentification.Core.Models.Foundations.UserAccesses;
 using ISL.ReIdentification.Core.Services.Foundations.AccessAudits;
-using ISL.ReIdentification.Core.Services.Foundations.DelegatedAccesses;
+using ISL.ReIdentification.Core.Services.Foundations.ImpersonationContexts;
 using ISL.ReIdentification.Core.Services.Foundations.Lookups;
 using ISL.ReIdentification.Core.Services.Foundations.OdsDatas;
 using ISL.ReIdentification.Core.Services.Foundations.PdsDatas;
@@ -45,14 +49,13 @@ namespace ISL.ReIdentification.Configurations.Server
 
             builder.Services.AddAuthorization();
             builder.Services.AddDbContext<ReIdentificationStorageBroker>();
-            builder.Services.AddDbContext<PatientOrgReferenceStorageBroker>();
             builder.Services.AddHttpContextAccessor();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddControllers();
-            AddProviders(builder.Services);
+            AddProviders(builder.Services, builder.Configuration);
             AddBrokers(builder.Services);
             AddFoundationServices(builder.Services);
             AddProcessingServices(builder.Services);
@@ -119,22 +122,36 @@ namespace ISL.ReIdentification.Configurations.Server
             app.Run();
         }
 
-        private static void AddProviders(IServiceCollection services)
-        { }
+        private static void AddProviders(IServiceCollection services, IConfiguration configuration)
+        {
+            NotificationConfigurations notificationConfigurations = configuration
+                .GetSection("notificationConfigurations")
+                    .Get<NotificationConfigurations>();
+
+            NotifyConfigurations notifyConfigurations = new NotifyConfigurations
+            {
+                ApiKey = notificationConfigurations.ApiKey
+            };
+
+            services.AddSingleton(notificationConfigurations);
+            services.AddSingleton(notifyConfigurations);
+            services.AddTransient<INotificationAbstractionProvider, NotificationAbstractionProvider>();
+            services.AddTransient<INotificationProvider, GovukNotifyProvider>();
+        }
 
         private static void AddBrokers(IServiceCollection services)
         {
             services.AddTransient<IDateTimeBroker, DateTimeBroker>();
             services.AddTransient<IIdentifierBroker, IdentifierBroker>();
             services.AddTransient<ILoggingBroker, LoggingBroker>();
-            services.AddTransient<IPatientOrgReferenceStorageBroker, PatientOrgReferenceStorageBroker>();
             services.AddTransient<IReIdentificationStorageBroker, ReIdentificationStorageBroker>();
+            services.AddTransient<INotificationBroker, NotificationBroker>();
         }
 
         private static void AddFoundationServices(IServiceCollection services)
         {
             services.AddTransient<IAccessAuditService, AccessAuditService>();
-            services.AddTransient<IDelegatedAccessService, DelegatedAccessService>();
+            services.AddTransient<IImpersonationContextService, ImpersonationContextService>();
             services.AddTransient<ILookupService, LookupService>();
             services.AddTransient<IOdsDataService, OdsDataService>();
             services.AddTransient<IPdsDataService, PdsDataService>();

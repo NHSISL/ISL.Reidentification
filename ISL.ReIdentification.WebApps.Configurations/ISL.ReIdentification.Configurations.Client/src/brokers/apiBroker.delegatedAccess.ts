@@ -1,59 +1,59 @@
 import { AxiosResponse } from "axios";
 import { Guid } from "guid-typescript";
 import ApiBroker from "./apiBroker";
-import { DelegatedAccess } from "../models/delegatedAccess/delegatedAccess";
+import { ImpersonationContext } from "../models/impersonationContext/impersonationContext";
 
-class DelegatedAccessBroker {
-    relativeDelegatedAccessUrl = '/api/delegatedAccess';
-    relativeDelegatedAccessOdataUrl = '/odata/delegatedAccess'
+class ImpersonationContextBroker {
+    relativeImpersonationContextUrl = '/api/impersonationContext';
+    relativeImpersonationContextOdataUrl = '/odata/impersonationContext'
 
     private apiBroker: ApiBroker = new ApiBroker();
 
     private processOdataResult = (result: AxiosResponse) => {
-        const data = result.data.value.map((delegatedAccess: any) => new DelegatedAccess(delegatedAccess));
+        const data = result.data.value.map((impersonationContext: any) => new ImpersonationContext(impersonationContext));
 
         const nextPage = result.data['@odata.nextLink'];
         return { data, nextPage }
     }
 
-    async PostDelegatedAccessAsync(delegatedAccess: DelegatedAccess) {
-        return await this.apiBroker.PostAsync(this.relativeDelegatedAccessUrl, delegatedAccess)
-            .then(result => new DelegatedAccess(result.data));
+    async PostImpersonationContextAsync(impersonationContext: ImpersonationContext) {
+        return await this.apiBroker.PostAsync(this.relativeImpersonationContextUrl, impersonationContext)
+            .then(result => new ImpersonationContext(result.data));
     }
 
-    async GetAllDelegatedAccessAsync(queryString: string) {
-        const url = this.relativeDelegatedAccessUrl + queryString;
+    async GetAllImpersonationContextAsync(queryString: string) {
+        const url = this.relativeImpersonationContextUrl + queryString;
 
         return await this.apiBroker.GetAsync(url)
-            .then(result => result.data.map((delegatedAccess: any) => new DelegatedAccess(delegatedAccess)));
+            .then(result => result.data.map((impersonationContext: any) => new ImpersonationContext(impersonationContext)));
     }
 
-    async GetDelegatedAccessFirstPagesAsync(query: string) {
-        const url = this.relativeDelegatedAccessOdataUrl + query;
+    async GetImpersonationContextFirstPagesAsync(query: string) {
+        const url = this.relativeImpersonationContextOdataUrl + query;
         return this.processOdataResult(await this.apiBroker.GetAsync(url));
     }
 
-    async GetDelegatedAccessSubsequentPagesAsync(absoluteUri: string) {
+    async GetImpersonationContextSubsequentPagesAsync(absoluteUri: string) {
         return this.processOdataResult(await this.apiBroker.GetAsyncAbsolute(absoluteUri));
     }
 
-    async GetDelegatedAccessByIdAsync(id: Guid) {
-        const url = `${this.relativeDelegatedAccessUrl}/${id}`;
+    async GetImpersonationContextByIdAsync(id: Guid) {
+        const url = `${this.relativeImpersonationContextUrl}/${id}`;
 
         return await this.apiBroker.GetAsync(url)
-            .then(result => new DelegatedAccess(result.data));
+            .then(result => new ImpersonationContext(result.data));
     }
 
-    async PutDelegatedAccessAsync(delegatedAccess: DelegatedAccess) {
-        return await this.apiBroker.PutAsync(this.relativeDelegatedAccessUrl, delegatedAccess)
-            .then(result => new DelegatedAccess(result.data));
+    async PutImpersonationContextAsync(impersonationContext: ImpersonationContext) {
+        return await this.apiBroker.PutAsync(this.relativeImpersonationContextUrl, impersonationContext)
+            .then(result => new ImpersonationContext(result.data));
     }
 
-    async DeleteDelegatedAccessByIdAsync(id: Guid) {
-        const url = `${this.relativeDelegatedAccessUrl}/${id}`;
+    async DeleteImpersonationContextByIdAsync(id: Guid) {
+        const url = `${this.relativeImpersonationContextUrl}/${id}`;
 
         return await this.apiBroker.DeleteAsync(url)
-            .then(result => new DelegatedAccess(result.data));
+            .then(result => new ImpersonationContext(result.data));
     }
 }
-export default DelegatedAccessBroker;
+export default ImpersonationContextBroker;

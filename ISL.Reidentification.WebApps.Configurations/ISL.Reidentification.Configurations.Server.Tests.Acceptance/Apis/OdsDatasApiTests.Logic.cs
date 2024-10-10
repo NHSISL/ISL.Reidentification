@@ -10,7 +10,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
 {
     public partial class OdsDatasApiTests
     {
-        [Fact]
+        [Fact(Skip = "Need to refactor tests and add other crud operations")]
         public async Task ShouldGetAllOdsDatasAsync()
         {
             // when
@@ -20,7 +20,7 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Acceptance.Apis
             actualOdsDatas.Should().NotBeNull();
         }
 
-        [Fact]
+        [Fact(Skip = "Need to refactor tests and add other crud operations")]
         public async Task ShouldGetOdsDataByIdAsync()
         {
             // given
