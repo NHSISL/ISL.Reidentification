@@ -18,20 +18,19 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
 
             Validate(
                 (Rule: await IsInvalidAsync(userAccess.Id), Parameter: nameof(UserAccess.Id)),
-                (Rule: await IsInvalidAsync(userAccess.FirstName), Parameter: nameof(UserAccess.FirstName)),
-                (Rule: await IsInvalidAsync(userAccess.LastName), Parameter: nameof(UserAccess.LastName)),
-                (Rule: await IsInvalidAsync(userAccess.UserEmail), Parameter: nameof(UserAccess.UserEmail)),
+                (Rule: await IsInvalidAsync(userAccess.EntraUserId), Parameter: nameof(UserAccess.EntraUserId)),
+                (Rule: await IsInvalidAsync(userAccess.Email), Parameter: nameof(UserAccess.Email)),
                 (Rule: await IsInvalidAsync(userAccess.OrgCode), Parameter: nameof(UserAccess.OrgCode)),
                 (Rule: await IsInvalidAsync(userAccess.ActiveFrom), Parameter: nameof(UserAccess.ActiveFrom)),
                 (Rule: await IsInvalidAsync(userAccess.CreatedBy), Parameter: nameof(UserAccess.CreatedBy)),
                 (Rule: await IsInvalidAsync(userAccess.UpdatedBy), Parameter: nameof(UserAccess.UpdatedBy)),
                 (Rule: await IsInvalidAsync(userAccess.CreatedDate), Parameter: nameof(UserAccess.CreatedDate)),
                 (Rule: await IsInvalidAsync(userAccess.UpdatedDate), Parameter: nameof(UserAccess.UpdatedDate)),
-                (Rule: await IsInvalidLengthAsync(userAccess.FirstName, 255), Parameter: nameof(UserAccess.FirstName)),
-                (Rule: await IsInvalidLengthAsync(userAccess.LastName, 255), Parameter: nameof(UserAccess.LastName)),
+                (Rule: await IsInvalidLengthAsync(userAccess.GivenName, 255), Parameter: nameof(UserAccess.GivenName)),
+                (Rule: await IsInvalidLengthAsync(userAccess.Surname, 255), Parameter: nameof(UserAccess.Surname)),
                 (Rule: await IsInvalidLengthAsync(userAccess.CreatedBy, 255), Parameter: nameof(UserAccess.CreatedBy)),
                 (Rule: await IsInvalidLengthAsync(userAccess.UpdatedBy, 255), Parameter: nameof(UserAccess.UpdatedBy)),
-                (Rule: await IsInvalidLengthAsync(userAccess.UserEmail, 320), Parameter: nameof(UserAccess.UserEmail)),
+                (Rule: await IsInvalidLengthAsync(userAccess.Email, 320), Parameter: nameof(UserAccess.Email)),
                 (Rule: await IsInvalidLengthAsync(userAccess.OrgCode, 15), Parameter: nameof(UserAccess.OrgCode)),
 
                 (Rule: await IsNotSameAsync(
@@ -63,20 +62,19 @@ namespace ISL.ReIdentification.Core.Services.Foundations.UserAccesses
 
             Validate(
                 (Rule: await IsInvalidAsync(userAccess.Id), Parameter: nameof(UserAccess.Id)),
-                (Rule: await IsInvalidAsync(userAccess.FirstName), Parameter: nameof(UserAccess.FirstName)),
-                (Rule: await IsInvalidAsync(userAccess.LastName), Parameter: nameof(UserAccess.LastName)),
-                (Rule: await IsInvalidAsync(userAccess.UserEmail), Parameter: nameof(UserAccess.UserEmail)),
+                (Rule: await IsInvalidAsync(userAccess.EntraUserId), Parameter: nameof(UserAccess.EntraUserId)),
+                (Rule: await IsInvalidAsync(userAccess.Email), Parameter: nameof(UserAccess.Email)),
                 (Rule: await IsInvalidAsync(userAccess.OrgCode), Parameter: nameof(UserAccess.OrgCode)),
                 (Rule: await IsInvalidAsync(userAccess.ActiveFrom), Parameter: nameof(UserAccess.ActiveFrom)),
                 (Rule: await IsInvalidAsync(userAccess.CreatedBy), Parameter: nameof(UserAccess.CreatedBy)),
                 (Rule: await IsInvalidAsync(userAccess.UpdatedBy), Parameter: nameof(UserAccess.UpdatedBy)),
                 (Rule: await IsInvalidAsync(userAccess.CreatedDate), Parameter: nameof(UserAccess.CreatedDate)),
                 (Rule: await IsInvalidAsync(userAccess.UpdatedDate), Parameter: nameof(UserAccess.UpdatedDate)),
-                (Rule: await IsInvalidLengthAsync(userAccess.FirstName, 255), Parameter: nameof(UserAccess.FirstName)),
-                (Rule: await IsInvalidLengthAsync(userAccess.LastName, 255), Parameter: nameof(UserAccess.LastName)),
+                (Rule: await IsInvalidLengthAsync(userAccess.GivenName, 255), Parameter: nameof(UserAccess.GivenName)),
+                (Rule: await IsInvalidLengthAsync(userAccess.Surname, 255), Parameter: nameof(UserAccess.Surname)),
                 (Rule: await IsInvalidLengthAsync(userAccess.CreatedBy, 255), Parameter: nameof(UserAccess.CreatedBy)),
                 (Rule: await IsInvalidLengthAsync(userAccess.UpdatedBy, 255), Parameter: nameof(UserAccess.UpdatedBy)),
-                (Rule: await IsInvalidLengthAsync(userAccess.UserEmail, 320), Parameter: nameof(UserAccess.UserEmail)),
+                (Rule: await IsInvalidLengthAsync(userAccess.Email, 320), Parameter: nameof(UserAccess.Email)),
                 (Rule: await IsInvalidLengthAsync(userAccess.OrgCode, 15), Parameter: nameof(UserAccess.OrgCode)),
 
                 (Rule: await IsSameAsAsync(
