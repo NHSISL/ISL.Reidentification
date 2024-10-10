@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Force.DeepCloner;
 using ISL.ReIdentification.Configurations.Server.Controllers;
+using ISL.ReIdentification.Core.Models.Coordinations.Identifications.Exceptions;
 using ISL.ReIdentification.Core.Models.Foundations.ImpersonationContexts;
 using ISL.ReIdentification.Core.Models.Foundations.ReIdentifications;
 using ISL.ReIdentification.Core.Models.Orchestrations.Accesses;
@@ -14,6 +15,7 @@ using ISL.ReIdentification.Core.Services.Orchestrations.Identifications;
 using Moq;
 using RESTFulSense.Controllers;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.ReIdentification
 {
@@ -28,6 +30,26 @@ namespace ISL.ReIdentification.Configurations.Server.Tests.Unit.Controllers.ReId
             this.reIdentificationController =
                 new ReIdentificationController(this.identificationCoordinationServiceMock.Object);
         }
+
+        public static TheoryData<Xeption> ValidationExceptions()
+        {
+            var someInnerException = new Xeption();
+            string someMessage = GetRandomString();
+
+            return new TheoryData<Xeption>
+            {
+                new IdentificationCoordinationValidationException(
+                    message: someMessage,
+                    innerException: someInnerException),
+
+                new IdentificationCoordinationDependencyValidationException(
+                    message: someMessage,
+                    innerException: someInnerException)
+            };
+        }
+
+        private static string GetRandomString() =>
+            new MnemonicString(wordCount: GetRandomNumber()).GetValue();
 
         private static int GetRandomNumber() =>
             new IntRange(max: 15, min: 2).GetValue();
