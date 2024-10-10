@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System.Threading.Tasks;
+using ISL.ReIdentification.Core.Models.Coordinations.Identifications.Exceptions;
 using ISL.ReIdentification.Core.Models.Orchestrations.Accesses;
 using ISL.ReIdentification.Core.Services.Orchestrations.Identifications;
 using Microsoft.AspNetCore.Mvc;
@@ -23,10 +24,23 @@ namespace ISL.ReIdentification.Configurations.Server.Controllers
         public async ValueTask<ActionResult<AccessRequest>>
             PostIdentificationRequestsAsync(AccessRequest accessRequest)
         {
-            AccessRequest addedAccessRequest =
-                await this.identificationCoordinationService.ProcessIdentificationRequestsAsync(accessRequest);
+            try
+            {
+                AccessRequest addedAccessRequest =
+                    await this.identificationCoordinationService.ProcessIdentificationRequestsAsync(accessRequest);
 
-            return Created(addedAccessRequest);
+                return Created(addedAccessRequest);
+            }
+            catch (IdentificationCoordinationValidationException identificationCoordinationValidationException)
+            {
+                return BadRequest(identificationCoordinationValidationException.InnerException);
+            }
+            catch (
+                IdentificationCoordinationDependencyValidationException
+                    identificationCoordinationDependencyValidationException)
+            {
+                return BadRequest(identificationCoordinationDependencyValidationException.InnerException);
+            }
         }
     }
 }
